@@ -11,9 +11,12 @@ namespace Server
         {
             Server server = new Server();
             Thread[] threads = new Thread[server.player_number + 1];
-            
+
             for (int i = 0; i < server.player_number; i++)
-            { threads[i] = new Thread(new ParameterizedThreadStart(server.Recv_msg)); threads[i].Start(i); }//每个玩家对应一个线程用来接收客户端发送的信息
+            {
+                threads[i] = new Thread(new ParameterizedThreadStart(server.Recv_msg));
+                threads[i].Start(i);
+            }//每个玩家对应一个线程用来接收客户端发送的信息
             threads[server.player_number] = new Thread(new ThreadStart(server.Update));//该线程负责信息更新并发送给玩家
             threads[server.player_number].Start();
 
@@ -35,24 +38,24 @@ namespace Server
         MOVE_DIRECTION[] MoveDirection;//移动方向：上下左右
         long[] last_update_time;//上次刷新时间
 
-        
+
         IPAddress ip;
 
         MAP_SIZE map_size;//地图尺寸
         bool[][] block;//用来判断碰撞的东西
-        
-        
+
+
         public Server()
         {
             //连接到客户端
             Console.Write("请输入游戏人数： ");
             player_number = Convert.ToInt32(Console.ReadLine());
-            
+
             string hostName = Dns.GetHostName();
             IPHostEntry IpEntry = Dns.GetHostEntry(hostName);
 
             for (int i = 0; i < IpEntry.AddressList.Length; i++) if (IpEntry.AddressList[i].AddressFamily == AddressFamily.InterNetwork)
-                { Console.WriteLine("主机地址： {0}",IpEntry.AddressList[i].ToString()); ip = IPAddress.Parse(IpEntry.AddressList[i].ToString()); }
+                { Console.WriteLine("主机地址： {0}", IpEntry.AddressList[i].ToString()); ip = IPAddress.Parse(IpEntry.AddressList[i].ToString()); }
 
             serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             serverSocket.Bind(new IPEndPoint(ip, myProt));  //绑定IP地址：端口 
@@ -61,7 +64,7 @@ namespace Server
 
             clientSocket = new Socket[player_number];
             //建立连接，并将游戏人数和玩家编号发给玩家
-            for (int i = 0; i < player_number; i++) { clientSocket[i] = serverSocket.Accept();send_buf = i.ToString()+" "+player_number.ToString()+" "; Sendmsg(i); }
+            for (int i = 0; i < player_number; i++) { clientSocket[i] = serverSocket.Accept(); send_buf = i.ToString() + " " + player_number.ToString() + " "; Sendmsg(i); }
             //地图尺寸初始化（目前写成200*200）
             map_size.x_width = 200;
             map_size.y_width = 200;
@@ -71,7 +74,7 @@ namespace Server
             map_init();
             //各种信息初始化
             recv_buf = new byte[player_number][];
-            for(int i=0;i<player_number;i++) recv_buf[i]=new byte[1000];
+            for (int i = 0; i < player_number; i++) recv_buf[i] = new byte[1000];
             move_speed = new MOVE_SPEED[player_number];
             for (int i = 0; i < player_number; i++) move_speed[i].speed = 5;
             position = new Position[player_number];
@@ -82,7 +85,7 @@ namespace Server
         public void Recv_msg(object i)//从编号为i的玩家处接收信息
         {
             int j = Convert.ToInt32(i);
-            while(true)
+            while (true)
             {
                 clientSocket[j].Receive(recv_buf[j]);
                 char[] str_msg = Encoding.ASCII.GetChars(recv_buf[j]);
@@ -121,12 +124,12 @@ namespace Server
         }
         public void Sendmsg(int i)//将send_buf中的信息发送给编号为i的
         {
-           clientSocket[i].Send(Encoding.ASCII.GetBytes(send_buf));
+            clientSocket[i].Send(Encoding.ASCII.GetBytes(send_buf));
         }
         public void Update()//信息更新并向玩家发送
         {
-            long t=0;
-            
+            long t = 0;
+
             while (true)
             {
                 send_buf = "";
@@ -140,11 +143,11 @@ namespace Server
                         int y = (int)position[i].y;
                         double aim_x = position[i].x + move_speed[i].x_speed * 0.001 * (t - last_update_time[i]);
                         double aim_y = position[i].y + move_speed[i].y_speed * 0.001 * (t - last_update_time[i]);
-                        if ((block[(int)aim_x][(int)aim_y] == false ||(x == (int)aim_x && y == (int)aim_y)) && aim_x >= 0 && aim_y >= 0 && aim_x < map_size.x_width && aim_y < map_size.y_width) 
+                        if ((block[(int)aim_x][(int)aim_y] == false || (x == (int)aim_x && y == (int)aim_y)) && aim_x >= 0 && aim_y >= 0 && aim_x < map_size.x_width && aim_y < map_size.y_width)
                         {
                             position[i].x = aim_x;
                             position[i].y = aim_y;
-                            if (x != (int)aim_x || y != (int)aim_y) { block[x][y] = false;block[(int)aim_x][(int)aim_y] = true; }
+                            if (x != (int)aim_x || y != (int)aim_y) { block[x][y] = false; block[(int)aim_x][(int)aim_y] = true; }
                         }
                         last_update_time[i] = t;
                     }
@@ -161,7 +164,7 @@ namespace Server
         {
             for (int i = 0; i < map_size.x_width; i++)
             {
-                for(int j=0;j<map_size.y_width;j++)
+                for (int j = 0; j < map_size.y_width; j++)
                 {
                     block[i][j] = false;
                 }
