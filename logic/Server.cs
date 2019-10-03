@@ -55,7 +55,10 @@ namespace Server
             IPHostEntry IpEntry = Dns.GetHostEntry(hostName);
 
             for (int i = 0; i < IpEntry.AddressList.Length; i++) if (IpEntry.AddressList[i].AddressFamily == AddressFamily.InterNetwork)
-                { Console.WriteLine("主机地址： {0}", IpEntry.AddressList[i].ToString()); ip = IPAddress.Parse(IpEntry.AddressList[i].ToString()); }
+                {
+                    Console.WriteLine("主机地址： {0}", IpEntry.AddressList[i].ToString());
+                    ip = IPAddress.Parse(IpEntry.AddressList[i].ToString());
+                }
 
             serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             serverSocket.Bind(new IPEndPoint(ip, myProt));  //绑定IP地址：端口 
