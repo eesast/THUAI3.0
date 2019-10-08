@@ -67,19 +67,27 @@ namespace Server
 
             clientSocket = new Socket[player_number];
             //建立连接，并将游戏人数和玩家编号发给玩家
-            for (int i = 0; i < player_number; i++) { clientSocket[i] = serverSocket.Accept(); send_buf = i.ToString() + " " + player_number.ToString() + " "; Sendmsg(i); }
+            for (int i = 0; i < player_number; i++)
+            {
+                clientSocket[i] = serverSocket.Accept();
+                send_buf = i.ToString() + " " + player_number.ToString() + " ";
+                Sendmsg(i);
+            }
             //地图尺寸初始化（目前写成200*200）
             map_size.x_width = 200;
             map_size.y_width = 200;
             block = new bool[map_size.x_width][];
-            for (int i = 0; i < map_size.y_width; i++) block[i] = new bool[map_size.y_width];
+            for (int i = 0; i < map_size.y_width; i++)
+                block[i] = new bool[map_size.y_width];
             //地形初始化，目前是200*200的平地，只有撞人才会被卡住
             map_init();
             //各种信息初始化
             recv_buf = new byte[player_number][];
-            for (int i = 0; i < player_number; i++) recv_buf[i] = new byte[1000];
+            for (int i = 0; i < player_number; i++)
+                recv_buf[i] = new byte[1000];
             move_speed = new MOVE_SPEED[player_number];
-            for (int i = 0; i < player_number; i++) move_speed[i].speed = 5;
+            for (int i = 0; i < player_number; i++)
+                move_speed[i].speed = 5;
             position = new Position[player_number];
             position[0].x = 10; position[0].y = 10;
             MoveDirection = new MOVE_DIRECTION[player_number];

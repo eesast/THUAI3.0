@@ -3,19 +3,20 @@ using System.Threading;
 using System.Net.Sockets;
 using System.Net;
 using System.Text;
+using System.Diagnostics;
 namespace Client
 {
     class Program
     {
         private static byte[] result = new byte[1024];
-        
+
         static void Main()
         {
             Player player = new Player();
             Thread[] threads = new Thread[3];
             threads[0] = new Thread(new ThreadStart(player.Update));//该线程负责从服务器接收信息
             threads[1] = new Thread(new ThreadStart(player.Operation));//人工操作线程，向服务器发送信息
-            threads[2]= new Thread(new ThreadStart(player.ScreenRefresh));
+            threads[2] = new Thread(new ThreadStart(player.ScreenRefresh));
             threads[0].Start();
             threads[1].Start();
             threads[2].Start();
@@ -74,7 +75,7 @@ namespace Client
         }
         public void Sendmsg()//将send_buf中的信息发送给服务器
         {
-            if (send_buf != last_order) { clientSocket.Send(Encoding.ASCII.GetBytes(send_buf));last_order = send_buf; }
+            if (send_buf != last_order) { clientSocket.Send(Encoding.ASCII.GetBytes(send_buf)); last_order = send_buf; }
         }
         public void Move(MOVE_DIRECTION md)//移动指令，参数为移动方向
         {
@@ -160,11 +161,11 @@ namespace Client
     }
     public enum MOVE_DIRECTION
     {
-        STOP=0,
-        UP =1,
-        DOWN=2,
-        LEFT=3,
-        RIGHT=4
+        STOP = 0,
+        UP = 1,
+        DOWN = 2,
+        LEFT = 3,
+        RIGHT = 4
     }
     struct MOVE_SPEED
     {
