@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Net;
 using System.Text;
 using Constant;
+using System.Collections.Concurrent;
 using static Constant.CONSTANT;
 using System.Collections.Generic;
 
@@ -12,17 +13,33 @@ namespace Server
 {
     static class Program
     {
-        public static Queue<MessageToServer> messageQueue = new Queue<MessageToServer>();
-        public static MAP_CELL[,] WORLD_MAP = new MAP_CELL[WORLD_MAP_WIDTH, WORLD_MAP_HEIGHT];
-        public static DateTime initTime = new DateTime();
-        public static TimeSpan gameTime = new TimeSpan();
+        public static BlockingCollection<MessageToServer> messageQueue = new BlockingCollection<MessageToServer>();
+        public static List<Obj>[,] WORLD_MAP = new List<Obj>[WORLD_MAP_WIDTH, WORLD_MAP_HEIGHT];
+        private static DateTime initTime = new DateTime();
+        public static void initializeTime()
+        {
+            initTime = DateTime.Now;
+        }
+        public static DateTime getInitTime()
+        {
+            return initTime;
+        }
+        private static TimeSpan gameTime = new TimeSpan();
+        public static void refreshGameTime()
+        {
+            gameTime = DateTime.Now - initTime;
+        }
+        public static TimeSpan getGameTime()
+        {
+            return gameTime;
+        }
         public static void Main(string[] args)
         {
             for (int i = 0; i < WORLD_MAP_WIDTH; i++)
                 for (int j = 0; j < WORLD_MAP_HEIGHT; j++)
                 {
                     if (
-                        (i >= 50 && i <= 150 && j >= 100 && j <= 200) ||
+                        (i >= 25 && i <= 75 && j >= 25 && j <= 75) ||
                         i == 0 ||
                         i == WORLD_MAP_WIDTH - 1 ||
                         j == 0 ||
@@ -30,11 +47,12 @@ namespace Server
                         )
                     {
 
-                        WORLD_MAP[i, j] = new MAP_CELL(OBJECT_TYPE.BLOCK, (byte)BLOCK_TYPE.WALL);
+                        WORLD_MAP[i, j] = new List<Obj>();
+                        WORLD_MAP[i, j].Add(new Block(i + 0.5, j + 0.5));
                     }
                     else
                     {
-                        WORLD_MAP[i, j] = new MAP_CELL(OBJECT_TYPE.AIR, 0);
+                        WORLD_MAP[i, j] = new List<Obj>();
                     }
                 }
 
@@ -55,7 +73,7 @@ namespace Server
         {
             get { return isConnected; }
         }
-        public Player(uint id_t, double x, double y, Socket serverSocket)
+        public Player(byte id_t, double x, double y, Socket serverSocket)
         :
         base(id_t, x, y)
         {
@@ -64,7 +82,7 @@ namespace Server
             isConnected = true;
 
             correctPosition();
-            Program.WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y] = new MAP_CELL(OBJECT_TYPE.PEOPLE, 0);
+            Program.WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y].Add(new People(xyPosition.x, xyPosition.y));
             recieveThread = new Thread(recieveMessage);
             recieveThread.Start();
 
@@ -73,18 +91,45 @@ namespace Server
         {
             double halfWidth = width * 0.5;
             double halfHeight = height * 0.5;
-            if (
-                Program.WORLD_MAP[(uint)(xyPos.x + halfWidth), (uint)(xyPos.y + halfHeight)].objectType != OBJECT_TYPE.BLOCK &&
-                Program.WORLD_MAP[(uint)(xyPos.x - halfWidth), (uint)(xyPos.y + halfHeight)].objectType != OBJECT_TYPE.BLOCK &&
-                Program.WORLD_MAP[(uint)(xyPos.x - halfWidth), (uint)(xyPos.y - halfHeight)].objectType != OBJECT_TYPE.BLOCK &&
-                Program.WORLD_MAP[(uint)(xyPos.x + halfWidth), (uint)(xyPos.y - halfHeight)].objectType != OBJECT_TYPE.BLOCK
-            )
-                return true;
-            else
-                return false;
+
+            if (Program.WORLD_MAP[(uint)(xyPos.x + halfWidth), (uint)(xyPos.y + halfHeight)].Count > 0)
+            {
+                if (Program.WORLD_MAP[(uint)(xyPos.x + halfWidth), (uint)(xyPos.y + halfHeight)][0].GetType().Name == "Block")
+                {
+                    return false;
+                }
+            }
+            if (Program.WORLD_MAP[(uint)(xyPos.x - halfWidth), (uint)(xyPos.y + halfHeight)].Count > 0)
+            {
+                if (Program.WORLD_MAP[(uint)(xyPos.x - halfWidth), (uint)(xyPos.y + halfHeight)][0].GetType().Name == "Block")
+                {
+                    return false;
+                }
+            }
+            if (Program.WORLD_MAP[(uint)(xyPos.x - halfWidth), (uint)(xyPos.y - halfHeight)].Count > 0)
+            {
+                if (Program.WORLD_MAP[(uint)(xyPos.x - halfWidth), (uint)(xyPos.y - halfHeight)][0].GetType().Name == "Block")
+                {
+                    return false;
+                }
+            }
+            if (Program.WORLD_MAP[(uint)(xyPos.x + halfWidth), (uint)(xyPos.y - halfHeight)].Count > 0)
+            {
+                if (Program.WORLD_MAP[(uint)(xyPos.x + halfWidth), (uint)(xyPos.y - halfHeight)][0].GetType().Name == "Block")
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
         private void correctPosition()
         {
+            if (xyPosition.x <= 0 || xyPosition.x >= WORLD_MAP_WIDTH - 1 || xyPosition.y <= 0 || xyPosition.y >= WORLD_MAP_HEIGHT - 1)
+            {
+                xyPosition.x = WORLD_MAP_WIDTH * 0.5;
+                xyPosition.y = WORLD_MAP_HEIGHT * 0.5;
+            }
             if (checkXYPosition(xyPosition, 1, 1))
                 return;
             XY_Position[] searchers = new XY_Position[4];
@@ -111,21 +156,20 @@ namespace Server
         }
         public override void move(DIRECTION direction)
         {
-            Program.WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y] = new MAP_CELL(OBJECT_TYPE.AIR, 0);
+            Program.WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y].RemoveAll(obj => { return obj.GetType().Name == "People"; });
             XY_Position aim = OPERATION[(uint)direction] + xyPosition;
             if (checkXYPosition(aim, 1, 1))
             {
 
                 xyPosition = aim;
-                Program.WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y] = new MAP_CELL(OBJECT_TYPE.PEOPLE, 0);
+                Program.WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y].Insert(0, new People(xyPosition.x, xyPosition.y));
 
                 sendMessage(
                     new MessageToClient(
                     id,
                     xyPosition,
-                    xyPosition,
-                    xyPosition,
-                    Program.WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y]
+                    true,
+                    new Obj(0, 0)
                 )
                 );
             }
@@ -140,22 +184,28 @@ namespace Server
                     int bufferLength = socket.Receive(recieveBuffer);
                     byte[] realBuffer = new Byte[bufferLength];
                     Array.Copy(recieveBuffer, 0, realBuffer, 0, bufferLength);
-                    string str = Encoding.Default.GetString(realBuffer);
-                    Console.WriteLine("{0} : {1}.", socket.RemoteEndPoint, str);
-                    string[] message = str.Split(messageSpiltSeperation);
 
-                    UInt32 id_t = Convert.ToUInt32(message[0]);
-                    // if (id_t != id)
-                    //     continue;
+                    bool isSucces = false;
+                    MessageToServer msgToSvr = MessageToServer.FromBytes(realBuffer, 0, out isSucces);
 
-                    byte type = Convert.ToByte(message[1]);
-                    if (type < 0 || type >= (byte)COMMAND_TYPE.SIZE)
+                    if (!isSucces)
                         continue;
 
-                    byte param1 = Convert.ToByte(message[2]);
-                    byte param2 = Convert.ToByte(message[3]);
-                    MessageToServer msgToSvr = new MessageToServer(id, (COMMAND_TYPE)type, param1, param2);
-                    Program.messageQueue.Enqueue(msgToSvr);
+                    Console.WriteLine("{0} send.", socket.RemoteEndPoint);
+                    // string[] message = str.Split(messageSpiltSeperation);
+
+                    // byte id_t = Convert.ToByte(message[0]);
+                    // // if (id_t != id)
+                    // //     continue;
+
+                    // byte type = Convert.ToByte(message[1]);
+                    // if (type < 0 || type >= (byte)COMMAND_TYPE.SIZE)
+                    //     continue;
+
+                    // byte param1 = Convert.ToByte(message[2]);
+                    // byte param2 = Convert.ToByte(message[3]);
+                    // MessageToServer msgToSvr = new MessageToServer(id, (COMMAND_TYPE)type, param1, param2);
+                    Program.messageQueue.Add(msgToSvr);
                 }
                 catch (Exception e)
                 {
@@ -168,7 +218,7 @@ namespace Server
         {
             try
             {
-                byte[] sendByte = Encoding.Default.GetBytes(msgToClt.ToString());
+                byte[] sendByte = msgToClt.ToBytes();
                 socket.Send(sendByte, sendByte.Length, 0);
             }
             catch (Exception ex)
@@ -192,6 +242,7 @@ namespace Server
         //private static int count = 0;//表示对话序号
         Player[] players;
         Thread serverThread;
+        Thread executeMessageQueueThread;
         public Server()
         {
             Console.Write("请输入游戏人数： ");
@@ -222,7 +273,7 @@ namespace Server
             players = new Player[playerNumber];
             for (int i = 0; i < playerNumber; i++)
             {
-                players[i] = new Player((uint)i, 100, 150, socket);
+                players[i] = new Player((byte)i, 50, 50, socket);
             }
 
             while (true)
@@ -236,20 +287,31 @@ namespace Server
 
             serverThread = new Thread(run);
             serverThread.Start();
+
+            Console.WriteLine("Server constructed");
         }
 
         public void run()
         {
-            Program.initTime = DateTime.Now;
+            Program.initializeTime();
+            Console.WriteLine("Server begin to run");
 
+            executeMessageQueueThread = new Thread(executeMessageQueue);
+            executeMessageQueueThread.Start();
+
+
+
+            Console.WriteLine("Server stop running");
+        }
+        public void executeMessageQueue()
+        {
+            Console.WriteLine("Begin to execute message queue");
             while (true)
             {
-                if (Program.messageQueue.Count == 0)
-                    continue;
-                Program.gameTime = DateTime.Now - Program.initTime;
-                Console.WriteLine("Time : " + Program.gameTime.TotalSeconds.ToString() + "s");
+                Program.refreshGameTime();
+                Console.WriteLine("Time : " + Program.getGameTime().TotalSeconds.ToString() + "s");
 
-                MessageToServer msgToSvr = Program.messageQueue.Dequeue();
+                MessageToServer msgToSvr = Program.messageQueue.Take();
                 if (msgToSvr.commandType < 0 || msgToSvr.commandType >= COMMAND_TYPE.SIZE)
                     continue;
 
@@ -259,6 +321,7 @@ namespace Server
                     players[msgToSvr.senderID].move((DIRECTION)msgToSvr.parameter1);
                 }
             }
+
         }
 
     }

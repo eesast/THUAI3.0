@@ -79,17 +79,22 @@ namespace Client
                     int length = socket.Receive(recieveBuffer);
                     byte[] realBuffer = new Byte[length];
                     Array.Copy(recieveBuffer, 0, realBuffer, 0, length);
-                    string str = System.Text.Encoding.Default.GetString(realBuffer);
-                    //Console.WriteLine("{0} : {1}.", socket.RemoteEndPoint, str);
 
-                    string[] message = str.Split(messageSpiltSeperation);
+                    bool isSuccess = false;
+                    MessageToClient msgToClt = MessageToClient.FromBytes(realBuffer, 0, out isSuccess);
+                    if (!isSuccess)
+                        continue;
+                    // string str = System.Text.Encoding.Default.GetString(realBuffer);
+                    // //Console.WriteLine("{0} : {1}.", socket.RemoteEndPoint, str);
 
-                    uint id_t = Convert.ToUInt32(message[0]);
-                    // if (id_t != id)
-                    //     continue;
+                    // string[] message = str.Split(messageSpiltSeperation);
 
-                    xyPosition.x = Convert.ToDouble(message[1]);
-                    xyPosition.y = Convert.ToDouble(message[2]);
+                    // uint id_t = Convert.ToUInt32(message[0]);
+                    // // if (id_t != id)
+                    // //     continue;
+
+                    xyPosition = msgToClt.playerPosition;
+                    // xyPosition.y = Convert.ToDouble(message[2]);
 
                 }
                 catch (Exception ex)
@@ -107,7 +112,7 @@ namespace Client
         {
             try
             {
-                byte[] sendByte = Encoding.Default.GetBytes(msgToSvr.ToString());
+                byte[] sendByte = msgToSvr.ToBytes();
                 socket.Send(sendByte, sendByte.Length, 0);
             }
             catch (Exception ex)
