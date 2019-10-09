@@ -1,0 +1,1 @@
+@dotnet ClientChatTest\bin\Debug\netcoreapp2.1\ClientChatTest.dll

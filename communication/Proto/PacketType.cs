@@ -1,9 +1,10 @@
-namespace Communication
+namespace Communication.Proto
 {
-    enum PacketType
+    public enum PacketType
     {
-        ClientPacket = 0,
-        ServerPacket = 1,
-        GameStart = 2
+        ProtoPacket = 0,
+        PlayerReady = 1,
+        GameOver = 2,
+        RequestInfo = 3
     }
 }
