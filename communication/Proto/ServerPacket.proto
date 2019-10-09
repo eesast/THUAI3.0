@@ -1,8 +1,0 @@
-syntax = "proto3";
-package google.protobuf;
-
-option csharp_namespace = "Communication";
-
-message ServerPacket {
-    string Data = 1;
-}
