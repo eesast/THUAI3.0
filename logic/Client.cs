@@ -63,10 +63,14 @@ namespace Client
             while (true)
             {
                 key = Console.ReadKey().KeyChar;
-                if (key == 'w') move(DIRECTION.UP);
-                else if (key == 's') move(DIRECTION.DOWN);
+                if (key == 'd') move(DIRECTION.RIGHT);
+                else if (key == 'e') move(DIRECTION.RIGHT_UP);
+                else if (key == 'w') move(DIRECTION.UP);
+                else if (key == 'q') move(DIRECTION.LEFT_UP);
                 else if (key == 'a') move(DIRECTION.LEFT);
-                else if (key == 'd') move(DIRECTION.RIGHT);
+                else if (key == 'z') move(DIRECTION.LEFT_DOWN);
+                else if (key == 'x') move(DIRECTION.DOWN);
+                else if (key == 'c') move(DIRECTION.RIGHT_DOWN);
                 lastSendTime = DateTime.Now;
             }
         }

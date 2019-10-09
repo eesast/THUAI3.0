@@ -82,45 +82,82 @@ namespace Server
             isConnected = true;
 
             correctPosition();
-            Program.WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y].Add(new People(xyPosition.x, xyPosition.y));
+            Program.WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y].Add(new People(xyPosition.x, xyPosition.y, id));
             recieveThread = new Thread(recieveMessage);
             recieveThread.Start();
 
         }
-        public bool checkXYPosition(XY_Position xyPos, uint width, uint height)
+
+
+        static double halfWidth = 0.5;
+        static double halfHeight = 0.5;
+        static XY_Position operationRightUp = new XY_Position(halfWidth, halfHeight);
+        static XY_Position operationLeftUp = new XY_Position(-halfWidth, halfHeight);
+        static XY_Position operationLeftDown = new XY_Position(-halfWidth, -halfHeight);
+        static XY_Position operationRightDown = new XY_Position(halfWidth, -halfHeight);
+        public bool checkXYPosition(XY_Position xyPos)
         {
-            double halfWidth = width * 0.5;
-            double halfHeight = height * 0.5;
+            XY_Position RightUp = xyPos + operationRightUp;
+            XY_Position LeftUp = xyPos + operationLeftUp;
+            XY_Position LeftDown = xyPos + operationLeftDown;
+            XY_Position RightDown = xyPos + operationRightDown;
 
-            if (Program.WORLD_MAP[(uint)(xyPos.x + halfWidth), (uint)(xyPos.y + halfHeight)].Count > 0)
+            if (Program.WORLD_MAP[(uint)RightUp.x, (uint)RightUp.y].Count > 0)
             {
-                if (Program.WORLD_MAP[(uint)(xyPos.x + halfWidth), (uint)(xyPos.y + halfHeight)][0].GetType().Name == "Block")
+                if (Program.WORLD_MAP[(uint)RightUp.x, (uint)RightUp.y][0] is Block)
                 {
                     return false;
                 }
+                if (Program.WORLD_MAP[(uint)RightUp.x, (uint)RightUp.y][0] is People)
+                {
+                    if (((People)Program.WORLD_MAP[(uint)RightUp.x, (uint)RightUp.y][0]).id != id)
+                    {
+                        return false;
+                    }
+                }
             }
-            if (Program.WORLD_MAP[(uint)(xyPos.x - halfWidth), (uint)(xyPos.y + halfHeight)].Count > 0)
+            if (Program.WORLD_MAP[(uint)LeftUp.x, (uint)LeftUp.y].Count > 0)
             {
-                if (Program.WORLD_MAP[(uint)(xyPos.x - halfWidth), (uint)(xyPos.y + halfHeight)][0].GetType().Name == "Block")
+                if (Program.WORLD_MAP[(uint)LeftUp.x, (uint)LeftUp.y][0] is Block)
                 {
                     return false;
                 }
+                if (Program.WORLD_MAP[(uint)LeftUp.x, (uint)LeftUp.y][0] is People)
+                {
+                    if (((People)Program.WORLD_MAP[(uint)LeftUp.x, (uint)LeftUp.y][0]).id != id)
+                    {
+                        return false;
+                    }
+                }
             }
-            if (Program.WORLD_MAP[(uint)(xyPos.x - halfWidth), (uint)(xyPos.y - halfHeight)].Count > 0)
+            if (Program.WORLD_MAP[(uint)LeftDown.x, (uint)LeftDown.y].Count > 0)
             {
-                if (Program.WORLD_MAP[(uint)(xyPos.x - halfWidth), (uint)(xyPos.y - halfHeight)][0].GetType().Name == "Block")
+                if (Program.WORLD_MAP[(uint)LeftDown.x, (uint)LeftDown.y][0] is Block)
                 {
                     return false;
                 }
+                if (Program.WORLD_MAP[(uint)LeftDown.x, (uint)LeftDown.y][0] is People)
+                {
+                    if (((People)Program.WORLD_MAP[(uint)LeftDown.x, (uint)LeftDown.y][0]).id != id)
+                    {
+                        return false;
+                    }
+                }
             }
-            if (Program.WORLD_MAP[(uint)(xyPos.x + halfWidth), (uint)(xyPos.y - halfHeight)].Count > 0)
+            if (Program.WORLD_MAP[(uint)RightDown.x, (uint)RightDown.y].Count > 0)
             {
-                if (Program.WORLD_MAP[(uint)(xyPos.x + halfWidth), (uint)(xyPos.y - halfHeight)][0].GetType().Name == "Block")
+                if (Program.WORLD_MAP[(uint)RightDown.x, (uint)RightDown.y][0] is Block)
                 {
                     return false;
                 }
+                if (Program.WORLD_MAP[(uint)RightDown.x, (uint)RightDown.y][0] is People)
+                {
+                    if (((People)Program.WORLD_MAP[(uint)RightDown.x, (uint)RightDown.y][0]).id != id)
+                    {
+                        return false;
+                    }
+                }
             }
-
             return true;
         }
         private void correctPosition()
@@ -130,7 +167,7 @@ namespace Server
                 xyPosition.x = WORLD_MAP_WIDTH * 0.5;
                 xyPosition.y = WORLD_MAP_HEIGHT * 0.5;
             }
-            if (checkXYPosition(xyPosition, 1, 1))
+            if (checkXYPosition(xyPosition))
                 return;
             XY_Position[] searchers = new XY_Position[4];
             for (int i = 0; i < 4; i++)
@@ -146,7 +183,7 @@ namespace Server
 
                 foreach (XY_Position searcher in searchers)
                 {
-                    if (checkXYPosition(searcher, 1, 1))
+                    if (checkXYPosition(searcher))
                     {
                         xyPosition = searcher;
                         return;
@@ -156,14 +193,21 @@ namespace Server
         }
         public override void move(DIRECTION direction)
         {
-            Program.WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y].RemoveAll(obj => { return obj.GetType().Name == "People"; });
+            //Program.WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y].RemoveAll(obj => { return obj.GetType().Name == "People"; });
             XY_Position aim = OPERATION[(uint)direction] + xyPosition;
-            if (checkXYPosition(aim, 1, 1))
+            if (checkXYPosition(aim))
             {
-
-                xyPosition = aim;
-                Program.WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y].Insert(0, new People(xyPosition.x, xyPosition.y));
-
+                if ((uint)xyPosition.x != (uint)aim.x || (uint)xyPosition.y != (uint)aim.y)
+                {
+                    Program.WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y][0].removeSelf();
+                    xyPosition = aim;
+                    Program.WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y].Insert(0, new People(xyPosition.x, xyPosition.y, id));
+                }
+                else
+                {
+                    xyPosition = aim;
+                    Program.WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y][0].xyPosition = xyPosition;
+                }
                 sendMessage(
                     new MessageToClient(
                     id,
@@ -192,19 +236,7 @@ namespace Server
                         continue;
 
                     Console.WriteLine("{0} send.", socket.RemoteEndPoint);
-                    // string[] message = str.Split(messageSpiltSeperation);
-
-                    // byte id_t = Convert.ToByte(message[0]);
-                    // // if (id_t != id)
-                    // //     continue;
-
-                    // byte type = Convert.ToByte(message[1]);
-                    // if (type < 0 || type >= (byte)COMMAND_TYPE.SIZE)
-                    //     continue;
-
-                    // byte param1 = Convert.ToByte(message[2]);
-                    // byte param2 = Convert.ToByte(message[3]);
-                    // MessageToServer msgToSvr = new MessageToServer(id, (COMMAND_TYPE)type, param1, param2);
+                    msgToSvr.senderID = id;
                     Program.messageQueue.Add(msgToSvr);
                 }
                 catch (Exception e)

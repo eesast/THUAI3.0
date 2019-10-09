@@ -118,9 +118,22 @@ namespace Constant
     }
     public class People : Obj
     {
-        public People(double x_t, double y_t) : base(x_t, y_t)
+        private byte _id;
+        public byte id
         {
-
+            get
+            {
+                return _id;
+            }
+        }
+        public People(
+            double x_t, double y_t,
+            byte id_t
+        )
+        :
+         base(x_t, y_t)
+        {
+            _id = id_t;
         }
     }
     public class Block : Obj
