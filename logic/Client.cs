@@ -49,12 +49,12 @@ namespace Client
                 Console.WriteLine(ex);
                 throw;
             }
-            recieveThread = new Thread(recieveMessage);
+            recieveThread = new Thread(RecieveMessage);
             recieveThread.Start();
-            operationThread = new Thread(operation);
+            operationThread = new Thread(Operation);
             operationThread.Start();
         }
-        private void operation()
+        private void Operation()
         {
             TimeSpan deltaTime = DateTime.Now - lastSendTime;
             if (deltaTime.TotalSeconds <= TIME_INTERVAL)
@@ -63,18 +63,18 @@ namespace Client
             while (true)
             {
                 key = Console.ReadKey().KeyChar;
-                if (key == 'd') move(DIRECTION.RIGHT);
-                else if (key == 'e') move(DIRECTION.RIGHT_UP);
-                else if (key == 'w') move(DIRECTION.UP);
-                else if (key == 'q') move(DIRECTION.LEFT_UP);
-                else if (key == 'a') move(DIRECTION.LEFT);
-                else if (key == 'z') move(DIRECTION.LEFT_DOWN);
-                else if (key == 'x') move(DIRECTION.DOWN);
-                else if (key == 'c') move(DIRECTION.RIGHT_DOWN);
+                if (key == 'd') Move(DIRECTION.RIGHT);
+                else if (key == 'e') Move(DIRECTION.RIGHT_UP);
+                else if (key == 'w') Move(DIRECTION.UP);
+                else if (key == 'q') Move(DIRECTION.LEFT_UP);
+                else if (key == 'a') Move(DIRECTION.LEFT);
+                else if (key == 'z') Move(DIRECTION.LEFT_DOWN);
+                else if (key == 'x') Move(DIRECTION.DOWN);
+                else if (key == 'c') Move(DIRECTION.RIGHT_DOWN);
                 lastSendTime = DateTime.Now;
             }
         }
-        private void recieveMessage()
+        private void RecieveMessage()
         {
             while (true)
             {
@@ -112,7 +112,7 @@ namespace Client
             }
         }
 
-        public void sendMessage(MessageToServer msgToSvr)
+        public void SendMessage(MessageToServer msgToSvr)
         {
             try
             {
@@ -127,9 +127,9 @@ namespace Client
             }
 
         }
-        public override void move(DIRECTION direction)
+        public override void Move(DIRECTION direction)
         {
-            sendMessage(
+            SendMessage(
                 new MessageToServer
                 (
                 id,

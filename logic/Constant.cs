@@ -86,7 +86,7 @@ namespace Constant
         {
             return ((byte)type).ToString();
         }
-        public void removeSelf()
+        public void RemoveSelf()
         {
             Server.Program.WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y].Remove(this);
         }
@@ -376,7 +376,7 @@ namespace Constant
             xyPosition.x = x;
             xyPosition.y = y;
         }
-        public virtual void move(DIRECTION direction)
+        public virtual void Move(DIRECTION direction)
         {
             ;
         }

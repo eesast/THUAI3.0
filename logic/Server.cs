@@ -16,22 +16,28 @@ namespace Server
         public static BlockingCollection<MessageToServer> messageQueue = new BlockingCollection<MessageToServer>();
         public static List<Obj>[,] WORLD_MAP = new List<Obj>[WORLD_MAP_WIDTH, WORLD_MAP_HEIGHT];
         private static DateTime initTime = new DateTime();
-        public static void initializeTime()
+        public static void InitializeTime()
         {
             initTime = DateTime.Now;
         }
-        public static DateTime getInitTime()
+        public static DateTime InitTime
         {
-            return initTime;
+            get
+            {
+                return initTime;
+            }
         }
         private static TimeSpan gameTime = new TimeSpan();
-        public static void refreshGameTime()
+        public static void RefreshGameTime()
         {
             gameTime = DateTime.Now - initTime;
         }
-        public static TimeSpan getGameTime()
+        public static TimeSpan GameTime
         {
-            return gameTime;
+            get
+            {
+                return gameTime;
+            }
         }
         public static void Main(string[] args)
         {
@@ -81,9 +87,9 @@ namespace Server
             Console.WriteLine("{0} has connected to local.", socket.RemoteEndPoint);
             isConnected = true;
 
-            correctPosition();
+            CorrectPosition();
             Program.WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y].Add(new People(xyPosition.x, xyPosition.y, id));
-            recieveThread = new Thread(recieveMessage);
+            recieveThread = new Thread(RecieveMessage);
             recieveThread.Start();
 
         }
@@ -95,7 +101,7 @@ namespace Server
         static XY_Position operationLeftUp = new XY_Position(-halfWidth, halfHeight);
         static XY_Position operationLeftDown = new XY_Position(-halfWidth, -halfHeight);
         static XY_Position operationRightDown = new XY_Position(halfWidth, -halfHeight);
-        public bool checkXYPosition(XY_Position xyPos)
+        public bool CheckXYPosition(XY_Position xyPos)
         {
             XY_Position RightUp = xyPos + operationRightUp;
             XY_Position LeftUp = xyPos + operationLeftUp;
@@ -160,14 +166,14 @@ namespace Server
             }
             return true;
         }
-        private void correctPosition()
+        private void CorrectPosition()
         {
             if (xyPosition.x <= 0 || xyPosition.x >= WORLD_MAP_WIDTH - 1 || xyPosition.y <= 0 || xyPosition.y >= WORLD_MAP_HEIGHT - 1)
             {
                 xyPosition.x = WORLD_MAP_WIDTH * 0.5;
                 xyPosition.y = WORLD_MAP_HEIGHT * 0.5;
             }
-            if (checkXYPosition(xyPosition))
+            if (CheckXYPosition(xyPosition))
                 return;
             XY_Position[] searchers = new XY_Position[4];
             for (int i = 0; i < 4; i++)
@@ -183,7 +189,7 @@ namespace Server
 
                 foreach (XY_Position searcher in searchers)
                 {
-                    if (checkXYPosition(searcher))
+                    if (CheckXYPosition(searcher))
                     {
                         xyPosition = searcher;
                         return;
@@ -191,15 +197,15 @@ namespace Server
                 }
             }
         }
-        public override void move(DIRECTION direction)
+        public override void Move(DIRECTION direction)
         {
             //Program.WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y].RemoveAll(obj => { return obj.GetType().Name == "People"; });
             XY_Position aim = OPERATION[(uint)direction] + xyPosition;
-            if (checkXYPosition(aim))
+            if (CheckXYPosition(aim))
             {
                 if ((uint)xyPosition.x != (uint)aim.x || (uint)xyPosition.y != (uint)aim.y)
                 {
-                    Program.WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y][0].removeSelf();
+                    Program.WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y][0].RemoveSelf();
                     xyPosition = aim;
                     Program.WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y].Insert(0, new People(xyPosition.x, xyPosition.y, id));
                 }
@@ -208,7 +214,7 @@ namespace Server
                     xyPosition = aim;
                     Program.WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y][0].xyPosition = xyPosition;
                 }
-                sendMessage(
+                SendMessage(
                     new MessageToClient(
                     id,
                     xyPosition,
@@ -219,7 +225,7 @@ namespace Server
             }
             Console.WriteLine("player {0} 's position : {1}", id.ToString(), xyPosition.ToString());
         }
-        private void recieveMessage()
+        private void RecieveMessage()
         {
             while (true)
             {
@@ -246,7 +252,7 @@ namespace Server
                 }
             }
         }
-        public void sendMessage(MessageToClient msgToClt)
+        public void SendMessage(MessageToClient msgToClt)
         {
             try
             {
@@ -317,31 +323,33 @@ namespace Server
                     break;
             }
 
-            serverThread = new Thread(run);
+            serverThread = new Thread(Run);
             serverThread.Start();
 
             Console.WriteLine("Server constructed");
         }
 
-        public void run()
+        public void Run()
         {
-            Program.initializeTime();
+            Program.InitializeTime();
             Console.WriteLine("Server begin to run");
 
-            executeMessageQueueThread = new Thread(executeMessageQueue);
+            executeMessageQueueThread = new Thread(ExecuteMessageQueue);
             executeMessageQueueThread.Start();
-
+            /*
+            这里应该放定时、刷新物品等代码。
+            */
 
 
             Console.WriteLine("Server stop running");
         }
-        public void executeMessageQueue()
+        public void ExecuteMessageQueue()
         {
             Console.WriteLine("Begin to execute message queue");
             while (true)
             {
-                Program.refreshGameTime();
-                Console.WriteLine("Time : " + Program.getGameTime().TotalSeconds.ToString() + "s");
+                Program.RefreshGameTime();
+                Console.WriteLine("Time : " + Program.GameTime.TotalSeconds.ToString() + "s");
 
                 MessageToServer msgToSvr = Program.messageQueue.Take();
                 if (msgToSvr.commandType < 0 || msgToSvr.commandType >= COMMAND_TYPE.SIZE)
@@ -350,7 +358,7 @@ namespace Server
 
                 if (msgToSvr.commandType == COMMAND_TYPE.MOVE && msgToSvr.parameter1 >= 0 && msgToSvr.parameter1 < (byte)DIRECTION.SIZE)
                 {
-                    players[msgToSvr.senderID].move((DIRECTION)msgToSvr.parameter1);
+                    players[msgToSvr.senderID].Move((DIRECTION)msgToSvr.parameter1);
                 }
             }
 
