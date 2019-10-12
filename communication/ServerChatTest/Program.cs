@@ -2,6 +2,7 @@
 using Communication.Server;
 using System;
 
+
 namespace ServerChatTest
 {
     class Program
@@ -18,9 +19,10 @@ namespace ServerChatTest
                 Message message = comm.MessageQueue.Take();
                 (message.Content as ChatMessage).Message += "[From Player #" + message.Client + "]\n";
                 message.Client = -1; //broadcast
+                message.Agent = -1;
+                Console.Write("send");
                 comm.SendMessage(message);
             }
-
         }
     }
 }
