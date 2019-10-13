@@ -2,11 +2,11 @@ namespace Communication.Proto
 {
     public enum PacketType
     {
-        ProtoPacket = 0,
-        PlayerReady = 1,
-        GameOver = 2,
-        RequestInfo = 3,
-        IdRequest=4,
-        IdAllocate=5,
+        ProtoPacket = 10,
+        PlayerReady = 11,
+        GameOver = 12,
+        RequestInfo = 13,
+        IdRequest = 14,
+        IdAllocate = 15,
     }
 }
