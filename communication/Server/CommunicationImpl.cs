@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.IO;
-using System.Threading;
 using Communication.Proto;
 using HPSocketCS;
 using System.Collections.Generic;
-using System.Text;
-
 
 namespace Communication.Server
 {
@@ -14,16 +11,15 @@ namespace Communication.Server
     {
         private TcpServer server;
         private List<IntPtr> agentList = new List<IntPtr>();
-        private int nAgent =0;
         private int nAgentReady = 0;
         private bool Full;
-        private object locker = new object();
+        private readonly object locker = new object();
         public ushort Port
         {
             get => server.Port;
             set => server.Port = value;
         }
-        public BlockingCollection<Message> MessageQueue { get; private set; }
+        public BlockingCollection<ServerMessage> MessageQueue { get; private set; }
         public void GameOver()
         {
             MemoryStream ms = new MemoryStream();
@@ -42,16 +38,18 @@ namespace Communication.Server
         {
             server.OnAccept += delegate (IServer sender, IntPtr connId, IntPtr pAgent)
             {
+                if (agentList.Count == Constants.AgentCount) return HandleResult.Ignore;
+
                 Console.WriteLine($"Accept {connId}:{pAgent}");
-                agentList.Add(connId);
-                nAgent++;
                 return HandleResult.Ok;
             };
             server.OnReceive += delegate (IServer sender, IntPtr connId, byte[] bytes)
             {
                 PacketType type = (PacketType)BitConverter.ToInt32(bytes, 0);
                 Console.WriteLine("Packet received : " + type);
-                MemoryStream ms = new MemoryStream();
+                MemoryStream ms = new MemoryStream(bytes, 4, bytes.Length - 4);
+                BinaryReader br = new BinaryReader(ms);
+
                 switch (type)
                 {
                     case PacketType.PlayerReady:
@@ -61,16 +59,15 @@ namespace Communication.Server
                         }
                         break;
                     case PacketType.ProtoPacket:
-                        ms.Write(BitConverter.GetBytes(agentList.IndexOf(connId)), 0, 4);
-                        ms.Write(bytes, 4, bytes.Length - 4);
-                        Console.Write(ms.Length);
-                        Message message = new Message();
-                        ms.Position = 0;
-                        message.MergeFrom(ms);
+                        ServerMessage message = new ServerMessage();
+                        message.Agent = agentList.IndexOf(connId);
+                        message.Client = br.ReadInt32();
+                        message.Message.MergeFrom(ms);
                         MessageQueue.Add(message);
                         break;
                     case PacketType.IdRequest:
-                        byte[] clientID = BitConverter.GetBytes(agentList.IndexOf(connId));
+                        agentList.Add(connId);
+                        byte[] clientID = BitConverter.GetBytes(agentList.Count - 1);
                         ms = new MemoryStream();
                         ms.Write(BitConverter.GetBytes((int)PacketType.IdAllocate), 0, 4);
                         ms.Write(clientID, 0, 4);
@@ -79,9 +76,7 @@ namespace Communication.Server
                         Console.WriteLine($"Allocate ID {agentList.IndexOf(connId)} to {connId}");
                         break;
                     case PacketType.IdAllocate:
-                        nAgent--;
                         int index = BitConverter.ToInt32(bytes, 4);
-                        agentList.Remove(connId);
                         agentList[index] = connId;
                         break;
                     default:
@@ -101,25 +96,23 @@ namespace Communication.Server
 
         public void Initialize()
         {
-            MessageQueue = new BlockingCollection<Message>();
+            MessageQueue = new BlockingCollection<ServerMessage>();
             server = new TcpPackServer();
         }
 
-        public void SendMessage(Message message)
+        public void SendMessage(ServerMessage message)
         {
             MemoryStream ms = new MemoryStream();
             ms.Write(BitConverter.GetBytes((int)PacketType.ProtoPacket),0,4);
-            message.WriteTo(ms);
+            ms.Write(BitConverter.GetBytes(message.Client));
+            message.Message.WriteTo(ms);
             byte[] raw = ms.ToArray();
-            int agentId = message.Agent;
-            if (agentId == -1)
-            {
+
+            if (message.Agent == -1)
                 foreach (IntPtr target in agentList)
-                {
                     server.Send(target, raw, raw.Length);
-                }
-            }
-            else server.Send(agentList[agentId], raw, raw.Length);
+            else server.Send(agentList[message.Agent], raw, raw.Length);
+
             ms.Dispose();
         }
     }

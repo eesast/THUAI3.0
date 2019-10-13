@@ -34,7 +34,6 @@ namespace Communication.Agent
         private static HandleResult Accept(IServer s, IntPtr connID, IntPtr pClient)
         {
             Console.WriteLine($"Accept {connID}:{pClient}");
-            clientList.Add(connID);
             if (++nClient == Constants.PlayerCount)
             {
                 MemoryStream ms = new MemoryStream();
@@ -48,36 +47,39 @@ namespace Communication.Agent
         private static HandleResult ServerReceive(IServer sender, IntPtr connID, byte[] bytes)
         {
             PacketType type = (PacketType)BitConverter.ToInt32(bytes, 0);
+            MemoryStream ms = new MemoryStream();
+            BinaryWriter bw = new BinaryWriter(ms);
+            byte[] raw;
+
             switch (type)
             {
                 case PacketType.ProtoPacket:
-                    byte[] clientID = BitConverter.GetBytes(clientList.IndexOf(connID));
-                    MemoryStream ms = new MemoryStream();
-                    ms.Write(BitConverter.GetBytes((int)type), 0, 4);
-                    ms.Write(clientID,0,4);
-                    ms.Write(bytes, 4, bytes.Length-4);
-                    byte[] mes = ms.ToArray();
-                    client.Send(mes, mes.Length);
-                    Console.WriteLine($"C2S Packet sent ({mes.Length} bytes)");
+                    bw.Write((int)type);
+                    bw.Write(clientList.IndexOf(connID));
+                    MemoryStream content = new MemoryStream(bytes, 4, bytes.Length - 4);
+                    ms.Write(content.ToArray());
+                    content.Dispose();
+
+                    raw = ms.ToArray();
+                    client.Send(raw, raw.Length);
+                    Console.WriteLine($"C2S Packet sent ({ms.Length} bytes)");
+
                     break;
                 case PacketType.IdRequest:
-                    clientID = BitConverter.GetBytes(clientList.IndexOf(connID));
-                    ms = new MemoryStream();
-                    ms.Write(BitConverter.GetBytes((int)PacketType.IdAllocate), 0, 4);
-                    Console.WriteLine(clientID);
-                    ms.Write(clientID, 0, clientID.Length);
-                    mes = ms.ToArray();
-                    server.Send(connID, mes, mes.Length);
+                    clientList.Add(connID);
+                    bw.Write((int)PacketType.IdAllocate);
+                    bw.Write(clientList.IndexOf(connID));
+
+                    raw = ms.ToArray();
+                    server.Send(connID, raw, raw.Length);
                     Console.WriteLine($"Allocate ID {clientList.IndexOf(connID)} to {connID}");
                     break;
                 case PacketType.IdAllocate:
-                    nClient--;
-                    int index = BitConverter.ToInt32(bytes, 4);
-                    clientList.Remove(connID);
-                    clientList[index] = connID;
+                    clientList[BitConverter.ToInt32(bytes, 4)] = connID;
                     break;
+                default:
+                    throw new Exception("unknown packet type received.");
             }
-
 
             return HandleResult.Ok;
         }
@@ -87,21 +89,26 @@ namespace Communication.Agent
             switch (type)
             {
                 case PacketType.ProtoPacket:
-                    int clientID = BitConverter.ToInt32(bytes, 4);
+                    int clientId = BitConverter.ToInt32(bytes, 4);
                     MemoryStream ms = new MemoryStream();
-                    ms.Write(BitConverter.GetBytes((int)PacketType.ProtoPacket), 0, 4);
-                    ms.Write(bytes, 8, bytes.Length - 8);
+                    BinaryWriter bw = new BinaryWriter(ms);
+                    bw.Write((int)PacketType.ProtoPacket);
+                    bw.Write(bytes, 8, bytes.Length - 8);
                     byte[] mes = ms.ToArray();
-                    if (clientID == -1)
+                    if (clientId == -1)
                         foreach (IntPtr client in clientList)
                             server.Send(client, mes, mes.Length);
                     else
-                        server.Send(clientList[clientID], mes, mes.Length);
-                    Console.WriteLine($"S2C {(clientID == -1 ? "BroadCast" : "Packet")} sent ({bytes.Length} bytes)");
+                        server.Send(clientList[clientId], mes, mes.Length);
+                    Console.WriteLine($"S2C {(clientId == -1 ? "BroadCast" : "Packet")} sent ({bytes.Length} bytes)");
                     break;
-                
+                case PacketType.IdAllocate:
+                    MyID = BitConverter.ToInt32(bytes, 4);
+                    break;
+                default:
+                    throw new Exception("unknown packet type received.");
             }
-                    return HandleResult.Ok;
+            return HandleResult.Ok;
         }
         static void Main(string[] args)
         {
@@ -154,6 +161,7 @@ namespace Communication.Agent
             }
             byte[] mes = ms.ToArray();
             client.Send(mes, mes.Length);
+            ms.Dispose();
             return HandleResult.Ok;
         }
         private static void TimedUpdate(object source, System.Timers.ElapsedEventArgs e)
