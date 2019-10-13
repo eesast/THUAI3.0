@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using Communication.Proto;
+using System.Collections.Generic;
 
 namespace Communication.Server
 {

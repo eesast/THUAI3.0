@@ -24,6 +24,7 @@ namespace Communication.CAPI
             client.OnClose += TryReconnect;
             closed = false;
             buffer = "";
+            MyPlayer = -1;
         }
 
         private HandleResult TryReconnect(IClient sender, SocketOperation enOperation, int errcode)
@@ -38,6 +39,18 @@ namespace Communication.CAPI
                     Thread.Sleep(500);
                 }
                 Console.WriteLine("Reconnected to server");
+                MemoryStream ms = new MemoryStream();
+                if(MyPlayer==-1)
+                {
+                    ms.Write(BitConverter.GetBytes((int)PacketType.IdRequest), 0, 4);
+                }
+                else
+                {
+                    ms.Write(BitConverter.GetBytes((int)PacketType.IdAllocate),0,4);
+                    ms.Write(BitConverter.GetBytes(MyPlayer), 4, 4);
+                }
+                byte[] mes = ms.ToArray();
+                client.Send(mes, mes.Length);
             }
             return HandleResult.Ok;
         }
@@ -69,6 +82,10 @@ namespace Communication.CAPI
                     break;
                 case PacketType.RequestInfo:
                     break;
+                case PacketType.IdAllocate:
+                    ms = new MemoryStream(bytes, 4, bytes.Length - 4);
+                    MyPlayer = BitConverter.ToInt32(ms.ToArray());
+                    break;
             }
             return HandleResult.Ok;
         }
@@ -79,7 +96,17 @@ namespace Communication.CAPI
             if (!Connected)
                 TryReconnect(client, SocketOperation.Close, 0);
             else
+            {
+                if(MyPlayer==-1)
+                {
+                    MemoryStream ms = new MemoryStream();
+                    ms.Write(BitConverter.GetBytes((int)PacketType.IdRequest), 0, 4);
+                    byte[] bytes = ms.ToArray();
+                    client.Send(bytes, bytes.Length);
+                }
                 Console.WriteLine("Connected to server.");
+            }
+
         }
 
         public void SendChatMessage(string Message)
