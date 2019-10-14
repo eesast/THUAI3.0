@@ -1,4 +1,5 @@
 ﻿using Communication.CAPI;
+using Communication.Proto;
 using System;
 using System.Net;
 using System.Threading;
@@ -12,22 +13,32 @@ namespace Communication.ClientChatTest
         {
             API = new API();
             API.Initialize();
+            Constants.Debug = delegate (string DebugMessage)
+            {
 
-            API.ConnectServer(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8081));
+            };
+
+            Console.Write("Agent IP: ");
+            string[] agent = Console.ReadLine().Split(':');
+            API.ConnectServer(new IPEndPoint(IPAddress.Parse(agent[0]), Int32.Parse(agent[1])));
+
             new Thread(new ThreadStart(delegate ()
             {
                 while (API.Connected)
                 {
                     string buffer = API.BufferedMessage();
-                    if (buffer != "") Console.WriteLine(buffer);
+                    if (buffer != "") Console.Write(buffer);
                 }
             })).Start();
             string message = "Connected!";
             while (API.Connected)
             {
-                API.SendChatMessage(message);
+                API.SendChatMessage(message + $" (agent: {API.AgentId}/{API.AgentCount}, player: {API.PlayerId}/{API.PlayerCount})");
                 message = Console.ReadLine();
             }
+
+            Console.WriteLine("Disconnected from server.");
+            Console.ReadLine();
         }
     }
 }

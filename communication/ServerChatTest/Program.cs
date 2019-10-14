@@ -11,16 +11,22 @@ namespace ServerChatTest
         {
             ICommunication comm = new CommunicationImpl();
             comm.Initialize();
-            comm.Port = 8080;
+            Console.Write("Server Listen Port:");
+            comm.Port = UInt16.Parse(Console.ReadLine());
             comm.GameStart();
             Console.WriteLine("Game started.");
             while (true)
             {
                 ServerMessage message = comm.MessageQueue.Take();
-                (message.Message.Content as ChatMessage).Message += "[From Player #" + message.Client + "]\n";
-                message.Client = -1; //broadcast
-                message.Agent = -1;
-                Console.Write("send");
+                ChatMessage chat = message.Message as ChatMessage;
+                if (chat.Message.StartsWith("/stop"))
+                {
+                    comm.GameOver();
+                    break;
+                }
+                chat.Message = $"[From Player ({message.Agent}, {message.Client})] " + chat.Message + "\n";
+                message.Client = -2; //broadcast
+                message.Agent = -2;
                 comm.SendMessage(message);
             }
         }

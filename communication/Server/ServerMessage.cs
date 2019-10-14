@@ -1,4 +1,5 @@
 ﻿using Communication.Proto;
+using Google.Protobuf;
 using System.IO;
 
 namespace Communication.Server
@@ -6,11 +7,6 @@ namespace Communication.Server
     public class ServerMessage
     {
         public int Agent, Client;
-        public Message Message;
-
-        public ServerMessage()
-        {
-            Message = new Message();
-        }
+        public IMessage Message;
     }
 }
