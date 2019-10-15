@@ -32,14 +32,14 @@ namespace Communication.Agent
 
             client.OnReceive += delegate (Message message)
             {
-                server.Send(message.Content as Message);
+                server.Send(message.Content as Message); //向客户端转发Content
             };
 
             server.OnReceive += delegate (Message message)
             {
                 Message msg = new Message()
                 {
-                    Address = -1,
+                    Address = -1, //-1表示发送给Server端
                     Content = message
                 };
                 client.Send(msg);
@@ -47,7 +47,7 @@ namespace Communication.Agent
 
             client.OnDisconnect += delegate ()
             {
-                server.Stop();
+                server.Stop(); //主动Disconnect意味着游戏结束，关闭Agent。
                 Environment.Exit(0);
             };
 
@@ -55,7 +55,7 @@ namespace Communication.Agent
             {
                 Constants.Debug($"Player Connected: {server.Count}/{Constants.PlayerCount}");
                 if (server.Count == Constants.PlayerCount)
-                    client.Connect(Server);
+                    client.Connect(Server); //客户端满人后再向Server发送连接请求，可以省略GameStart包
             };
 
             server.Start();
@@ -63,7 +63,7 @@ namespace Communication.Agent
             Thread.Sleep(Int32.MaxValue);
         }
 
-        private static void TimedUpdate(object source, System.Timers.ElapsedEventArgs e)
+        private static void TimedUpdate(object source, System.Timers.ElapsedEventArgs e) //轮询预留
         {
 
         }

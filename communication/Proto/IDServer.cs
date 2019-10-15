@@ -22,7 +22,7 @@ namespace Communication.Proto
         public IDServer()
         {
             clientList = new List<IntPtr>();
-            server = new TcpServer();
+            server = new TcpPackServer();
             server.OnReceive += delegate (IServer sender, IntPtr connId, byte[] bytes)
             {
                 MemoryStream istream = new MemoryStream(bytes);
@@ -31,12 +31,12 @@ namespace Communication.Proto
 
                 switch (type)
                 {
-                    case PacketType.IdAllocate:
+                    case PacketType.IdAllocate: //客户端请求分配到，此时slot应已有，不需要扩容clientList
                         clientList[br.ReadInt32()] = connId;
                         OnAccept?.Invoke();
                         Constants.Debug($"ServerSide: Using Pre-Allocated ID #{clientList.IndexOf(connId)}");
                         break;
-                    case PacketType.IdRequest:
+                    case PacketType.IdRequest: //客户端请求ID
                         clientList.Add(connId);
                         MemoryStream ostream = new MemoryStream();
                         BinaryWriter bw = new BinaryWriter(ostream);
@@ -47,7 +47,7 @@ namespace Communication.Proto
                         OnAccept?.Invoke();
                         Constants.Debug($"ServerSide: Allocate ID #{clientList.Count - 1}");
                         break;
-                    case PacketType.ProtoPacket:
+                    case PacketType.ProtoPacket: //接收到包
                         Message message = new Message();
                         message.MergeFrom(istream);
                         Constants.Debug($"ServerSide: Data received {message.Content.GetType().FullName}");
@@ -76,9 +76,9 @@ namespace Communication.Proto
             server.Stop();
         }
 
-        private void InternalSend(Message message, int address)
+        private void InternalSend(Message message, int address) //address代表目标为自身时的发包者
         {
-            if (message.Address == -1) //server self
+            if (message.Address == -1) //发给自己的
             {
                 message.Address = address;
                 OnReceive?.Invoke(message);
@@ -90,7 +90,7 @@ namespace Communication.Proto
                 bw.Write((int)PacketType.ProtoPacket);
                 message.WriteTo(ostream);
                 byte[] raw = ostream.ToArray();
-                if (message.Address == -2)
+                if (message.Address == -2) //广播包
                     foreach(IntPtr client in clientList)
                         server.Send(client, raw, raw.Length);
                 else
@@ -98,13 +98,13 @@ namespace Communication.Proto
             }
         }
 
-        public void Send(Message message)
+        public void Send(Message message) //发包
         {
             InternalSend(message, -1);
             Constants.Debug($"ServerSide: Data sent {message.Content.GetType().FullName}");
         }
 
         public event OnReceiveCallback OnReceive;
-        public event OnAcceptCallback OnAccept;
+        public event OnAcceptCallback OnAccept; //当客户端被分配到/已请求ID而非TCP的Accept时触发
     }
 }

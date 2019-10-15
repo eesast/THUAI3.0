@@ -5,23 +5,23 @@ using System.IO;
 
 namespace Communication.Proto
 {
-    internal class Message : IMessage
+    internal class Message : IMessage //Communication内部使用的Message
     {
-        public int Address;
-        public IMessage Content;
+        public int Address; //发送者/接收者，因环境而定
+        public IMessage Content; //包内容
 
         public MessageDescriptor Descriptor => null;
 
-        public int CalculateSize()
+        public int CalculateSize() //目前没用所以不实现
         {
-            return 0;
+            throw new NotImplementedException();
         }
 
         public void MergeFrom(Stream stream)
         {
             BinaryReader br = new BinaryReader(stream);
             Address = br.ReadInt32();
-            string PacketType = br.ReadString();
+            string PacketType = br.ReadString(); //包类型的FullName
             Content = Activator.CreateInstance(Type.GetType(PacketType)) as IMessage;
             Content.MergeFrom(stream);
             Constants.Debug($"{PacketType} received ({Content.CalculateSize()} bytes)");
@@ -40,7 +40,7 @@ namespace Communication.Proto
         {
             BinaryWriter bw = new BinaryWriter(stream);
             bw.Write(Address);
-            bw.Write(Content.GetType().FullName);
+            bw.Write(Content.GetType().FullName); //包类型的FullName
             Content.WriteTo(stream);
             Constants.Debug($"{Content.GetType().FullName} sent ({Content.CalculateSize()} bytes)");
         }

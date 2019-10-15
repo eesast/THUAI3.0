@@ -19,14 +19,14 @@ namespace ServerChatTest
             {
                 ServerMessage message = comm.MessageQueue.Take();
                 ChatMessage chat = message.Message as ChatMessage;
-                if (chat.Message.StartsWith("/stop"))
+                if (chat.Message.StartsWith("/stop")) //测试主动断开连接功能
                 {
                     comm.GameOver();
                     break;
                 }
                 chat.Message = $"[From Player ({message.Agent}, {message.Client})] " + chat.Message + "\n";
                 message.Client = -2; //broadcast
-                message.Agent = -2;
+                message.Agent = -2; //broadcast
                 comm.SendMessage(message);
             }
         }

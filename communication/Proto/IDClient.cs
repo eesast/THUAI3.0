@@ -15,7 +15,7 @@ namespace Communication.Proto
         public bool Closed { get; private set; }
         public IDClient()
         {
-            client = new TcpClient();
+            client = new TcpPackClient();
             Address = -1;
             Closed = false;
 
@@ -27,21 +27,21 @@ namespace Communication.Proto
 
                 switch(type)
                 {
-                    case PacketType.IdAllocate:
+                    case PacketType.IdAllocate: //被Server分配ID
                         Address = br.ReadInt32();
                         Constants.Debug($"ClientSide: Allocated ID {Address}");
                         break;
-                    case PacketType.ProtoPacket:
+                    case PacketType.ProtoPacket: //接收到Message
                         Message message = new Message();
                         message.MergeFrom(istream);
                         OnReceive?.Invoke(message);
                         Constants.Debug($"ClientSide: Data received {message.Content.GetType().FullName}");
                         break;
-                    case PacketType.Disconnected:
+                    case PacketType.Disconnected: //主动Disconnect包
                         Constants.Debug($"ClientSide: Disconnect Message Received.");
                         Disconnect();
                         break;
-                    default:
+                    default: //未知包
                         throw new Exception($"unknown Packet Type : {type}");
                 }
                 return HandleResult.Ok;
@@ -50,13 +50,12 @@ namespace Communication.Proto
             {
                 MemoryStream ostream = new MemoryStream();
                 BinaryWriter bw = new BinaryWriter(ostream);
-                if (Address == -1)
+                if (Address == -1) //未得到分配ID时请求ID
                 {
                     bw.Write((int)PacketType.IdRequest);
                     Constants.Debug("ClientSide: Request ID");
                 }
-
-                else
+                else //断线重连，要求服务端分配到ID
                 {
                     bw.Write((int)PacketType.IdAllocate);
                     bw.Write(Address);
@@ -68,7 +67,12 @@ namespace Communication.Proto
             };
             client.OnClose += delegate (IClient sender, SocketOperation enOperation, int errorCode)
             {
-                if (!Closed) client.Connect(endPoint.Address.ToString(), (ushort) endPoint.Port, false);
+                if (!Closed) //断线重连
+                    while (!client.IsStarted)
+                    {
+                        Constants.Debug($"ClientSide: Connecting to server {endPoint}");
+                        client.Connect(endPoint.Address.ToString(), (ushort)endPoint.Port, false);
+                    }
                 return HandleResult.Ok;
             };
         }
@@ -82,7 +86,7 @@ namespace Communication.Proto
             }
         }
 
-        public void Disconnect()
+        public void Disconnect() //主动断开连接
         {
             Constants.Debug("ClientSide: Stopping");
             Closed = true;
@@ -90,7 +94,7 @@ namespace Communication.Proto
             OnDisconnect?.Invoke();
         }
 
-        public void Send(Message message)
+        public void Send(Message message) //发送Message
         {
             MemoryStream ostream = new MemoryStream();
             BinaryWriter bw = new BinaryWriter(ostream);
@@ -102,6 +106,6 @@ namespace Communication.Proto
         }
 
         public event OnReceiveCallback OnReceive;
-        public event OnDisconnectCallback OnDisconnect;
+        public event OnDisconnectCallback OnDisconnect; //被Server断开链接或客户端主动断开的时候触发
     }
 }

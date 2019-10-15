@@ -29,9 +29,9 @@ namespace Communication.ClientChatTest
                     string buffer = API.BufferedMessage();
                     if (buffer != "") Console.Write(buffer);
                 }
-            })).Start();
+            })).Start(); //buffer监视线程，没错这个cpu占用很高，不过毕竟是demo
             string message = "Connected!";
-            while (API.Connected)
+            while (API.Connected) //Console输入发送给Server
             {
                 API.SendChatMessage(message + $" (agent: {API.AgentId}/{API.AgentCount}, player: {API.PlayerId}/{API.PlayerCount})");
                 message = Console.ReadLine();

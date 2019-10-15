@@ -21,7 +21,7 @@ namespace Communication.Server
 
         public void GameStart()
         {
-            server.OnReceive += delegate (Message message)
+            server.OnReceive += delegate (Message message) //收到信息入消息队列
             {
                 ServerMessage msg = new ServerMessage();
                 msg.Agent = message.Address;
@@ -31,7 +31,7 @@ namespace Communication.Server
                 MessageQueue.Add(msg);
             };
 
-            server.OnAccept += delegate ()
+            server.OnAccept += delegate () //判断是否满人
             {
                 Constants.Debug($"Agent Connected: {server.Count}/{Constants.AgentCount}");
                 if (server.Count == Constants.AgentCount)
@@ -42,6 +42,7 @@ namespace Communication.Server
             server.Start();
             Constants.Debug("Waiting for clients");
             while (!full) ;
+            //此时应广播通知Client，不过应该由logic广播？
         }
 
         public void Initialize()
@@ -54,10 +55,10 @@ namespace Communication.Server
         {
             Message msg = new Message()
             {
-                Address = message.Agent,
+                Address = message.Agent, //封包Agent
                 Content = new Message()
                 {
-                    Address = message.Client,
+                    Address = message.Client, //封包Cient
                     Content = message.Message
                 }
             };
