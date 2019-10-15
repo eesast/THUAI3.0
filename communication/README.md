@@ -43,7 +43,15 @@ Client设计：
 
 ## 10.3 基本通信框架
 
-分为Client/Agent/Server三个部分，Client部分用c#模拟CAPI来进行测试工作
+分为Client/Agent/Server三个部分，Client部分用c#模拟CAPI来进行测试工作，Client<==>Agent与Agent<==>Server间均使用IDServer/IDClient进行对接
+
+### IDServer/IDClient部分
+
+- 实现断线重连功能
+- 实现包分发以及客户端包封包回传
+- 封包单元为Message，兼容protobuf的IMessage以及嵌套
+- 支持Server主动进行通知Disconnect的功能
+- 预留由Server转发的Client间通讯？
 
 ### Client部分
 
@@ -53,9 +61,6 @@ Client设计：
 TODO:
 
 - 使用c++进行实现
-- 客户端断线重连
-- 将资源数据内置于CAPI内
-- 细分包类型
 
 ### Agent部分
 
@@ -65,17 +70,10 @@ TODO:
 
 TODO:
 
-- 连接到Server后与同步总人数
 - 轮询功能
-- 客户端断线重连
 - 转发到unity
 
 ### Server部分
 
 - 拆分logic的server通信部分
-- 目前用IGame接口与logic对接 （？）
-
-TODO:
-
-- 支持多Agent （？）
-- 细分包类型
+- 使用ICommunication模块与logic对接

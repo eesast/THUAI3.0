@@ -1,31 +1,56 @@
 using Google.Protobuf;
+using Google.Protobuf.Reflection;
 using System;
 using System.IO;
 
 namespace Communication.Proto
 {
-    public class Message
+    internal class Message : IMessage //Communication内部使用的Message
     {
-        public IMessage Content{ get; set; }
-//        public int Client { get; set; }
-//        public int Agent { get; set; }
+        public int Address; //发送者/接收者，因环境而定
+        public IMessage Content; //包内容
+
+        public MessageDescriptor Descriptor => null;
+
+        public int CalculateSize() //目前没用所以不实现
+        {
+            throw new NotImplementedException();
+        }
+
         public void MergeFrom(Stream stream)
         {
             BinaryReader br = new BinaryReader(stream);
-            string PacketType = br.ReadString();
-            Console.WriteLine(PacketType);
+            Address = br.ReadInt32();
+            string PacketType = br.ReadString(); //包类型的FullName
             Content = Activator.CreateInstance(Type.GetType(PacketType)) as IMessage;
             Content.MergeFrom(stream);
-            Console.WriteLine($"{PacketType} received ({Content.CalculateSize()} bytes)");
+            Constants.Debug($"{PacketType} received ({Content.CalculateSize()} bytes)");
         }
+
+        public void MergeFrom(CodedInputStream input)
+        {
+            Address = input.ReadInt32();
+            string PacketType = input.ReadString();
+            Content = Activator.CreateInstance(Type.GetType(PacketType)) as IMessage;
+            Content.MergeFrom(input);
+            Constants.Debug($"{PacketType} received ({Content.CalculateSize()} bytes)");
+        }
+
         public void WriteTo(Stream stream)
         {
             BinaryWriter bw = new BinaryWriter(stream);
-//            bw.Write(BitConverter.GetBytes(Agent), 0, 4);
-//            bw.Write(BitConverter.GetBytes(Client), 0, 4);
-            bw.Write(Content.GetType().FullName);
+            bw.Write(Address);
+            bw.Write(Content.GetType().FullName); //包类型的FullName
             Content.WriteTo(stream);
-            Console.WriteLine($"{Content.GetType().FullName} sent ({Content.CalculateSize()} bytes)");
+            Constants.Debug($"{Content.GetType().FullName} sent ({Content.CalculateSize()} bytes)");
+        }
+
+        public void WriteTo(CodedOutputStream output)
+        {
+            output.WriteInt32(Address);
+            output.WriteString(Content.GetType().FullName);
+            Content.WriteTo(output);
+            Constants.Debug($"{Content.GetType().FullName} sent ({Content.CalculateSize()} bytes)");
         }
     }
 }

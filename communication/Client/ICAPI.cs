@@ -9,8 +9,10 @@ namespace Communication.CAPI
     {
         /* Connect Control */
         bool Connected { get; }
-        int MyPlayer { get; }
+        int PlayerId { get; }
+        int AgentId { get; }
         int PlayerCount { get; }
+        int AgentCount { get; }
         void Initialize();
         void ConnectServer(IPEndPoint endPoint);
         /* Game Control */

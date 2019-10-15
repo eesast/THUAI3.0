@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29326.143
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agent", "Agent\Agent.csproj", "{97B4E057-348A-49C8-AC23-10174DC294BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Communication.Agent", "Agent\Communication.Agent.csproj", "{97B4E057-348A-49C8-AC23-10174DC294BE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CAPI", "Client\CAPI.csproj", "{D0471CAA-CE37-4652-89CD-5449DC27796A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Communication.CAPI", "Client\Communication.CAPI.csproj", "{D0471CAA-CE37-4652-89CD-5449DC27796A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server", "Server\Server.csproj", "{C9084E76-2DCC-455C-B7A6-1BBEC6A7672B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Communication.Server", "Server\Communication.Server.csproj", "{C9084E76-2DCC-455C-B7A6-1BBEC6A7672B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proto", "Proto\Proto.csproj", "{9D6D0A77-121A-4331-8BDB-BFE4A9770DEB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Communication.Proto", "Proto\Communication.Proto.csproj", "{9D6D0A77-121A-4331-8BDB-BFE4A9770DEB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerChatTest", "ServerChatTest\ServerChatTest.csproj", "{DEEBB62F-C57F-477E-91B9-CC3EFF5BFD14}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Communication.ServerChatTest", "ServerChatTest\Communication.ServerChatTest.csproj", "{DEEBB62F-C57F-477E-91B9-CC3EFF5BFD14}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientChatTest", "ClientChatTest\ClientChatTest.csproj", "{285575C7-F3CE-4E27-A1F8-28FAC7C52C3D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Communication.ClientChatTest", "ClientChatTest\Communication.ClientChatTest.csproj", "{285575C7-F3CE-4E27-A1F8-28FAC7C52C3D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
