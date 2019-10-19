@@ -35,7 +35,10 @@ namespace Communication.Server
             {
                 Constants.Debug($"Agent Connected: {server.Count}/{Constants.AgentCount}");
                 if (server.Count == Constants.AgentCount)
+                {
                     full = true;
+                    server.Pause();
+                }
             };
 
             full = false;

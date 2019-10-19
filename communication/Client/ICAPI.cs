@@ -8,6 +8,7 @@ namespace Communication.CAPI
     public interface ICAPI
     {
         /* Connect Control */
+        float Ping { get; }
         bool Connected { get; }
         int PlayerId { get; }
         int AgentId { get; }
@@ -15,6 +16,7 @@ namespace Communication.CAPI
         int AgentCount { get; }
         void Initialize();
         void ConnectServer(IPEndPoint endPoint);
+        void Refresh();
         /* Game Control */
 
         void SendChatMessage(string Message);

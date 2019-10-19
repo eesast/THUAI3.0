@@ -11,6 +11,7 @@ namespace Communication.Proto
     {
         private List<IntPtr> clientList;
         private TcpServer server;
+        private bool isListening;
 
         public ushort Port
         {
@@ -23,6 +24,7 @@ namespace Communication.Proto
         {
             clientList = new List<IntPtr>();
             server = new TcpPackServer();
+            isListening = false;
             server.OnReceive += delegate (IServer sender, IntPtr connId, byte[] bytes)
             {
                 MemoryStream istream = new MemoryStream(bytes);
@@ -32,11 +34,21 @@ namespace Communication.Proto
                 switch (type)
                 {
                     case PacketType.IdAllocate: //客户端请求分配到，此时slot应已有，不需要扩容clientList
+                        if (!isListening)
+                        {
+                            server.Disconnect(connId);
+                            break;
+                        }
                         clientList[br.ReadInt32()] = connId;
                         OnAccept?.Invoke();
                         Constants.Debug($"ServerSide: Using Pre-Allocated ID #{clientList.IndexOf(connId)}");
                         break;
                     case PacketType.IdRequest: //客户端请求ID
+                        if (!isListening)
+                        {
+                            server.Disconnect(connId);
+                            break;
+                        }
                         clientList.Add(connId);
                         MemoryStream ostream = new MemoryStream();
                         BinaryWriter bw = new BinaryWriter(ostream);
@@ -62,6 +74,17 @@ namespace Communication.Proto
         public void Start()
         {
             server.Start();
+            isListening = true;
+        }
+
+        public void Pause()
+        {
+            isListening = false;
+        }
+
+        public void Resume()
+        {
+            isListening = true;
         }
 
         public void Stop()
