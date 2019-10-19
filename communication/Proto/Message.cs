@@ -14,7 +14,7 @@ namespace Communication.Proto
 
         public int CalculateSize() //目前没用所以不实现
         {
-            throw new NotImplementedException();
+            return Content.CalculateSize() + 4 + Content.GetType().FullName.Length;
         }
 
         public void MergeFrom(Stream stream)
