@@ -5,15 +5,21 @@ using System.Text;
 
 namespace Communication.CAPI
 {
-    interface ICAPI
+    public interface ICAPI
     {
-        bool isConnected();
-        int MyPlayer();
-        int PlayerCount();
-        void GetPos(int client, out double x, out double y);
-        void Move(MOVE_DIRECTION direction);
-        long Time();
-        void Stop();
+        /* Connect Control */
+        bool Connected { get; }
+        int PlayerId { get; }
+        int AgentId { get; }
+        int PlayerCount { get; }
+        int AgentCount { get; }
+        void Initialize();
         void ConnectServer(IPEndPoint endPoint);
+        /* Game Control */
+
+        void SendChatMessage(string Message);
+
+        /* Data Control */
+        string BufferedMessage();
     }
 }

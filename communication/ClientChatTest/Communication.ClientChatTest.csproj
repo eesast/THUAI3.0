@@ -6,11 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HP-Socket.net" Version="5.6.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Proto\Proto.csproj" />
+    <ProjectReference Include="..\Client\Communication.CAPI.csproj" />
   </ItemGroup>
 
 </Project>

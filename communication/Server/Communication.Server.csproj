@@ -3,17 +3,14 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <AssemblyName>Server</AssemblyName>
+    <AssemblyName>Communication.Server</AssemblyName>
     <ApplicationIcon />
     <StartupObject />
+    <RootNamespace>Communication.Server</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HP-Socket.net" Version="5.6.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Proto\Proto.csproj" />
+    <ProjectReference Include="..\Proto\Communication.Proto.csproj" />
   </ItemGroup>
 
 </Project>

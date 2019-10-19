@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Proto\Proto.csproj" />
+    <ProjectReference Include="..\Proto\Communication.Proto.csproj" />
   </ItemGroup>
 
 </Project>
