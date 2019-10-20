@@ -18,7 +18,7 @@ namespace Communication.ClientChatTest
 
             };
 
-            Console.Write("Agent IP: ");
+            Console.Write("Agent IP&Port: ");
             string[] agent = Console.ReadLine().Split(':');
             API.ConnectServer(new IPEndPoint(IPAddress.Parse(agent[0]), Int32.Parse(agent[1])));
 
@@ -28,6 +28,12 @@ namespace Communication.ClientChatTest
                 {
                     string buffer = API.BufferedMessage();
                     if (buffer != "") Console.Write(buffer);
+                    else
+                    {
+                        API.Refresh();
+                        Console.WriteLine($"Ping : {API.Ping}ms");
+                        Thread.Sleep(200);
+                    }
                 }
             })).Start(); //buffer监视线程，没错这个cpu占用很高，不过毕竟是demo
             string message = "Connected!";
