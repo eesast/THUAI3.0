@@ -24,7 +24,7 @@ namespace Server
         {
             return initTime;
         }
-        private static TimeSpan gameTime = new TimeSpan();
+        public static TimeSpan gameTime = new TimeSpan();
         public static void refreshGameTime()
         {
             gameTime = DateTime.Now - initTime;
@@ -228,6 +228,67 @@ namespace Server
                 throw;
             }
 
+        }
+    }
+
+    public class Timer
+    {
+        int count;//总共要执行的回调数
+        TimerCallback[] callback;//要执行的方法
+        object[] state;//第i个回调传入的参数
+        double[] dueTime;//调用第i个回调函数等待的时间，默认不等待
+        double[] callbackTime;//执行第i个回调函数的时间
+        public double leftTime;//距离执行回调剩余的时间
+        bool TimerBreak;
+        public Timer(TimerCallback[] callback_t, object[] state_t = null, double[] dueTime_t = null, int count_t = 1)
+        {
+            count = count_t;
+            callback = callback_t;
+            if (state_t != null) state = state_t;
+            else state = new object[count];
+            dueTime = dueTime_t;
+            callbackTime = new double[count];
+            TimerBreak = false;
+        }
+        public void Start()
+        {
+            Thread TimerThread = new Thread(threadFunction);
+            TimerThread.Start();
+        }
+        public void threadFunction()
+        {
+            for (int i = 0; i < count; i++)
+            {
+                if (i == 0) callbackTime[i] = Program.gameTime.TotalSeconds + dueTime[i];
+                else callbackTime[i] = callbackTime[i - 1] + dueTime[i];
+                leftTime = callbackTime[i] - Program.gameTime.TotalSeconds;
+                while (leftTime > 0)
+                {
+                    if (TimerBreak == true) break;
+                    leftTime = callbackTime[i] - Program.gameTime.TotalSeconds;
+                    Thread.Sleep(10);
+                }
+                if (TimerBreak == true) break;
+                callback[i](state[i]);
+            }
+        }
+        public void Quit()
+        {
+            TimerBreak = true;
+        }
+        public void check()
+        {
+            char key;
+            while (true)
+            {
+                key = Console.ReadKey().KeyChar;
+                if (key == 'q' || key == 'Q')
+                {
+                    Quit();
+                    break;
+                }
+                Console.WriteLine("\b \b距离下次回调还有" + leftTime + 's');
+            }
         }
     }
 
