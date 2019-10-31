@@ -1,6 +1,4 @@
-﻿using Communication.Proto;
-using Google.Protobuf;
-using System.IO;
+﻿using Google.Protobuf;
 
 namespace Communication.Server
 {
