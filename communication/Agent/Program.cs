@@ -1,11 +1,6 @@
-﻿
-using System;
-using HPSocketCS;
-using System.IO;
+﻿using System;
 using System.Threading;
-using System.Collections.Generic;
 using Communication.Proto;
-using System.Text;
 using System.Net;
 
 namespace Communication.Agent

@@ -10,6 +10,10 @@ namespace Communication.Proto
 {
     internal class Message : IMessage //Communication内部使用的Message
     {
+        private static readonly List<Assembly> assemblyList = new List<Assembly> //需要反射的类型程序集
+        {
+            Assembly.GetExecutingAssembly()
+        };
         public int Address; //发送者/接收者，因环境而定
         public IMessage Content; //包内容
         private static readonly List<Assembly> assemblyList = new List<Assembly>
@@ -20,6 +24,7 @@ namespace Communication.Proto
 
         public MessageDescriptor Descriptor => null;
 
+
         private static Type GetType(string typename)
         {
             foreach (Assembly asm in assemblyList)
@@ -29,6 +34,7 @@ namespace Communication.Proto
             }
             return null;
         }
+
         public int CalculateSize() //目前没用所以不实现
         {
             return Content.CalculateSize() + 4 + Content.GetType().FullName.Length;
@@ -39,7 +45,9 @@ namespace Communication.Proto
             BinaryReader br = new BinaryReader(stream);
             Address = br.ReadInt32();
             string PacketType = br.ReadString(); //包类型的FullName
+
             Content = Activator.CreateInstance(GetType(PacketType)) as IMessage;
+
             Content.MergeFrom(stream);
             Constants.Debug($"{PacketType} received ({Content.CalculateSize()} bytes)");
         }
@@ -48,7 +56,9 @@ namespace Communication.Proto
         {
             Address = input.ReadInt32();
             string PacketType = input.ReadString();
+
             Content = Activator.CreateInstance(GetType(PacketType)) as IMessage;
+
             Content.MergeFrom(input);
             Constants.Debug($"{PacketType} received ({Content.CalculateSize()} bytes)");
         }

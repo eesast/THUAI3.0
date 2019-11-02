@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 
+
 namespace Communication.CAPI
 {
     public delegate void ReceiveMessageCallback(IMessage message);
