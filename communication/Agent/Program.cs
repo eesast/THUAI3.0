@@ -14,8 +14,9 @@ namespace Communication.Agent
         private static IPEndPoint Server;
         public static void Main(string[] args)
         {
-            Console.Write("Server IP&Port: ");
-            string[] t = Console.ReadLine().Split(':');
+            string[] t = { "127.0.0.1", "8888" };
+            Console.Write("Server IP&Port: " + t[0] + t[1]);
+            //string[] t = Console.ReadLine().Split(':');
             Server = new IPEndPoint(IPAddress.Parse(t[0]), Int32.Parse(t[1]));
 
             Console.Write("Agent Listen Port: ");
