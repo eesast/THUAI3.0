@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using Communication.Proto;
+using Google.Protobuf;
 
 namespace Communication.CAPI
 {
@@ -8,6 +9,9 @@ namespace Communication.CAPI
     {
         private IDClient client;
         private string buffer;
+
+        public event ReceiveMessageCallback ReceiveMessage;
+
         public bool Connected => !client.Closed;
 
         public int PlayerId => client.Address;
@@ -33,7 +37,9 @@ namespace Communication.CAPI
                         Ping = (DateTime.Now.Ticks - (message.Content as PingPacket).Ticks) * 0.0001f; //PingPacket计算Ping
                         break;
                     default:
-                        throw new Exception($"unknown protobuf packet type {message.Content.GetType().FullName}");
+                        ReceiveMessage(message.Content);
+                        break;
+                        //throw new Exception($"unknown protobuf packet type {message.Content.GetType().FullName}");
                 }
             };
             buffer = "";
@@ -95,6 +101,23 @@ namespace Communication.CAPI
                 buffer = "";
             }
             return t;
+        }
+
+        public void SendMessage(IMessage message)
+        {
+            client.Send(new Message()
+            {
+                Address = -1, //发送给Server端（Agent而非其他Player)
+                Content = new Message()
+                {
+                    Address = -1, //GameServer而非其他Agent
+                    Content = new Message()
+                    {
+                        Address = PlayerId,
+                        Content = message
+                    }
+                }
+            });
         }
     }
 }

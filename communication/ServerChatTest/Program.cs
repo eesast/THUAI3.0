@@ -2,7 +2,6 @@
 using Communication.Server;
 using System;
 
-
 namespace ServerChatTest
 {
     class Program
