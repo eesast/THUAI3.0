@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using Communication.Proto;
 
 namespace Communication.Server
@@ -36,14 +37,14 @@ namespace Communication.Server
                 if (server.Count == Constants.AgentCount)
                 {
                     full = true;
-                    Constants.Debug("All clients has connected!");
+                    Console.WriteLine("All clients has connected!");
                     server.Pause();
                 }
             };
 
             full = false;
             server.Start();
-            Constants.Debug("Waiting for clients");
+            Console.WriteLine("Waiting for clients");
             while (!full) ;
             //此时应广播通知Client，不过应该由logic广播？
         }

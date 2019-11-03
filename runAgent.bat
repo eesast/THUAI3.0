@@ -1,1 +1,1 @@
-@dotnet communication\Agent\bin\Release\netcoreapp2.1\Communication.Agent.dll
+@dotnet communication\Agent\bin\Debug\netcoreapp2.1\Communication.Agent.dll

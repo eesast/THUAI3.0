@@ -13,42 +13,14 @@ using Communication.Proto;
 
 namespace Server
 {
-    static class Program
-    {
-        public static Server server;
-        private static DateTime initTime = new DateTime();
-        public static void InitializeTime()
-        {
-            initTime = DateTime.Now;
-        }
-        public static DateTime InitTime
-        {
-            get
-            {
-                return initTime;
-            }
-        }
-        private static TimeSpan gameTime = new TimeSpan();
-        public static void RefreshGameTime()
-        {
-            gameTime = DateTime.Now - initTime;
-        }
-        public static TimeSpan GameTime { get { return gameTime; } }
-        public static void Main(string[] args)
-        {
-            InitializeMap();
-            server = new Server();
-        }
-    }
-
     class Player : Character
     {
         public Player(Tuple<int, int> id_t, double x, double y) :
-            base(id_t, x, y)
+            base(x, y)
         {
+            id = id_t;
             CorrectPosition();
             WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y].Add(new People(xyPosition.x, xyPosition.y, id));
-
         }
 
         static readonly Dictionary<Direction, XY_Position> operation = new Dictionary<Direction, XY_Position>
@@ -157,7 +129,6 @@ namespace Server
         public override void Move(Direction direction)
         {
             facingDirection = direction;
-            //WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y].RemoveAll(obj => { return obj.GetType().Name == "People"; });
             XY_Position aim = OPERATION[(uint)direction] + xyPosition;
             if (CheckXYPosition(aim))
             {
@@ -188,7 +159,8 @@ namespace Server
                         ObjType = 0,
                         ObjType2 = 0
                     }
-                });
+                }
+                );
 
             }
             Console.WriteLine("player {0} 's position : {1}", id.ToString(), xyPosition.ToString());
@@ -200,6 +172,11 @@ namespace Server
         private const int serverPort = 8888;
         Dictionary<Tuple<int, int>, Player> playerList = new Dictionary<Tuple<int, int>, Player>();
         public ICommunication ServerCommunication = new CommunicationImpl();
+        private static DateTime initTime = new DateTime();
+        public static void InitializeTime() { initTime = DateTime.Now; }
+        private static TimeSpan gameTime = new TimeSpan();
+        public static void RefreshGameTime() { gameTime = DateTime.Now - initTime; }
+
         public Server()
         {
             ServerCommunication.Initialize();
@@ -210,7 +187,24 @@ namespace Server
             {
                 for (int c = 0; c < Constants.PlayerCount; c++)
                 {
-                    playerList.Add(new Tuple<int, int>(a, c), new Player(new Tuple<int, int>(a, c), a * 10, c * 10));
+                    playerList.Add(new Tuple<int, int>(a, c), new Player(new Tuple<int, int>(a, c), new Random().Next(2, WORLD_MAP_WIDTH - 2), new Random().Next(2, WORLD_MAP_HEIGHT - 2)));
+                    ServerCommunication.SendMessage(new ServerMessage
+                    {
+                        Agent = a,
+                        Client = c,
+                        Message = new MessageToClient
+                        {
+                            PlayerIDAgent = a,
+                            PlayerIDClient = c,
+                            PlayerPositionX = BitConverter.DoubleToInt64Bits(playerList[new Tuple<int,int>(a,c)].xyPosition.x),
+                            PlayerPositionY = BitConverter.DoubleToInt64Bits(playerList[new Tuple<int, int>(a, c)].xyPosition.y),
+                            FacingDirection = (int)playerList[new Tuple<int, int>(a, c)].facingDirection,
+                            IsAdd = false,
+                            ObjType = 0,
+                            ObjType2 = 0
+                        }
+                    }
+                    );
                 }
             }
 
@@ -222,7 +216,7 @@ namespace Server
 
         public void Run()
         {
-            Program.InitializeTime();
+            InitializeTime();
             Console.WriteLine("Server begin to run");
 
             new Thread(ExecuteMessageQueue).Start();
@@ -239,8 +233,8 @@ namespace Server
             Console.WriteLine("Begin to execute message queue");
             while (true)
             {
-                Program.RefreshGameTime();
-                Console.WriteLine("Time : " + Program.GameTime.TotalSeconds.ToString() + "s");
+                RefreshGameTime();
+                Console.WriteLine("Time : " + gameTime.TotalSeconds.ToString() + "s");
 
                 ServerMessage msg = ServerCommunication.MessageQueue.Take();
                 if (!(msg.Message is MessageToServer)) throw new Exception("Recieve Error !");

@@ -19,7 +19,7 @@ namespace Client
         public delegate void MoveFormLabel(XY_Position xy);
         public MoveFormLabel moveFormLabel;
         public Player(double x, double y) :
-            base(new Tuple<int, int>(0, 0), x, y)
+            base(x, y)
         {
             //moveFormLabel = new MoveFormLabel(Program.form.moveLabel);
 

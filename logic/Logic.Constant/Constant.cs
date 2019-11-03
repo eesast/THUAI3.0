@@ -129,16 +129,16 @@ namespace Logic.Constant
     }
     public class Trigger : Obj
     {
-        public new enum TYPE
+        public new enum Type
         {
-            TRAP,
-            MINE,
-            SIZE
+            Trap,
+            Mine,
+            Size
         }
-        public TYPE _type;
-        public new TYPE type { get { return _type; } }
+        public Type _type;
+        public new Type type { get { return _type; } }
 
-        public Trigger(double x_t, double y_t, TYPE type_t) : base(x_t, y_t)
+        public Trigger(double x_t, double y_t, Type type_t) : base(x_t, y_t)
         {
             _type = type_t;
         }
@@ -195,13 +195,12 @@ namespace Logic.Constant
 
     public class Character
     {
-        protected XY_Position xyPosition;
+        public XY_Position xyPosition;
         protected double moveSpeed;
-        protected Direction facingDirection;
-        protected Tuple<int, int> id;  //first:Agent, second:Client
-        public Character(Tuple<int, int> id_t, double x, double y)
+        public Direction facingDirection;
+        public Tuple<int, int> id = new Tuple<int, int>(-1, -1);  //first:Agent, second:Client
+        public Character(double x, double y)
         {
-            id = id_t;
             xyPosition.x = x;
             xyPosition.y = y;
         }
@@ -209,7 +208,5 @@ namespace Logic.Constant
         {
             ;
         }
-
     }
-
 }
