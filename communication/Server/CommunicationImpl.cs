@@ -36,6 +36,7 @@ namespace Communication.Server
                 if (server.Count == Constants.AgentCount)
                 {
                     full = true;
+                    Constants.Debug("All clients has connected!");
                     server.Pause();
                 }
             };

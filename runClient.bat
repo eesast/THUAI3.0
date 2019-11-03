@@ -1,0 +1,1 @@
+@dotnet logic\Logic.Client\bin\Release\netcoreapp3.0\Logic.Client.dll

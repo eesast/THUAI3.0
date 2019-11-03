@@ -62,7 +62,7 @@ public static class Map
         for (uint x = 0; x < WORLD_MAP_WIDTH; x++)
             for (uint y = 0; y < WORLD_MAP_HEIGHT; y++)
             {
-                if (Convert.ToInt32(map[x, y]) == 3)
+                if (Convert.ToBoolean(map[x, y]))
                 {
                     WORLD_MAP[x, y] = new List<Obj>();
                     WORLD_MAP[x, y].Add(new Block(x + 0.5, y + 0.5, Block.Type.Wall));
