@@ -8,6 +8,8 @@ using Google.Protobuf;
 using Logic.Constant;
 using static Logic.Constant.CONSTANT;
 using WindowsFormsApp2;
+using Communication.Proto;
+
 namespace Client
 {
     class Player : Character

@@ -1,7 +1,7 @@
 ﻿syntax = "proto3";
 package google.protobuf;
 
-option csharp_namespace = "Logic.Constant";
+option csharp_namespace = "Communication.Proto";
 
 message MessageToClient {
 	int32 PlayerIDAgent = 1;

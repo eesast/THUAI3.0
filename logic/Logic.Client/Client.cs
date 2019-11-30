@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using Google.Protobuf;
 using Logic.Constant;
+using Communication.Proto;
 using static Logic.Constant.CONSTANT;
 using static Map;
 using GameForm;
@@ -13,7 +14,7 @@ namespace Client
 {
     class Player : Character
     {
-        private static int port = 8889;
+        private static int port = 30000;
         static Thread operationThread;
         public static DateTime lastSendTime = new DateTime();
         public Communication.CAPI.API ClientCommunication = new Communication.CAPI.API();

@@ -70,8 +70,8 @@ namespace Logic.Constant
     {
         private Tuple<int, int> _id;
         public Tuple<int, int> id { get { return _id; } }
-        public Dish dish;
-        public Tool tool;
+        public Dish? dish = null;
+        public Tool? tool = null;
         public Direction facingDirection;
         public People(double x_t, double y_t, Tuple<int, int> id_t) : base(x_t, y_t)
         {
@@ -89,7 +89,6 @@ namespace Logic.Constant
             RubbishBin,
             Size
         }
-
         private Type _type;
         public new Type type { get { return _type; } }
         public Block(double x_t, double y_t, Type type_t) : base(x_t, y_t)
@@ -142,7 +141,6 @@ namespace Logic.Constant
         {
             _type = type_t;
         }
-
     }
 
     public struct XY_Position
@@ -183,7 +181,6 @@ namespace Logic.Constant
             return result;
         }
     };
-
     public enum COMMAND_TYPE
     {
         MOVE = 0,
@@ -198,6 +195,9 @@ namespace Logic.Constant
         public XY_Position xyPosition;
         protected double moveSpeed;
         public Direction facingDirection;
+        public uint score;
+        public Tool? tool = null;
+        public Dish? dish = null;
         public Tuple<int, int> id = new Tuple<int, int>(-1, -1);  //first:Agent, second:Client
         public Character(double x, double y)
         {
@@ -205,8 +205,12 @@ namespace Logic.Constant
             xyPosition.y = y;
         }
         public virtual void Move(Direction direction)
-        {
-            ;
-        }
+        { }
+        public virtual void Put()
+        { }
+        public virtual void Pick()
+        { }
+        public virtual void Use()
+        { }
     }
 }

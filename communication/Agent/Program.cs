@@ -19,8 +19,8 @@ namespace Communication.Agent
             //string[] t = Console.ReadLine().Split(':');
             Server = new IPEndPoint(IPAddress.Parse(t[0]), Int32.Parse(t[1]));
 
-            Console.WriteLine("Agent Listen Port: 8889");
-            server.Port = 8889;
+            server.Port = 30000;
+            Console.WriteLine("Agent Listen Port: " + server.Port.ToString());
             //init timer
             myTimer.Interval = Interval;
             myTimer.Elapsed += TimedUpdate;

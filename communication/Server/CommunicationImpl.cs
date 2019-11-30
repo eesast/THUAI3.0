@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
+using System.Threading;
 using Communication.Proto;
 
 namespace Communication.Server
@@ -7,7 +7,7 @@ namespace Communication.Server
     public class CommunicationImpl : ICommunication
     {
         private IDServer server;
-        private bool full;
+        private ManualResetEvent full;
         public ushort Port
         {
             get => server.Port;
@@ -36,16 +36,15 @@ namespace Communication.Server
                 Constants.Debug($"Agent Connected: {server.Count}/{Constants.AgentCount}");
                 if (server.Count == Constants.AgentCount)
                 {
-                    full = true;
-                    Console.WriteLine("All clients has connected!");
+                    full.Set();
                     server.Pause();
                 }
             };
 
-            full = false;
+            full = new ManualResetEvent(false);
             server.Start();
-            Console.WriteLine("Waiting for clients");
-            while (!full) ;
+            Constants.Debug("Waiting for clients");
+            full.WaitOne();
             //此时应广播通知Client，不过应该由logic广播？
         }
 

@@ -9,7 +9,7 @@ using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
-namespace Logic.Constant {
+namespace Communication.Proto {
 
   /// <summary>Holder for reflection information generated from MessageToClient.proto</summary>
   public static partial class MessageToClientReflection {
@@ -29,11 +29,11 @@ namespace Logic.Constant {
             "eWVySURDbGllbnQYAiABKAUSFwoPUGxheWVyUG9zaXRpb25YGAMgASgDEhcK",
             "D1BsYXllclBvc2l0aW9uWRgEIAEoAxIXCg9GYWNpbmdEaXJlY3Rpb24YBSAB",
             "KAUSDQoFSXNBZGQYBiABKAgSDwoHT2JqVHlwZRgHIAEoBRIQCghPYmpUeXBl",
-            "MhgIIAEoBUIRqgIOTG9naWMuQ29uc3RhbnRiBnByb3RvMw=="));
+            "MhgIIAEoBUIWqgITQ29tbXVuaWNhdGlvbi5Qcm90b2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Logic.Constant.MessageToClient), global::Logic.Constant.MessageToClient.Parser, new[]{ "PlayerIDAgent", "PlayerIDClient", "PlayerPositionX", "PlayerPositionY", "FacingDirection", "IsAdd", "ObjType", "ObjType2" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.MessageToClient), global::Communication.Proto.MessageToClient.Parser, new[]{ "PlayerIDAgent", "PlayerIDClient", "PlayerPositionX", "PlayerPositionY", "FacingDirection", "IsAdd", "ObjType", "ObjType2" }, null, null, null)
           }));
     }
     #endregion
@@ -48,7 +48,7 @@ namespace Logic.Constant {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Logic.Constant.MessageToClientReflection.Descriptor.MessageTypes[0]; }
+      get { return global::Communication.Proto.MessageToClientReflection.Descriptor.MessageTypes[0]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]

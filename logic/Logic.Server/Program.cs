@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Server;
 using static Map;
 
-namespace Server
+namespace Logic.Server
 {
     static class Program
     {

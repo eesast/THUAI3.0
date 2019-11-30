@@ -1,6 +1,5 @@
 using Google.Protobuf;
 using Google.Protobuf.Reflection;
-using Logic.Constant;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,30 +7,14 @@ using System.Reflection;
 
 namespace Communication.Proto
 {
-    internal class Message : IMessage //CommunicationÄÚ²¿Ê¹ÓÃµÄMessage
+    internal class Message : IMessage //Communicationï¿½Ú²ï¿½Ê¹ï¿½Ãµï¿½Message
     {
-        public int Address; //·¢ËÍÕß/½ÓÊÕÕß£¬Òò»·¾³¶ø¶¨
-        public IMessage Content; //°üÄÚÈÝ
-        private static readonly List<Assembly> assemblyList = new List<Assembly>
-        {
-            Assembly.GetExecutingAssembly(),
-            typeof(MessageToServer).Assembly
-        };
+        public int Address; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ï¿½ß£ï¿½ï¿½ò»·¾ï¿½ï¿½ï¿½ï¿½ï¿½
+        public IMessage Content; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
         public MessageDescriptor Descriptor => null;
 
-
-        private static Type GetType(string typename)
-        {
-            foreach (Assembly asm in assemblyList)
-            {
-                Type t = asm.GetType(typename);
-                if (t != null) return t;
-            }
-            return null;
-        }
-
-        public int CalculateSize() //Ä¿Ç°Ã»ÓÃËùÒÔ²»ÊµÏÖ
+        public int CalculateSize() //Ä¿Ç°Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ô²ï¿½Êµï¿½ï¿½
         {
             return Content.CalculateSize() + 4 + Content.GetType().FullName.Length;
         }
@@ -40,9 +23,9 @@ namespace Communication.Proto
         {
             BinaryReader br = new BinaryReader(stream);
             Address = br.ReadInt32();
-            string PacketType = br.ReadString(); //°üÀàÐÍµÄFullName
+            string PacketType = br.ReadString(); //ï¿½ï¿½ï¿½ï¿½ï¿½Íµï¿½FullName
 
-            Content = Activator.CreateInstance(GetType(PacketType)) as IMessage;
+            Content = Activator.CreateInstance(Type.GetType(PacketType)) as IMessage;
 
             Content.MergeFrom(stream);
             Constants.Debug($"{PacketType} received ({Content.CalculateSize()} bytes)");
@@ -53,7 +36,7 @@ namespace Communication.Proto
             Address = input.ReadInt32();
             string PacketType = input.ReadString();
 
-            Content = Activator.CreateInstance(GetType(PacketType)) as IMessage;
+            Content = Activator.CreateInstance(Type.GetType(PacketType)) as IMessage;
 
             Content.MergeFrom(input);
             Constants.Debug($"{PacketType} received ({Content.CalculateSize()} bytes)");
@@ -63,7 +46,7 @@ namespace Communication.Proto
         {
             BinaryWriter bw = new BinaryWriter(stream);
             bw.Write(Address);
-            bw.Write(Content.GetType().FullName); //°üÀàÐÍµÄFullName
+            bw.Write(Content.GetType().FullName); //ï¿½ï¿½ï¿½ï¿½ï¿½Íµï¿½FullName
             Content.WriteTo(stream);
             Constants.Debug($"{Content.GetType().FullName} sent ({Content.CalculateSize()} bytes)");
         }
