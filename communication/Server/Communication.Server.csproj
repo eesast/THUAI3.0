@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <AssemblyName>Communication.Server</AssemblyName>
+    <ApplicationIcon />
+    <StartupObject />
+    <RootNamespace>Communication.Server</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Proto\Communication.Proto.csproj" />
+  </ItemGroup>
+
+</Project>
