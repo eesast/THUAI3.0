@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using static Map;
 using Logic.Constant;
-using static Logic.Constant.CONSTANT;
+using static Logic.Constant.Constant;
 using Communication.Proto;
 using Communication.Server;
 
@@ -16,102 +16,66 @@ namespace Logic.Server
         {
             id = id_t;
             CorrectPosition();
-            WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y].Add(new People(xyPosition.x, xyPosition.y, id));
+            WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y, 0] = new People(xyPosition.x, xyPosition.y, id);
         }
 
-        static readonly Dictionary<Direction, XY_Position> operation = new Dictionary<Direction, XY_Position>
-        {
-            { Direction.RightUp, new XY_Position(0.5, 0.5) },
-            { Direction.LeftUp , new XY_Position(-0.5, 0.5) },
-            { Direction.LeftDown, new XY_Position(-0.5, -0.5) },
-            { Direction.RightDown,new XY_Position(0.5, -0.5) }
-        };
         public bool CheckXYPosition(XY_Position xyPos)
         {
-            XY_Position RightUp = xyPos + operation[Direction.RightUp];
-            XY_Position LeftUp = xyPos + operation[Direction.LeftUp];
-            XY_Position LeftDown = xyPos + operation[Direction.LeftDown];
-            XY_Position RightDown = xyPos + operation[Direction.RightDown];
+            Dictionary<Direction, XY_Position> fourCorners = new Dictionary<Direction, XY_Position>
+            {
+                { Direction.RightUp, xyPos + CornerOperations[Direction.RightUp] },
+                { Direction.LeftUp , xyPos + CornerOperations[Direction.LeftUp] },
+                { Direction.LeftDown, xyPos + CornerOperations[Direction.LeftDown] },
+                { Direction.RightDown,xyPos + CornerOperations[Direction.RightDown] }
+            };
+            foreach (var item in fourCorners)
+            {
+                //Console.WriteLine("corner : " + item.Key.ToString() + " , " + item.Value.ToString());
+                if (item.Value.x <= 0 || item.Value.x >= WORLD_MAP_WIDTH - 1
+                    || item.Value.y <= 0 || item.Value.y >= WORLD_MAP_HEIGHT - 1)
+                {
+                    return false;
+                }
+                if (WORLD_MAP[(uint)item.Value.x, (uint)item.Value.y, 0] != null)
+                {
+                    //Console.WriteLine("not null");
+                    if (WORLD_MAP[(uint)item.Value.x, (uint)item.Value.y, 0] is Block)
+                    {
+                        //Console.WriteLine("is Block");
+                        return false;
+                    }
+                    if (WORLD_MAP[(uint)item.Value.x, (uint)item.Value.y, 0] is People)
+                    {
+                        //Console.WriteLine("is People, id: "+ ((People)WORLD_MAP[(uint)item.Value.x, (uint)item.Value.y, 0]).id.ToString()+" , xyPosition : "+ ((People)WORLD_MAP[(uint)item.Value.x, (uint)item.Value.y, 0]).xyPosition.ToString());
+                        if (((People)WORLD_MAP[(uint)item.Value.x, (uint)item.Value.y, 0]).id != id
+                            && Math.Abs(((People)WORLD_MAP[(uint)item.Value.x, (uint)item.Value.y, 0]).xyPosition.x - item.Value.x) <= 0.5
+                            && Math.Abs(((People)WORLD_MAP[(uint)item.Value.x, (uint)item.Value.y, 0]).xyPosition.y - item.Value.y) <= 0.5)
+                        {
+                            return false;
+                        }
+                    }
+                }
 
-            if (WORLD_MAP[(uint)RightUp.x, (uint)RightUp.y].Count > 0)
-            {
-                if (WORLD_MAP[(uint)RightUp.x, (uint)RightUp.y][0] is Block)
-                {
-                    return false;
-                }
-                if (WORLD_MAP[(uint)RightUp.x, (uint)RightUp.y][0] is People)
-                {
-                    if (((People)WORLD_MAP[(uint)RightUp.x, (uint)RightUp.y][0]).id != id)
-                    {
-                        return false;
-                    }
-                }
-            }
-            if (WORLD_MAP[(uint)LeftUp.x, (uint)LeftUp.y].Count > 0)
-            {
-                if (WORLD_MAP[(uint)LeftUp.x, (uint)LeftUp.y][0] is Block)
-                {
-                    return false;
-                }
-                if (WORLD_MAP[(uint)LeftUp.x, (uint)LeftUp.y][0] is People)
-                {
-                    if (((People)WORLD_MAP[(uint)LeftUp.x, (uint)LeftUp.y][0]).id != id)
-                    {
-                        return false;
-                    }
-                }
-            }
-            if (WORLD_MAP[(uint)LeftDown.x, (uint)LeftDown.y].Count > 0)
-            {
-                if (WORLD_MAP[(uint)LeftDown.x, (uint)LeftDown.y][0] is Block)
-                {
-                    return false;
-                }
-                if (WORLD_MAP[(uint)LeftDown.x, (uint)LeftDown.y][0] is People)
-                {
-                    if (((People)WORLD_MAP[(uint)LeftDown.x, (uint)LeftDown.y][0]).id != id)
-                    {
-                        return false;
-                    }
-                }
-            }
-            if (WORLD_MAP[(uint)RightDown.x, (uint)RightDown.y].Count > 0)
-            {
-                if (WORLD_MAP[(uint)RightDown.x, (uint)RightDown.y][0] is Block)
-                {
-                    return false;
-                }
-                if (WORLD_MAP[(uint)RightDown.x, (uint)RightDown.y][0] is People)
-                {
-                    if (((People)WORLD_MAP[(uint)RightDown.x, (uint)RightDown.y][0]).id != id)
-                    {
-                        return false;
-                    }
-                }
             }
             return true;
         }
         private void CorrectPosition()
         {
-            if (xyPosition.x <= 0 || xyPosition.x >= WORLD_MAP_WIDTH - 1 || xyPosition.y <= 0 || xyPosition.y >= WORLD_MAP_HEIGHT - 1)
-            {
-                xyPosition.x = WORLD_MAP_WIDTH * 0.5;
-                xyPosition.y = WORLD_MAP_HEIGHT * 0.5;
-            }
-            if (CheckXYPosition(xyPosition))
-                return;
-            XY_Position[] searchers = new XY_Position[4];
-            for (int i = 0; i < 4; i++)
+            XY_Position[] searchers = new XY_Position[8];
+            for (int i = 0; i < 8; i++)
             {
                 searchers[i] = new XY_Position(xyPosition.x, xyPosition.y);
             }
             while (true)
             {
-                searchers[0] = searchers[0] + new XY_Position(1, 0);
-                searchers[1] = searchers[1] + new XY_Position(0, 1);
-                searchers[2] = searchers[2] + new XY_Position(-1, 0);
-                searchers[3] = searchers[3] + new XY_Position(0, -1);
-
+                {
+                    uint i = 0;
+                    foreach (var item in Operations)
+                    {
+                        searchers[i] = searchers[i] + item.Value;
+                        i++;
+                    }
+                }
                 foreach (XY_Position searcher in searchers)
                 {
                     if (CheckXYPosition(searcher))
@@ -125,22 +89,89 @@ namespace Logic.Server
         public override void Move(Direction direction)
         {
             facingDirection = direction;
-            XY_Position aim = OPERATION[(uint)direction] + xyPosition;
-            if (CheckXYPosition(aim))
+            XY_Position aim = moveSpeedCoefficient * MoveOperations[facingDirection] + xyPosition;
+            double minInterval = moveSpeedCoefficient * MoveDistancePerFrame;
+            //Console.WriteLine("init minInterval : " + minInterval.ToString());
+            bool isSuccessful = true;
+            if (WORLD_MAP[(uint)aim.x, (uint)aim.y, 0] != null
+                && !(WORLD_MAP[(uint)aim.x, (uint)aim.y, 0] is People
+                    && ((People)WORLD_MAP[(uint)aim.x, (uint)aim.y, 0]).id == id))
             {
-                if ((uint)xyPosition.x != (uint)aim.x || (uint)xyPosition.y != (uint)aim.y)
+                isSuccessful = false;
+                if (Convert.ToBoolean((byte)direction & 1))
                 {
-                    WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y][0].RemoveSelf();
-                    xyPosition = aim;
-                    WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y].Insert(0, new People(xyPosition.x, xyPosition.y, id));
+                    Direction[] boundDirection = new Direction[2] { (Direction)(((int)direction - 1) % 8), (Direction)(((int)direction + 1) % 8) };
+                    minInterval = Math.Max(
+                        ((WORLD_MAP[(uint)aim.x, (uint)aim.y, 0].xyPosition - CornerOperations[boundDirection[0]] - (this.xyPosition + CornerOperations[boundDirection[0]])).get(Convert.ToBoolean((int)boundDirection[0] & 2))) * (Convert.ToBoolean((int)boundDirection[0] & 4) ? -1 : 1),
+                        ((WORLD_MAP[(uint)aim.x, (uint)aim.y, 0].xyPosition - CornerOperations[boundDirection[1]] - (this.xyPosition + CornerOperations[boundDirection[1]])).get(Convert.ToBoolean((int)boundDirection[1] & 2))) * (Convert.ToBoolean((int)boundDirection[1] & 4) ? -1 : 1)
+                        );
                 }
                 else
                 {
-                    xyPosition = aim;
-                    WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y][0].xyPosition = xyPosition;
+                    minInterval = (WORLD_MAP[(uint)aim.x, (uint)aim.y, 0].xyPosition - CornerOperations[direction] - (this.xyPosition + CornerOperations[direction])).get(Convert.ToBoolean((int)direction & 2)) * (Convert.ToBoolean((int)direction & 4) ? -1 : 1);
                 }
+            }
+            else
+            {
+                for (int i = 5; i <= 11; i++)
+                {
+                    XY_Position toCheck = new XY_Position((uint)aim.x + 0.5, (uint)aim.y + 0.5) + Operations[(Direction)(((byte)facingDirection + i) % 8)];
+                    if (WORLD_MAP[(uint)toCheck.x, (uint)toCheck.y, 0] != null)
+                    {
+                        if ((WORLD_MAP[(uint)toCheck.x, (uint)toCheck.y, 0] is Block
+                            || (WORLD_MAP[(uint)toCheck.x, (uint)toCheck.y, 0] is People && ((People)WORLD_MAP[(uint)toCheck.x, (uint)toCheck.y, 0]).id != id))
+                            && Math.Abs(WORLD_MAP[(uint)toCheck.x, (uint)toCheck.y, 0].xyPosition.x - aim.x) < 1
+                            && Math.Abs(WORLD_MAP[(uint)toCheck.x, (uint)toCheck.y, 0].xyPosition.y - aim.y) < 1)
+                        {
+                            isSuccessful = false;
+                            double tempMinInterval = 1;
+                            if (Convert.ToBoolean((byte)direction & 1))
+                            {
+                                Direction[] boundDirection = new Direction[2] { (Direction)(((int)direction - 1) % 8), (Direction)(((int)direction + 1) % 8) };
+                                tempMinInterval = Math.Max(
+                                    ((WORLD_MAP[(uint)toCheck.x, (uint)toCheck.y, 0].xyPosition - CornerOperations[boundDirection[0]] - (this.xyPosition + CornerOperations[boundDirection[0]])).get(Convert.ToBoolean((int)boundDirection[0] & 2))) * (Convert.ToBoolean((int)boundDirection[0] & 4) ? -1 : 1),
+                                    ((WORLD_MAP[(uint)toCheck.x, (uint)toCheck.y, 0].xyPosition - CornerOperations[boundDirection[1]] - (this.xyPosition + CornerOperations[boundDirection[1]])).get(Convert.ToBoolean((int)boundDirection[1] & 2))) * (Convert.ToBoolean((int)boundDirection[1] & 4) ? -1 : 1)
+                                    );
+                            }
+                            else
+                            {
+                                //Console.WriteLine("direction : " + ((int)direction).ToString());
+                                //Console.WriteLine("Block : " + WORLD_MAP[(uint)toCheck.x, (uint)toCheck.y, 0].xyPosition.ToString());
+                                //Console.WriteLine("Corner : " + CornerOperations[direction].ToString());
 
-                Program.server.ServerCommunication.SendMessage(new ServerMessage
+                                tempMinInterval = (WORLD_MAP[(uint)toCheck.x, (uint)toCheck.y, 0].xyPosition - CornerOperations[direction] - (this.xyPosition + CornerOperations[direction])).get(Convert.ToBoolean((int)direction & 2)) * (Convert.ToBoolean((int)direction & 4) ? -1 : 1);
+                                //Console.WriteLine("tempInInterval : " + tempMinInterval.ToString());
+                            }
+                            
+                            if (tempMinInterval < minInterval)
+                            {
+                                minInterval = tempMinInterval;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if(!isSuccessful)
+            {
+                aim = (minInterval * 2) * CornerOperations[direction] + xyPosition;
+            }
+
+            if ((uint)xyPosition.x != (uint)aim.x || (uint)xyPosition.y != (uint)aim.y)
+            {
+                WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y, 0].RemoveSelf();
+                xyPosition = aim;
+                WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y, 0] = new People(xyPosition.x, xyPosition.y, id);
+                //Console.WriteLine("new self , " + xyPosition.ToString());
+            }
+            else
+            {
+                xyPosition = aim;
+                WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y, 0].xyPosition = xyPosition;
+            }
+
+            Program.server.ServerCommunication.SendMessage(
+                new ServerMessage
                 {
                     Agent = -2,
                     Client = -2,
@@ -155,15 +186,12 @@ namespace Logic.Server
                         ObjType = 0,
                         ObjType2 = 0
                     }
-                }
-                );
-
-            }
-            Console.WriteLine("player {0} 's position : {1}", id.ToString(), xyPosition.ToString());
+                });
+            Constants.Debug("player " + id.ToString() + " 's position : " + xyPosition.ToString());
         }
         public override void Put()
         {
-            if(dish != null)
+            if (dish != null)
             {
 
             }

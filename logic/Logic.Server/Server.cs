@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using Logic.Constant;
-using static Logic.Constant.CONSTANT;
+using static Logic.Constant.Constant;
 using System.Collections.Generic;
 using static Map;
 using Communication.Server;
@@ -20,8 +20,10 @@ namespace Logic.Server
         public ICommunication ServerCommunication = new CommunicationImpl();
         private static DateTime initTime = new DateTime();
         public static void InitializeTime() { initTime = DateTime.Now; }
-        private static TimeSpan gameTime = new TimeSpan();
-        public static void RefreshGameTime() { gameTime = DateTime.Now - initTime; }
+        private static TimeSpan getGameTime()
+        {
+            return DateTime.Now - initTime;
+        }
 
         public Server()
         {
@@ -33,7 +35,7 @@ namespace Logic.Server
             {
                 for (int c = 0; c < Constants.PlayerCount; c++)
                 {
-                    playerList.Add(new Tuple<int, int>(a, c), new Player(new Tuple<int, int>(a, c), new Random().Next(2, WORLD_MAP_WIDTH - 2), new Random().Next(2, WORLD_MAP_HEIGHT - 2)));
+                    playerList.Add(new Tuple<int, int>(a, c), new Player(new Tuple<int, int>(a, c), 2.5, 1.5));//new Random().Next(2, WORLD_MAP_WIDTH - 2), new Random().Next(2, WORLD_MAP_HEIGHT - 2)));
                     ServerCommunication.SendMessage(new ServerMessage
                     {
                         Agent = a,
@@ -53,10 +55,27 @@ namespace Logic.Server
                     );
                 }
             }
-
-
+            foreach (var item in playerList)
+            {
+                ServerCommunication.SendMessage(new ServerMessage
+                {
+                    Agent = -2,
+                    Client = -2,
+                    Message = new MessageToClient
+                    {
+                        PlayerIDAgent = item.Value.id.Item1,
+                        PlayerIDClient = item.Value.id.Item2,
+                        PlayerPositionX = BitConverter.DoubleToInt64Bits(playerList[item.Value.id].xyPosition.x),
+                        PlayerPositionY = BitConverter.DoubleToInt64Bits(playerList[item.Value.id].xyPosition.y),
+                        FacingDirection = (int)playerList[item.Value.id].facingDirection,
+                        IsAdd = false,
+                        ObjType = 0,
+                        ObjType2 = 0
+                    }
+                }
+                );
+            }
             new Thread(Run).Start();
-
             Console.WriteLine("Server constructed");
         }
 
@@ -79,8 +98,7 @@ namespace Logic.Server
             Console.WriteLine("Begin to execute message queue");
             while (true)
             {
-                RefreshGameTime();
-                Console.WriteLine("Time : " + gameTime.TotalSeconds.ToString() + "s");
+                Console.WriteLine("Time : " + getGameTime().TotalSeconds.ToString("F3") + "s");
 
                 ServerMessage msg = ServerCommunication.MessageQueue.Take();
                 if (!(msg.Message is MessageToServer)) throw new Exception("Recieve Error !");
@@ -93,11 +111,7 @@ namespace Logic.Server
                 {
                     playerList[new Tuple<int, int>(msg.Agent, msg.Client)].Move((Direction)msgToSvr.Parameter1);
                 }
-
             }
-
         }
-
     }
-
 }

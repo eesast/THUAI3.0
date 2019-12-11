@@ -53,7 +53,7 @@ public static class Map
  };
     public static int WORLD_MAP_WIDTH = map.GetLength(0);
     public static int WORLD_MAP_HEIGHT = map.GetLength(1);
-    public static List<Obj>[,] WORLD_MAP = new List<Obj>[WORLD_MAP_WIDTH, WORLD_MAP_HEIGHT];
+    public static Obj?[,,] WORLD_MAP = new Obj?[WORLD_MAP_WIDTH, WORLD_MAP_HEIGHT, 2];
 
 
     // Start is called before the first frame update
@@ -64,12 +64,13 @@ public static class Map
             {
                 if (Convert.ToBoolean(map[x, y]))
                 {
-                    WORLD_MAP[x, y] = new List<Obj>();
-                    WORLD_MAP[x, y].Add(new Block(x + 0.5, y + 0.5, Block.Type.Wall));
+                    WORLD_MAP[x, y, 0] = (new Block(x + 0.5, y + 0.5, Block.Type.Wall));
+                    WORLD_MAP[x, y, 1] = null;
                 }
                 else
                 {
-                    WORLD_MAP[x, y] = new List<Obj>();
+                    WORLD_MAP[x, y, 0] = null;
+                    WORLD_MAP[x, y, 1] = null;
                 }
             }
 

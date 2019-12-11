@@ -7,7 +7,7 @@ using System.Threading;
 using Google.Protobuf;
 using Logic.Constant;
 using Communication.Proto;
-using static Logic.Constant.CONSTANT;
+using static Logic.Constant.Constant;
 using static Map;
 using GameForm;
 namespace Client
@@ -105,7 +105,7 @@ namespace Client
         private void Operation()
         {
             TimeSpan deltaTime = DateTime.Now - lastSendTime;
-            if (deltaTime.TotalSeconds <= TIME_INTERVAL)
+            if (deltaTime.TotalSeconds <= TimeInterval)
                 return;
 
             char key;
@@ -147,6 +147,7 @@ namespace Client
                 this.xyPosition.y = BitConverter.Int64BitsToDouble(msg.PlayerPositionY);
                 this.facingDirection = (Direction)msg.FacingDirection;
                 Console.WriteLine("\nThis Player :\n" + "\t" + id.ToString() + "\n\tposition: " + xyPosition.ToString());
+                moveFormLabel(this.id, this.xyPosition, this.facingDirection);
                 return;
             }
 

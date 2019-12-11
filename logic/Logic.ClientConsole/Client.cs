@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using Google.Protobuf;
 using Logic.Constant;
-using static Logic.Constant.CONSTANT;
+using static Logic.Constant.Constant;
 using WindowsFormsApp2;
 using Communication.Proto;
 
@@ -35,7 +35,7 @@ namespace Client
         private void Operation()
         {
             TimeSpan deltaTime = DateTime.Now - lastSendTime;
-            if (deltaTime.TotalSeconds <= TIME_INTERVAL)
+            if (deltaTime.TotalSeconds <= TimeInterval)
                 return;
 
             char key;
