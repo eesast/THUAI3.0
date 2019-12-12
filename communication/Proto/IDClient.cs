@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Threading;
 
 namespace Communication.Proto
 {
@@ -83,6 +84,7 @@ namespace Communication.Proto
             {
                 Constants.Debug($"ClientSide: Connecting to server {endPoint}");
                 client.Connect(endPoint.Address.ToString(), (ushort)endPoint.Port, false);
+                Thread.Sleep(1000);
             }
         }
 

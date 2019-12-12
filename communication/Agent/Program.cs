@@ -15,12 +15,12 @@ namespace Communication.Agent
         public static void Main(string[] args)
         {
             string[] t = { "127.0.0.1", "8888" };
-            Console.Write("Server IP&Port: " + t[0] + t[1]);
+            Console.WriteLine("Server IP&Port: " + t[0] + t[1]);
             //string[] t = Console.ReadLine().Split(':');
             Server = new IPEndPoint(IPAddress.Parse(t[0]), Int32.Parse(t[1]));
 
-            Console.Write("Agent Listen Port: ");
-            server.Port = UInt16.Parse(Console.ReadLine());
+            server.Port = 30000;
+            Console.WriteLine("Agent Listen Port: " + server.Port.ToString());
             //init timer
             myTimer.Interval = Interval;
             myTimer.Elapsed += TimedUpdate;

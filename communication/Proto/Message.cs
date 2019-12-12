@@ -1,6 +1,5 @@
 using Google.Protobuf;
 using Google.Protobuf.Reflection;
-using Logic.Constant;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,34 +7,14 @@ using System.Reflection;
 
 namespace Communication.Proto
 {
-    internal class Message : IMessage //Communication内部使用的Message
+    internal class Message : IMessage //Communication锟节诧拷使锟矫碉拷Message
     {
-        private static readonly List<Assembly> assemblyList = new List<Assembly> //需要反射的类型程序集
-        {
-            Assembly.GetExecutingAssembly()
-        };
-        public int Address; //发送者/接收者，因环境而定
-        public IMessage Content; //包内容
-        private static readonly List<Assembly> assemblyList = new List<Assembly>
-        {
-            Assembly.GetExecutingAssembly(),
-            typeof(MessageToServer).Assembly
-        };
+        public int Address; //锟斤拷锟斤拷锟斤拷/锟斤拷锟斤拷锟竭ｏ拷锟津环撅拷锟斤拷锟斤拷
+        public IMessage Content; //锟斤拷锟斤拷锟斤拷
 
         public MessageDescriptor Descriptor => null;
 
-
-        private static Type GetType(string typename)
-        {
-            foreach (Assembly asm in assemblyList)
-            {
-                Type t = asm.GetType(typename);
-                if (t != null) return t;
-            }
-            return null;
-        }
-
-        public int CalculateSize() //目前没用所以不实现
+        public int CalculateSize() //目前没锟斤拷锟斤拷锟皆诧拷实锟斤拷
         {
             return Content.CalculateSize() + 4 + Content.GetType().FullName.Length;
         }
@@ -44,9 +23,9 @@ namespace Communication.Proto
         {
             BinaryReader br = new BinaryReader(stream);
             Address = br.ReadInt32();
-            string PacketType = br.ReadString(); //包类型的FullName
+            string PacketType = br.ReadString(); //锟斤拷锟斤拷锟酵碉拷FullName
 
-            Content = Activator.CreateInstance(GetType(PacketType)) as IMessage;
+            Content = Activator.CreateInstance(Type.GetType(PacketType)) as IMessage;
 
             Content.MergeFrom(stream);
             Constants.Debug($"{PacketType} received ({Content.CalculateSize()} bytes)");
@@ -57,7 +36,7 @@ namespace Communication.Proto
             Address = input.ReadInt32();
             string PacketType = input.ReadString();
 
-            Content = Activator.CreateInstance(GetType(PacketType)) as IMessage;
+            Content = Activator.CreateInstance(Type.GetType(PacketType)) as IMessage;
 
             Content.MergeFrom(input);
             Constants.Debug($"{PacketType} received ({Content.CalculateSize()} bytes)");
@@ -67,7 +46,7 @@ namespace Communication.Proto
         {
             BinaryWriter bw = new BinaryWriter(stream);
             bw.Write(Address);
-            bw.Write(Content.GetType().FullName); //包类型的FullName
+            bw.Write(Content.GetType().FullName); //锟斤拷锟斤拷锟酵碉拷FullName
             Content.WriteTo(stream);
             Constants.Debug($"{Content.GetType().FullName} sent ({Content.CalculateSize()} bytes)");
         }

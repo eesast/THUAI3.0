@@ -2,9 +2,9 @@ namespace Communication.Proto
 {
     internal enum PacketType
     {
-        ProtoPacket = 0, //ÄÚÈİ°ü(S2C,C2S)
-        IdRequest = 1, //ClientÇëÇóID(C2S)
-        IdAllocate = 2, //ClientÇëÇó·ÖÅäID(C2S)£¬Server¸øClient·ÖÅäID(S2C)
-        Disconnected = 3 //ServerÖ÷¶¯¶Ï¿ª(S2C)
+        ProtoPacket = 0, //ï¿½ï¿½ï¿½İ°ï¿½(S2C,C2S)
+        IdRequest = 1, //Clientï¿½ï¿½ï¿½ï¿½ID(C2S)
+        IdAllocate = 2, //Clientï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ID(C2S)ï¿½ï¿½Serverï¿½ï¿½Clientï¿½ï¿½ï¿½ï¿½ID(S2C)
+        Disconnected = 3 //Serverï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½(S2C)
     }
 }

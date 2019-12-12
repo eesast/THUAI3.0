@@ -1,7 +1,8 @@
 ﻿using static Map;
 using System;
+using System.Collections.Generic;
 
-namespace WindowsFormsApp2
+namespace GameForm
 {
     partial class Form1
     {
@@ -32,17 +33,20 @@ namespace WindowsFormsApp2
         private void InitializeComponent()
         {
             this.mapLabels = new System.Windows.Forms.Label[WORLD_MAP_WIDTH, WORLD_MAP_HEIGHT];
-            this.playerLabel = new System.Windows.Forms.Label();
+            this.playerLabels = new Dictionary<Tuple<int, int>, System.Windows.Forms.Label>();
             this.SuspendLayout();
             //
             //playerLabel
             //
-            this.playerLabel.BackColor = System.Drawing.Color.Red;
-            this.playerLabel.Location = new System.Drawing.Point(15 * LABEL_WIDTH, 12 * LABEL_WIDTH);
-            this.playerLabel.Name = "playerLabel";
-            this.playerLabel.Size = new System.Drawing.Size(LABEL_WIDTH, LABEL_WIDTH);
-            this.playerLabel.TabIndex = 1;
-            this.Controls.Add(this.playerLabel);
+            for (int a = 0; a < Communication.Proto.Constants.AgentCount; a++)
+                for (int c = 0; c < Communication.Proto.Constants.PlayerCount; c++)
+                {
+                    this.playerLabels.Add(new Tuple<int, int>(a, c), new System.Windows.Forms.Label());
+                    this.playerLabels[new Tuple<int, int>(a, c)].BackColor = System.Drawing.Color.Red;
+                    this.playerLabels[new Tuple<int, int>(a, c)].Name = "playerLabel";
+                    this.playerLabels[new Tuple<int, int>(a, c)].TabIndex = 1;
+                    this.Controls.Add(this.playerLabels[new Tuple<int, int>(a, c)]);
+                }
             //
             //mapLabels
             //
@@ -106,7 +110,7 @@ namespace WindowsFormsApp2
         #endregion
 
         public System.Windows.Forms.Label[,] mapLabels;
-        public System.Windows.Forms.Label playerLabel;
+        public Dictionary<Tuple<int, int>, System.Windows.Forms.Label> playerLabels;
     }
 }
 
