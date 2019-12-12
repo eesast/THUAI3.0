@@ -142,7 +142,6 @@ namespace Logic.Server
                                 tempMinInterval = (WORLD_MAP[(uint)toCheck.x, (uint)toCheck.y, 0].xyPosition - CornerOperations[direction] - (this.xyPosition + CornerOperations[direction])).get(Convert.ToBoolean((int)direction & 2)) * (Convert.ToBoolean((int)direction & 4) ? -1 : 1);
                                 //Console.WriteLine("tempInInterval : " + tempMinInterval.ToString());
                             }
-
                             if (tempMinInterval < minInterval)
                             {
                                 minInterval = tempMinInterval;

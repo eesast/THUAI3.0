@@ -34,7 +34,6 @@ namespace Client
         }
         private void Operation()
         {
-            
             char key;
             while (true)
             {
