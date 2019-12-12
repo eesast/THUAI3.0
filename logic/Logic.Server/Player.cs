@@ -142,7 +142,6 @@ namespace Logic.Server
                                 tempMinInterval = (WORLD_MAP[(uint)toCheck.x, (uint)toCheck.y, 0].xyPosition - CornerOperations[direction] - (this.xyPosition + CornerOperations[direction])).get(Convert.ToBoolean((int)direction & 2)) * (Convert.ToBoolean((int)direction & 4) ? -1 : 1);
                                 //Console.WriteLine("tempInInterval : " + tempMinInterval.ToString());
                             }
-                            
                             if (tempMinInterval < minInterval)
                             {
                                 minInterval = tempMinInterval;
@@ -152,7 +151,7 @@ namespace Logic.Server
                 }
             }
 
-            if(!isSuccessful)
+            if (!isSuccessful)
             {
                 aim = (minInterval * 2) * CornerOperations[direction] + xyPosition;
             }
@@ -194,6 +193,24 @@ namespace Logic.Server
             if (dish != null)
             {
 
+            }
+        }
+        public override void Pick()
+        {
+            if (Convert.ToBoolean((int)facingDirection & 1) || dish != null)
+                return;
+            XY_Position toPick = new XY_Position((uint)xyPosition.x + 0.5 + Operations[facingDirection].x, (uint)xyPosition.y + 0.5 + Operations[facingDirection].y);
+            if (WORLD_MAP[(uint)toPick.x, (uint)toPick.y, 1] == null)
+                return;
+            if(WORLD_MAP[(uint)toPick.x, (uint)toPick.y, 1] is Dish)
+            {
+                dish = (Dish)WORLD_MAP[(uint)toPick.x, (uint)toPick.y, 1];
+                WORLD_MAP[(uint)toPick.x, (uint)toPick.y, 1] = null;
+            }
+            else if (WORLD_MAP[(uint)toPick.x, (uint)toPick.y, 1] is Tool)
+            {
+                tool = (Tool)WORLD_MAP[(uint)toPick.x, (uint)toPick.y, 1];
+                WORLD_MAP[(uint)toPick.x, (uint)toPick.y, 1] = null;
             }
         }
     }

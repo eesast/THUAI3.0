@@ -34,14 +34,13 @@ namespace Client
         }
         private void Operation()
         {
-            TimeSpan deltaTime = DateTime.Now - lastSendTime;
-            if (deltaTime.TotalSeconds <= TimeInterval)
-                return;
-
             char key;
             while (true)
             {
                 key = Console.ReadKey().KeyChar;
+                TimeSpan deltaTime = DateTime.Now - lastSendTime;
+                if (deltaTime.TotalSeconds <= TimeInterval)
+                    continue;
                 if (key == 'd') Move(Direction.Right);
                 else if (key == 'e') Move(Direction.RightUp);
                 else if (key == 'w') Move(Direction.Up);
