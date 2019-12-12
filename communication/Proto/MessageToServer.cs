@@ -9,7 +9,7 @@ using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
-namespace Logic.Constant {
+namespace Communication.Proto {
 
   /// <summary>Holder for reflection information generated from MessageToServer.proto</summary>
   public static partial class MessageToServerReflection {
@@ -26,12 +26,12 @@ namespace Logic.Constant {
           string.Concat(
             "ChVNZXNzYWdlVG9TZXJ2ZXIucHJvdG8SD2dvb2dsZS5wcm90b2J1ZiJOCg9N",
             "ZXNzYWdlVG9TZXJ2ZXISEwoLQ29tbWFuZFR5cGUYASABKAUSEgoKUGFyYW1l",
-            "dGVyMRgCIAEoBRISCgpQYXJhbWV0ZXIyGAMgASgFQhGqAg5Mb2dpYy5Db25z",
-            "dGFudGIGcHJvdG8z"));
+            "dGVyMRgCIAEoBRISCgpQYXJhbWV0ZXIyGAMgASgFQhaqAhNDb21tdW5pY2F0",
+            "aW9uLlByb3RvYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Logic.Constant.MessageToServer), global::Logic.Constant.MessageToServer.Parser, new[]{ "CommandType", "Parameter1", "Parameter2" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.MessageToServer), global::Communication.Proto.MessageToServer.Parser, new[]{ "CommandType", "Parameter1", "Parameter2" }, null, null, null)
           }));
     }
     #endregion
@@ -46,7 +46,7 @@ namespace Logic.Constant {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Logic.Constant.MessageToServerReflection.Descriptor.MessageTypes[0]; }
+      get { return global::Communication.Proto.MessageToServerReflection.Descriptor.MessageTypes[0]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]

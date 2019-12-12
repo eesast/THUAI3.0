@@ -13,7 +13,7 @@ using Logic.Constant;
 using Client;
 using static Map;
 
-namespace WindowsFormsApp2
+namespace GameForm
 {
     public partial class Form1 : Form
     {
@@ -26,7 +26,6 @@ namespace WindowsFormsApp2
         public Form1()
         {
             InitializeComponent();
-            Control.CheckForIllegalCrossThreadCalls = false;
             Console.WriteLine("Start console output");
         }
 
@@ -39,9 +38,12 @@ namespace WindowsFormsApp2
                     this.mapLabels[x, y].Size = new System.Drawing.Size(LABEL_WIDTH - LABEL_INTERVAL, LABEL_WIDTH - LABEL_INTERVAL);
                 }
 
-            this.playerLabel.Location = new System.Drawing.Point(15 * LABEL_WIDTH, 12 * LABEL_WIDTH);
-            this.playerLabel.Size = new System.Drawing.Size(LABEL_WIDTH - LABEL_INTERVAL, LABEL_WIDTH - LABEL_INTERVAL);
-
+            for (int a = 0; a < Communication.Proto.Constants.AgentCount; a++)
+                for (int c = 0; c < Communication.Proto.Constants.PlayerCount; c++)
+                {
+                    this.playerLabels[new Tuple<int, int>(a, c)].Location = new System.Drawing.Point(-10, -10);
+                    this.playerLabels[new Tuple<int, int>(a, c)].Size = new System.Drawing.Size(LABEL_WIDTH, LABEL_WIDTH);
+                }
             this.ClientSize = new System.Drawing.Size(FORM_WIDTH, FORM_HEIGHT);
 
             Player player = new Player(15, 12);
@@ -51,9 +53,5 @@ namespace WindowsFormsApp2
         {
         }
 
-        public void moveLabel(XY_Position xy)
-        {
-            playerLabel.Location = new System.Drawing.Point(Convert.ToInt32((xy.x - 0.5) * Convert.ToDouble(LABEL_WIDTH)), Convert.ToInt32((Convert.ToDouble(WORLD_MAP_HEIGHT) - xy.y - 0.5) * Convert.ToDouble(LABEL_WIDTH)));
-        }
     }
 }

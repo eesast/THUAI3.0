@@ -6,8 +6,10 @@ using System.Text;
 using System.Threading;
 using Google.Protobuf;
 using Logic.Constant;
-using static Logic.Constant.CONSTANT;
+using static Logic.Constant.Constant;
 using WindowsFormsApp2;
+using Communication.Proto;
+
 namespace Client
 {
     class Player : Character
@@ -19,7 +21,7 @@ namespace Client
         public delegate void MoveFormLabel(XY_Position xy);
         public MoveFormLabel moveFormLabel;
         public Player(double x, double y) :
-            base(new Tuple<int, int>(0, 0), x, y)
+            base(x, y)
         {
             //moveFormLabel = new MoveFormLabel(Program.form.moveLabel);
 
@@ -33,7 +35,7 @@ namespace Client
         private void Operation()
         {
             TimeSpan deltaTime = DateTime.Now - lastSendTime;
-            if (deltaTime.TotalSeconds <= TIME_INTERVAL)
+            if (deltaTime.TotalSeconds <= TimeInterval)
                 return;
 
             char key;
