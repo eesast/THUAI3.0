@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using static Map;
+using Communication.Proto;
+using Communication.Server;
 namespace Logic.Constant
 {
     public static class Constant
@@ -13,12 +15,12 @@ namespace Logic.Constant
         public const double MoveDistancePerFrame = MoveSpeed / FrameRate;
         //长度为1的向量。
         public static readonly Dictionary<Direction, XY_Position> Operations = new Dictionary<Direction, XY_Position> {
-            { Direction.Right,new XY_Position (1, 0) },
+            { Direction.Right, new XY_Position (1, 0) },
             { Direction.RightUp, new XY_Position(1 / Math.Sqrt(2),1 / Math.Sqrt(2)) },
             { Direction.Up, new XY_Position(0, 1) },
             { Direction.LeftUp, new XY_Position(-1 / Math.Sqrt(2),1 / Math.Sqrt(2)) },
             { Direction.Left, new XY_Position(-1, 0) },
-            { Direction.LeftDown,new XY_Position(-1 / Math.Sqrt(2),-1 / Math.Sqrt(2)) },
+            { Direction.LeftDown, new XY_Position(-1 / Math.Sqrt(2),-1 / Math.Sqrt(2)) },
             { Direction.Down, new XY_Position(0, -1) },
             { Direction.RightDown, new XY_Position(1 / Math.Sqrt(2),-1 / Math.Sqrt(2)) }
         };
@@ -29,7 +31,7 @@ namespace Logic.Constant
             { Direction.Up, MoveDistancePerFrame * Operations[Direction.Up] },
             { Direction.LeftUp, MoveDistancePerFrame * Operations[Direction.LeftUp] },
             { Direction.Left, MoveDistancePerFrame * Operations[Direction.Left] },
-            { Direction.LeftDown,MoveDistancePerFrame * Operations[Direction.LeftDown] },
+            { Direction.LeftDown, MoveDistancePerFrame * Operations[Direction.LeftDown] },
             { Direction.Down, MoveDistancePerFrame * Operations[Direction.Down] },
             { Direction.RightDown, MoveDistancePerFrame * Operations[Direction.RightDown] }
         };
@@ -119,12 +121,39 @@ namespace Logic.Constant
             Pot,
             ChoppingTable,
             RubbishBin,
+            SubmissionTable,
             Size
         }
         public new Type type { get; }
+        System.Threading.Timer timer = new System.Threading.Timer(new System.Threading.TimerCallback((object o) => { }));
         public Block(double x_t, double y_t, Type type_t) : base(x_t, y_t)
         {
             type = type_t;
+        }
+        public delegate void SendToClient(ServerMessage msg);
+        SendToClient send = new SendToClient((ServerMessage msg) => { });
+        public void NewFood()
+        {
+            if(type != Type.NewFood)
+            {
+                return;
+            }
+            timer.Dispose();
+            timer = new System.Threading.Timer(
+                new System.Threading.TimerCallback(
+                    (object o) =>
+                    {
+                        if (WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y, 1] == null)
+                        {
+                            WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y, 1] = new Dish(xyPosition.x, xyPosition.y, Dish.Type.Apple);
+                            Console.WriteLine("New Food");
+                            send(new ServerMessage { });
+                        }
+                    }),
+                null,
+                TimeSpan.FromSeconds(10),
+                TimeSpan.FromSeconds(-1)
+                );
         }
     }
     public class Dish : Obj
