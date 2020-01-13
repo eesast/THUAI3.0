@@ -74,17 +74,21 @@ namespace Communication.Proto
         public void Start()
         {
             server.Start();
+            Console.WriteLine("Server has started");
             isListening = true;
+            Console.WriteLine("Server is listening");
         }
 
         public void Pause()
         {
             isListening = false;
+            Console.WriteLine("Server has paused, stop listening");
         }
 
         public void Resume()
         {
             isListening = true;
+            Console.WriteLine("Server resume to listen");
         }
 
         public void Stop()

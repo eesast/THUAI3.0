@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Communication.Proto", "..\c
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Communication.Server", "..\communication\Server\Communication.Server.csproj", "{E9B8BAA7-2F58-4675-946B-03F5F0634B44}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logic.ClientConsole", "Logic.ClientConsole\Logic.ClientConsole.csproj", "{DAC1B83E-712F-4A74-B1EA-BA61FF27EAC1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logic.ClientConsole", "Logic.ClientConsole\Logic.ClientConsole.csproj", "{DAC1B83E-712F-4A74-B1EA-BA61FF27EAC1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

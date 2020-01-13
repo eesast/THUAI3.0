@@ -53,7 +53,7 @@ public static class Map
  };
     public static int WORLD_MAP_WIDTH = map.GetLength(0);
     public static int WORLD_MAP_HEIGHT = map.GetLength(1);
-    public static List<Obj>[,] WORLD_MAP = new List<Obj>[WORLD_MAP_WIDTH, WORLD_MAP_HEIGHT];
+    public static Obj?[,,] WORLD_MAP = new Obj?[WORLD_MAP_WIDTH, WORLD_MAP_HEIGHT, 2];
 
 
     // Start is called before the first frame update
@@ -62,14 +62,25 @@ public static class Map
         for (uint x = 0; x < WORLD_MAP_WIDTH; x++)
             for (uint y = 0; y < WORLD_MAP_HEIGHT; y++)
             {
-                if (Convert.ToInt32(map[x, y]) == 3)
+                if (map[x, y] == 6)
                 {
-                    WORLD_MAP[x, y] = new List<Obj>();
-                    WORLD_MAP[x, y].Add(new Block(x + 0.5, y + 0.5, Block.Type.Wall));
+                    WORLD_MAP[x, y, 0] = (new Block(x + 0.5, y + 0.5, Block.Type.NewFood));
+                    WORLD_MAP[x, y, 1] = null;
+                }
+                else if (map[x, y] == 5)
+                {
+                    WORLD_MAP[x, y, 0] = (new Block(x + 0.5, y + 0.5, Block.Type.SubmissionTable));
+                    WORLD_MAP[x, y, 1] = null;
+                }
+                else if (map[x, y] == 0)
+                {
+                    WORLD_MAP[x, y, 0] = null;
+                    WORLD_MAP[x, y, 1] = null;
                 }
                 else
                 {
-                    WORLD_MAP[x, y] = new List<Obj>();
+                    WORLD_MAP[x, y, 0] = (new Block(x + 0.5, y + 0.5, Block.Type.Wall));
+                    WORLD_MAP[x, y, 1] = null;
                 }
             }
 

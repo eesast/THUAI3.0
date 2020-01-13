@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using Client;
 using System.Runtime.InteropServices;
 
-namespace WindowsFormsApp2
+namespace GameForm
 {
     static class Program
     {

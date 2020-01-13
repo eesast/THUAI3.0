@@ -1,24 +1,52 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using static Map;
+using Communication.Proto;
+using Communication.Server;
 namespace Logic.Constant
 {
-    public static class CONSTANT
+    public static class Constant
     {
 
-        public const double MOVE_SPEED = 5;
-        public const int FRAME_RATE = 20;
-        public const double TIME_INTERVAL = 1 / FRAME_RATE;
-        public const double MOVE_DISTANCE_PER_FRAME = MOVE_SPEED / FRAME_RATE;
-        public static readonly XY_Position[] OPERATION = {
-            new XY_Position (MOVE_DISTANCE_PER_FRAME, 0),
-            new XY_Position(MOVE_DISTANCE_PER_FRAME / 1.4142135623731, MOVE_DISTANCE_PER_FRAME / 1.4142135623731),
-            new XY_Position(0, MOVE_DISTANCE_PER_FRAME),
-            new XY_Position(-MOVE_DISTANCE_PER_FRAME / 1.4142135623731, MOVE_DISTANCE_PER_FRAME / 1.4142135623731),
-            new XY_Position(-MOVE_DISTANCE_PER_FRAME, 0),
-            new XY_Position(-MOVE_DISTANCE_PER_FRAME / 1.4142135623731, -MOVE_DISTANCE_PER_FRAME / 1.4142135623731),
-            new XY_Position(0, -MOVE_DISTANCE_PER_FRAME),
-            new XY_Position(MOVE_DISTANCE_PER_FRAME / 1.4142135623731, -MOVE_DISTANCE_PER_FRAME / 1.4142135623731)
+        public const double MoveSpeed = 5;
+        public const int FrameRate = 20;
+        public const double TimeInterval = 1 / FrameRate;
+        public const double MoveDistancePerFrame = MoveSpeed / FrameRate;
+        //长度为1的向量。
+        public static readonly Dictionary<Direction, XY_Position> Operations = new Dictionary<Direction, XY_Position> {
+            { Direction.Right, new XY_Position (1, 0) },
+            { Direction.RightUp, new XY_Position(1 / Math.Sqrt(2),1 / Math.Sqrt(2)) },
+            { Direction.Up, new XY_Position(0, 1) },
+            { Direction.LeftUp, new XY_Position(-1 / Math.Sqrt(2),1 / Math.Sqrt(2)) },
+            { Direction.Left, new XY_Position(-1, 0) },
+            { Direction.LeftDown, new XY_Position(-1 / Math.Sqrt(2),-1 / Math.Sqrt(2)) },
+            { Direction.Down, new XY_Position(0, -1) },
+            { Direction.RightDown, new XY_Position(1 / Math.Sqrt(2),-1 / Math.Sqrt(2)) }
         };
+        //长度为MoveDistancePerFrame的向量
+        public static readonly Dictionary<Direction, XY_Position> MoveOperations = new Dictionary<Direction, XY_Position> {
+            { Direction.Right, MoveDistancePerFrame * Operations[Direction.Right] },
+            { Direction.RightUp, MoveDistancePerFrame * Operations[Direction.RightUp] },
+            { Direction.Up, MoveDistancePerFrame * Operations[Direction.Up] },
+            { Direction.LeftUp, MoveDistancePerFrame * Operations[Direction.LeftUp] },
+            { Direction.Left, MoveDistancePerFrame * Operations[Direction.Left] },
+            { Direction.LeftDown, MoveDistancePerFrame * Operations[Direction.LeftDown] },
+            { Direction.Down, MoveDistancePerFrame * Operations[Direction.Down] },
+            { Direction.RightDown, MoveDistancePerFrame * Operations[Direction.RightDown] }
+        };
+        //指向四个角的向量
+        public static readonly Dictionary<Direction, XY_Position> CornerOperations = new Dictionary<Direction, XY_Position> {
+            { Direction.Right, new XY_Position (0.5, 0) },
+            { Direction.RightUp, new XY_Position(0.5,0.5) },
+            { Direction.Up, new XY_Position(0, 0.5) },
+            { Direction.LeftUp, new XY_Position(-0.5,0.5) },
+            { Direction.Left, new XY_Position(-0.5, 0) },
+            { Direction.LeftDown,new XY_Position(-0.5,-0.5) },
+            { Direction.Down, new XY_Position(0, -0.5) },
+            { Direction.RightDown, new XY_Position(0.5,-0.5) }
+        };
+
         public const char messageSpiltSeperation = ',';
     }
     public enum Direction
@@ -63,19 +91,25 @@ namespace Logic.Constant
 
         public void RemoveSelf()
         {
-            WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y].Remove(this);
+            if (WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y, 0] == this)
+            {
+                //Console.WriteLine("RemoveSelf , " + WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y, 0].xyPosition.ToString());
+                WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y, 0] = null;
+                return;
+            }
+            if (WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y, 1] == this)
+                WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y, 1] = null;
         }
     }
     public class People : Obj
     {
-        private Tuple<int, int> _id;
-        public Tuple<int, int> id { get { return _id; } }
-        public Dish dish;
-        public Tool tool;
+        public Tuple<int, int> id { get; }
+        public Dish? dish = null;
+        public Tool? tool = null;
         public Direction facingDirection;
         public People(double x_t, double y_t, Tuple<int, int> id_t) : base(x_t, y_t)
         {
-            _id = id_t;
+            id = id_t;
         }
     }
     public class Block : Obj
@@ -87,14 +121,39 @@ namespace Logic.Constant
             Pot,
             ChoppingTable,
             RubbishBin,
+            SubmissionTable,
             Size
         }
-
-        private Type _type;
-        public new Type type { get { return _type; } }
+        public new Type type { get; }
+        System.Threading.Timer timer = new System.Threading.Timer(new System.Threading.TimerCallback((object o) => { }));
         public Block(double x_t, double y_t, Type type_t) : base(x_t, y_t)
         {
-            _type = type_t;
+            type = type_t;
+        }
+        public delegate void SendToClient(ServerMessage msg);
+        SendToClient send = new SendToClient((ServerMessage msg) => { });
+        public void NewFood()
+        {
+            if(type != Type.NewFood)
+            {
+                return;
+            }
+            timer.Dispose();
+            timer = new System.Threading.Timer(
+                new System.Threading.TimerCallback(
+                    (object o) =>
+                    {
+                        if (WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y, 1] == null)
+                        {
+                            WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y, 1] = new Dish(xyPosition.x, xyPosition.y, Dish.Type.Apple);
+                            Console.WriteLine("New Food");
+                            send(new ServerMessage { });
+                        }
+                    }),
+                null,
+                TimeSpan.FromSeconds(10),
+                TimeSpan.FromSeconds(-1)
+                );
         }
     }
     public class Dish : Obj
@@ -105,11 +164,10 @@ namespace Logic.Constant
             Banana,
             Size
         }
-        public Type _type;
-        public new Type type { get { return _type; } }
+        public new Type type { get; }
         public Dish(double x_t, double y_t, Type type_t) : base(x_t, y_t)
         {
-            _type = type_t;
+            type = type_t;
         }
     }
     public class Tool : Obj
@@ -120,29 +178,26 @@ namespace Logic.Constant
             WaveGlue,
             Size
         }
-        public Type _type;
-        public new Type type { get { return _type; } }
+        public new Type type { get; }
         public Tool(double x_t, double y_t, Type type_t) : base(x_t, y_t)
         {
-            _type = type_t;
+            type = type_t;
         }
     }
     public class Trigger : Obj
     {
-        public new enum TYPE
+        public new enum Type
         {
-            TRAP,
-            MINE,
-            SIZE
+            Trap,
+            Mine,
+            Size
         }
-        public TYPE _type;
-        public new TYPE type { get { return _type; } }
+        public new Type type { get; }
 
-        public Trigger(double x_t, double y_t, TYPE type_t) : base(x_t, y_t)
+        public Trigger(double x_t, double y_t, Type type_t) : base(x_t, y_t)
         {
-            _type = type_t;
+            type = type_t;
         }
-
     }
 
     public struct XY_Position
@@ -158,8 +213,13 @@ namespace Logic.Constant
         public override string ToString()
         {
             return
-            x.ToString("0.000") + CONSTANT.messageSpiltSeperation +
+            x.ToString("0.000") + Constant.messageSpiltSeperation +
                 y.ToString("0.000");
+        }
+        public double get(bool flag)
+        {
+            if (flag) return y;
+            else return x;
         }
         public static XY_Position operator +(XY_Position a, XY_Position b)
         {
@@ -182,8 +242,15 @@ namespace Logic.Constant
             result.y = a.y * b;
             return result;
         }
-    };
+        public static XY_Position operator *(double b, XY_Position a)
+        {
+            XY_Position result = new XY_Position();
+            result.x = a.x * b;
+            result.y = a.y * b;
+            return result;
+        }
 
+    };
     public enum COMMAND_TYPE
     {
         MOVE = 0,
@@ -193,23 +260,27 @@ namespace Logic.Constant
         SIZE
     }
 
-    public class Character
+    public abstract class Character
     {
-        protected XY_Position xyPosition;
-        protected double moveSpeed;
-        protected Direction facingDirection;
-        protected Tuple<int, int> id;  //first:Agent, second:Client
-        public Character(Tuple<int, int> id_t, double x, double y)
+        public XY_Position xyPosition;
+        protected double moveSpeedCoefficient = 1;
+        public Direction facingDirection;
+        public uint score = 0;
+        public Tool? tool = null;
+        public Dish? dish = null;
+        public Tuple<int, int> id = new Tuple<int, int>(-1, -1);  //first:Agent, second:Client
+        public Character(double x, double y)
         {
-            id = id_t;
             xyPosition.x = x;
             xyPosition.y = y;
         }
         public virtual void Move(Direction direction)
-        {
-            ;
-        }
-
+        { }
+        public virtual void Put()
+        { }
+        public virtual void Pick()
+        { }
+        public virtual void Use()
+        { }
     }
-
 }
