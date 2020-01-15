@@ -14,7 +14,7 @@ namespace Communication.Proto
         public static readonly IPEndPoint Agent = new IPEndPoint(IPAddress.Parse("127.0.0.1"), AgentPort);
         public static DebugFunc Debug = delegate (string DebugMessage)
         {
-            //Console.WriteLine(DebugMessage);
+            Console.WriteLine(DebugMessage);
         };
     }
 }
