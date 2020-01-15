@@ -18,8 +18,8 @@ THUAI3.0 原电子系第21届队式程序设计大赛
 - installer：下载/更新器，生成Windows GUI程序
 - interaction：玩家交互，生成Unity程序
 - launcher：游戏启动器，生成Windows GUI程序
-- logic：游戏逻辑，生成控制台可执行文件（`.Net Core 2.1/2.2`）
-- nupkg：引入的不在Nuget.net中的第三方包（可能主要是HPSocket）
+- logic：游戏逻辑，生成控制台可执行文件（`.Net Core 3.0`）
+- dependency：需要使用的各种依赖与proto文件
 - resource：用于主目录下markdown文件的图片等
 - unittest：单元测试
 

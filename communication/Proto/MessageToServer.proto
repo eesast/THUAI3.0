@@ -1,0 +1,11 @@
+syntax = "proto3";
+package google.protobuf;
+
+option csharp_namespace = "Communication.Proto";
+
+message MessageToServer {
+
+	int32 CommandType = 1;
+	int32 Parameter1 = 2;
+	int32 Parameter2 = 3;
+}

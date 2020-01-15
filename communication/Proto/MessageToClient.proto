@@ -1,0 +1,15 @@
+﻿syntax = "proto3";
+package google.protobuf;
+
+option csharp_namespace = "Communication.Proto";
+
+message MessageToClient {
+	int32 PlayerIDAgent = 1;
+    int32 PlayerIDClient = 2;
+	int64 PlayerPositionX = 3;
+	int64 PlayerPositionY = 4;
+    int32 FacingDirection = 5;
+    bool IsAdd = 6;
+    int32 ObjType = 7;
+	int32 ObjType2 = 8;
+}
