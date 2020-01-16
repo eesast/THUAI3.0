@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Threading;
 using Communication.Proto;
-
+using System;
 namespace Communication.Server
 {
     public class CommunicationImpl : ICommunication
@@ -13,7 +13,11 @@ namespace Communication.Server
             get => server.Port;
             set => server.Port = value;
         }
-        public BlockingCollection<ServerMessage> MessageQueue { get; private set; }
+        public event MessageHandler MsgProcess=null;
+        public void OnNewMessage(MessageEventArgs e)
+        {
+            MsgProcess?.Invoke(this, e);
+        }
         public void GameOver()
         {
             server.Stop();
@@ -21,14 +25,15 @@ namespace Communication.Server
 
         public void GameStart()
         {
-            server.OnReceive += delegate (Message message) //收到信息入消息队列
+            server.OnReceive += delegate (Message message) //收到信息后将消息传给逻辑处理
             {
                 ServerMessage msg = new ServerMessage();
                 msg.Agent = message.Address;
                 message = message.Content as Message;
                 msg.Client = message.Address;
                 msg.Message = message.Content;
-                MessageQueue.Add(msg);
+                MessageEventArgs e = new MessageEventArgs(msg);
+                OnNewMessage(e);
             };
 
             server.OnAccept += delegate () //判断是否满人
@@ -40,17 +45,18 @@ namespace Communication.Server
                     server.Pause();
                 }
             };
-
+            server.InternalQuit += delegate ()
+              {
+                  server.Resume();
+              };
             full = new ManualResetEvent(false);
             server.Start();
             Constants.Debug("Waiting for clients");
             full.WaitOne();
             //此时应广播通知Client，不过应该由logic广播？
         }
-
         public void Initialize()
         {
-            MessageQueue = new BlockingCollection<ServerMessage>();
             server = new IDServer();
         }
 
@@ -67,5 +73,6 @@ namespace Communication.Server
             };
             server.Send(msg);
         }
+        
     }
 }

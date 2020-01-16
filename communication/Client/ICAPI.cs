@@ -12,7 +12,7 @@ namespace Communication.CAPI
     {
         /* Connect Control */
         float Ping { get; }
-        bool Connected { get; }
+        bool Connected { get;}
         int PlayerId { get; }
         int AgentId { get; }
         int PlayerCount { get; }
@@ -23,6 +23,7 @@ namespace Communication.CAPI
         /* Game Control */
 
         void SendChatMessage(string Message);
+        void SendQuitMessage();
 
         /* Data Control */
         string BufferedMessage();
