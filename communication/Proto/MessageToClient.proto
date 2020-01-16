@@ -3,13 +3,53 @@ package google.protobuf;
 
 option csharp_namespace = "Communication.Proto";
 
+message ID{
+	int32 Agent = 1;
+	int32 Client = 2;
+}
+message XY_Position{
+	int64 X = 1;
+	int64 Y = 2;
+}
+
+message Player{
+	ID Id = 1;
+	XY_Position XY = 2;
+	int32 FacingDirection = 3;
+	int32 Status = 4;
+	int32 MoveSpeedCoefficient = 5;
+}
+
+message Block{
+	int32 Type = 1;
+	int32 Id = 2;
+	XY_Position XY = 3;
+	int32 Param1 = 4;
+	int32 Param2 = 5;
+}
+
+message Dish{
+	int32 Type = 1;
+	int32 Id = 2;
+	XY_Position XY = 3;
+}
+
+message Tool{
+	int32 Type = 1;
+	int32 Id = 2;
+	XY_Position XY = 3;
+}
+
+message Trigger{
+	int32 Type = 1;
+	int32 Id = 2;
+	XY_Position XY = 3;
+}
+
 message MessageToClient {
-	int32 PlayerIDAgent = 1;
-    int32 PlayerIDClient = 2;
-	int64 PlayerPositionX = 3;
-	int64 PlayerPositionY = 4;
-    int32 FacingDirection = 5;
-    bool IsAdd = 6;
-    int32 ObjType = 7;
-	int32 ObjType2 = 8;
+	repeated Player player = 1;
+	repeated Block block = 2;
+	repeated Dish dish = 3;
+	repeated Tool tool = 4;
+	repeated Trigger trigger = 5;
 }

@@ -269,6 +269,16 @@ namespace Logic.Constant
         public Tool? tool = null;
         public Dish? dish = null;
         public Tuple<int, int> id = new Tuple<int, int>(-1, -1);  //first:Agent, second:Client
+        public enum Status
+        {
+            Nothing,
+            Moving,
+            Picking,
+            Freezing,
+            Stunned,
+            Size
+        }
+        Status status = Status.Nothing;
         public Character(double x, double y)
         {
             xyPosition.x = x;

@@ -44,7 +44,7 @@ namespace Logic.Server
                         {
                             PlayerIDAgent = a,
                             PlayerIDClient = c,
-                            PlayerPositionX = BitConverter.DoubleToInt64Bits(playerList[new Tuple<int,int>(a,c)].xyPosition.x),
+                            PlayerPositionX = BitConverter.DoubleToInt64Bits(playerList[new Tuple<int, int>(a, c)].xyPosition.x),
                             PlayerPositionY = BitConverter.DoubleToInt64Bits(playerList[new Tuple<int, int>(a, c)].xyPosition.y),
                             FacingDirection = (int)playerList[new Tuple<int, int>(a, c)].facingDirection,
                             IsAdd = false,
@@ -106,7 +106,6 @@ namespace Logic.Server
 
                 if (msgToSvr.CommandType < 0 || msgToSvr.CommandType >= (int)COMMAND_TYPE.SIZE)
                     continue;
-
                 if (msgToSvr.CommandType == (int)COMMAND_TYPE.MOVE && msgToSvr.Parameter1 >= 0 && msgToSvr.Parameter1 < (int)Direction.Size)
                 {
                     playerList[new Tuple<int, int>(msg.Agent, msg.Client)].Move((Direction)msgToSvr.Parameter1);
