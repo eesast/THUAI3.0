@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace Communication.Proto
 {
-    internal class Message : IMessage //Communication�ڲ�ʹ�õ�Message
+    internal class Message : IMessage //Communication�ڲ�ʹ�õ�Message 
     {
         public int Address; //������/�����ߣ��򻷾�����
         public IMessage Content; //������

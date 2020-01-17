@@ -106,7 +106,15 @@ namespace Communication.Proto
             client.Send(raw, raw.Length);
             Constants.Debug($"ClientSide: Data sent {message.Content.GetType().FullName}");
         }
-
+        public void Quit()
+        {
+            MemoryStream ostream = new MemoryStream();
+            BinaryWriter bw = new BinaryWriter(ostream);
+            bw.Write((int)PacketType.Quit);
+            byte[] raw = ostream.ToArray();
+            client.Send(raw, raw.Length);
+            Disconnect();
+        }
         public event OnReceiveCallback OnReceive;
         public event OnDisconnectCallback OnDisconnect; //被Server断开链接或客户端主动断开的时候触发
     }
