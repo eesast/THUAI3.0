@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System;
+using System.Net;
 
 namespace Communication.Server
 {
@@ -12,9 +13,16 @@ namespace Communication.Server
             this.message = mes;
         }
     }
-    public interface ICommunication
+    public interface ICommunication : IDisposable
     {
-        ushort Port { get; set; }
+        int PlayerCount { get;}
+
+        /// <summary>
+        /// be aware port means the rest server tcp port but not the server port
+        /// </summary>
+        IPEndPoint EndPoint { get; set; }
+
+        string ID { get; set; }
         void Initialize();
         void GameStart(); /* This function should return when all the players are connected to server*/
         void GameOver();
