@@ -8,24 +8,59 @@ using Google.Protobuf;
 using Logic.Constant;
 using Communication.Proto;
 using static Logic.Constant.Constant;
-using static Map;
+using static Logic.Constant.Map;
+using THUnity2D;
+using static THUnity2D.Tools;
 using GameForm;
 namespace Client
 {
     class Player : Character
     {
+        protected Int64 id = -1;
         private static int port = 30000;
         static Thread operationThread;
         public static DateTime lastSendTime = new DateTime();
         public Communication.CAPI.API ClientCommunication = new Communication.CAPI.API();
-        public void moveFormLabel(Tuple<int, int> id_t, XY_Position xy_t, Direction direction_t)
+        public void moveFormLabel(Int64 id_t, XYPosition xy_t, Direction direction_t)
         {
+            if (!Program.form.playerLabels.ContainsKey(id_t))
+            {
+                Program.form.playerLabels.Add(id_t, new System.Windows.Forms.Label());
+                Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.Red;
+                Program.form.playerLabels[id_t].Name = "playerLabel";
+                Program.form.playerLabels[id_t].TabIndex = 1;
+                if (Program.form.InvokeRequired)
+                {
+                    Action<object> actionDelegate1 = (o) =>
+                    {
+                        Program.form.Controls.Add(Program.form.playerLabels[id_t]);
+                    };
+                    Program.form.Invoke(actionDelegate1, new object());
+                }
+                else
+                {
+                    Program.form.Controls.Add(Program.form.playerLabels[id_t]);
+                }
+
+                if (Program.form.playerLabels[id_t].InvokeRequired)
+                {
+                    Action<object> actionDelegate1 = (o) =>
+                    {
+                        Program.form.playerLabels[id_t].Size = new System.Drawing.Size(Form1.LABEL_WIDTH, Form1.LABEL_WIDTH);
+                    };
+                    Program.form.playerLabels[id_t].Invoke(actionDelegate1, new object());
+                }
+                else
+                {
+                    Program.form.playerLabels[id_t].Size = new System.Drawing.Size(Form1.LABEL_WIDTH, Form1.LABEL_WIDTH);
+                }
+            }
             if (Program.form.playerLabels[id_t].InvokeRequired)
             {
                 // 当一个控件的InvokeRequired属性值为真时，说明有一个创建它以外的线程想访问它
-                Action<XY_Position, Direction> actionDelegate = (xy_t2, direction_t2) =>
+                Action<XYPosition, Direction> actionDelegate = (xy_t2, direction_t2) =>
                 {
-                    Program.form.playerLabels[id_t].Location = new System.Drawing.Point(Convert.ToInt32((xy_t2.x - 0.5) * Convert.ToDouble(GameForm.Form1.LABEL_WIDTH)), Convert.ToInt32((Convert.ToDouble(WORLD_MAP_HEIGHT) - xy_t2.y - 0.5) * Convert.ToDouble(GameForm.Form1.LABEL_WIDTH)));
+                    Program.form.playerLabels[id_t].Location = new System.Drawing.Point(Convert.ToInt32((xy_t2.x - 0.5) * Convert.ToDouble(GameForm.Form1.LABEL_WIDTH)), Convert.ToInt32((Convert.ToDouble(WorldMap.Height) - xy_t2.y - 0.5) * Convert.ToDouble(GameForm.Form1.LABEL_WIDTH)));
                     switch (direction_t2)
                     {
                         case Direction.Right:
@@ -60,7 +95,7 @@ namespace Client
             }
             else
             {
-                Program.form.playerLabels[id_t].Location = new System.Drawing.Point(Convert.ToInt32((xy_t.x - 0.5) * Convert.ToDouble(GameForm.Form1.LABEL_WIDTH)), Convert.ToInt32((Convert.ToDouble(WORLD_MAP_HEIGHT) - xy_t.y - 0.5) * Convert.ToDouble(GameForm.Form1.LABEL_WIDTH)));
+                Program.form.playerLabels[id_t].Location = new System.Drawing.Point(Convert.ToInt32((xy_t.x - 0.5) * Convert.ToDouble(GameForm.Form1.LABEL_WIDTH)), Convert.ToInt32((Convert.ToDouble(WorldMap.Width) - xy_t.y - 0.5) * Convert.ToDouble(GameForm.Form1.LABEL_WIDTH)));
                 switch (direction_t)
                 {
                     case Direction.Right:
@@ -123,11 +158,12 @@ namespace Client
                 lastSendTime = DateTime.Now;
             }
         }
-        public override void Move(Direction direction)
+        public new void Move(Direction direction)
         {
             ClientCommunication.SendMessage(
                 new MessageToServer
                 {
+                    ID = this.id,
                     CommandType = (int)COMMAND_TYPE.MOVE,
                     Parameter1 = (int)direction,
                     Parameter2 = 0
@@ -140,23 +176,28 @@ namespace Client
             if (!(message is MessageToClient)) throw new Exception("Recieve Error !");
             MessageToClient msg = message as MessageToClient;
 
-            if (this.id.Item1 < 0 || this.id.Item2 < 0)
+            if (this.id < 0)
             {
-                this.id = new Tuple<int, int>(msg.PlayerIDAgent, msg.PlayerIDClient);
-                this.xyPosition.x = BitConverter.Int64BitsToDouble(msg.PlayerPositionX);
-                this.xyPosition.y = BitConverter.Int64BitsToDouble(msg.PlayerPositionY);
-                this.facingDirection = (Direction)msg.FacingDirection;
-                Console.WriteLine("\nThis Player :\n" + "\t" + id.ToString() + "\n\tposition: " + xyPosition.ToString());
-                moveFormLabel(this.id, this.xyPosition, this.facingDirection);
-                return;
+                foreach (var gameObject in msg.GameObjectsList)
+                {
+                    this.id = gameObject.Key;
+                    this.Position.x = gameObject.Value.Position.X;
+                    this.Position.y = gameObject.Value.Position.Y;
+                    this.facingDirection = (Tools.Direction)(int)gameObject.Value.Direction;
+                    Console.WriteLine("\nThis Player :\n" + "\t" + id.ToString() + "\n\tposition: " + Position.ToString());
+                    moveFormLabel(this.id, this.Position, this.facingDirection);
+                    return;
+                }
             }
-
-            this.xyPosition.x = BitConverter.Int64BitsToDouble(msg.PlayerPositionX);
-            this.xyPosition.y = BitConverter.Int64BitsToDouble(msg.PlayerPositionY);
-            this.facingDirection = (Direction)msg.FacingDirection;
-
-            Console.WriteLine("\nPlayer " + msg.PlayerIDAgent.ToString() + " , " + msg.PlayerIDClient.ToString() + "  position: " + xyPosition.ToString());
-            moveFormLabel(new Tuple<int, int>(msg.PlayerIDAgent, msg.PlayerIDClient), xyPosition, facingDirection);
+            foreach (var gameObject in msg.GameObjectsList)
+            {
+                this.Position.x = gameObject.Value.Position.X;
+                this.Position.y = gameObject.Value.Position.Y;
+                this.facingDirection = (Tools.Direction)(int)gameObject.Value.Direction;
+                Console.WriteLine("\nPlayer " + gameObject.Key.ToString() + "  position: " + Position.ToString());
+                moveFormLabel(gameObject.Key, Position, facingDirection);
+                break;
+            }
         }
     }
 
