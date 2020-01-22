@@ -3,6 +3,7 @@ using Communication.Proto;
 using System;
 using System.Net;
 using System.Threading;
+using System.IO;
 
 namespace Communication.ClientChatTest
 {
@@ -19,9 +20,9 @@ namespace Communication.ClientChatTest
             };
 
             Console.Write("Agent IP&Port: ");
-            string[] agent = Console.ReadLine().Split(':');
-            API.ConnectServer(new IPEndPoint(IPAddress.Parse(agent[0]), Int32.Parse(agent[1])));
-
+            //string[] agent = Console.ReadLine().Split(':');
+            //API.ConnectServer(new IPEndPoint(IPAddress.Parse(agent[0]), Int32.Parse(agent[1])));
+            API.ConnectServer(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 30000));
             new Thread(new ThreadStart(delegate ()
             {
                 while (API.Connected)
@@ -39,7 +40,11 @@ namespace Communication.ClientChatTest
             string message = "Connected!";
             while (API.Connected) //Console输入发送给Server
             {
-                API.SendChatMessage(message + $" (agent: {API.AgentId}/{API.AgentCount}, player: {API.PlayerId}/{API.PlayerCount})");
+                if(message=="quit")
+                {
+                    API.SendQuitMessage();
+                }
+                else API.SendChatMessage(message + $" (agent: {API.AgentId}/{API.AgentCount}, player: {API.PlayerId}/{API.PlayerCount})");
                 message = Console.ReadLine();
             }
 
