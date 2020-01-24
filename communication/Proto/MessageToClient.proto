@@ -3,13 +3,56 @@ package google.protobuf;
 
 option csharp_namespace = "Communication.Proto";
 
+message XY_Position{
+	double X = 1;
+	double Y = 2;
+}
+enum BUFF{
+	Frozen = 0;
+	Stunned = 1;
+	SpeedUp = 2;
+	SlowDown = 3;
+}
+enum DISH_STATE{
+	Raw = 0;
+	Good = 1;
+	OverCooked = 2;
+}
+enum OBJECTS_TYPE{
+	Player = 0;
+	Block = 1;
+	Dish = 2;
+	Tool = 3;
+	Trigger = 4;
+}
+enum DIRECTION{
+	Right = 0;
+    RightUp = 1;
+    Up = 2;
+    LeftUp = 3;
+    Left = 4;
+    LeftDown = 5;
+    Down = 6;
+    RightDown = 7;
+}
+enum BLOCK_TYPE{
+	Wall = 0;
+	Table = 1;
+	FoodPoint = 2;
+	Cooker = 3;
+	RubbishBin = 4;
+	TaskPoint = 5;
+}
+message GameObjects{
+	OBJECTS_TYPE Type = 1;
+	bool isMoving = 2;
+	XY_Position Position = 3;
+	int32 Width = 4;
+	int32 Height = 5;
+	DIRECTION Direction = 6;
+	repeated BUFF Buff = 7;
+	BLOCK_TYPE BlockType = 8;
+}
 message MessageToClient {
-	int32 PlayerIDAgent = 1;
-    int32 PlayerIDClient = 2;
-	int64 PlayerPositionX = 3;
-	int64 PlayerPositionY = 4;
-    int32 FacingDirection = 5;
-    bool IsAdd = 6;
-    int32 ObjType = 7;
-	int32 ObjType2 = 8;
+	map<int64, GameObjects> GameObjectsList = 1;
 }
