@@ -1,6 +1,7 @@
 ﻿using Communication.Proto;
 using Communication.Server;
 using System;
+using System.Net;
 
 namespace ServerChatTest
 {
@@ -25,13 +26,23 @@ namespace ServerChatTest
                 comm.SendMessage(message);
             }
         }
+
+        /// <summary>
+        /// server acts as a docker launcher as well
+        /// 
+        /// </summary>
+        /// <param name="args">
+        /// new string[] {tcp server port, docker id}
+        /// </param>
         public static void Main(string[] args)
         {
-            ICommunication comm = new CommunicationImpl();
+            using ICommunication comm = new CommunicationImpl();
+            string[] t = args[0].Split(':');
+            Console.WriteLine(args[0]);
+            //comm.EndPoint = new IPEndPoint(IPAddress.Parse(t[0]), ushort.Parse(t[1]));
+            //comm.ID = args[1];
             comm.Initialize();
             comm.MsgProcess += new MessageHandler(PrintChatMessage);
-            Console.Write("Server Listen Port:");
-            comm.Port = UInt16.Parse(Console.ReadLine());
             comm.GameStart();
             Console.WriteLine("Game started.");
             Console.ReadLine();

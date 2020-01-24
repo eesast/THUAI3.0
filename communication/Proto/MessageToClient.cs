@@ -24,565 +24,22 @@ namespace Communication.Proto {
     static MessageToClientReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChVNZXNzYWdlVG9DbGllbnQucHJvdG8SD2dvb2dsZS5wcm90b2J1ZiIjCgtY",
-            "WV9Qb3NpdGlvbhIJCgFYGAEgASgBEgkKAVkYAiABKAEinwIKC0dhbWVPYmpl",
-            "Y3RzEisKBFR5cGUYASABKA4yHS5nb29nbGUucHJvdG9idWYuT0JKRUNUU19U",
-            "WVBFEhAKCGlzTW92aW5nGAIgASgIEi4KCFBvc2l0aW9uGAMgASgLMhwuZ29v",
-            "Z2xlLnByb3RvYnVmLlhZX1Bvc2l0aW9uEg0KBVdpZHRoGAQgASgFEg4KBkhl",
-            "aWdodBgFIAEoBRItCglEaXJlY3Rpb24YBiABKA4yGi5nb29nbGUucHJvdG9i",
-            "dWYuRElSRUNUSU9OEiMKBEJ1ZmYYByADKA4yFS5nb29nbGUucHJvdG9idWYu",
-            "QlVGRhIuCglCbG9ja1R5cGUYCCABKA4yGy5nb29nbGUucHJvdG9idWYuQkxP",
-            "Q0tfVFlQRSK3AQoPTWVzc2FnZVRvQ2xpZW50Ek4KD0dhbWVPYmplY3RzTGlz",
-            "dBgBIAMoCzI1Lmdvb2dsZS5wcm90b2J1Zi5NZXNzYWdlVG9DbGllbnQuR2Ft",
-            "ZU9iamVjdHNMaXN0RW50cnkaVAoUR2FtZU9iamVjdHNMaXN0RW50cnkSCwoD",
-            "a2V5GAEgASgDEisKBXZhbHVlGAIgASgLMhwuZ29vZ2xlLnByb3RvYnVmLkdh",
-            "bWVPYmplY3RzOgI4ASo6CgRCVUZGEgoKBkZyb3plbhAAEgsKB1N0dW5uZWQQ",
-            "ARILCgdTcGVlZFVwEAISDAoIU2xvd0Rvd24QAyovCgpESVNIX1NUQVRFEgcK",
-            "A1JhdxAAEggKBEdvb2QQARIOCgpPdmVyQ29va2VkEAIqRgoMT0JKRUNUU19U",
-            "WVBFEgoKBlBsYXllchAAEgkKBUJsb2NrEAESCAoERGlzaBACEggKBFRvb2wQ",
-            "AxILCgdUcmlnZ2VyEAQqaAoJRElSRUNUSU9OEgkKBVJpZ2h0EAASCwoHUmln",
-            "aHRVcBABEgYKAlVwEAISCgoGTGVmdFVwEAMSCAoETGVmdBAEEgwKCExlZnRE",
-            "b3duEAUSCAoERG93bhAGEg0KCVJpZ2h0RG93bhAHKlsKCkJMT0NLX1RZUEUS",
-            "CAoEV2FsbBAAEgkKBVRhYmxlEAESDQoJRm9vZFBvaW50EAISCgoGQ29va2Vy",
-            "EAMSDgoKUnViYmlzaEJpbhAEEg0KCVRhc2tQb2ludBAFQhaqAhNDb21tdW5p",
-            "Y2F0aW9uLlByb3RvYgZwcm90bzM="));
+            "ChVNZXNzYWdlVG9DbGllbnQucHJvdG8SD2dvb2dsZS5wcm90b2J1ZiK9AQoP",
+            "TWVzc2FnZVRvQ2xpZW50EhUKDVBsYXllcklEQWdlbnQYASABKAUSFgoOUGxh",
+            "eWVySURDbGllbnQYAiABKAUSFwoPUGxheWVyUG9zaXRpb25YGAMgASgDEhcK",
+            "D1BsYXllclBvc2l0aW9uWRgEIAEoAxIXCg9GYWNpbmdEaXJlY3Rpb24YBSAB",
+            "KAUSDQoFSXNBZGQYBiABKAgSDwoHT2JqVHlwZRgHIAEoBRIQCghPYmpUeXBl",
+            "MhgIIAEoBUIWqgITQ29tbXVuaWNhdGlvbi5Qcm90b2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
-          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Communication.Proto.BUFF), typeof(global::Communication.Proto.DISH_STATE), typeof(global::Communication.Proto.OBJECTS_TYPE), typeof(global::Communication.Proto.DIRECTION), typeof(global::Communication.Proto.BLOCK_TYPE), }, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.XY_Position), global::Communication.Proto.XY_Position.Parser, new[]{ "X", "Y" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.GameObjects), global::Communication.Proto.GameObjects.Parser, new[]{ "Type", "IsMoving", "Position", "Width", "Height", "Direction", "Buff", "BlockType" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.MessageToClient), global::Communication.Proto.MessageToClient.Parser, new[]{ "GameObjectsList" }, null, null, new pbr::GeneratedClrTypeInfo[] { null, })
+          new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
+            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.MessageToClient), global::Communication.Proto.MessageToClient.Parser, new[]{ "PlayerIDAgent", "PlayerIDClient", "PlayerPositionX", "PlayerPositionY", "FacingDirection", "IsAdd", "ObjType", "ObjType2" }, null, null, null)
           }));
     }
     #endregion
 
   }
-  #region Enums
-  public enum BUFF {
-    [pbr::OriginalName("Frozen")] Frozen = 0,
-    [pbr::OriginalName("Stunned")] Stunned = 1,
-    [pbr::OriginalName("SpeedUp")] SpeedUp = 2,
-    [pbr::OriginalName("SlowDown")] SlowDown = 3,
-  }
-
-  public enum DISH_STATE {
-    [pbr::OriginalName("Raw")] Raw = 0,
-    [pbr::OriginalName("Good")] Good = 1,
-    [pbr::OriginalName("OverCooked")] OverCooked = 2,
-  }
-
-  public enum OBJECTS_TYPE {
-    [pbr::OriginalName("Player")] Player = 0,
-    [pbr::OriginalName("Block")] Block = 1,
-    [pbr::OriginalName("Dish")] Dish = 2,
-    [pbr::OriginalName("Tool")] Tool = 3,
-    [pbr::OriginalName("Trigger")] Trigger = 4,
-  }
-
-  public enum DIRECTION {
-    [pbr::OriginalName("Right")] Right = 0,
-    [pbr::OriginalName("RightUp")] RightUp = 1,
-    [pbr::OriginalName("Up")] Up = 2,
-    [pbr::OriginalName("LeftUp")] LeftUp = 3,
-    [pbr::OriginalName("Left")] Left = 4,
-    [pbr::OriginalName("LeftDown")] LeftDown = 5,
-    [pbr::OriginalName("Down")] Down = 6,
-    [pbr::OriginalName("RightDown")] RightDown = 7,
-  }
-
-  public enum BLOCK_TYPE {
-    [pbr::OriginalName("Wall")] Wall = 0,
-    [pbr::OriginalName("Table")] Table = 1,
-    [pbr::OriginalName("FoodPoint")] FoodPoint = 2,
-    [pbr::OriginalName("Cooker")] Cooker = 3,
-    [pbr::OriginalName("RubbishBin")] RubbishBin = 4,
-    [pbr::OriginalName("TaskPoint")] TaskPoint = 5,
-  }
-
-  #endregion
-
   #region Messages
-  public sealed partial class XY_Position : pb::IMessage<XY_Position> {
-    private static readonly pb::MessageParser<XY_Position> _parser = new pb::MessageParser<XY_Position>(() => new XY_Position());
-    private pb::UnknownFieldSet _unknownFields;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<XY_Position> Parser { get { return _parser; } }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pbr::MessageDescriptor Descriptor {
-      get { return global::Communication.Proto.MessageToClientReflection.Descriptor.MessageTypes[0]; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    pbr::MessageDescriptor pb::IMessage.Descriptor {
-      get { return Descriptor; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public XY_Position() {
-      OnConstruction();
-    }
-
-    partial void OnConstruction();
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public XY_Position(XY_Position other) : this() {
-      x_ = other.x_;
-      y_ = other.y_;
-      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public XY_Position Clone() {
-      return new XY_Position(this);
-    }
-
-    /// <summary>Field number for the "X" field.</summary>
-    public const int XFieldNumber = 1;
-    private double x_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public double X {
-      get { return x_; }
-      set {
-        x_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "Y" field.</summary>
-    public const int YFieldNumber = 2;
-    private double y_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public double Y {
-      get { return y_; }
-      set {
-        y_ = value;
-      }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override bool Equals(object other) {
-      return Equals(other as XY_Position);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(XY_Position other) {
-      if (ReferenceEquals(other, null)) {
-        return false;
-      }
-      if (ReferenceEquals(other, this)) {
-        return true;
-      }
-      if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(X, other.X)) return false;
-      if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(Y, other.Y)) return false;
-      return Equals(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override int GetHashCode() {
-      int hash = 1;
-      if (X != 0D) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(X);
-      if (Y != 0D) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(Y);
-      if (_unknownFields != null) {
-        hash ^= _unknownFields.GetHashCode();
-      }
-      return hash;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override string ToString() {
-      return pb::JsonFormatter.ToDiagnosticString(this);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void WriteTo(pb::CodedOutputStream output) {
-      if (X != 0D) {
-        output.WriteRawTag(9);
-        output.WriteDouble(X);
-      }
-      if (Y != 0D) {
-        output.WriteRawTag(17);
-        output.WriteDouble(Y);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(output);
-      }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int CalculateSize() {
-      int size = 0;
-      if (X != 0D) {
-        size += 1 + 8;
-      }
-      if (Y != 0D) {
-        size += 1 + 8;
-      }
-      if (_unknownFields != null) {
-        size += _unknownFields.CalculateSize();
-      }
-      return size;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(XY_Position other) {
-      if (other == null) {
-        return;
-      }
-      if (other.X != 0D) {
-        X = other.X;
-      }
-      if (other.Y != 0D) {
-        Y = other.Y;
-      }
-      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(pb::CodedInputStream input) {
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
-            break;
-          case 9: {
-            X = input.ReadDouble();
-            break;
-          }
-          case 17: {
-            Y = input.ReadDouble();
-            break;
-          }
-        }
-      }
-    }
-
-  }
-
-  public sealed partial class GameObjects : pb::IMessage<GameObjects> {
-    private static readonly pb::MessageParser<GameObjects> _parser = new pb::MessageParser<GameObjects>(() => new GameObjects());
-    private pb::UnknownFieldSet _unknownFields;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<GameObjects> Parser { get { return _parser; } }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pbr::MessageDescriptor Descriptor {
-      get { return global::Communication.Proto.MessageToClientReflection.Descriptor.MessageTypes[1]; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    pbr::MessageDescriptor pb::IMessage.Descriptor {
-      get { return Descriptor; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public GameObjects() {
-      OnConstruction();
-    }
-
-    partial void OnConstruction();
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public GameObjects(GameObjects other) : this() {
-      type_ = other.type_;
-      isMoving_ = other.isMoving_;
-      position_ = other.position_ != null ? other.position_.Clone() : null;
-      width_ = other.width_;
-      height_ = other.height_;
-      direction_ = other.direction_;
-      buff_ = other.buff_.Clone();
-      blockType_ = other.blockType_;
-      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public GameObjects Clone() {
-      return new GameObjects(this);
-    }
-
-    /// <summary>Field number for the "Type" field.</summary>
-    public const int TypeFieldNumber = 1;
-    private global::Communication.Proto.OBJECTS_TYPE type_ = 0;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Communication.Proto.OBJECTS_TYPE Type {
-      get { return type_; }
-      set {
-        type_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "isMoving" field.</summary>
-    public const int IsMovingFieldNumber = 2;
-    private bool isMoving_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool IsMoving {
-      get { return isMoving_; }
-      set {
-        isMoving_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "Position" field.</summary>
-    public const int PositionFieldNumber = 3;
-    private global::Communication.Proto.XY_Position position_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Communication.Proto.XY_Position Position {
-      get { return position_; }
-      set {
-        position_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "Width" field.</summary>
-    public const int WidthFieldNumber = 4;
-    private int width_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int Width {
-      get { return width_; }
-      set {
-        width_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "Height" field.</summary>
-    public const int HeightFieldNumber = 5;
-    private int height_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int Height {
-      get { return height_; }
-      set {
-        height_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "Direction" field.</summary>
-    public const int DirectionFieldNumber = 6;
-    private global::Communication.Proto.DIRECTION direction_ = 0;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Communication.Proto.DIRECTION Direction {
-      get { return direction_; }
-      set {
-        direction_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "Buff" field.</summary>
-    public const int BuffFieldNumber = 7;
-    private static readonly pb::FieldCodec<global::Communication.Proto.BUFF> _repeated_buff_codec
-        = pb::FieldCodec.ForEnum(58, x => (int) x, x => (global::Communication.Proto.BUFF) x);
-    private readonly pbc::RepeatedField<global::Communication.Proto.BUFF> buff_ = new pbc::RepeatedField<global::Communication.Proto.BUFF>();
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public pbc::RepeatedField<global::Communication.Proto.BUFF> Buff {
-      get { return buff_; }
-    }
-
-    /// <summary>Field number for the "BlockType" field.</summary>
-    public const int BlockTypeFieldNumber = 8;
-    private global::Communication.Proto.BLOCK_TYPE blockType_ = 0;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Communication.Proto.BLOCK_TYPE BlockType {
-      get { return blockType_; }
-      set {
-        blockType_ = value;
-      }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override bool Equals(object other) {
-      return Equals(other as GameObjects);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(GameObjects other) {
-      if (ReferenceEquals(other, null)) {
-        return false;
-      }
-      if (ReferenceEquals(other, this)) {
-        return true;
-      }
-      if (Type != other.Type) return false;
-      if (IsMoving != other.IsMoving) return false;
-      if (!object.Equals(Position, other.Position)) return false;
-      if (Width != other.Width) return false;
-      if (Height != other.Height) return false;
-      if (Direction != other.Direction) return false;
-      if(!buff_.Equals(other.buff_)) return false;
-      if (BlockType != other.BlockType) return false;
-      return Equals(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override int GetHashCode() {
-      int hash = 1;
-      if (Type != 0) hash ^= Type.GetHashCode();
-      if (IsMoving != false) hash ^= IsMoving.GetHashCode();
-      if (position_ != null) hash ^= Position.GetHashCode();
-      if (Width != 0) hash ^= Width.GetHashCode();
-      if (Height != 0) hash ^= Height.GetHashCode();
-      if (Direction != 0) hash ^= Direction.GetHashCode();
-      hash ^= buff_.GetHashCode();
-      if (BlockType != 0) hash ^= BlockType.GetHashCode();
-      if (_unknownFields != null) {
-        hash ^= _unknownFields.GetHashCode();
-      }
-      return hash;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override string ToString() {
-      return pb::JsonFormatter.ToDiagnosticString(this);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void WriteTo(pb::CodedOutputStream output) {
-      if (Type != 0) {
-        output.WriteRawTag(8);
-        output.WriteEnum((int) Type);
-      }
-      if (IsMoving != false) {
-        output.WriteRawTag(16);
-        output.WriteBool(IsMoving);
-      }
-      if (position_ != null) {
-        output.WriteRawTag(26);
-        output.WriteMessage(Position);
-      }
-      if (Width != 0) {
-        output.WriteRawTag(32);
-        output.WriteInt32(Width);
-      }
-      if (Height != 0) {
-        output.WriteRawTag(40);
-        output.WriteInt32(Height);
-      }
-      if (Direction != 0) {
-        output.WriteRawTag(48);
-        output.WriteEnum((int) Direction);
-      }
-      buff_.WriteTo(output, _repeated_buff_codec);
-      if (BlockType != 0) {
-        output.WriteRawTag(64);
-        output.WriteEnum((int) BlockType);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(output);
-      }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int CalculateSize() {
-      int size = 0;
-      if (Type != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Type);
-      }
-      if (IsMoving != false) {
-        size += 1 + 1;
-      }
-      if (position_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Position);
-      }
-      if (Width != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Width);
-      }
-      if (Height != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Height);
-      }
-      if (Direction != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Direction);
-      }
-      size += buff_.CalculateSize(_repeated_buff_codec);
-      if (BlockType != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) BlockType);
-      }
-      if (_unknownFields != null) {
-        size += _unknownFields.CalculateSize();
-      }
-      return size;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(GameObjects other) {
-      if (other == null) {
-        return;
-      }
-      if (other.Type != 0) {
-        Type = other.Type;
-      }
-      if (other.IsMoving != false) {
-        IsMoving = other.IsMoving;
-      }
-      if (other.position_ != null) {
-        if (position_ == null) {
-          Position = new global::Communication.Proto.XY_Position();
-        }
-        Position.MergeFrom(other.Position);
-      }
-      if (other.Width != 0) {
-        Width = other.Width;
-      }
-      if (other.Height != 0) {
-        Height = other.Height;
-      }
-      if (other.Direction != 0) {
-        Direction = other.Direction;
-      }
-      buff_.Add(other.buff_);
-      if (other.BlockType != 0) {
-        BlockType = other.BlockType;
-      }
-      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(pb::CodedInputStream input) {
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
-            break;
-          case 8: {
-            Type = (global::Communication.Proto.OBJECTS_TYPE) input.ReadEnum();
-            break;
-          }
-          case 16: {
-            IsMoving = input.ReadBool();
-            break;
-          }
-          case 26: {
-            if (position_ == null) {
-              Position = new global::Communication.Proto.XY_Position();
-            }
-            input.ReadMessage(Position);
-            break;
-          }
-          case 32: {
-            Width = input.ReadInt32();
-            break;
-          }
-          case 40: {
-            Height = input.ReadInt32();
-            break;
-          }
-          case 48: {
-            Direction = (global::Communication.Proto.DIRECTION) input.ReadEnum();
-            break;
-          }
-          case 58:
-          case 56: {
-            buff_.AddEntriesFrom(input, _repeated_buff_codec);
-            break;
-          }
-          case 64: {
-            BlockType = (global::Communication.Proto.BLOCK_TYPE) input.ReadEnum();
-            break;
-          }
-        }
-      }
-    }
-
-  }
-
   public sealed partial class MessageToClient : pb::IMessage<MessageToClient> {
     private static readonly pb::MessageParser<MessageToClient> _parser = new pb::MessageParser<MessageToClient>(() => new MessageToClient());
     private pb::UnknownFieldSet _unknownFields;
@@ -591,7 +48,7 @@ namespace Communication.Proto {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Communication.Proto.MessageToClientReflection.Descriptor.MessageTypes[2]; }
+      get { return global::Communication.Proto.MessageToClientReflection.Descriptor.MessageTypes[0]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -608,7 +65,14 @@ namespace Communication.Proto {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public MessageToClient(MessageToClient other) : this() {
-      gameObjectsList_ = other.gameObjectsList_.Clone();
+      playerIDAgent_ = other.playerIDAgent_;
+      playerIDClient_ = other.playerIDClient_;
+      playerPositionX_ = other.playerPositionX_;
+      playerPositionY_ = other.playerPositionY_;
+      facingDirection_ = other.facingDirection_;
+      isAdd_ = other.isAdd_;
+      objType_ = other.objType_;
+      objType2_ = other.objType2_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -617,14 +81,92 @@ namespace Communication.Proto {
       return new MessageToClient(this);
     }
 
-    /// <summary>Field number for the "GameObjectsList" field.</summary>
-    public const int GameObjectsListFieldNumber = 1;
-    private static readonly pbc::MapField<long, global::Communication.Proto.GameObjects>.Codec _map_gameObjectsList_codec
-        = new pbc::MapField<long, global::Communication.Proto.GameObjects>.Codec(pb::FieldCodec.ForInt64(8), pb::FieldCodec.ForMessage(18, global::Communication.Proto.GameObjects.Parser), 10);
-    private readonly pbc::MapField<long, global::Communication.Proto.GameObjects> gameObjectsList_ = new pbc::MapField<long, global::Communication.Proto.GameObjects>();
+    /// <summary>Field number for the "PlayerIDAgent" field.</summary>
+    public const int PlayerIDAgentFieldNumber = 1;
+    private int playerIDAgent_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public pbc::MapField<long, global::Communication.Proto.GameObjects> GameObjectsList {
-      get { return gameObjectsList_; }
+    public int PlayerIDAgent {
+      get { return playerIDAgent_; }
+      set {
+        playerIDAgent_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "PlayerIDClient" field.</summary>
+    public const int PlayerIDClientFieldNumber = 2;
+    private int playerIDClient_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int PlayerIDClient {
+      get { return playerIDClient_; }
+      set {
+        playerIDClient_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "PlayerPositionX" field.</summary>
+    public const int PlayerPositionXFieldNumber = 3;
+    private long playerPositionX_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public long PlayerPositionX {
+      get { return playerPositionX_; }
+      set {
+        playerPositionX_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "PlayerPositionY" field.</summary>
+    public const int PlayerPositionYFieldNumber = 4;
+    private long playerPositionY_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public long PlayerPositionY {
+      get { return playerPositionY_; }
+      set {
+        playerPositionY_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "FacingDirection" field.</summary>
+    public const int FacingDirectionFieldNumber = 5;
+    private int facingDirection_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int FacingDirection {
+      get { return facingDirection_; }
+      set {
+        facingDirection_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "IsAdd" field.</summary>
+    public const int IsAddFieldNumber = 6;
+    private bool isAdd_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool IsAdd {
+      get { return isAdd_; }
+      set {
+        isAdd_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "ObjType" field.</summary>
+    public const int ObjTypeFieldNumber = 7;
+    private int objType_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int ObjType {
+      get { return objType_; }
+      set {
+        objType_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "ObjType2" field.</summary>
+    public const int ObjType2FieldNumber = 8;
+    private int objType2_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int ObjType2 {
+      get { return objType2_; }
+      set {
+        objType2_ = value;
+      }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -640,14 +182,28 @@ namespace Communication.Proto {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!GameObjectsList.Equals(other.GameObjectsList)) return false;
+      if (PlayerIDAgent != other.PlayerIDAgent) return false;
+      if (PlayerIDClient != other.PlayerIDClient) return false;
+      if (PlayerPositionX != other.PlayerPositionX) return false;
+      if (PlayerPositionY != other.PlayerPositionY) return false;
+      if (FacingDirection != other.FacingDirection) return false;
+      if (IsAdd != other.IsAdd) return false;
+      if (ObjType != other.ObjType) return false;
+      if (ObjType2 != other.ObjType2) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
-      hash ^= GameObjectsList.GetHashCode();
+      if (PlayerIDAgent != 0) hash ^= PlayerIDAgent.GetHashCode();
+      if (PlayerIDClient != 0) hash ^= PlayerIDClient.GetHashCode();
+      if (PlayerPositionX != 0L) hash ^= PlayerPositionX.GetHashCode();
+      if (PlayerPositionY != 0L) hash ^= PlayerPositionY.GetHashCode();
+      if (FacingDirection != 0) hash ^= FacingDirection.GetHashCode();
+      if (IsAdd != false) hash ^= IsAdd.GetHashCode();
+      if (ObjType != 0) hash ^= ObjType.GetHashCode();
+      if (ObjType2 != 0) hash ^= ObjType2.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -661,7 +217,38 @@ namespace Communication.Proto {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void WriteTo(pb::CodedOutputStream output) {
-      gameObjectsList_.WriteTo(output, _map_gameObjectsList_codec);
+      if (PlayerIDAgent != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(PlayerIDAgent);
+      }
+      if (PlayerIDClient != 0) {
+        output.WriteRawTag(16);
+        output.WriteInt32(PlayerIDClient);
+      }
+      if (PlayerPositionX != 0L) {
+        output.WriteRawTag(24);
+        output.WriteInt64(PlayerPositionX);
+      }
+      if (PlayerPositionY != 0L) {
+        output.WriteRawTag(32);
+        output.WriteInt64(PlayerPositionY);
+      }
+      if (FacingDirection != 0) {
+        output.WriteRawTag(40);
+        output.WriteInt32(FacingDirection);
+      }
+      if (IsAdd != false) {
+        output.WriteRawTag(48);
+        output.WriteBool(IsAdd);
+      }
+      if (ObjType != 0) {
+        output.WriteRawTag(56);
+        output.WriteInt32(ObjType);
+      }
+      if (ObjType2 != 0) {
+        output.WriteRawTag(64);
+        output.WriteInt32(ObjType2);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -670,7 +257,30 @@ namespace Communication.Proto {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
-      size += gameObjectsList_.CalculateSize(_map_gameObjectsList_codec);
+      if (PlayerIDAgent != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(PlayerIDAgent);
+      }
+      if (PlayerIDClient != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(PlayerIDClient);
+      }
+      if (PlayerPositionX != 0L) {
+        size += 1 + pb::CodedOutputStream.ComputeInt64Size(PlayerPositionX);
+      }
+      if (PlayerPositionY != 0L) {
+        size += 1 + pb::CodedOutputStream.ComputeInt64Size(PlayerPositionY);
+      }
+      if (FacingDirection != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(FacingDirection);
+      }
+      if (IsAdd != false) {
+        size += 1 + 1;
+      }
+      if (ObjType != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(ObjType);
+      }
+      if (ObjType2 != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(ObjType2);
+      }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -682,7 +292,30 @@ namespace Communication.Proto {
       if (other == null) {
         return;
       }
-      gameObjectsList_.Add(other.gameObjectsList_);
+      if (other.PlayerIDAgent != 0) {
+        PlayerIDAgent = other.PlayerIDAgent;
+      }
+      if (other.PlayerIDClient != 0) {
+        PlayerIDClient = other.PlayerIDClient;
+      }
+      if (other.PlayerPositionX != 0L) {
+        PlayerPositionX = other.PlayerPositionX;
+      }
+      if (other.PlayerPositionY != 0L) {
+        PlayerPositionY = other.PlayerPositionY;
+      }
+      if (other.FacingDirection != 0) {
+        FacingDirection = other.FacingDirection;
+      }
+      if (other.IsAdd != false) {
+        IsAdd = other.IsAdd;
+      }
+      if (other.ObjType != 0) {
+        ObjType = other.ObjType;
+      }
+      if (other.ObjType2 != 0) {
+        ObjType2 = other.ObjType2;
+      }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -694,8 +327,36 @@ namespace Communication.Proto {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 10: {
-            gameObjectsList_.AddEntriesFrom(input, _map_gameObjectsList_codec);
+          case 8: {
+            PlayerIDAgent = input.ReadInt32();
+            break;
+          }
+          case 16: {
+            PlayerIDClient = input.ReadInt32();
+            break;
+          }
+          case 24: {
+            PlayerPositionX = input.ReadInt64();
+            break;
+          }
+          case 32: {
+            PlayerPositionY = input.ReadInt64();
+            break;
+          }
+          case 40: {
+            FacingDirection = input.ReadInt32();
+            break;
+          }
+          case 48: {
+            IsAdd = input.ReadBool();
+            break;
+          }
+          case 56: {
+            ObjType = input.ReadInt32();
+            break;
+          }
+          case 64: {
+            ObjType2 = input.ReadInt32();
             break;
           }
         }
