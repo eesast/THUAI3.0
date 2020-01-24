@@ -19,11 +19,6 @@ namespace Communication.Server
         public IPEndPoint EndPoint { get; set; }
         public string ID { get; set; }
 
-        private static Process StartAgent()
-        {
-            return Process.Start("Communication.Agent.exe", $"127.0.0.1:{Constants.ServerPort} {Constants.AgentPort}");
-        }
-
         public int PlayerCount => server.Count;
 
         public event MessageHandler MsgProcess;
@@ -66,7 +61,6 @@ namespace Communication.Server
             };
             full = new ManualResetEvent(false);
             server.Start();
-            StartAgent();
             status = DockerGameStatus.Listening;
             Constants.Debug("Waiting for clients");
             full.WaitOne();
@@ -98,7 +92,6 @@ namespace Communication.Server
         public void Dispose()
         {
             server.Dispose();
-            GC.SuppressFinalize(this);
         }
     }
 }

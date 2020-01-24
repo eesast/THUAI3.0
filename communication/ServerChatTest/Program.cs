@@ -27,13 +27,6 @@ namespace ServerChatTest
             }
         }
 
-        /// <summary>
-        /// server acts as a docker launcher as well
-        /// 
-        /// </summary>
-        /// <param name="args">
-        /// new string[] {tcp server port, docker id}
-        /// </param>
         public static void Main(string[] args)
         {
             using ICommunication comm = new CommunicationImpl();
