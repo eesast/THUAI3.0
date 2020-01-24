@@ -47,7 +47,7 @@ namespace Logic.Server
                 {
                     Agent = -2,
                     Client = -2,
-                    Message = msg
+                    Message = msgToCl
                 }
                 );
             }

@@ -9,10 +9,10 @@ namespace Communication.Proto
     internal delegate void OnReceiveCallback(Message message);
     internal delegate void OnAcceptCallback();
     internal delegate void OnClientQuit();
-    internal class IDServer
+    internal sealed class IDServer : IDisposable
     {
         private ConcurrentDictionary<int, IntPtr> clientList;
-        private TcpServer server;
+        private readonly TcpServer server;
         private bool isListening;
 
         public ushort Port
@@ -181,6 +181,12 @@ namespace Communication.Proto
                 Constants.Debug($"ServerSide: Data sent {message.Content.GetType().FullName}");
             }
 
+        }
+
+        public void Dispose()
+        {
+            server.Destroy();
+            GC.SuppressFinalize(this);
         }
 
         public event OnReceiveCallback OnReceive;

@@ -4,8 +4,8 @@ package google.protobuf;
 option csharp_namespace = "Communication.Proto";
 
 message MessageToServer {
-	int64 ID = 1;
-	int32 CommandType = 2;
-	int32 Parameter1 = 3;
-	int32 Parameter2 = 4;
+
+	int32 CommandType = 1;
+	int32 Parameter1 = 2;
+	int32 Parameter2 = 3;
 }
