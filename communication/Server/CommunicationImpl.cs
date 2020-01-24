@@ -2,6 +2,8 @@
 using System.Threading;
 using Communication.Proto;
 using System;
+using System.Diagnostics;
+
 namespace Communication.Server
 {
     public class CommunicationImpl : ICommunication
@@ -62,6 +64,8 @@ namespace Communication.Server
 
         public void SendMessage(ServerMessage message)
         {
+            if (message.Message is MessageToServer)
+                Debugger.Break();
             Message msg = new Message()
             {
                 Address = message.Agent, //封包Agent
