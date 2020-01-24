@@ -1,8 +1,0 @@
-syntax = "proto3";
-package google.protobuf;
-
-option csharp_namespace = "Communication.Proto";
-
-message LauncherID {
-    string id = 1;
-}

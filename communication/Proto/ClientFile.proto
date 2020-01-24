@@ -1,9 +1,0 @@
-syntax = "proto3";
-package google.protobuf;
-
-option csharp_namespace = "Communication.Proto";
-
-message ClientFile {
-    string clientID = 1;
-    bytes data = 2;
-}
