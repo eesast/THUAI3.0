@@ -37,11 +37,11 @@ namespace Logic.Server
             {
                 Move(new MoveEventArgs(msg.Parameter1 * Math.PI / 4, MoveDistancePerFrame));
                 MessageToClient msgToCl = new MessageToClient();
-                msgToCl.GameObjectsList.Add(this.ID, new GameObjects
+                msgToCl.GameObjectMessageList.Add(this.ID, new GameObjectMessage
                 {
-                    Type = OBJECTS_TYPE.Player,
-                    Position = new XY_Position { X = this.Position.x, Y = this.Position.y },
-                    Direction = (DIRECTION)(int)this.facingDirection
+                    Type = ObjectTypeMessage.People,
+                    Position = new XYPositionMessage { X = this.Position.x, Y = this.Position.y },
+                    Direction = (DirectionMessage)(int)this.facingDirection
                 }); ;
                 Program.server.ServerCommunication.SendMessage(new ServerMessage
                 {

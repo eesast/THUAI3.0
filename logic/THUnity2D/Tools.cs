@@ -51,5 +51,10 @@ namespace THUnity2D
                 angle -= 2 * Math.PI;
             return angle;
         }
+
+        public static void Debug(string str)
+        {
+            Console.WriteLine(str);
+        }
     }
 }

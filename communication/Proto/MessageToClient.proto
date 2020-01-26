@@ -3,30 +3,30 @@ package google.protobuf;
 
 option csharp_namespace = "Communication.Proto";
 
-message XY_Position{
+message XYPositionMessage{
 	double X = 1;
 	double Y = 2;
 }
-enum BUFF{
+enum ObjectTypeMessage{
+    People = 0;
+    Block = 1;
+    Dish = 2;
+    Tool = 3;
+    Trigger = 4;
+}
+enum BuffMessage{
 	Frozen = 0;
 	Stunned = 1;
 	SpeedUp = 2;
 	SlowDown = 3;
 }
-enum DISH_STATE{
+enum DishStateMessage{
 	Raw = 0;
 	Good = 1;
 	OverCooked = 2;
 }
-enum OBJECTS_TYPE{
-	Player = 0;
-	Block = 1;
-	Dish = 2;
-	Tool = 3;
-	Trigger = 4;
-}
-enum DIRECTION{
-	Right = 0;
+enum DirectionMessage{
+    Right = 0;
     RightUp = 1;
     Up = 2;
     LeftUp = 3;
@@ -35,24 +35,17 @@ enum DIRECTION{
     Down = 6;
     RightDown = 7;
 }
-enum BLOCK_TYPE{
-	Wall = 0;
-	Table = 1;
-	FoodPoint = 2;
-	Cooker = 3;
-	RubbishBin = 4;
-	TaskPoint = 5;
-}
-message GameObjects{
-	OBJECTS_TYPE Type = 1;
-	bool isMoving = 2;
-	XY_Position Position = 3;
-	int32 Width = 4;
-	int32 Height = 5;
-	DIRECTION Direction = 6;
-	repeated BUFF Buff = 7;
-	BLOCK_TYPE BlockType = 8;
+message GameObjectMessage{
+	int64 ID = 1;
+	ObjectTypeMessage Type = 2;
+	bool isMoving = 3;
+	XYPositionMessage Position = 4;
+	int32 Width = 5;
+	int32 Height = 6;
+	DirectionMessage Direction = 7;
+	repeated BuffMessage Buff = 8;
+	DishStateMessage DishState = 9;
 }
 message MessageToClient {
-	map<int64, GameObjects> GameObjectsList = 1;
+	map<int64, GameObjectMessage> GameObjectMessageList = 1;
 }

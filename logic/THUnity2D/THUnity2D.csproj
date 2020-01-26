@@ -5,6 +5,8 @@
     <TargetFrameworks>netcoreapp3.0;netstandard20</TargetFrameworks>
     <ApplicationIcon />
     <StartupObject />
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
 </Project>

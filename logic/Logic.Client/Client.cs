@@ -178,7 +178,7 @@ namespace Client
 
             if (this.id < 0)
             {
-                foreach (var gameObject in msg.GameObjectsList)
+                foreach (var gameObject in msg.GameObjectMessageList)
                 {
                     this.id = gameObject.Key;
                     this.Position.x = gameObject.Value.Position.X;
@@ -189,7 +189,7 @@ namespace Client
                     return;
                 }
             }
-            foreach (var gameObject in msg.GameObjectsList)
+            foreach (var gameObject in msg.GameObjectMessageList)
             {
                 this.Position.x = gameObject.Value.Position.X;
                 this.Position.y = gameObject.Value.Position.Y;
