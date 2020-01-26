@@ -84,7 +84,7 @@ namespace Logic.Server
             /*
             这里应该放定时、刷新物品等代码。
             */
-            while(true)
+            while (true)
             {
                 Console.ReadKey();
             }
