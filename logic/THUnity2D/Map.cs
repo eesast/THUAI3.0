@@ -87,16 +87,25 @@ namespace THUnity2D
         //目前只能检查边长为1的方块
         protected bool CheckXYPosition(GameObject childrenGameObject)
         {
-            this.Debug("Checking child's position : " + childrenGameObject.ID.ToString() + " : " + childrenGameObject.Position.ToString());
+            this.DebugWithoutEndline("Checking child's position : " + childrenGameObject.ID.ToString() + " : " + childrenGameObject.Position.ToString());
             if (!childrenGameObject.Blockable)
+            {
+                this.DebugWithoutID("true");
                 return true;
+            }
             if (childrenGameObject.Position.x - childrenGameObject.Width / 2 < 0
                 || childrenGameObject.Position.x + childrenGameObject.Width / 2 > this._width
                 || childrenGameObject.Position.y - childrenGameObject.Height / 2 < 0
                 || childrenGameObject.Position.y + childrenGameObject.Height / 2 > this._height)
+            {
+                this.DebugWithoutID("false");
                 return false;
+            }
             else if (this._grid[(uint)(childrenGameObject.Position.x), (uint)(childrenGameObject.Position.y)].blockableObject != null)
+            {
+                this.DebugWithoutID("false");
                 return false;
+            }
             XYPosition centerPosition = new XYPosition((int)(childrenGameObject.Position.x) + 0.5, (int)(childrenGameObject.Position.y) + 0.5);
             for (int i = 0; i < (int)(Direction.Size); i++)
             {
@@ -113,10 +122,12 @@ namespace THUnity2D
                     if (Math.Abs(_grid[(uint)toCheckPosition.x, (uint)toCheckPosition.y].blockableObject.Position.x - childrenGameObject.Position.x) < 1
                         && Math.Abs(_grid[(uint)toCheckPosition.x, (uint)toCheckPosition.y].blockableObject.Position.y - childrenGameObject.Position.y) < 1)
                     {
+                        this.DebugWithoutID("false");
                         return false;
                     }
                 }
             }
+            this.DebugWithoutID("true");
             return true;
         }
 
@@ -132,54 +143,46 @@ namespace THUnity2D
 
             XYPosition result = new XYPosition((uint)(childrenGameObject.Position.x) + 0.5, (uint)(childrenGameObject.Position.y) + 0.5);
             if (result.x < 0.5)
-                result.x = 0.5;
+                result = new XYPosition(0.5, result.y);
             else if (result.x > this._width - 0.5)
-                result.x = this._width - 0.5;
+                result = new XYPosition(this._width - 0.5, result.y);
             if (result.y < 0.5)
-                result.y = 0.5;
+                result = new XYPosition(result.x, 0.5);
             else if (result.y > this._height - 0.5)
-                result.y = this._height - 0.5;
+                result = new XYPosition(result.x, this._height - 0.5);
 
-            GameObject testGameObject = new GameObject { Blockable = true, Position = result };
+            GameObject testGameObject = new GameObject { Blockable = true, Position = new XYPosition(result.x, result.y) };
             for (int round = 1; round < Math.Max(this._width, this._height); round++)
             {
-                for (testGameObject.Position.y = result.y - round; testGameObject.Position.y <= result.y + round; testGameObject.Position.y += 2 * round)
-                    for (testGameObject.Position.x = result.x - round; testGameObject.Position.x <= result.x + round; testGameObject.Position.x++)
+                //this.Debug("round : " + round);
+                for (double ySearch = result.y - round; ySearch <= result.y + round + 0.1; ySearch += 2 * round)
+                {
+                    if (ySearch < 0 || ySearch > this._height)
+                        continue;
+                    for (double xSearch = result.x - round; xSearch <= result.x + round + 0.1; xSearch++)
                     {
+                        if (xSearch < 0 || xSearch > this._width)
+                            continue;
+                        testGameObject.Position = new XYPosition(xSearch, ySearch);
                         if (CheckXYPosition(testGameObject))
                             return testGameObject.Position;
                     }
-                for (testGameObject.Position.x = result.x - round; testGameObject.Position.x <= result.x + round; testGameObject.Position.x += 2 * round)
-                    for (testGameObject.Position.y = result.y - (round - 1); testGameObject.Position.y <= result.y + (round - 1); testGameObject.Position.y++)
+                }
+                for (double xSearch = result.x - round; xSearch <= result.x + round + 0.1; xSearch += 2 * round)
+                {
+                    if (xSearch < 0 || xSearch > this._width)
+                        continue;
+                    for (double ySearch = result.y - (round - 1); ySearch <= result.y + (round - 1) + 0.1; ySearch++)
                     {
+                        if (ySearch < 0 || ySearch > this._height)
+                            continue;
+                        testGameObject.Position = new XYPosition(xSearch, ySearch);
                         if (CheckXYPosition(testGameObject))
                             return testGameObject.Position;
                     }
+                }
             }
-
             return new XYPosition(0, 0);//找不到合法位置，返回无效值
-
-            //XYPosition[] searchers = new XYPosition[8];
-            //for (int i = 0; i < (int)Direction.Size; i++)
-            //{
-            //    searchers[i] = new XYPosition(result.x, result.y);
-            //}
-
-            //while (true)
-            //{
-            //    for (int i = 0; i < (int)Direction.Size; i++)
-            //    {
-            //        searchers[i] = searchers[i] + 2 * EightCornerVector[(Direction)i];
-            //    }
-            //    foreach (var searcher in searchers)
-            //    {
-            //        Debug("searcher : " + searcher.ToString());
-            //        if (CheckXYPosition(new GameObject { Blockable = true, Position = searcher }))
-            //        {
-            //            return searcher;
-            //        }
-            //    }
-            //}
         }
         protected override void OnChildrenMove(GameObject childrenGameObject, MoveEventArgs e, out PositionChangeReturnEventArgs eOut)
         {
@@ -194,6 +197,7 @@ namespace THUnity2D
 
             double angle = CorrectAngle(e.angle);
             XYPosition aim = eOut.position;
+            this.Debug("Move Children : " + childrenGameObject.ID + " aim : " + aim.ToString());
             Direction LeftOrRightBound = (angle >= Math.PI / 2 && angle < Math.PI * 3 / 2) ? Direction.Left : Direction.Right;
             Direction UpOrDownBound = (angle < Math.PI) ? Direction.Up : Direction.Down;
 
@@ -202,23 +206,23 @@ namespace THUnity2D
 
             if (LeftOrRightBound == Direction.Left)
             {
-                LeftRightExtends.Add(eOut.position.x - 0.5);
+                LeftRightExtends.Add(aim.x - 0.5);
                 LeftRightExtends.Add(childrenGameObject.Position.x - 0.5);
             }
             else
             {
                 LeftRightExtends.Add(childrenGameObject.Position.x + 0.5);
-                LeftRightExtends.Add(eOut.position.x + 0.5);
+                LeftRightExtends.Add(aim.x + 0.5);
             }
             if (UpOrDownBound == Direction.Down)
             {
-                UpDownExtends.Add(eOut.position.y - 0.5);
+                UpDownExtends.Add(aim.y - 0.5);
                 UpDownExtends.Add(childrenGameObject.Position.y - 0.5);
             }
             else
             {
                 UpDownExtends.Add(childrenGameObject.Position.y + 0.5);
-                UpDownExtends.Add(eOut.position.y + 0.5);
+                UpDownExtends.Add(aim.y + 0.5);
             }
 
             HashSet<Tuple<int, int>> toCheckPositions = new HashSet<Tuple<int, int>>();
@@ -236,204 +240,81 @@ namespace THUnity2D
 
             for (double xToCheck = (int)(LeftRightExtends[0] - 0.5) + 1 + 0.5; xToCheck < LeftRightExtends[1]; xToCheck++)
             {
-                if (LeftOrRightBound == Direction.Left)
-                {
-                    double yDown = childrenGameObject.Position.y - 0.5 + (xToCheck - (childrenGameObject.Position.x - 0.5)) * Math.Tan(e.angle);
-                    double yToCheck = (int)(yDown - 0.5) + 1 + 0.5;
+                double yDown = childrenGameObject.Position.y - 0.5 + (xToCheck - (childrenGameObject.Position.x + ((LeftOrRightBound == Direction.Left) ? -0.5 : 0.5))) * Math.Tan(e.angle);
+                double yToCheck = (int)(yDown - 0.5) + 1 + 0.5;
+                if (this._grid[(int)xToCheck, (int)yToCheck].blockableObject != childrenGameObject)
                     toCheckPositions.Add(new Tuple<int, int>((int)xToCheck, (int)yToCheck));
-                    foreach (var item in EightCornerVector)
-                    {
-                        toCheckPositions.Add(new Tuple<int, int>((int)(xToCheck + 2 * item.Value.x), (int)(yToCheck + 2 * item.Value.y)));
-                    }
-                }
-                else
+                foreach (var item in EightCornerVector)
                 {
-                    double yDown = childrenGameObject.Position.y - 0.5 + (xToCheck - (childrenGameObject.Position.x + 0.5)) * Math.Tan(e.angle);
-                    double yToCheck = (int)(yDown - 0.5) + 1 + 0.5;
-                    toCheckPositions.Add(new Tuple<int, int>((int)xToCheck, (int)yToCheck));
-                    foreach (var item in EightCornerVector)
-                    {
-                        toCheckPositions.Add(new Tuple<int, int>((int)(xToCheck + 2 * item.Value.x), (int)(yToCheck + 2 * item.Value.y)));
-                    }
+                    int xToAdd = (int)(xToCheck + 2 * item.Value.x);
+                    int yToAdd = (int)(yToCheck + 2 * item.Value.y);
+                    if (this._grid[xToAdd, yToAdd].blockableObject != childrenGameObject)
+                        toCheckPositions.Add(new Tuple<int, int>(xToAdd, yToAdd));
                 }
             }
             for (double yToCheck = (int)(UpDownExtends[0] - 0.5) + 1 + 0.5; yToCheck < UpDownExtends[1]; yToCheck++)
             {
-                if (UpOrDownBound == Direction.Down)
-                {
-                    double xLeft = childrenGameObject.Position.x - 0.5 + (yToCheck - (childrenGameObject.Position.y - 0.5)) / Math.Tan(e.angle);
-                    double xToCheck = (int)(xLeft - 0.5) + 1 + 0.5;
+                double xLeft = childrenGameObject.Position.x - 0.5 + (yToCheck - (childrenGameObject.Position.y + ((UpOrDownBound == Direction.Down) ? -0.5 : 0.5))) / Math.Tan(e.angle);
+                double xToCheck = (int)(xLeft - 0.5) + 1 + 0.5;
+                if (this._grid[(int)xToCheck, (int)yToCheck].blockableObject != childrenGameObject)
                     toCheckPositions.Add(new Tuple<int, int>((int)xToCheck, (int)yToCheck));
-                    foreach (var item in EightCornerVector)
-                    {
-                        toCheckPositions.Add(new Tuple<int, int>((int)(xToCheck + 2 * item.Value.x), (int)(yToCheck + 2 * item.Value.y)));
-                    }
-                }
-                else
+                foreach (var item in EightCornerVector)
                 {
-                    double xLeft = childrenGameObject.Position.x - 0.5 + (yToCheck - (childrenGameObject.Position.y + 0.5)) / Math.Tan(e.angle);
-                    double xToCheck = (int)(xLeft - 0.5) + 1 + 0.5;
-                    toCheckPositions.Add(new Tuple<int, int>((int)xToCheck, (int)yToCheck));
-                    foreach (var item in EightCornerVector)
-                    {
-                        toCheckPositions.Add(new Tuple<int, int>((int)(xToCheck + 2 * item.Value.x), (int)(yToCheck + 2 * item.Value.y)));
-                    }
+                    int xToAdd = (int)(xToCheck + 2 * item.Value.x);
+                    int yToAdd = (int)(yToCheck + 2 * item.Value.y);
+                    if (this._grid[xToAdd, yToAdd].blockableObject != childrenGameObject)
+                        toCheckPositions.Add(new Tuple<int, int>(xToAdd, yToAdd));
                 }
             }
 
             double resultDistance = e.distance;
+            XYPosition deltaVector = aim - childrenGameObject.Position;
             Debug("initialize resultDistance : " + resultDistance);
             foreach (var toCheckPosition in toCheckPositions)
             {
-                Debug("toCheckPosition : " + toCheckPosition.Item1 + " , " + toCheckPosition.Item2);
+                Debug("toCheckPosition : (" + toCheckPosition.Item1 + "," + toCheckPosition.Item2 + ")");
                 double tempResultDistance = resultDistance;
-                if (this._grid[toCheckPosition.Item1, toCheckPosition.Item2].blockableObject != null
-                    && this._grid[toCheckPosition.Item1, toCheckPosition.Item2].blockableObject != childrenGameObject)
+                if (this._grid[toCheckPosition.Item1, toCheckPosition.Item2].blockableObject == null
+                    || this._grid[toCheckPosition.Item1, toCheckPosition.Item2].blockableObject == childrenGameObject)
                 {
-                    double LeftRightDistance = resultDistance;
-                    double UpDownDistance = resultDistance;
-                    if (LeftOrRightBound == Direction.Left)
-                    {
-                        if (childrenGameObject.Position.x - 0.5 <= this._grid[toCheckPosition.Item1, toCheckPosition.Item2].blockableObject.Position.x + 0.5)
-                        {
-                            LeftRightDistance = 0;
-                        }
-                        else
-                        {
-                            LeftRightDistance = Math.Min(
-                                ((this._grid[toCheckPosition.Item1, toCheckPosition.Item2].blockableObject.Position.x + 0.5) - (childrenGameObject.Position.x - 0.5)) / Math.Cos(e.angle)
-                                , LeftRightDistance);
-                        }
-                    }
-                    else
-                    {
-                        if (childrenGameObject.Position.x + 0.5 >= this._grid[toCheckPosition.Item1, toCheckPosition.Item2].blockableObject.Position.x - 0.5)
-                        {
-                            LeftRightDistance = 0;
-                        }
-                        else
-                        {
-                            LeftRightDistance = Math.Min(
-                                ((this._grid[toCheckPosition.Item1, toCheckPosition.Item2].blockableObject.Position.x - 0.5) - (childrenGameObject.Position.x + 0.5)) / Math.Cos(e.angle)
-                                , LeftRightDistance);
-                        }
-                    }
-
-                    if (UpOrDownBound == Direction.Down)
-                    {
-                        if (childrenGameObject.Position.y - 0.5 <= this._grid[toCheckPosition.Item1, toCheckPosition.Item2].blockableObject.Position.y + 0.5)
-                        {
-                            UpDownDistance = 0;
-                        }
-                        else
-                        {
-                            UpDownDistance = Math.Min(
-                                ((this._grid[toCheckPosition.Item1, toCheckPosition.Item2].blockableObject.Position.y + 0.5) - (childrenGameObject.Position.y - 0.5)) / Math.Sin(e.angle)
-                                , UpDownDistance);
-                        }
-                    }
-                    else
-                    {
-                        if (childrenGameObject.Position.y + 0.5 >= this._grid[toCheckPosition.Item1, toCheckPosition.Item2].blockableObject.Position.y - 0.5)
-                        {
-                            UpDownDistance = 0;
-                        }
-                        else
-                        {
-                            UpDownDistance = Math.Min(
-                                ((this._grid[toCheckPosition.Item1, toCheckPosition.Item2].blockableObject.Position.y - 0.5) - (childrenGameObject.Position.y + 0.5)) / Math.Sin(e.angle)
-                                , UpDownDistance);
-                        }
-                    }
-
-                    tempResultDistance = Math.Max(LeftRightDistance, UpDownDistance);
+                    continue;
                 }
+
+                DebugWithoutID("Not Null");
+
+                double LeftRightDistance = resultDistance;
+                double intervalX = (LeftOrRightBound == Direction.Left) ?
+                    Math.Abs((this._grid[toCheckPosition.Item1, toCheckPosition.Item2].blockableObject.Position.x + 0.5) - (childrenGameObject.Position.x - 0.5)) :
+                    Math.Abs((this._grid[toCheckPosition.Item1, toCheckPosition.Item2].blockableObject.Position.x - 0.5) - (childrenGameObject.Position.x + 0.5));
+                if (intervalX < Math.Abs(deltaVector.x))
+                {
+                    double yDown = childrenGameObject.Position.y - 0.5 + intervalX * Math.Sign(deltaVector.x) * deltaVector.y / deltaVector.x;
+                    if (yDown > this._grid[toCheckPosition.Item1, toCheckPosition.Item2].blockableObject.Position.y - 0.5 - 1
+                        && yDown < this._grid[toCheckPosition.Item1, toCheckPosition.Item2].blockableObject.Position.y + 0.5)
+                        LeftRightDistance = intervalX * resultDistance / Math.Abs(deltaVector.x);
+                }
+
+                double UpDownDistancce = resultDistance;
+                double intervalY = (UpOrDownBound == Direction.Down) ?
+                    Math.Abs((this._grid[toCheckPosition.Item1, toCheckPosition.Item2].blockableObject.Position.y + 0.5) - (childrenGameObject.Position.y - 0.5)) :
+                    Math.Abs((this._grid[toCheckPosition.Item1, toCheckPosition.Item2].blockableObject.Position.y - 0.5) - (childrenGameObject.Position.y + 0.5));
+                if (intervalY < Math.Abs(deltaVector.y))
+                {
+                    double xLeft = childrenGameObject.Position.x - 0.5 + intervalY * Math.Sign(deltaVector.y) * deltaVector.x / deltaVector.y;
+                    if (xLeft > this._grid[toCheckPosition.Item1, toCheckPosition.Item2].blockableObject.Position.x - 0.5 - 1
+                        && xLeft < this._grid[toCheckPosition.Item1, toCheckPosition.Item2].blockableObject.Position.x + 0.5)
+                        UpDownDistancce = intervalY * resultDistance / Math.Abs(deltaVector.y);
+                }
+
+                tempResultDistance = Math.Min(LeftRightDistance, UpDownDistancce);
                 if (tempResultDistance < resultDistance)
                     resultDistance = tempResultDistance;
             }
-
             Debug("resultDistance : " + resultDistance);
-            eOut = new PositionChangeReturnEventArgs(true, childrenGameObject.Position + new XYPosition(resultDistance * Math.Cos(e.angle), resultDistance * Math.Sin(e.angle)));
-            //double tempAngle = CorrectAngle(e.angle);
-            //Direction direction = (Direction)(int)(tempAngle / (Math.PI / 4));
-            //XYPosition aim = childrenGameObject.Position + e.distance * EightUnitVector[direction];
-            //double minInterval = e.distance;
-            ////Console.WriteLine("init minInterval : " + minInterval.ToString());
-            //bool isSuccessful = true;
-            //if (this._grid[(uint)aim.x, (uint)aim.y].blockableObject != null
-            //    && this._grid[(uint)aim.x, (uint)aim.y].blockableObject != childrenGameObject)
-            //{
-            //    isSuccessful = false;
-            //    if (Convert.ToBoolean((byte)direction & 1))
-            //    {
-            //        Direction[] boundDirection = new Direction[2] {
-            //            (Direction)(((int)direction - 1) % 8),
-            //            (Direction)(((int)direction + 1) % 8)
-            //        };
-            //        minInterval = Math.Max(
-            //            ((this._grid[(uint)aim.x, (uint)aim.y].blockableObject.Position - EightCornerVector[boundDirection[0]] - (childrenGameObject.Position + EightCornerVector[boundDirection[0]])).get(Convert.ToBoolean((int)boundDirection[0] & 2))) * (Convert.ToBoolean((int)boundDirection[0] & 4) ? -1 : 1),
-            //            ((this._grid[(uint)aim.x, (uint)aim.y].blockableObject.Position - EightCornerVector[boundDirection[1]] - (childrenGameObject.Position + EightCornerVector[boundDirection[1]])).get(Convert.ToBoolean((int)boundDirection[1] & 2))) * (Convert.ToBoolean((int)boundDirection[1] & 4) ? -1 : 1)
-            //            );
-            //    }
-            //    else
-            //    {
-            //        minInterval = (this._grid[(uint)aim.x, (uint)aim.y].blockableObject.Position - EightCornerVector[direction] - (childrenGameObject.Position + EightCornerVector[direction])).get(Convert.ToBoolean((int)direction & 2)) * (Convert.ToBoolean((int)direction & 4) ? -1 : 1);
-            //    }
-            //}
-            //else
-            //{
-            //    for (int i = 5; i <= 11; i++)
-            //    {
-            //        XYPosition toCheck = new XYPosition((uint)aim.x + 0.5, (uint)aim.y + 0.5) + EightUnitVector[(Direction)(((byte)direction + i) % 8)];
-            //        if (this._grid[(uint)toCheck.x, (uint)toCheck.y].blockableObject != null
-            //            && this._grid[(uint)toCheck.x, (uint)toCheck.y].blockableObject != childrenGameObject)
-            //        {
-            //            if (Math.Abs(this._grid[(uint)toCheck.x, (uint)toCheck.y].blockableObject.Position.x - aim.x) < 1
-            //                && Math.Abs(this._grid[(uint)toCheck.x, (uint)toCheck.y].blockableObject.Position.y - aim.y) < 1)
-            //            {
-            //                isSuccessful = false;
-            //                double tempMinInterval = 1;
-            //                if (Convert.ToBoolean((byte)direction & 1))
-            //                {
-            //                    Direction[] boundDirection = new Direction[2] { (Direction)(((int)direction - 1) % 8), (Direction)(((int)direction + 1) % 8) };
-            //                    tempMinInterval = Math.Max(
-            //                        ((this._grid[(uint)toCheck.x, (uint)toCheck.y].blockableObject.Position - EightCornerVector[boundDirection[0]] - (childrenGameObject.Position + EightCornerVector[boundDirection[0]])).get(Convert.ToBoolean((int)boundDirection[0] & 2))) * (Convert.ToBoolean((int)boundDirection[0] & 4) ? -1 : 1),
-            //                        ((this._grid[(uint)toCheck.x, (uint)toCheck.y].blockableObject.Position - EightCornerVector[boundDirection[1]] - (childrenGameObject.Position + EightCornerVector[boundDirection[1]])).get(Convert.ToBoolean((int)boundDirection[1] & 2))) * (Convert.ToBoolean((int)boundDirection[1] & 4) ? -1 : 1)
-            //                        );
-            //                }
-            //                else
-            //                {
-            //                    //Console.WriteLine("direction : " + ((int)direction).ToString());
-            //                    //Console.WriteLine("Block : " + this._grid[(uint)toCheck.x, (uint)toCheck.y, 0].xyPosition.ToString());
-            //                    //Console.WriteLine("Corner : " + EightCornerVector[direction].ToString());
-
-            //                    tempMinInterval = (this._grid[(uint)toCheck.x, (uint)toCheck.y].blockableObject.Position - EightCornerVector[direction] - (childrenGameObject.Position + EightCornerVector[direction])).get(Convert.ToBoolean((int)direction & 2)) * (Convert.ToBoolean((int)direction & 4) ? -1 : 1);
-            //                    //Console.WriteLine("tempInInterval : " + tempMinInterval.ToString());
-            //                }
-            //                if (tempMinInterval < minInterval)
-            //                {
-            //                    minInterval = tempMinInterval;
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-
-            //if (!isSuccessful)
-            //{
-            //    aim = (minInterval * 2) * EightCornerVector[direction] + childrenGameObject.Position;
-            //}
-
-            //if ((uint)childrenGameObject.Position.x != (uint)aim.x || (uint)childrenGameObject.Position.y != (uint)aim.y)
-            //{
-            //    this._grid[(uint)aim.x, (uint)aim.y].blockableObject = this._grid[(uint)childrenGameObject.Position.x, (uint)childrenGameObject.Position.y].blockableObject;
-            //    this._grid[(uint)childrenGameObject.Position.x, (uint)childrenGameObject.Position.y].blockableObject = null;
-            //    //Console.WriteLine("new self , " + xyPosition.ToString());
-            //}
-            //else
-            //{
-            //    childrenGameObject.Position = aim;
-            //}
+            XYPosition resultPosition = childrenGameObject.Position + new XYPosition(resultDistance * Math.Cos(e.angle), resultDistance * Math.Sin(e.angle));
+            this._grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].blockableObject = null;
+            this._grid[(int)resultPosition.x, (int)resultPosition.y].blockableObject = childrenGameObject;
+            eOut = new PositionChangeReturnEventArgs(true, resultPosition);
         }
     }
     public class MapCell

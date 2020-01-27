@@ -71,6 +71,7 @@ namespace THUnity2D
             get { return this._position; }
             set
             {
+                this.Debug("Prompt to change position to : " + value.ToString());
                 PositionChanged(new PositionChangedEventArgs(this._position, value));
                 this.Debug("change position to : " + this._position.ToString());
             }
@@ -116,14 +117,7 @@ namespace THUnity2D
                     if (tempPositionChangeReturnEventArgs.isReset)
                         positionChangeReturnEventArgs = tempPositionChangeReturnEventArgs;
                 }
-                if (positionChangeReturnEventArgs.isReset)
-                {
-                    this._position = positionChangeReturnEventArgs.position;
-                }
-                else
-                {
-                    this._position = e.position;
-                }
+                this._position = positionChangeReturnEventArgs.position;
             }
             else
             {
@@ -263,6 +257,14 @@ namespace THUnity2D
         public void Debug(string str)
         {
             Console.WriteLine(this.GetType() + " " + this.ID + " : " + str);
+        }
+        public void DebugWithoutEndline(string str)
+        {
+            Console.Write(this.GetType() + " " + this.ID + " : " + str + " ");
+        }
+        public void DebugWithoutID(string str)
+        {
+            Console.WriteLine(str);
         }
     }
 }

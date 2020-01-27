@@ -6,8 +6,8 @@ namespace THUnity2D
 {
     public class XYPosition
     {
-        public double x { get; set; }
-        public double y { get; set; }
+        public readonly double x;
+        public readonly double y;
         public XYPosition(double x_t = 0, double y_t = 0)
         {
             x = x_t;
@@ -15,31 +15,19 @@ namespace THUnity2D
         }
         public static XYPosition operator +(XYPosition a, XYPosition b)
         {
-            XYPosition result = new XYPosition();
-            result.x = a.x + b.x;
-            result.y = a.y + b.y;
-            return result;
+            return new XYPosition(a.x + b.x, a.y + b.y);
         }
         public static XYPosition operator -(XYPosition a, XYPosition b)
         {
-            XYPosition result = new XYPosition();
-            result.x = a.x - b.x;
-            result.y = a.y - b.y;
-            return result;
+            return new XYPosition(a.x - b.x, a.y - b.y);
         }
         public static XYPosition operator *(XYPosition a, double b)
         {
-            XYPosition result = new XYPosition();
-            result.x = a.x * b;
-            result.y = a.y * b;
-            return result;
+            return new XYPosition(a.x * b, a.y * b);
         }
         public static XYPosition operator *(double b, XYPosition a)
         {
-            XYPosition result = new XYPosition();
-            result.x = a.x * b;
-            result.y = a.y * b;
-            return result;
+            return new XYPosition(a.x * b, a.y * b);
         }
         public double get(bool flag)
         {
