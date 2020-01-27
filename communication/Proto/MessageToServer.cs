@@ -24,14 +24,14 @@ namespace Communication.Proto {
     static MessageToServerReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChVNZXNzYWdlVG9TZXJ2ZXIucHJvdG8SD2dvb2dsZS5wcm90b2J1ZiJOCg9N",
-            "ZXNzYWdlVG9TZXJ2ZXISEwoLQ29tbWFuZFR5cGUYASABKAUSEgoKUGFyYW1l",
-            "dGVyMRgCIAEoBRISCgpQYXJhbWV0ZXIyGAMgASgFQhaqAhNDb21tdW5pY2F0",
-            "aW9uLlByb3RvYgZwcm90bzM="));
+            "ChVNZXNzYWdlVG9TZXJ2ZXIucHJvdG8SD2dvb2dsZS5wcm90b2J1ZiJaCg9N",
+            "ZXNzYWdlVG9TZXJ2ZXISCgoCSUQYASABKAMSEwoLQ29tbWFuZFR5cGUYAiAB",
+            "KAUSEgoKUGFyYW1ldGVyMRgDIAEoBRISCgpQYXJhbWV0ZXIyGAQgASgFQhaq",
+            "AhNDb21tdW5pY2F0aW9uLlByb3RvYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.MessageToServer), global::Communication.Proto.MessageToServer.Parser, new[]{ "CommandType", "Parameter1", "Parameter2" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.MessageToServer), global::Communication.Proto.MessageToServer.Parser, new[]{ "ID", "CommandType", "Parameter1", "Parameter2" }, null, null, null)
           }));
     }
     #endregion
@@ -63,6 +63,7 @@ namespace Communication.Proto {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public MessageToServer(MessageToServer other) : this() {
+      iD_ = other.iD_;
       commandType_ = other.commandType_;
       parameter1_ = other.parameter1_;
       parameter2_ = other.parameter2_;
@@ -74,8 +75,19 @@ namespace Communication.Proto {
       return new MessageToServer(this);
     }
 
+    /// <summary>Field number for the "ID" field.</summary>
+    public const int IDFieldNumber = 1;
+    private long iD_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public long ID {
+      get { return iD_; }
+      set {
+        iD_ = value;
+      }
+    }
+
     /// <summary>Field number for the "CommandType" field.</summary>
-    public const int CommandTypeFieldNumber = 1;
+    public const int CommandTypeFieldNumber = 2;
     private int commandType_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CommandType {
@@ -86,7 +98,7 @@ namespace Communication.Proto {
     }
 
     /// <summary>Field number for the "Parameter1" field.</summary>
-    public const int Parameter1FieldNumber = 2;
+    public const int Parameter1FieldNumber = 3;
     private int parameter1_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int Parameter1 {
@@ -97,7 +109,7 @@ namespace Communication.Proto {
     }
 
     /// <summary>Field number for the "Parameter2" field.</summary>
-    public const int Parameter2FieldNumber = 3;
+    public const int Parameter2FieldNumber = 4;
     private int parameter2_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int Parameter2 {
@@ -120,6 +132,7 @@ namespace Communication.Proto {
       if (ReferenceEquals(other, this)) {
         return true;
       }
+      if (ID != other.ID) return false;
       if (CommandType != other.CommandType) return false;
       if (Parameter1 != other.Parameter1) return false;
       if (Parameter2 != other.Parameter2) return false;
@@ -129,6 +142,7 @@ namespace Communication.Proto {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
+      if (ID != 0L) hash ^= ID.GetHashCode();
       if (CommandType != 0) hash ^= CommandType.GetHashCode();
       if (Parameter1 != 0) hash ^= Parameter1.GetHashCode();
       if (Parameter2 != 0) hash ^= Parameter2.GetHashCode();
@@ -145,16 +159,20 @@ namespace Communication.Proto {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void WriteTo(pb::CodedOutputStream output) {
-      if (CommandType != 0) {
+      if (ID != 0L) {
         output.WriteRawTag(8);
+        output.WriteInt64(ID);
+      }
+      if (CommandType != 0) {
+        output.WriteRawTag(16);
         output.WriteInt32(CommandType);
       }
       if (Parameter1 != 0) {
-        output.WriteRawTag(16);
+        output.WriteRawTag(24);
         output.WriteInt32(Parameter1);
       }
       if (Parameter2 != 0) {
-        output.WriteRawTag(24);
+        output.WriteRawTag(32);
         output.WriteInt32(Parameter2);
       }
       if (_unknownFields != null) {
@@ -165,6 +183,9 @@ namespace Communication.Proto {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
+      if (ID != 0L) {
+        size += 1 + pb::CodedOutputStream.ComputeInt64Size(ID);
+      }
       if (CommandType != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(CommandType);
       }
@@ -184,6 +205,9 @@ namespace Communication.Proto {
     public void MergeFrom(MessageToServer other) {
       if (other == null) {
         return;
+      }
+      if (other.ID != 0L) {
+        ID = other.ID;
       }
       if (other.CommandType != 0) {
         CommandType = other.CommandType;
@@ -206,14 +230,18 @@ namespace Communication.Proto {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 8: {
-            CommandType = input.ReadInt32();
+            ID = input.ReadInt64();
             break;
           }
           case 16: {
-            Parameter1 = input.ReadInt32();
+            CommandType = input.ReadInt32();
             break;
           }
           case 24: {
+            Parameter1 = input.ReadInt32();
+            break;
+          }
+          case 32: {
             Parameter2 = input.ReadInt32();
             break;
           }

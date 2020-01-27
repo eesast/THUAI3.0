@@ -29,7 +29,7 @@ namespace Logic.Server
         {
             ServerCommunication.Initialize();
             ServerCommunication.MsgProcess += OnRecieve;
-            ServerCommunication.Port = serverPort;
+            //ServerCommunication.Port = serverPort;
             ServerCommunication.GameStart();
 
             for (int a = 0; a < Constants.AgentCount; a++)
@@ -39,11 +39,11 @@ namespace Logic.Server
                     playerList.Add(new Tuple<int, int>(a, c), new Player(2.5, 1.5));//new Random().Next(2, WORLD_MAP_WIDTH - 2), new Random().Next(2, WORLD_MAP_HEIGHT - 2)));
                     playerList[new Tuple<int, int>(a, c)].Parent = WorldMap;
                     MessageToClient msg = new MessageToClient();
-                    msg.GameObjectsList.Add(playerList[new Tuple<int, int>(a, c)].ID, new GameObjects
+                    msg.GameObjectMessageList.Add(playerList[new Tuple<int, int>(a, c)].ID, new GameObjectMessage
                     {
-                        Type = OBJECTS_TYPE.Player,
-                        Position = new XY_Position { X = playerList[new Tuple<int, int>(a, c)].Position.x, Y = playerList[new Tuple<int, int>(a, c)].Position.y },
-                        Direction = (DIRECTION)(int)playerList[new Tuple<int, int>(a, c)].facingDirection
+                        Type = ObjectTypeMessage.People,
+                        Position = new XYPositionMessage { X = playerList[new Tuple<int, int>(a, c)].Position.x, Y = playerList[new Tuple<int, int>(a, c)].Position.y },
+                        Direction = (DirectionMessage)(int)playerList[new Tuple<int, int>(a, c)].facingDirection
                     });
                     ServerCommunication.SendMessage(new ServerMessage
                     {
@@ -57,11 +57,11 @@ namespace Logic.Server
             foreach (var item in playerList)
             {
                 MessageToClient msg = new MessageToClient();
-                msg.GameObjectsList.Add(item.Value.ID, new GameObjects
+                msg.GameObjectMessageList.Add(item.Value.ID, new GameObjectMessage
                 {
-                    Type = OBJECTS_TYPE.Player,
-                    Position = new XY_Position { X = item.Value.Position.x, Y = item.Value.Position.y },
-                    Direction = (DIRECTION)(int)item.Value.facingDirection
+                    Type = ObjectTypeMessage.People,
+                    Position = new XYPositionMessage { X = item.Value.Position.x, Y = item.Value.Position.y },
+                    Direction = (DirectionMessage)(int)item.Value.facingDirection
                 }); ;
                 ServerCommunication.SendMessage(new ServerMessage
                 {
@@ -84,7 +84,7 @@ namespace Logic.Server
             /*
             这里应该放定时、刷新物品等代码。
             */
-            while(true)
+            while (true)
             {
                 Console.ReadKey();
             }

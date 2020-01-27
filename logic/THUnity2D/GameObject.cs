@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using static THUnity2D.Tools;
 
 namespace THUnity2D
 {
@@ -12,23 +13,28 @@ namespace THUnity2D
         private static Int64 currentMaxID = 0;
         public readonly Int64 ID;
 
-        protected GameObject _parent;
+        protected GameObject? _parent;
         public GameObject Parent
         {
             get { return _parent; }
             set
             {
-                if (this._parent == null)
+                if (value != null && this._parent != null)
                 {
-                    this._parent = value;
-                }
-                else if (value != null)
-                {
+                    this.Debug("Reset Parent to : " + value.ID);
+                    this._parent.OnChildrenDelete(this);
                     this._parent = value;
                     this._parent.OnChildrenAdded(this);
                 }
-                else
+                else if (value != null && this._parent == null)
                 {
+                    this.Debug("Set new Parent : " + value.ID);
+                    this._parent = value;
+                    this._parent.OnChildrenAdded(this);
+                }
+                else if (value == null && this._parent != null)
+                {
+                    this.Debug("Delete Parent : " + this._parent.ID);
                     this._parent.OnChildrenDelete(this);
                     this._parent = null;
                 }
@@ -49,33 +55,79 @@ namespace THUnity2D
             childrenObject.OnPositionChanged -= this.OnChildrenPositionChanged;
             childrenObject.OnMove -= this.OnChildrenMove;
         }
-        protected virtual void OnChildrenPositionChanged(GameObject gameObject, PositionChangedEventArgs e)
+        protected virtual void OnChildrenPositionChanged(GameObject gameObject, PositionChangedEventArgs e, out PositionChangeReturnEventArgs eOut)
         {
-            ;
+            eOut = new PositionChangeReturnEventArgs(false, new XYPosition());
         }
-        protected virtual void OnChildrenMove(GameObject gameObject, MoveEventArgs e, out bool isMoved)
+        protected virtual void OnChildrenMove(GameObject gameObject, MoveEventArgs e, out PositionChangeReturnEventArgs eOut)
         {
-            isMoved = true;
+            eOut = new PositionChangeReturnEventArgs(false, gameObject.Position + new XYPosition(e.distance * Math.Cos(e.angle), e.distance * Math.Sin(e.angle)));
         }
 
         //Position
         protected XYPosition _position = new XYPosition();
-        public XYPosition Position { get { return this._position; } set { this._position = value; PositionChanged(new PositionChangedEventArgs(this._position)); } }
-        public class PositionChangedEventArgs : EventArgs
+        public XYPosition Position
         {
-            public readonly XYPosition position;
-            public PositionChangedEventArgs(XYPosition position_t)
+            get { return this._position; }
+            set
             {
-                this.position = position_t;
+                PositionChanged(new PositionChangedEventArgs(this._position, value));
+                this.Debug("change position to : " + this._position.ToString());
             }
         }
-        public delegate void PositionChangedHandler(GameObject sender, PositionChangedEventArgs e);
+        public class PositionChangedEventArgs : EventArgs
+        {
+            public readonly XYPosition previousPosition;
+            public readonly XYPosition position;
+            public PositionChangedEventArgs(XYPosition previousPosition, XYPosition position)
+            {
+                this.previousPosition = previousPosition;
+                this.position = position;
+            }
+        }
+        public class PositionChangeReturnEventArgs : EventArgs
+        {
+            public readonly bool isReset;
+            public readonly XYPosition position;
+            public PositionChangeReturnEventArgs(bool isReset, XYPosition position)
+            {
+                this.isReset = isReset;
+                this.position = position;
+            }
+            public PositionChangeReturnEventArgs(PositionChangeReturnEventArgs e)
+            {
+                this.isReset = e.isReset;
+                this.position = e.position;
+            }
+        }
+        public delegate void PositionChangedHandler(GameObject sender, PositionChangedEventArgs e, out PositionChangeReturnEventArgs eOut);
         public event PositionChangedHandler OnPositionChanged; // 声明事件
         protected virtual void PositionChanged(PositionChangedEventArgs e)
         {
             if (OnPositionChanged != null)
             {
-                OnPositionChanged(this, e); // 调用所有注册对象的方法
+                Delegate[] delegates = OnPositionChanged.GetInvocationList();
+                PositionChangeReturnEventArgs positionChangeReturnEventArgs = new PositionChangeReturnEventArgs(false, e.position);
+                foreach (var delegateItem in delegates)
+                {
+                    PositionChangeReturnEventArgs tempPositionChangeReturnEventArgs = new PositionChangeReturnEventArgs(false, e.position);
+                    PositionChangedHandler PositionChangedMethod = (PositionChangedHandler)delegateItem;
+                    PositionChangedMethod(this, e, out tempPositionChangeReturnEventArgs);
+                    if (tempPositionChangeReturnEventArgs.isReset)
+                        positionChangeReturnEventArgs = tempPositionChangeReturnEventArgs;
+                }
+                if (positionChangeReturnEventArgs.isReset)
+                {
+                    this._position = positionChangeReturnEventArgs.position;
+                }
+                else
+                {
+                    this._position = e.position;
+                }
+            }
+            else
+            {
+                this._position = e.position;
             }
         }
         //Position end
@@ -152,19 +204,20 @@ namespace THUnity2D
         //Blockable end
 
         //Movable
-        public bool _movable { get; }
+        private bool _movable;
+        public bool Movable { get { return this._movable; } set { this._movable = value; } }
         //Movable end
 
-        public GameObject(int width = 1, int height = 1, GameObject parent = null)
+        public GameObject(int width = 1, int height = 1, GameObject? parent = null)
         {
-            Console.WriteLine("new GameObject");
             ID = currentMaxID;
             currentMaxID++;
             this.Parent = parent;
             this.Width = width;
             this.Height = height;
+            this.Debug("has been newed . " + this._position.ToString());
         }
-        public GameObject(XYPosition position, int width = 1, int height = 1, GameObject parent = null) : this(width, height, parent)
+        public GameObject(XYPosition position, int width = 1, int height = 1, GameObject? parent = null) : this(width, height, parent)
         {
             this.Position = position;
         }
@@ -180,28 +233,24 @@ namespace THUnity2D
                 this.distance = distance_t;
             }
         }
-        public delegate void MoveHandler(GameObject sender, MoveEventArgs e, out bool isMoved);
+        public delegate void MoveHandler(GameObject sender, MoveEventArgs e, out PositionChangeReturnEventArgs eOut);
         public event MoveHandler OnMove;
         public virtual void Move(MoveEventArgs e)
         {
-            lock (privateLock)
+            Debug("Move : angle : " + e.angle + " distance : " + e.distance);
+            if (OnMove != null && this._movable)
             {
-                if (OnMove != null && this._movable)
+                Delegate[] delegates = OnMove.GetInvocationList();
+                PositionChangeReturnEventArgs positionChangeReturnEventArgs = new PositionChangeReturnEventArgs(false, this.Position + new XYPosition(e.distance * Math.Cos(e.angle), e.distance * Math.Sin(e.angle)));
+                foreach (var delegateItem in delegates)
                 {
-                    bool isMoved = false;
-                    Delegate[] delegateList = OnMove.GetInvocationList();
-                    foreach (var delegateItem in delegateList)
-                    {
-                        MoveHandler MoveMethod = (MoveHandler)delegateItem;
-                        bool isMovedTemp = false;
-                        MoveMethod(this, e, out isMovedTemp);
-                        isMoved |= isMovedTemp;
-                    }
-                    if (!isMoved)
-                    {
-                        this._position = this._position + new XYPosition(e.distance * Math.Cos((float)e.angle), e.distance * Math.Sin((float)e.angle));
-                    }
+                    PositionChangeReturnEventArgs tempPositionChangeReturnEventArgs = new PositionChangeReturnEventArgs(positionChangeReturnEventArgs);
+                    MoveHandler OnMoveMethod = (MoveHandler)delegateItem;
+                    OnMoveMethod(this, e, out tempPositionChangeReturnEventArgs);
+                    if (tempPositionChangeReturnEventArgs.isReset)
+                        positionChangeReturnEventArgs = tempPositionChangeReturnEventArgs;
                 }
+                this._position = positionChangeReturnEventArgs.position;
             }
         }
         //Move end
@@ -209,6 +258,11 @@ namespace THUnity2D
         ~GameObject()
         {
 
+        }
+
+        public void Debug(string str)
+        {
+            Console.WriteLine(this.GetType() + " " + this.ID + " : " + str);
         }
     }
 }
