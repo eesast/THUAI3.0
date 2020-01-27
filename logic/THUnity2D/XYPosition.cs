@@ -8,10 +8,10 @@ namespace THUnity2D
     {
         public readonly double x;
         public readonly double y;
-        public XYPosition(double x_t = 0, double y_t = 0)
+        public XYPosition(double x = 0, double y = 0)
         {
-            x = x_t;
-            y = y_t;
+            this.x = x;
+            this.y = y;
         }
         public static XYPosition operator +(XYPosition a, XYPosition b)
         {
