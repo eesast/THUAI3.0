@@ -181,8 +181,7 @@ namespace Client
                 foreach (var gameObject in msg.GameObjectMessageList)
                 {
                     this.id = gameObject.Key;
-                    this.Position.x = gameObject.Value.Position.X;
-                    this.Position.y = gameObject.Value.Position.Y;
+                    this.Position = new XYPosition(gameObject.Value.Position.X, gameObject.Value.Position.Y);
                     this.facingDirection = (Tools.Direction)(int)gameObject.Value.Direction;
                     Console.WriteLine("\nThis Player :\n" + "\t" + id.ToString() + "\n\tposition: " + Position.ToString());
                     moveFormLabel(this.id, this.Position, this.facingDirection);
@@ -191,8 +190,7 @@ namespace Client
             }
             foreach (var gameObject in msg.GameObjectMessageList)
             {
-                this.Position.x = gameObject.Value.Position.X;
-                this.Position.y = gameObject.Value.Position.Y;
+                this.Position = new XYPosition(gameObject.Value.Position.X, gameObject.Value.Position.Y);
                 this.facingDirection = (Tools.Direction)(int)gameObject.Value.Direction;
                 Console.WriteLine("\nPlayer " + gameObject.Key.ToString() + "  position: " + Position.ToString());
                 moveFormLabel(gameObject.Key, Position, facingDirection);
