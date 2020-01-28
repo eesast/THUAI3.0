@@ -139,14 +139,15 @@ namespace Client
         }
         private void Operation()
         {
-            TimeSpan deltaTime = DateTime.Now - lastSendTime;
-            if (deltaTime.TotalSeconds <= TimeInterval)
-                return;
-
+            lastSendTime = DateTime.Now;
             char key;
             while (true)
             {
                 key = Console.ReadKey().KeyChar;
+
+                if ((DateTime.Now - lastSendTime).TotalSeconds <= TimeInterval)
+                    continue;
+
                 if (key == 'd') Move(Direction.Right);
                 else if (key == 'e') Move(Direction.RightUp);
                 else if (key == 'w') Move(Direction.Up);
@@ -158,24 +159,25 @@ namespace Client
                 lastSendTime = DateTime.Now;
             }
         }
-        public new void Move(Direction direction)
+        public void Move(Direction direction)
         {
             ClientCommunication.SendMessage(
                 new MessageToServer
                 {
                     ID = this.id,
-                    CommandType = (int)COMMAND_TYPE.MOVE,
-                    Parameter1 = (int)direction,
-                    Parameter2 = 0
+                    CommandType = (CommandTypeMessage)CommandType.Move,
+                    MoveDirection = (DirectionMessage)direction
                 }
             );
         }
 
         public void OnReceive(IMessage message)
         {
-            if (!(message is MessageToClient)) throw new Exception("Recieve Error !");
+            if (!(message is MessageToClient))
+                throw new Exception("Recieve Error !");
             MessageToClient msg = message as MessageToClient;
 
+            //自己的id小于0时为未初始化状态，此时初始化自己的id
             if (this.id < 0)
             {
                 foreach (var gameObject in msg.GameObjectMessageList)
@@ -188,13 +190,14 @@ namespace Client
                     return;
                 }
             }
+
+            this.Position = new XYPosition(msg.GameObjectMessageList[this.id].Position.X, msg.GameObjectMessageList[this.id].Position.Y);
+            this.facingDirection = (Tools.Direction)msg.GameObjectMessageList[this.id].Direction;
+
             foreach (var gameObject in msg.GameObjectMessageList)
             {
-                this.Position = new XYPosition(gameObject.Value.Position.X, gameObject.Value.Position.Y);
-                this.facingDirection = (Tools.Direction)(int)gameObject.Value.Direction;
                 Console.WriteLine("\nPlayer " + gameObject.Key.ToString() + "  position: " + Position.ToString());
                 moveFormLabel(gameObject.Key, Position, facingDirection);
-                break;
             }
         }
     }

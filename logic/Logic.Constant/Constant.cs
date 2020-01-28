@@ -15,18 +15,6 @@ namespace Logic.Constant
         public const int FrameRate = 20;
         public const double TimeInterval = 1 / FrameRate;
         public const double MoveDistancePerFrame = MoveSpeed / FrameRate;
-        ////长度为1的向量。
-        //public static readonly Dictionary<Direction, XYPosition> Operations = new Dictionary<Direction, XYPosition> {
-        //    { Direction.Right, new XYPosition (1, 0) },
-        //    { Direction.RightUp, new XYPosition(1 / Math.Sqrt(2),1 / Math.Sqrt(2)) },
-        //    { Direction.Up, new XYPosition(0, 1) },
-        //    { Direction.LeftUp, new XYPosition(-1 / Math.Sqrt(2),1 / Math.Sqrt(2)) },
-        //    { Direction.Left, new XYPosition(-1, 0) },
-        //    { Direction.LeftDown, new XYPosition(-1 / Math.Sqrt(2),-1 / Math.Sqrt(2)) },
-        //    { Direction.Down, new XYPosition(0, -1) },
-        //    { Direction.RightDown, new XYPosition(1 / Math.Sqrt(2),-1 / Math.Sqrt(2)) }
-        //};
-        //长度为MoveDistancePerFrame的向量
         public static readonly Dictionary<Direction, XYPosition> MoveOperations = new Dictionary<Direction, XYPosition> {
             { Direction.Right, MoveDistancePerFrame * EightUnitVector[Direction.Right] },
             { Direction.RightUp, MoveDistancePerFrame * EightUnitVector[Direction.RightUp] },
@@ -37,32 +25,8 @@ namespace Logic.Constant
             { Direction.Down, MoveDistancePerFrame * EightUnitVector[Direction.Down] },
             { Direction.RightDown, MoveDistancePerFrame * EightUnitVector[Direction.RightDown] }
         };
-        ////指向四个角的向量
-        //public static readonly Dictionary<Direction, XYPosition> CornerOperations = new Dictionary<Direction, XYPosition> {
-        //    { Direction.Right, new XYPosition (0.5, 0) },
-        //    { Direction.RightUp, new XYPosition(0.5,0.5) },
-        //    { Direction.Up, new XYPosition(0, 0.5) },
-        //    { Direction.LeftUp, new XYPosition(-0.5,0.5) },
-        //    { Direction.Left, new XYPosition(-0.5, 0) },
-        //    { Direction.LeftDown,new XYPosition(-0.5,-0.5) },
-        //    { Direction.Down, new XYPosition(0, -0.5) },
-        //    { Direction.RightDown, new XYPosition(0.5,-0.5) }
-        //};
         public const char messageSpiltSeperation = ',';
     }
-    //public enum Direction
-    //{
-    //    Right = 0,
-    //    RightUp,
-    //    Up,
-    //    LeftUp,
-    //    Left,
-    //    LeftDown,
-    //    Down,
-    //    RightDown,
-    //    Size
-    //}
-
     //public class Obj
     //{
     //    public enum Type
@@ -114,7 +78,7 @@ namespace Logic.Constant
     //}
     public class Block : GameObject
     {
-        public new enum Type
+        public enum Type
         {
             Wall,
             Table,
@@ -124,16 +88,16 @@ namespace Logic.Constant
             TaskPoint,
             Size
         }
-        public new Type type;
+        public Type type;
 
         public Dish.Type Foodtype;//仅当type为FoodPoint时有效
         public int RefreshTime;
 
         public Dish.Type[] CookingFood = null;
-        public Block(double x_t, double y_t, Type type_t) : base(new XYPosition(x_t, y_t))
+        public Block(double x, double y, Type type) : base(new XYPosition(x, y))
         {
             Blockable = true;
-            type = type_t;
+            this.type = type;
             if (type == Type.FoodPoint)
             {
                 Foodtype = (Dish.Type)new Random().Next(0, (int)Dish.Type.Size1 - 1);
@@ -167,7 +131,7 @@ namespace Logic.Constant
     }
     public class Dish : GameObject //包括食材和做好的菜
     {
-        public new enum Type
+        public enum Type
         {
             Empty = 0,//空
             //以下为食材
@@ -181,7 +145,7 @@ namespace Logic.Constant
             DarkDish,
             Size2
         }
-        public new Type type;
+        public Type type;
 
         public int distance;
         public Direction direction;
@@ -222,7 +186,7 @@ namespace Logic.Constant
 
     public class Tool : GameObject
     {
-        public new enum Type
+        public enum Type
         {
             Empty = 0,
             TigerShoes,//虎头鞋
@@ -245,7 +209,7 @@ namespace Logic.Constant
 
             Size
         }
-        public new Type type;
+        public Type type;
         public Tool(double x_t, double y_t, Type type_t) : base(new XYPosition(x_t, y_t))
         {
             type = type_t;
@@ -261,13 +225,13 @@ namespace Logic.Constant
     }
     public class Trigger : GameObject
     {
-        public new enum Type
+        public enum Type
         {
             Trap,
             Mine,
             Size
         }
-        public new Type type;
+        public Type type;
 
         public Trigger(double x_t, double y_t, Type type_t) : base(new XYPosition(x_t, y_t))
         {
@@ -275,57 +239,14 @@ namespace Logic.Constant
         }
     }
 
-    //public struct XYPosition
-    //{
-    //    public double x;
-    //    public double y;
-    //    public const byte BYTE_LENGTH = 2 * sizeof(double);
-    //    public XYPosition(double x_t = 0, double y_t = 0)
-    //    {
-    //        this.x = x_t;
-    //        this.y = y_t;
-    //    }
-    //    public override string ToString()
-    //    {
-    //        return x.ToString("0.000") + ',' + y.ToString("0.000");
-    //    }
-    //    public static XYPosition operator +(XYPosition a, XYPosition b)
-    //    {
-    //        XYPosition result = new XYPosition();
-    //        result.x = a.x + b.x;
-    //        result.y = a.y + b.y;
-    //        return result;
-    //    }
-    //    public static XYPosition operator -(XYPosition a, XYPosition b)
-    //    {
-    //        XYPosition result = new XYPosition();
-    //        result.x = a.x - b.x;
-    //        result.y = a.y - b.y;
-    //        return result;
-    //    }
-    //    public static XYPosition operator *(XYPosition a, double b)
-    //    {
-    //        XYPosition result = new XYPosition();
-    //        result.x = a.x * b;
-    //        result.y = a.y * b;
-    //        return result;
-    //    }
-    //    public static XYPosition operator *(double b, XYPosition a)
-    //    {
-    //        XYPosition result = new XYPosition();
-    //        result.x = a.x * b;
-    //        result.y = a.y * b;
-    //        return result;
-    //    }
-    //};
-    public enum COMMAND_TYPE
+    public enum CommandType
     {
-        MOVE = 0,
-        PICK,
-        PUT,
-        USE,
-        STOP,
-        SIZE
+        Move = 0,
+        Pick,
+        Put,
+        Use,
+        Stop,
+        Size
     }
 
     public enum TALENT
@@ -338,35 +259,5 @@ namespace Logic.Constant
         Luck,
         Bag,
         Drunk
-    }
-    public class Character : GameObject
-    {
-        public double moveSpeed;
-        public Direction facingDirection;
-        public int MaxThrowDistance;
-        public int SightRange;
-        public TALENT talent;
-        public int score;
-        public Dish.Type dish;
-        public Tool.Type tool;
-        //public Tuple<int, int> id = new Tuple<int, int>(-1, -1);  //first:Agent, second:Client
-        public Character(double x, double y) : base(new XYPosition(x, y))
-        {
-            Blockable = true;
-            score = 0;
-            dish = Dish.Type.Empty;
-            tool = Tool.Type.Empty;
-            moveSpeed = Convert.ToDouble(System.Configuration.ConfigurationManager.AppSettings["PlayerInitMoveSpeed"]);
-            MaxThrowDistance = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["PlayerInitThrowDistance"]);
-            SightRange = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["PlayerInitSightRange"]);
-        }
-        public virtual void Move(Direction direction_t, int duration = 50)
-        { }
-        public virtual void Put(int distance, int ThrowDish)
-        { }
-        public virtual void Pick()
-        { }
-        public virtual void Use(int type, int parameter)
-        { }
     }
 }

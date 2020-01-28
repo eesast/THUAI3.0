@@ -58,7 +58,7 @@
 //            ClientCommunication.SendMessage(
 //                new MessageToServer
 //                {
-//                    CommandType = (int)COMMAND_TYPE.MOVE,
+//                    CommandType = (int)CommandType.MOVE,
 //                    Parameter1 = (int)direction,
 //                    Parameter2 = 0
 //                }

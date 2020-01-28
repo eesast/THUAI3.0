@@ -63,7 +63,7 @@ namespace THUnity2D
             {
                 this._grid[(int)e.previousPosition.x, (int)e.previousPosition.y].blockableObject = null;
                 this.Debug("Grid (" + (int)e.previousPosition.x + "," + (int)e.previousPosition.y + ") delete blockable " + childrenGameObject.ID);
-                if (!CheckXYPosition(childrenGameObject))
+                if (!XYPositionIsLegal(childrenGameObject))
                 {
                     XYPosition tempPosition = CorrectPosition(childrenGameObject);
                     eOut = new PositionChangeReturnEventArgs(true, tempPosition);
@@ -83,9 +83,36 @@ namespace THUnity2D
             }
         }
 
+        protected bool XIsLegal(GameObject childrenGameObject)
+        {
+            if (childrenGameObject.Position.x - childrenGameObject.Width / 2 < 0
+                || childrenGameObject.Position.x + childrenGameObject.Width / 2 > this._width)
+                return false;
+            return true;
+        }
+        protected bool YIsLegal(GameObject childrenGameObject)
+        {
+            if (childrenGameObject.Position.y - childrenGameObject.Height / 2 < 0
+                || childrenGameObject.Position.y + childrenGameObject.Height / 2 > this._height)
+                return false;
+            return true;
+        }
+        protected bool XIsLegal(double x)
+        {
+            if (x < 0 || x > this._width)
+                return false;
+            return true;
+        }
+        protected bool YIsLegal(double y)
+        {
+            if (y < 0 || y > this._height)
+                return false;
+            return true;
+        }
+
         //检查childrenGameObject的位置是否合法
         //目前只能检查边长为1的方块
-        protected bool CheckXYPosition(GameObject childrenGameObject)
+        protected bool XYPositionIsLegal(GameObject childrenGameObject)
         {
             this.DebugWithoutEndline("Checking child's position : " + childrenGameObject.ID.ToString() + " : " + childrenGameObject.Position.ToString());
             if (!childrenGameObject.Blockable)
@@ -93,10 +120,7 @@ namespace THUnity2D
                 this.DebugWithoutID("true");
                 return true;
             }
-            if (childrenGameObject.Position.x - childrenGameObject.Width / 2 < 0
-                || childrenGameObject.Position.x + childrenGameObject.Width / 2 > this._width
-                || childrenGameObject.Position.y - childrenGameObject.Height / 2 < 0
-                || childrenGameObject.Position.y + childrenGameObject.Height / 2 > this._height)
+            if (!XIsLegal(childrenGameObject) || !YIsLegal(childrenGameObject))
             {
                 this.DebugWithoutID("false");
                 return false;
@@ -138,7 +162,7 @@ namespace THUnity2D
         {
             Debug("Correcting Position : " + childrenGameObject.ID + " : " + childrenGameObject.Position.ToString());
 
-            if (CheckXYPosition(childrenGameObject))
+            if (XYPositionIsLegal(childrenGameObject))
                 return childrenGameObject.Position;
 
             XYPosition result = new XYPosition((uint)(childrenGameObject.Position.x) + 0.5, (uint)(childrenGameObject.Position.y) + 0.5);
@@ -164,7 +188,7 @@ namespace THUnity2D
                         if (xSearch < 0 || xSearch > this._width)
                             continue;
                         testGameObject.Position = new XYPosition(xSearch, ySearch);
-                        if (CheckXYPosition(testGameObject))
+                        if (XYPositionIsLegal(testGameObject))
                             return testGameObject.Position;
                     }
                 }
@@ -177,7 +201,7 @@ namespace THUnity2D
                         if (ySearch < 0 || ySearch > this._height)
                             continue;
                         testGameObject.Position = new XYPosition(xSearch, ySearch);
-                        if (CheckXYPosition(testGameObject))
+                        if (XYPositionIsLegal(testGameObject))
                             return testGameObject.Position;
                     }
                 }
@@ -319,6 +343,7 @@ namespace THUnity2D
     }
     public class MapCell
     {
+        public readonly object publicLock = new object();
         public GameObject? blockableObject = null;
         public List<GameObject> unblockableObjects = new List<GameObject>();
     }

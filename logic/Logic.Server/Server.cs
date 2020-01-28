@@ -10,20 +10,16 @@ using System.Collections.Generic;
 using static Logic.Constant.Map;
 using Communication.Server;
 using Communication.Proto;
-
+using Timer;
 namespace Logic.Server
 {
     class Server
     {
-        private const int serverPort = 8888;
-        Dictionary<Tuple<int, int>, Player> playerList = new Dictionary<Tuple<int, int>, Player>();
+        //private const int serverPort = 8888;
+        protected Dictionary<Tuple<int, int>, Player> PlayerList = new Dictionary<Tuple<int, int>, Player>();
         public ICommunication ServerCommunication = new CommunicationImpl();
-        private static DateTime initTime = new DateTime();
-        public static void InitializeTime() { initTime = DateTime.Now; }
-        private static TimeSpan getGameTime()
-        {
-            return DateTime.Now - initTime;
-        }
+
+        public MessageToClient MessageToClient { get; } = new MessageToClient();
 
         public Server()
         {
@@ -32,19 +28,34 @@ namespace Logic.Server
             //ServerCommunication.Port = serverPort;
             ServerCommunication.GameStart();
 
+            //初始化playerList
+            //向所有Client发送他们自己的ID
             for (int a = 0; a < Constants.AgentCount; a++)
             {
                 for (int c = 0; c < Constants.PlayerCount; c++)
                 {
-                    playerList.Add(new Tuple<int, int>(a, c), new Player(2.5, 1.5));//new Random().Next(2, WORLD_MAP_WIDTH - 2), new Random().Next(2, WORLD_MAP_HEIGHT - 2)));
-                    playerList[new Tuple<int, int>(a, c)].Parent = WorldMap;
+                    Tuple<int, int> playerIDTuple = new Tuple<int, int>(a, c);
+                    PlayerList.Add(playerIDTuple, new Player(2.5, 1.5));//new Random().Next(2, WORLD_MAP_WIDTH - 2), new Random().Next(2, WORLD_MAP_HEIGHT - 2)));
+                    MessageToClient.GameObjectMessageList.Add(
+                        PlayerList[playerIDTuple].ID,
+                        new GameObjectMessage
+                        {
+                            Type = ObjectTypeMessage.People,
+                            IsMoving = false,
+                            Position = new XYPositionMessage { X = PlayerList[playerIDTuple].Position.x, Y = PlayerList[playerIDTuple].Position.y },
+                            Direction = (DirectionMessage)(int)PlayerList[playerIDTuple].facingDirection
+                        });
+
                     MessageToClient msg = new MessageToClient();
-                    msg.GameObjectMessageList.Add(playerList[new Tuple<int, int>(a, c)].ID, new GameObjectMessage
-                    {
-                        Type = ObjectTypeMessage.People,
-                        Position = new XYPositionMessage { X = playerList[new Tuple<int, int>(a, c)].Position.x, Y = playerList[new Tuple<int, int>(a, c)].Position.y },
-                        Direction = (DirectionMessage)(int)playerList[new Tuple<int, int>(a, c)].facingDirection
-                    });
+                    msg.GameObjectMessageList.Add(
+                        PlayerList[playerIDTuple].ID,
+                        new GameObjectMessage
+                        {
+                            Type = ObjectTypeMessage.People,
+                            IsMoving = false,
+                            Position = new XYPositionMessage { X = PlayerList[playerIDTuple].Position.x, Y = PlayerList[playerIDTuple].Position.y },
+                            Direction = (DirectionMessage)(int)PlayerList[playerIDTuple].facingDirection
+                        });
                     ServerCommunication.SendMessage(new ServerMessage
                     {
                         Agent = a,
@@ -54,38 +65,23 @@ namespace Logic.Server
                     );
                 }
             }
-            foreach (var item in playerList)
-            {
-                MessageToClient msg = new MessageToClient();
-                msg.GameObjectMessageList.Add(item.Value.ID, new GameObjectMessage
-                {
-                    Type = ObjectTypeMessage.People,
-                    Position = new XYPositionMessage { X = item.Value.Position.x, Y = item.Value.Position.y },
-                    Direction = (DirectionMessage)(int)item.Value.facingDirection
-                }); ;
-                ServerCommunication.SendMessage(new ServerMessage
-                {
-                    Agent = -2,
-                    Client = -2,
-                    Message = msg
-                }
-                );
-            }
+
+            SendMessageToAllClient();
+
             new Thread(Run).Start();
             Console.WriteLine("Server constructed");
         }
 
         public void Run()
         {
-            InitializeTime();
+            Time.InitializeTime();
             Console.WriteLine("Server begin to run");
 
-            //new Thread(ExecuteMessageQueue).Start();
-            /*
-            这里应该放定时、刷新物品等代码。
-            */
             while (true)
             {
+                /*
+                这里应该放定时、刷新物品等代码。
+                */
                 Console.ReadKey();
             }
 
@@ -96,37 +92,20 @@ namespace Logic.Server
         {
             CommunicationImpl communicationImpl = communication as CommunicationImpl;
             MessageEventArgs messageEventArgs = e as MessageEventArgs;
-            //ServerMessage message = ev.message;
-            //ChatMessage chat = message.Message as ChatMessage;
-            Console.WriteLine("Time : " + getGameTime().TotalSeconds.ToString("F3") + "s");
-            playerList[new Tuple<int, int>(messageEventArgs.message.Agent, messageEventArgs.message.Client)].ExecuteMessage(communicationImpl, (MessageToServer)((ServerMessage)messageEventArgs.message).Message);
-            SendAll();
+
+            Console.WriteLine("Time : " + Time.GameTime().TotalSeconds.ToString("F3") + "s");
+            PlayerList[new Tuple<int, int>(messageEventArgs.message.Agent, messageEventArgs.message.Client)].ExecuteMessage(communicationImpl, (MessageToServer)((ServerMessage)messageEventArgs.message).Message);
+            SendMessageToAllClient();
         }
 
-        public void SendAll()
+        protected void SendMessageToAllClient()
         {
-            ;
+            ServerCommunication.SendMessage(new ServerMessage
+            {
+                Agent = -2,
+                Client = -2,
+                Message = MessageToClient
+            });
         }
-
-        ////ExecuteMessageQueue()函数控制消息队列
-        //public void ExecuteMessageQueue()
-        //{
-        //    Console.WriteLine("Begin to execute message queue");
-        //    while (true)
-        //    {
-        //        Console.WriteLine("Time : " + getGameTime().TotalSeconds.ToString("F3") + "s");
-
-        //        ServerMessage msg = ServerCommunication.MessageQueue.Take();
-        //        if (!(msg.Message is MessageToServer)) throw new Exception("Recieve Error !");
-        //        MessageToServer msgToSvr = msg.Message as MessageToServer;
-
-        //        if (msgToSvr.CommandType < 0 || msgToSvr.CommandType >= (int)COMMAND_TYPE.SIZE)
-        //            continue;
-        //        if (msgToSvr.CommandType == (int)COMMAND_TYPE.MOVE && msgToSvr.Parameter1 >= 0 && msgToSvr.Parameter1 < (int)Direction.Size)
-        //        {
-        //            playerList[new Tuple<int, int>(msg.Agent, msg.Client)].Move((Direction)msgToSvr.Parameter1);
-        //        }
-        //    }
-        //}
     }
 }

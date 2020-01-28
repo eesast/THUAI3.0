@@ -14,7 +14,7 @@ namespace THUnity2D
         public readonly Int64 ID;
 
         protected GameObject? _parent;
-        public GameObject Parent
+        public GameObject? Parent
         {
             get { return _parent; }
             set
@@ -251,7 +251,7 @@ namespace THUnity2D
 
         ~GameObject()
         {
-
+            this.Parent = null;
         }
 
         public void Debug(string str)

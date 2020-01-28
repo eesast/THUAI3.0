@@ -17,40 +17,47 @@ namespace Logic.Server
     {
         public System.Threading.Timer timer;
         public System.Threading.Timer StopTimer;
-        public COMMAND_TYPE status;
+        public CommandType status;
         public TimeSpan LastActTime;
         public TimeSpan LeftTime;
 
         public Player(double x, double y) :
             base(x, y)
         {
-            status = COMMAND_TYPE.STOP;
+            Parent = WorldMap;
+            status = CommandType.Stop;
             LastActTime = Time.GameTime();
             //timer = new System.Threading.Timer(new System.Threading.TimerCallback(Move), (object)1, -1, 0);
             StopTimer = new System.Threading.Timer(new System.Threading.TimerCallback(Stop), (object)1, 0, 0);
         }
         public void ExecuteMessage(CommunicationImpl communication, MessageToServer msg)
         {
-            if (msg.CommandType < 0 || msg.CommandType >= (int)COMMAND_TYPE.SIZE)
+            if (msg.CommandType < 0 || msg.CommandType >= CommandTypeMessage.CommandTypeSize)
                 return;
-            if (msg.CommandType == (int)COMMAND_TYPE.MOVE && msg.Parameter1 >= 0 && msg.Parameter1 < (int)Direction.Size)
+            switch (msg.CommandType)
             {
-                Move(new MoveEventArgs(msg.Parameter1 * Math.PI / 4, MoveDistancePerFrame));
-                MessageToClient msgToCl = new MessageToClient();
-                msgToCl.GameObjectMessageList.Add(this.ID, new GameObjectMessage
-                {
-                    Type = ObjectTypeMessage.People,
-                    Position = new XYPositionMessage { X = this.Position.x, Y = this.Position.y },
-                    Direction = (DirectionMessage)(int)this.facingDirection
-                }); ;
-                Program.server.ServerCommunication.SendMessage(new ServerMessage
-                {
-                    Agent = -2,
-                    Client = -2,
-                    Message = msgToCl
-                }
-                );
+                case CommandTypeMessage.Move:
+                    if (msg.MoveDirection >= 0 && msg.MoveDirection < DirectionMessage.DirectionSize)
+                        Move((Direction)msg.MoveDirection);
+                    break;
+                case CommandTypeMessage.Pick:
+                    break;
+                case CommandTypeMessage.Put:
+                    break;
+                case CommandTypeMessage.Stop:
+                    break;
+                case CommandTypeMessage.Use:
+                    break;
+                default:
+                    break;
             }
+        }
+
+        public void Move(Direction direction)
+        {
+            Move(new MoveEventArgs((int)direction * Math.PI / 4, MoveDistancePerFrame));
+            Program.server.MessageToClient.GameObjectMessageList[this.ID].Position.X = this.Position.x;
+            Program.server.MessageToClient.GameObjectMessageList[this.ID].Position.Y = this.Position.y;
         }
         public override void Pick()
         {
@@ -115,7 +122,7 @@ namespace Logic.Server
             {
                 GetItem(xypos);
             }
-            status = COMMAND_TYPE.STOP;
+            status = CommandType.Stop;
         }
         public override void Put(int distance, int ThrowDish)
         {
@@ -145,7 +152,7 @@ namespace Logic.Server
 
             }
             else Console.WriteLine("没有可以扔的东西");
-            status = COMMAND_TYPE.STOP;
+            status = CommandType.Stop;
         }
         public override void Use(int type, int parameter)
         {
@@ -177,11 +184,11 @@ namespace Logic.Server
             {
                 UseTool(0);
             }
-            status = COMMAND_TYPE.STOP;
+            status = CommandType.Stop;
         }
         public void Stop(object i = null)
         {
-            status = COMMAND_TYPE.STOP;
+            status = CommandType.Stop;
             if (timer != null)
                 timer.Dispose();
             Move(0);
