@@ -19,12 +19,11 @@ namespace Communication.Agent
         }
         public static void Main(string[] args)
         {
-            string[] t = { "127.0.0.1", "8888" };
-            Console.WriteLine("Server IP&Port: " + t[0] + t[1]);
-            //string[] t = Console.ReadLine().Split(':');
-            Server = new IPEndPoint(IPAddress.Parse(t[0]), Int32.Parse(t[1]));
+            string[] t = args[0].Split(':');
+            Console.WriteLine("Server endpoint: " + t);
+            Server = new IPEndPoint(IPAddress.Parse(t[0]), int.Parse(t[1]));
 
-            server.Port = 30000;
+            server.Port = ushort.Parse(args[1]);
             Console.WriteLine("Agent Listen Port: " + server.Port.ToString());
             //init timer
             myTimer.Interval = Interval;
@@ -35,10 +34,10 @@ namespace Communication.Agent
                 server.Send(message.Content as Message); //向客户端转发Content
             };
             server.InternalQuit += delegate ()
-              {
-                  client.Quit();
-                  server.Resume();
-              };
+            {
+                 client.Quit();
+                 server.Resume();
+            };
             server.OnReceive += delegate (Message message)
             {
                 if (MessageLimit > 0)

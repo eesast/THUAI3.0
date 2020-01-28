@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using static Map;
+using static Logic.Constant.Map;
 
 namespace Logic.Server
 {

@@ -1,0 +1,60 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using THUnity2D;
+
+namespace THUnity2D
+{
+    public static class Tools
+    {
+        public enum Direction
+        {
+            Right = 0,
+            RightUp,
+            Up,
+            LeftUp,
+            Left,
+            LeftDown,
+            Down,
+            RightDown,
+            Size
+        }
+
+        //长度为1的向量。
+        public static readonly Dictionary<Direction, XYPosition> EightUnitVector = new Dictionary<Direction, XYPosition> {
+            { Direction.Right, new XYPosition (1, 0) },
+            { Direction.RightUp, new XYPosition(1 / Math.Sqrt(2),1 / Math.Sqrt(2)) },
+            { Direction.Up, new XYPosition(0, 1) },
+            { Direction.LeftUp, new XYPosition(-1 / Math.Sqrt(2),1 / Math.Sqrt(2)) },
+            { Direction.Left, new XYPosition(-1, 0) },
+            { Direction.LeftDown, new XYPosition(-1 / Math.Sqrt(2),-1 / Math.Sqrt(2)) },
+            { Direction.Down, new XYPosition(0, -1) },
+            { Direction.RightDown, new XYPosition(1 / Math.Sqrt(2),-1 / Math.Sqrt(2)) }
+        };
+        //指向八个角的向量
+        public static readonly Dictionary<Direction, XYPosition> EightCornerVector = new Dictionary<Direction, XYPosition> {
+            { Direction.Right, new XYPosition (0.5, 0) },
+            { Direction.RightUp, new XYPosition(0.5,0.5) },
+            { Direction.Up, new XYPosition(0, 0.5) },
+            { Direction.LeftUp, new XYPosition(-0.5,0.5) },
+            { Direction.Left, new XYPosition(-0.5, 0) },
+            { Direction.LeftDown,new XYPosition(-0.5,-0.5) },
+            { Direction.Down, new XYPosition(0, -0.5) },
+            { Direction.RightDown, new XYPosition(0.5,-0.5) }
+        };
+
+        public static double CorrectAngle(double angle)
+        {
+            while (angle < 0)
+                angle += 2 * Math.PI;
+            while (angle >= 2 * Math.PI)
+                angle -= 2 * Math.PI;
+            return angle;
+        }
+
+        public static void Debug(string str)
+        {
+            Console.WriteLine(str);
+        }
+    }
+}

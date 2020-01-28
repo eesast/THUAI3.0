@@ -7,10 +7,10 @@ using System.Threading;
 namespace Communication.Proto
 {
     internal delegate void OnDisconnectCallback();
-    internal class IDClient
+    internal sealed class IDClient : IDisposable
     {
         private IPEndPoint endPoint;
-        private TcpClient client;
+        private readonly TcpClient client;
         
         public int Address { get; private set; }
         public bool Closed { get; private set; }
@@ -106,6 +106,7 @@ namespace Communication.Proto
             client.Send(raw, raw.Length);
             Constants.Debug($"ClientSide: Data sent {message.Content.GetType().FullName}");
         }
+
         public void Quit()
         {
             MemoryStream ostream = new MemoryStream();
@@ -115,6 +116,13 @@ namespace Communication.Proto
             client.Send(raw, raw.Length);
             Disconnect();
         }
+
+        public void Dispose()
+        {
+            client.Destroy();
+            GC.SuppressFinalize(this);
+        }
+
         public event OnReceiveCallback OnReceive;
         public event OnDisconnectCallback OnDisconnect; //被Server断开链接或客户端主动断开的时候触发
     }
