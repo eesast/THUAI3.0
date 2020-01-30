@@ -21,6 +21,40 @@ namespace Client
         static Thread operationThread;
         public static DateTime lastSendTime = new DateTime();
         public Communication.CAPI.API ClientCommunication = new Communication.CAPI.API();
+        public void moveFormLabelMethod(Int64 id_t, XYPosition xy_t, Direction direction_t)
+        {
+            Program.form.playerLabels[id_t].Location = new System.Drawing.Point((int)((xy_t.x - 0.5) * GameForm.Form1.LABEL_WIDTH), Convert.ToInt32((WorldMap.Height - xy_t.y - 0.5) * GameForm.Form1.LABEL_WIDTH));
+            switch (direction_t)
+            {
+                case Direction.Right:
+                    Program.form.playerLabels[id_t].Text = "→";
+                    break;
+                case Direction.RightUp:
+                    Program.form.playerLabels[id_t].Text = "↗";
+                    break;
+                case Direction.Up:
+                    Program.form.playerLabels[id_t].Text = "↑";
+                    break;
+                case Direction.LeftUp:
+                    Program.form.playerLabels[id_t].Text = "↖";
+                    break;
+                case Direction.Left:
+                    Program.form.playerLabels[id_t].Text = "←";
+                    break;
+                case Direction.LeftDown:
+                    Program.form.playerLabels[id_t].Text = "↙";
+                    break;
+                case Direction.Down:
+                    Program.form.playerLabels[id_t].Text = "↓";
+                    break;
+                case Direction.RightDown:
+                    Program.form.playerLabels[id_t].Text = "↘";
+                    break;
+                default:
+                    break;
+            }
+        }
+
         public void moveFormLabel(Int64 id_t, XYPosition xy_t, Direction direction_t)
         {
             if (!Program.form.playerLabels.ContainsKey(id_t))
@@ -47,84 +81,57 @@ namespace Client
                     Action<object> actionDelegate1 = (o) =>
                     {
                         Program.form.playerLabels[id_t].Size = new System.Drawing.Size(Form1.LABEL_WIDTH, Form1.LABEL_WIDTH);
+                        Program.form.playerLabels[id_t].SendToBack();
                     };
                     Program.form.playerLabels[id_t].Invoke(actionDelegate1, new object());
                 }
                 else
                 {
                     Program.form.playerLabels[id_t].Size = new System.Drawing.Size(Form1.LABEL_WIDTH, Form1.LABEL_WIDTH);
+                    Program.form.playerLabels[id_t].SendToBack();
                 }
             }
             if (Program.form.playerLabels[id_t].InvokeRequired)
             {
                 // 当一个控件的InvokeRequired属性值为真时，说明有一个创建它以外的线程想访问它
-                Action<XYPosition, Direction> actionDelegate = (xy_t2, direction_t2) =>
-                {
-                    Program.form.playerLabels[id_t].Location = new System.Drawing.Point(Convert.ToInt32((xy_t2.x - 0.5) * Convert.ToDouble(GameForm.Form1.LABEL_WIDTH)), Convert.ToInt32((Convert.ToDouble(WorldMap.Height) - xy_t2.y - 0.5) * Convert.ToDouble(GameForm.Form1.LABEL_WIDTH)));
-                    switch (direction_t2)
-                    {
-                        case Direction.Right:
-                            Program.form.playerLabels[id_t].Text = "→";
-                            break;
-                        case Direction.RightUp:
-                            Program.form.playerLabels[id_t].Text = "↗";
-                            break;
-                        case Direction.Up:
-                            Program.form.playerLabels[id_t].Text = "↑";
-                            break;
-                        case Direction.LeftUp:
-                            Program.form.playerLabels[id_t].Text = "↖";
-                            break;
-                        case Direction.Left:
-                            Program.form.playerLabels[id_t].Text = "←";
-                            break;
-                        case Direction.LeftDown:
-                            Program.form.playerLabels[id_t].Text = "↙";
-                            break;
-                        case Direction.Down:
-                            Program.form.playerLabels[id_t].Text = "↓";
-                            break;
-                        case Direction.RightDown:
-                            Program.form.playerLabels[id_t].Text = "↘";
-                            break;
-                        default:
-                            break;
-                    }
-                };
-                Program.form.playerLabels[id_t].Invoke(actionDelegate, xy_t, direction_t);
+                //Action<XYPosition, Direction> actionDelegate = (xy_t2, direction_t2) =>
+                //{
+                //    Program.form.playerLabels[id_t].Location = new System.Drawing.Point(Convert.ToInt32((xy_t2.x - 0.5) * Convert.ToDouble(GameForm.Form1.LABEL_WIDTH)), Convert.ToInt32((Convert.ToDouble(WorldMap.Height) - xy_t2.y - 0.5) * Convert.ToDouble(GameForm.Form1.LABEL_WIDTH)));
+                //    switch (direction_t2)
+                //    {
+                //        case Direction.Right:
+                //            Program.form.playerLabels[id_t].Text = "→";
+                //            break;
+                //        case Direction.RightUp:
+                //            Program.form.playerLabels[id_t].Text = "↗";
+                //            break;
+                //        case Direction.Up:
+                //            Program.form.playerLabels[id_t].Text = "↑";
+                //            break;
+                //        case Direction.LeftUp:
+                //            Program.form.playerLabels[id_t].Text = "↖";
+                //            break;
+                //        case Direction.Left:
+                //            Program.form.playerLabels[id_t].Text = "←";
+                //            break;
+                //        case Direction.LeftDown:
+                //            Program.form.playerLabels[id_t].Text = "↙";
+                //            break;
+                //        case Direction.Down:
+                //            Program.form.playerLabels[id_t].Text = "↓";
+                //            break;
+                //        case Direction.RightDown:
+                //            Program.form.playerLabels[id_t].Text = "↘";
+                //            break;
+                //        default:
+                //            break;
+                //    }
+                //};
+                Program.form.playerLabels[id_t].Invoke(new Action<Int64, XYPosition, Direction>(moveFormLabelMethod), id_t, xy_t, direction_t);
             }
             else
             {
-                Program.form.playerLabels[id_t].Location = new System.Drawing.Point(Convert.ToInt32((xy_t.x - 0.5) * Convert.ToDouble(GameForm.Form1.LABEL_WIDTH)), Convert.ToInt32((Convert.ToDouble(WorldMap.Width) - xy_t.y - 0.5) * Convert.ToDouble(GameForm.Form1.LABEL_WIDTH)));
-                switch (direction_t)
-                {
-                    case Direction.Right:
-                        Program.form.playerLabels[id_t].Text = "→";
-                        break;
-                    case Direction.RightUp:
-                        Program.form.playerLabels[id_t].Text = "↗";
-                        break;
-                    case Direction.Up:
-                        Program.form.playerLabels[id_t].Text = "↑";
-                        break;
-                    case Direction.LeftUp:
-                        Program.form.playerLabels[id_t].Text = "↖";
-                        break;
-                    case Direction.Left:
-                        Program.form.playerLabels[id_t].Text = "←";
-                        break;
-                    case Direction.LeftDown:
-                        Program.form.playerLabels[id_t].Text = "↙";
-                        break;
-                    case Direction.Down:
-                        Program.form.playerLabels[id_t].Text = "↓";
-                        break;
-                    case Direction.RightDown:
-                        Program.form.playerLabels[id_t].Text = "↘";
-                        break;
-                    default:
-                        break;
-                }
+                moveFormLabelMethod(id_t, xy_t, direction_t);
             }
         }
         public Player(double x, double y) :
@@ -147,15 +154,33 @@ namespace Client
 
                 if ((DateTime.Now - lastSendTime).TotalSeconds <= TimeInterval)
                     continue;
-
-                if (key == 'd') Move(Direction.Right);
-                else if (key == 'e') Move(Direction.RightUp);
-                else if (key == 'w') Move(Direction.Up);
-                else if (key == 'q') Move(Direction.LeftUp);
-                else if (key == 'a') Move(Direction.Left);
-                else if (key == 'z') Move(Direction.LeftDown);
-                else if (key == 'x') Move(Direction.Down);
-                else if (key == 'c') Move(Direction.RightDown);
+                switch (key)
+                {
+                    case 'd':
+                        Move(Direction.Right);
+                        break;
+                    case 'e':
+                        Move(Direction.RightUp);
+                        break;
+                    case 'w':
+                        Move(Direction.Up);
+                        break;
+                    case 'q':
+                        Move(Direction.LeftUp);
+                        break;
+                    case 'a':
+                        Move(Direction.Left);
+                        break;
+                    case 'z':
+                        Move(Direction.LeftDown); ;
+                        break;
+                    case 'x':
+                        Move(Direction.Down);
+                        break;
+                    case 'c':
+                        Move(Direction.RightDown);
+                        break;
+                }
                 lastSendTime = DateTime.Now;
             }
         }

@@ -57,7 +57,8 @@ namespace Logic.Constant
         {
             get
             {
-                _worldMap = _worldMap ?? new THUnity2D.Map(map.GetLength(0), map.GetLength(1), Constant.FrameRate);
+                _worldMap = _worldMap ?? new THUnity2D.Map(map.GetLength(0), map.GetLength(1));
+                _worldMap.FrameRate = Constant.FrameRate;
                 return _worldMap;
             }
         }

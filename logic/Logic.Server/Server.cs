@@ -19,8 +19,6 @@ namespace Logic.Server
         protected Dictionary<Tuple<int, int>, Player> PlayerList = new Dictionary<Tuple<int, int>, Player>();
         public ICommunication ServerCommunication = new CommunicationImpl();
 
-        public MessageToClient MessageToClient { get; } = new MessageToClient();
-
         public Server()
         {
             ServerCommunication.Initialize();
@@ -36,7 +34,7 @@ namespace Logic.Server
                 {
                     Tuple<int, int> playerIDTuple = new Tuple<int, int>(a, c);
                     PlayerList.Add(playerIDTuple, new Player(2.5, 1.5));//new Random().Next(2, WORLD_MAP_WIDTH - 2), new Random().Next(2, WORLD_MAP_HEIGHT - 2)));
-                    MessageToClient.GameObjectMessageList.Add(
+                    Program.MessageToClient.GameObjectMessageList.Add(
                         PlayerList[playerIDTuple].ID,
                         new GameObjectMessage
                         {
@@ -93,7 +91,7 @@ namespace Logic.Server
             CommunicationImpl communicationImpl = communication as CommunicationImpl;
             MessageEventArgs messageEventArgs = e as MessageEventArgs;
 
-            Console.WriteLine("Time : " + Time.GameTime().TotalSeconds.ToString("F3") + "s");
+            Console.WriteLine("GameTime : " + Time.GameTime().TotalSeconds.ToString("F3") + "s");
             PlayerList[new Tuple<int, int>(messageEventArgs.message.Agent, messageEventArgs.message.Client)].ExecuteMessage(communicationImpl, (MessageToServer)((ServerMessage)messageEventArgs.message).Message);
             SendMessageToAllClient();
         }
@@ -104,7 +102,7 @@ namespace Logic.Server
             {
                 Agent = -2,
                 Client = -2,
-                Message = MessageToClient
+                Message = Program.MessageToClient
             });
         }
     }

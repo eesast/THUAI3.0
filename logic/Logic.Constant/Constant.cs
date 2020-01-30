@@ -10,7 +10,6 @@ namespace Logic.Constant
 {
     public static class Constant
     {
-
         public const double MoveSpeed = 5;
         public const int FrameRate = 20;
         public const double TimeInterval = 1 / FrameRate;
@@ -27,58 +26,36 @@ namespace Logic.Constant
         };
         public const char messageSpiltSeperation = ',';
     }
-    //public class Obj
-    //{
-    //    public enum Type
-    //    {
-    //        Air = 0,
-    //        People,
-    //        Block,
-    //        Dish,
-    //        Tools,
-    //        Trigger,
-    //        Size
-    //    }
-    //    public const byte BYTE_LENGTH = XYPosition.BYTE_LENGTH + 1;
-    //    public XYPosition xyPosition;
-    //    public Type type;
-    //    public const int width = 1;
-    //    public const int height = 1;
-
-    //    public Obj(double x_t, double y_t)
-    //    {
-    //        xyPosition.x = x_t;
-    //        xyPosition.y = y_t;
-    //    }
-    //    public override string ToString()
-    //    {
-    //        return ((byte)type).ToString();
-    //    }
-
-    //    public void RemoveSelf()
-    //    {
-    //        WORLD_MAP[(int)xyPosition.x, (int)xyPosition.y].Remove(this);
-    //    }
-    //    public virtual Dish.Type GetDish(Dish.Type t) { return Dish.Type.Empty; }
-    //    public virtual Tool.Type GetTool(Tool.Type t) { return Tool.Type.Empty; }
-    //    public virtual void UseCooker() { }
-    //    public virtual void HandIn() { }
-    //}
-    //public class People : GameObject
-    //{
-    //    public Dish.Type dish;
-    //    public Tool.Type tool;
-    //    public Direction facingDirection;
-    //    public People(double x_t, double y_t) : base(x_t, y_t)
-    //    {
-    //        dish = Dish.Type.Empty;
-    //        tool = Tool.Type.Empty;
-    //    }
-
-    //}
-    public class Block : GameObject
+    public class Obj : GameObject
     {
         public enum Type
+        {
+            Air = 0,
+            People,
+            Block,
+            Dish,
+            Tools,
+            Trigger,
+            Size
+        }
+        public Type type;
+        public Dish.Type dish;
+        public Tool.Type tool;
+        public Block.Type blockType;
+        //public const int width = 1;
+        //public const int height = 1;
+
+        public Obj(double x_t, double y_t) : base(new XYPosition(x_t, y_t))
+        {
+        }
+        public virtual Dish.Type GetDish(Dish.Type t) { return Dish.Type.Empty; }
+        public virtual Tool.Type GetTool(Tool.Type t) { return Tool.Type.Empty; }
+        public virtual void UseCooker() { }
+        public virtual int HandIn(Dish.Type dish_t) { return 0; }
+    }
+    public class Block : Obj
+    {
+        public new enum Type
         {
             Wall,
             Table,
@@ -88,50 +65,98 @@ namespace Logic.Constant
             TaskPoint,
             Size
         }
-        public Type type;
 
-        public Dish.Type Foodtype;//仅当type为FoodPoint时有效
-        public int RefreshTime;
+        public int RefreshTime;//食物刷新点的食物刷新速率，毫秒
 
-        public Dish.Type[] CookingFood = null;
-        public Block(double x, double y, Type type) : base(new XYPosition(x, y))
+        public List<Dish.Type> Task = null;//任务点的任务列表
+        public Block(double x_t, double y_t, Type type_t) : base(x_t, y_t)
         {
             Blockable = true;
-            this.type = type;
-            if (type == Type.FoodPoint)
+            Movable = false;
+            blockType = type_t;
+            if (blockType == Type.FoodPoint)
             {
-                Foodtype = (Dish.Type)new Random().Next(0, (int)Dish.Type.Size1 - 1);
-                RefreshTime = 10000;
-                Console.WriteLine("食品刷新：地点（" + Position.x + "," + Position.y + "）,种类" + type);
+                dish = (Dish.Type)new Random().Next(1, (int)Dish.Type.Size1 - 1);
+                RefreshTime = 1000;
+                Console.WriteLine("食品刷新：地点（" + Position.x + "," + Position.y + "）,种类" + blockType);
             }
-            else if (type == Type.Cooker) CookingFood = new Dish.Type[10];
+            else if (blockType == Type.TaskPoint)
+            {
+                Task = new List<Dish.Type>();
+                new System.Threading.Timer(TaskProduce, null, 1000, Convert.ToInt32(ConfigurationManager.AppSettings["TaskRefreshTime"]));
+
+            }
         }
-        public Dish.Type GetDish(Dish.Type t)
+        public override Dish.Type GetDish(Dish.Type t)
         {
-            Dish.Type temp = Foodtype;
-            Foodtype = Dish.Type.Empty;
-            System.Threading.Timer timer = new System.Threading.Timer(new System.Threading.TimerCallback(Refresh), 0, RefreshTime, 0);
+            Dish.Type temp = dish;
+            dish = Dish.Type.Empty;
+            new System.Threading.Timer(new System.Threading.TimerCallback(Refresh), 0, RefreshTime, 0);
             return temp;
         }
         public void Refresh(object i)
         {
-            Foodtype = (Dish.Type)new Random().Next(1, (int)Dish.Type.Size1 - 1);
-            Console.WriteLine("食品刷新：地点（" + Position.x + "," + Position.y + "）,种类" + type);
+            dish = Dish.Type.Apple;//(Dish.Type)new Random().Next(1, (int)Dish.Type.Size1 - 1);
+            Console.WriteLine("食品刷新：地点（" + Position.x + "," + Position.y + "）,种类" + blockType);
         }
 
-        public void UseCooker()
+        public override void UseCooker()
         {
+            string Material = "";
 
+            SortedSet<Dish.Type> dishTypeSet = new SortedSet<Dish.Type>();
+            foreach (var unBlockableObject in Map.WorldMap.Grid[(int)Position.x, (int)Position.y].unblockableObjects)
+            {
+                if (unBlockableObject is Dish)
+                    dishTypeSet.Add(((Dish)unBlockableObject).dish);
+            }
+
+            foreach (var dishType in dishTypeSet)
+            {
+                Material += dishType.ToString() + " ";
+            }
+
+            string result = ConfigurationManager.AppSettings[Material];
+            System.Threading.Timer timer = new System.Threading.Timer(Cook, result, Convert.ToInt32(ConfigurationManager.AppSettings[result + "Time"]), 0);
+            Dish.Type GetResult(string s)
+            {
+                return Dish.Type.DarkDish;
+            }
+            void Cook(object s)
+            {
+                if (s is string)
+                    dish = GetResult((string)s);
+            }
         }
 
-        public void HandIn()
+        public void TaskProduce(object i)
         {
+            Dish.Type temp = Dish.Type.Apple;//(Dish.Type)new Random().Next();
+            Task.Add(temp);
+            new System.Threading.Timer(remove, temp,
+                Convert.ToInt32(ConfigurationManager.AppSettings["TaskTimeLimit"]), 0);
 
+            void remove(object task)
+            {
+                if (task is Dish.Type)
+                    Task.Remove((Dish.Type)task);
+            }
+        }
+
+        public override int HandIn(Dish.Type dish_t)
+        {
+            if (Task.Contains(dish_t))
+            {
+                Task.Remove(dish_t);
+                return Convert.ToInt32(ConfigurationManager.AppSettings[dish_t.ToString() + "Score"]);//菜品名+Score，在App.config里加，里面有AppleScore
+                //测试的时候能直接把食材交进去，比赛的只会产生菜品任务
+            }
+            return 0;
         }
     }
-    public class Dish : GameObject //包括食材和做好的菜
+    public class Dish : Obj //包括食材和做好的菜
     {
-        public enum Type
+        public new enum Type
         {
             Empty = 0,//空
             //以下为食材
@@ -145,48 +170,29 @@ namespace Logic.Constant
             DarkDish,
             Size2
         }
-        public Type type;
 
         public int distance;
         public Direction direction;
         public TimeSpan LastActTime;
 
-        public Dish(double x_t, double y_t, Type type_t) : base(new XYPosition(x_t, y_t))
+        public Dish(double x_t, double y_t, Type type_t) : base(x_t, y_t)
         {
-            type = type_t;
-            type = Type.Empty;
+            Blockable = false;
+            Movable = false;
+            dish = type_t;
         }
-        public Type GetDish(Type t)
+        public override Type GetDish(Type t)
         {
-            Type temp = type;
+            Type temp = dish;
             if (t == Type.Empty) this.Parent = null;
-            else type = t;
+            else dish = t;
             return temp;
         }
-
-        //public void move()
-        //{
-        //    if(Time.GameTime() - LastActTime>TimeSpan.FromSeconds(0.5)) LastActTime = Time.GameTime();
-        //    XYPosition aim = CONSTANT.OPERATION[(uint)direction] * (10 * (Time.GameTime() - LastActTime).TotalSeconds) + xyPosition;
-        //    LastActTime = Time.GameTime();
-        //    if ((uint)xyPosition.x != (uint)aim.x || (uint)xyPosition.y != (uint)aim.y)
-        //    {
-        //        Type temp = type;
-        //        WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y][0].RemoveSelf();
-        //        xyPosition = aim;
-        //        WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y].Insert(0, new Dish(xyPosition.x, xyPosition.y, temp));
-        //    }
-        //    else
-        //    {
-        //        xyPosition = aim;
-        //        WORLD_MAP[(uint)xyPosition.x, (uint)xyPosition.y][0].xyPosition = xyPosition;
-        //    }
-        //}
     }
 
-    public class Tool : GameObject
+    public class Tool : Obj
     {
-        public enum Type
+        public new enum Type
         {
             Empty = 0,
             TigerShoes,//虎头鞋
@@ -209,12 +215,14 @@ namespace Logic.Constant
 
             Size
         }
-        public Type type;
-        public Tool(double x_t, double y_t, Type type_t) : base(new XYPosition(x_t, y_t))
+        public new Type type;
+        public Tool(double x_t, double y_t, Type type_t) : base(x_t, y_t)
         {
+            Blockable = false;
+            Movable = false;
             type = type_t;
         }
-        public Type GetTool(Type t)
+        public override Type GetTool(Type t)
         {
             Type temp = type;
             if (t == Type.Empty) this.Parent = null;
@@ -223,22 +231,23 @@ namespace Logic.Constant
         }
 
     }
-    public class Trigger : GameObject
+    public class Trigger : Obj
     {
-        public enum Type
+        public new enum Type
         {
             Trap,
             Mine,
             Size
         }
-        public Type type;
+        public new Type type;
 
-        public Trigger(double x_t, double y_t, Type type_t) : base(new XYPosition(x_t, y_t))
+        public Trigger(double x_t, double y_t, Type type_t) : base(x_t, y_t)
         {
+            Blockable = false;
+            Movable = false;
             type = type_t;
         }
     }
-
     public enum CommandType
     {
         Move = 0,

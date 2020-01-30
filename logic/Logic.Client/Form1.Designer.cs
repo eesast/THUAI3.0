@@ -49,12 +49,13 @@ namespace GameForm
             for (int x = 0; x < WorldMap.Width; x++)
                 for (int y = 0; y < WorldMap.Height; y++)
                 {
-                    this.mapLabels[x, y] = new System.Windows.Forms.Label();
+                    if (map[x, y] == 0)
+                        continue;
 
+                    this.mapLabels[x, y] = new System.Windows.Forms.Label();
                     switch (map[x, y])
                     {
                         case 0:
-                            this.mapLabels[x, y].BackColor = System.Drawing.Color.Black;
                             break;
                         case 1:
                             this.mapLabels[x, y].BackColor = System.Drawing.Color.White;
