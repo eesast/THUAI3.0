@@ -1,0 +1,51 @@
+﻿syntax = "proto3";
+package google.protobuf;
+
+option csharp_namespace = "Communication.Proto";
+
+message XYPositionMessage{
+	double X = 1;
+	double Y = 2;
+}
+enum ObjectTypeMessage{
+    People = 0;
+    Block = 1;
+    Dish = 2;
+    Tool = 3;
+    Trigger = 4;
+}
+enum BuffMessage{
+	Frozen = 0;
+	Stunned = 1;
+	SpeedUp = 2;
+	SlowDown = 3;
+}
+enum DishStateMessage{
+	Raw = 0;
+	Good = 1;
+	OverCooked = 2;
+}
+enum DirectionMessage{
+    Right = 0;
+    RightUp = 1;
+    Up = 2;
+    LeftUp = 3;
+    Left = 4;
+    LeftDown = 5;
+    Down = 6;
+	RightDown = 7;
+	DirectionSize = 8;
+}
+message GameObjectMessage{
+	ObjectTypeMessage Type = 1;
+	bool isMoving = 2;
+	XYPositionMessage Position = 3;
+	int32 Width = 4;
+	int32 Height = 5;
+	DirectionMessage Direction = 6;
+	repeated BuffMessage Buff = 7;
+	DishStateMessage DishState = 8;
+}
+message MessageToClient {
+	map<int64, GameObjectMessage> GameObjectMessageList = 1;
+}

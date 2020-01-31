@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFrameworks>netcoreapp3.0;netstandard20</TargetFrameworks>
+    <AssemblyName>Communication.Server</AssemblyName>
+    <ApplicationIcon />
+    <StartupObject />
+    <RootNamespace>Communication.Server</RootNamespace>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Proto\Communication.Proto.csproj" />
+  </ItemGroup>
+
+</Project>
