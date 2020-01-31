@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Communication.Proto;
-<<<<<<< HEAD
 using Logic.Constant;
-=======
->>>>>>> 1563b56fedd49c24139c431ce521aed9346ea401
 using static Logic.Constant.Map;
 
 namespace Logic.Server
@@ -21,7 +18,6 @@ namespace Logic.Server
                 return _messageToClient;
             }
         }
-<<<<<<< HEAD
         public static readonly object MessageToClientLock = new object();
         // Start is called before the first frame update
         public static void InitializeMap()
@@ -48,8 +44,6 @@ namespace Logic.Server
 
         }
 
-=======
->>>>>>> 1563b56fedd49c24139c431ce521aed9346ea401
         private static Server server;
         public static void Main(string[] args)
         {

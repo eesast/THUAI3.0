@@ -78,12 +78,6 @@ namespace THUnity2D
             }
 
         }
-        protected bool YIsLegal(int y)
-        {
-            if (y < 0 || y >= this._height)
-                return false;
-            return true;
-        }
 
 
         //protected bool XIsLegal(GameObject childrenGameObject)

@@ -15,23 +15,14 @@ namespace Logic.Server
 {
     class Player : Character
     {
-<<<<<<< HEAD
         public System.Threading.Timer MoveStopTimer = new System.Threading.Timer((o) => { });
         public CommandType status;
-=======
-        //public System.Threading.Timer timer;
-        public System.Threading.Timer MoveStopTimer;
-        public CommandType status;
-        //public TimeSpan LastActTime;
-        //public TimeSpan LeftTime;
->>>>>>> 1563b56fedd49c24139c431ce521aed9346ea401
 
         public Player(double x, double y) :
             base(x, y)
         {
             Parent = WorldMap;
             status = CommandType.Stop;
-<<<<<<< HEAD
             lock (Program.MessageToClientLock)
             {
                 Program.MessageToClient.GameObjectMessageList.Add(
@@ -44,11 +35,6 @@ namespace Logic.Server
                         Direction = (DirectionMessage)(int)this.facingDirection
                     });
             }
-=======
-            //LastActTime = Time.GameTime();
-            //timer = new System.Threading.Timer(new System.Threading.TimerCallback(Move), (object)1, -1, 0);
-            //StopTimer = new System.Threading.Timer(new System.Threading.TimerCallback(Stop), (object)1, 0, 0);
->>>>>>> 1563b56fedd49c24139c431ce521aed9346ea401
         }
         public void ExecuteMessage(CommunicationImpl communication, MessageToServer msg)
         {
@@ -75,7 +61,6 @@ namespace Logic.Server
 
         public void Move(Direction direction)
         {
-<<<<<<< HEAD
             this.facingDirection = direction;
             Move(new MoveEventArgs((int)direction * Math.PI / 4, moveSpeed / Constant.Constant.FrameRate));
             lock (Program.MessageToClientLock)
@@ -84,11 +69,6 @@ namespace Logic.Server
                 Program.MessageToClient.GameObjectMessageList[this.ID].Position.Y = this.Position.y;
                 Program.MessageToClient.GameObjectMessageList[this.ID].Direction = (DirectionMessage)this.facingDirection;
             }
-=======
-            Move(new MoveEventArgs((int)direction * Math.PI / 4, moveSpeed / Constant.Constant.FrameRate));
-            Program.MessageToClient.GameObjectMessageList[this.ID].Position.X = this.Position.x;
-            Program.MessageToClient.GameObjectMessageList[this.ID].Position.Y = this.Position.y;
->>>>>>> 1563b56fedd49c24139c431ce521aed9346ea401
         }
         public void Move(double angle, int durationMilliseconds)
         {
@@ -107,11 +87,7 @@ namespace Logic.Server
             {
                 bool CheckItem(XYPosition xypos)
                 {
-<<<<<<< HEAD
                     if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].BlockableObject is Block && ((Block)WorldMap.Grid[(int)xypos.x, (int)xypos.y].BlockableObject).dish != DishType.Empty)
-=======
-                    if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].blockableObject is Block && ((Block)WorldMap.Grid[(int)xypos.x, (int)xypos.y].blockableObject).dish != Dish.Type.Empty)
->>>>>>> 1563b56fedd49c24139c431ce521aed9346ea401
                         return true;
                     foreach (var item in WorldMap.Grid[(int)xypos.x, (int)xypos.y].unblockableObjects)
                     {
@@ -146,7 +122,6 @@ namespace Logic.Server
             }
             void GetItem(XYPosition xypos)
             {
-<<<<<<< HEAD
                 if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].BlockableObject is Block
                     && ((Block)WorldMap.Grid[(int)xypos.x, (int)xypos.y].BlockableObject).blockType == BlockType.FoodPoint
                     && ((Block)WorldMap.Grid[(int)xypos.x, (int)xypos.y].BlockableObject).dish != DishType.Empty)
@@ -156,17 +131,6 @@ namespace Logic.Server
 
                 foreach (var item in WorldMap.Grid[(int)xypos.x, (int)xypos.y].unblockableObjects)
                 {
-=======
-                if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].blockableObject is Block
-                    && ((Block)WorldMap.Grid[(int)xypos.x, (int)xypos.y].blockableObject).blockType == Block.Type.FoodPoint
-                    && ((Block)WorldMap.Grid[(int)xypos.x, (int)xypos.y].blockableObject).dish != Dish.Type.Empty)
-                {
-                    dish = ((Block)WorldMap.Grid[(int)xypos.x, (int)xypos.y].blockableObject).GetDish(dish);
-                }
-
-                foreach (var item in WorldMap.Grid[(int)xypos.x, (int)xypos.y].unblockableObjects)
-                {
->>>>>>> 1563b56fedd49c24139c431ce521aed9346ea401
                     if (item is Dish)
                     {
                         dish = ((Dish)item).GetDish(dish);
@@ -239,27 +203,15 @@ namespace Logic.Server
                 }
                 if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].BlockableObject is Block)
                 {
-<<<<<<< HEAD
                     if ((int)((Block)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].BlockableObject).type == (int)BlockType.Cooker)
-=======
-                    if ((int)((Block)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].blockableObject).type == (int)Block.Type.Cooker)
->>>>>>> 1563b56fedd49c24139c431ce521aed9346ea401
                     {
                         ((Block)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].BlockableObject).UseCooker();
                     }
-<<<<<<< HEAD
                     else if (((Block)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].BlockableObject).blockType == BlockType.TaskPoint)
                     {
                         int temp = ((Block)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].BlockableObject).HandIn(dish);
                         if (temp > 0)
                         { score += temp; dish = DishType.Empty; }
-=======
-                    else if (((Block)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].blockableObject).blockType == Block.Type.TaskPoint)
-                    {
-                        int temp = ((Block)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].blockableObject).HandIn(dish);
-                        if (temp > 0)
-                        { score += temp; dish = Dish.Type.Empty; }
->>>>>>> 1563b56fedd49c24139c431ce521aed9346ea401
                     }
                 }
             }

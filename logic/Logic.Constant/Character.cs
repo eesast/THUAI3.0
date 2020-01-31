@@ -14,26 +14,16 @@ namespace Logic.Constant
         public int SightRange;
         public TALENT talent;
         public int score;
-<<<<<<< HEAD
         public DishType dish;
         public ToolType tool;
-=======
-        public Dish.Type dish;
-        public Tool.Type tool;
->>>>>>> 1563b56fedd49c24139c431ce521aed9346ea401
         //public Tuple<int, int> id = new Tuple<int, int>(-1, -1);  //first:Agent, second:Client
         public Character(double x, double y) : base(new XYPosition(x, y))
         {
             Blockable = true;
             Movable = true;
             score = 0;
-<<<<<<< HEAD
             dish = DishType.Empty;
             tool = ToolType.Empty;
-=======
-            dish = Dish.Type.Empty;
-            tool = Tool.Type.Empty;
->>>>>>> 1563b56fedd49c24139c431ce521aed9346ea401
             moveSpeed = Convert.ToDouble(System.Configuration.ConfigurationManager.AppSettings["PlayerInitMoveSpeed"]);
             MaxThrowDistance = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["PlayerInitThrowDistance"]);
             SightRange = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["PlayerInitSightRange"]);
