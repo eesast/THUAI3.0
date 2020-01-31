@@ -34,22 +34,13 @@ namespace Logic.Server
                 {
                     Tuple<int, int> playerIDTuple = new Tuple<int, int>(a, c);
                     PlayerList.Add(playerIDTuple, new Player(2.5, 1.5));//new Random().Next(2, WORLD_MAP_WIDTH - 2), new Random().Next(2, WORLD_MAP_HEIGHT - 2)));
-                    Program.MessageToClient.GameObjectMessageList.Add(
-                        PlayerList[playerIDTuple].ID,
-                        new GameObjectMessage
-                        {
-                            Type = ObjectTypeMessage.People,
-                            IsMoving = false,
-                            Position = new XYPositionMessage { X = PlayerList[playerIDTuple].Position.x, Y = PlayerList[playerIDTuple].Position.y },
-                            Direction = (DirectionMessage)(int)PlayerList[playerIDTuple].facingDirection
-                        });
 
                     MessageToClient msg = new MessageToClient();
                     msg.GameObjectMessageList.Add(
                         PlayerList[playerIDTuple].ID,
                         new GameObjectMessage
                         {
-                            Type = ObjectTypeMessage.People,
+                            ObjType = ObjTypeMessage.People,
                             IsMoving = false,
                             Position = new XYPositionMessage { X = PlayerList[playerIDTuple].Position.x, Y = PlayerList[playerIDTuple].Position.y },
                             Direction = (DirectionMessage)(int)PlayerList[playerIDTuple].facingDirection
@@ -68,12 +59,24 @@ namespace Logic.Server
 
             new Thread(Run).Start();
             Console.WriteLine("Server constructed");
+
         }
 
         public void Run()
         {
             Time.InitializeTime();
             Console.WriteLine("Server begin to run");
+
+            //此定时器无法正常工作！！！？？？
+            //new System.Threading.Timer(
+            //    (o) =>
+            //    {
+            //        SendMessageToAllClient();
+            //        Console.WriteLine("\nSend!!!\n");
+            //    },
+            //    new object(),
+            //    TimeSpan.FromSeconds(TimeInterval),
+            //    TimeSpan.FromSeconds(TimeInterval));
 
             while (true)
             {
@@ -96,14 +99,20 @@ namespace Logic.Server
             SendMessageToAllClient();
         }
 
+        //向所有Client发送消息，按照帧率定时发送，严禁在其他地方调用此函数
         protected void SendMessageToAllClient()
         {
-            ServerCommunication.SendMessage(new ServerMessage
+            Console.WriteLine("SendMessageToAllClient");
+            lock (Program.MessageToClientLock)
             {
-                Agent = -2,
-                Client = -2,
-                Message = Program.MessageToClient
-            });
+                Console.WriteLine("Go into lock");
+                ServerCommunication.SendMessage(new ServerMessage
+                {
+                    Agent = -2,
+                    Client = -2,
+                    Message = Program.MessageToClient
+                });
+            }
         }
     }
 }

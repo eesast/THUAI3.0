@@ -15,20 +15,26 @@ namespace Logic.Server
 {
     class Player : Character
     {
-        //public System.Threading.Timer timer;
-        public System.Threading.Timer MoveStopTimer;
+        public System.Threading.Timer MoveStopTimer = new System.Threading.Timer((o) => { });
         public CommandType status;
-        //public TimeSpan LastActTime;
-        //public TimeSpan LeftTime;
 
         public Player(double x, double y) :
             base(x, y)
         {
             Parent = WorldMap;
             status = CommandType.Stop;
-            //LastActTime = Time.GameTime();
-            //timer = new System.Threading.Timer(new System.Threading.TimerCallback(Move), (object)1, -1, 0);
-            //StopTimer = new System.Threading.Timer(new System.Threading.TimerCallback(Stop), (object)1, 0, 0);
+            lock (Program.MessageToClientLock)
+            {
+                Program.MessageToClient.GameObjectMessageList.Add(
+                    this.ID,
+                    new GameObjectMessage
+                    {
+                        ObjType = ObjTypeMessage.People,
+                        IsMoving = false,
+                        Position = new XYPositionMessage { X = this.Position.x, Y = this.Position.y },
+                        Direction = (DirectionMessage)(int)this.facingDirection
+                    });
+            }
         }
         public void ExecuteMessage(CommunicationImpl communication, MessageToServer msg)
         {
@@ -55,9 +61,14 @@ namespace Logic.Server
 
         public void Move(Direction direction)
         {
+            this.facingDirection = direction;
             Move(new MoveEventArgs((int)direction * Math.PI / 4, moveSpeed / Constant.Constant.FrameRate));
-            Program.MessageToClient.GameObjectMessageList[this.ID].Position.X = this.Position.x;
-            Program.MessageToClient.GameObjectMessageList[this.ID].Position.Y = this.Position.y;
+            lock (Program.MessageToClientLock)
+            {
+                Program.MessageToClient.GameObjectMessageList[this.ID].Position.X = this.Position.x;
+                Program.MessageToClient.GameObjectMessageList[this.ID].Position.Y = this.Position.y;
+                Program.MessageToClient.GameObjectMessageList[this.ID].Direction = (DirectionMessage)this.facingDirection;
+            }
         }
         public void Move(double angle, int durationMilliseconds)
         {
@@ -76,7 +87,7 @@ namespace Logic.Server
             {
                 bool CheckItem(XYPosition xypos)
                 {
-                    if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].blockableObject is Block && ((Block)WorldMap.Grid[(int)xypos.x, (int)xypos.y].blockableObject).dish != Dish.Type.Empty)
+                    if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].BlockableObject is Block && ((Block)WorldMap.Grid[(int)xypos.x, (int)xypos.y].BlockableObject).dish != DishType.Empty)
                         return true;
                     foreach (var item in WorldMap.Grid[(int)xypos.x, (int)xypos.y].unblockableObjects)
                     {
@@ -87,14 +98,17 @@ namespace Logic.Server
                     return false;
                 }
                 XYPosition xyPosition1 = Position;
-                if (facingDirection == Direction.Down) xyPosition1 = new XYPosition(xyPosition1.x, xyPosition1.y - 1);
-                else if (facingDirection == Direction.Left) xyPosition1 = new XYPosition(xyPosition1.x - 1, xyPosition1.y);
-                else if (facingDirection == Direction.LeftDown) xyPosition1 = new XYPosition(xyPosition1.x - 1, xyPosition1.y - 1);
-                else if (facingDirection == Direction.LeftUp) xyPosition1 = new XYPosition(xyPosition1.x - 1, xyPosition1.y + 1);
-                else if (facingDirection == Direction.Right) xyPosition1 = new XYPosition(xyPosition1.x + 1, xyPosition1.y);
-                else if (facingDirection == Direction.RightDown) xyPosition1 = new XYPosition(xyPosition1.x + 1, xyPosition1.y - 1);
-                else if (facingDirection == Direction.RightUp) xyPosition1 = new XYPosition(xyPosition1.x + 1, xyPosition1.y + 1);
-                else if (facingDirection == Direction.Up) xyPosition1 = new XYPosition(xyPosition1.x, xyPosition1.y + 1);
+                switch (facingDirection)
+                {
+                    case Direction.Down: xyPosition1 = new XYPosition(xyPosition1.x, xyPosition1.y - 1); break;
+                    case Direction.Left: xyPosition1 = new XYPosition(xyPosition1.x - 1, xyPosition1.y); break;
+                    case Direction.LeftDown: xyPosition1 = new XYPosition(xyPosition1.x - 1, xyPosition1.y - 1); break;
+                    case Direction.LeftUp: xyPosition1 = new XYPosition(xyPosition1.x - 1, xyPosition1.y + 1); break;
+                    case Direction.Right: xyPosition1 = new XYPosition(xyPosition1.x + 1, xyPosition1.y); break;
+                    case Direction.RightDown: xyPosition1 = new XYPosition(xyPosition1.x + 1, xyPosition1.y - 1); break;
+                    case Direction.RightUp: xyPosition1 = new XYPosition(xyPosition1.x + 1, xyPosition1.y + 1); break;
+                    case Direction.Up: xyPosition1 = new XYPosition(xyPosition1.x, xyPosition1.y + 1); break;
+                }
 
                 if (CheckItem(Position))
                 {
@@ -108,11 +122,11 @@ namespace Logic.Server
             }
             void GetItem(XYPosition xypos)
             {
-                if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].blockableObject is Block
-                    && ((Block)WorldMap.Grid[(int)xypos.x, (int)xypos.y].blockableObject).blockType == Block.Type.FoodPoint
-                    && ((Block)WorldMap.Grid[(int)xypos.x, (int)xypos.y].blockableObject).dish != Dish.Type.Empty)
+                if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].BlockableObject is Block
+                    && ((Block)WorldMap.Grid[(int)xypos.x, (int)xypos.y].BlockableObject).blockType == BlockType.FoodPoint
+                    && ((Block)WorldMap.Grid[(int)xypos.x, (int)xypos.y].BlockableObject).dish != DishType.Empty)
                 {
-                    dish = ((Block)WorldMap.Grid[(int)xypos.x, (int)xypos.y].blockableObject).GetDish(dish);
+                    dish = ((Block)WorldMap.Grid[(int)xypos.x, (int)xypos.y].BlockableObject).GetDish(dish);
                 }
 
                 foreach (var item in WorldMap.Grid[(int)xypos.x, (int)xypos.y].unblockableObjects)
@@ -142,14 +156,17 @@ namespace Logic.Server
         {
             if (distance > MaxThrowDistance) distance = MaxThrowDistance;
             XYPosition d_xyPos, aim = Position;
-            if (facingDirection == Direction.Down) d_xyPos = new XYPosition(0, -1);
-            else if (facingDirection == Direction.Left) d_xyPos = new XYPosition(-1, 0);
-            else if (facingDirection == Direction.LeftDown) d_xyPos = new XYPosition(-0.7071, -0.7071);
-            else if (facingDirection == Direction.LeftUp) d_xyPos = new XYPosition(-0.7071, 0.7071);
-            else if (facingDirection == Direction.Right) d_xyPos = new XYPosition(1, 0);
-            else if (facingDirection == Direction.RightDown) d_xyPos = new XYPosition(0.7071, -0.7071);
-            else if (facingDirection == Direction.RightUp) d_xyPos = new XYPosition(0.7071, 0.7071);
-            else if (facingDirection == Direction.Up) d_xyPos = new XYPosition(0, 1);
+            switch (facingDirection)
+            {
+                case Direction.Down: d_xyPos = new XYPosition(0, -1); break;
+                case Direction.Left: d_xyPos = new XYPosition(-1, 0); break;
+                case Direction.LeftDown: d_xyPos = new XYPosition(-0.7071, -0.7071); break;
+                case Direction.LeftUp: d_xyPos = new XYPosition(-0.7071, 0.7071); break;
+                case Direction.Right: d_xyPos = new XYPosition(1, 0); break;
+                case Direction.RightDown: d_xyPos = new XYPosition(0.7071, -0.7071); break;
+                case Direction.RightUp: d_xyPos = new XYPosition(0.7071, 0.7071); break;
+                case Direction.Up: d_xyPos = new XYPosition(0, 1); break;
+            }
 
             while (distance > 0)
             {
@@ -157,11 +174,11 @@ namespace Logic.Server
 
             }
 
-            if ((int)dish != (int)Dish.Type.Empty && ThrowDish != 0)
+            if ((int)dish != (int)DishType.Empty && ThrowDish != 0)
             {
 
             }
-            else if ((int)tool != (int)Tool.Type.Empty && ThrowDish == 0)
+            else if ((int)tool != (int)ToolType.Empty && ThrowDish == 0)
             {
 
             }
@@ -173,26 +190,28 @@ namespace Logic.Server
             if (type == 0)//type为0表示使用厨具做菜和提交菜品
             {
                 XYPosition xyPosition1 = Position;
-                if (facingDirection == Direction.Down) xyPosition1 = new XYPosition(xyPosition1.x, xyPosition1.y - 1);
-                else if (facingDirection == Direction.Left) xyPosition1 = new XYPosition(xyPosition1.x - 1, xyPosition1.y);
-                else if (facingDirection == Direction.LeftDown) xyPosition1 = new XYPosition(xyPosition1.x - 1, xyPosition1.y - 1);
-                else if (facingDirection == Direction.LeftUp) xyPosition1 = new XYPosition(xyPosition1.x - 1, xyPosition1.y + 1);
-                else if (facingDirection == Direction.Right) xyPosition1 = new XYPosition(xyPosition1.x + 1, xyPosition1.y);
-                else if (facingDirection == Direction.RightDown) xyPosition1 = new XYPosition(xyPosition1.x + 1, xyPosition1.y - 1);
-                else if (facingDirection == Direction.RightUp) xyPosition1 = new XYPosition(xyPosition1.x + 1, xyPosition1.y + 1);
-                else if (facingDirection == Direction.Up) xyPosition1 = new XYPosition(xyPosition1.x, xyPosition1.y + 1);
-
-                if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].blockableObject is Block)
+                switch (facingDirection)
                 {
-                    if ((int)((Block)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].blockableObject).type == (int)Block.Type.Cooker)
+                    case Direction.Down: xyPosition1 = new XYPosition(xyPosition1.x, xyPosition1.y - 1); break;
+                    case Direction.Left: xyPosition1 = new XYPosition(xyPosition1.x - 1, xyPosition1.y); break;
+                    case Direction.LeftDown: xyPosition1 = new XYPosition(xyPosition1.x - 1, xyPosition1.y - 1); break;
+                    case Direction.LeftUp: xyPosition1 = new XYPosition(xyPosition1.x - 1, xyPosition1.y + 1); break;
+                    case Direction.Right: xyPosition1 = new XYPosition(xyPosition1.x + 1, xyPosition1.y); break;
+                    case Direction.RightDown: xyPosition1 = new XYPosition(xyPosition1.x + 1, xyPosition1.y - 1); break;
+                    case Direction.RightUp: xyPosition1 = new XYPosition(xyPosition1.x + 1, xyPosition1.y + 1); break;
+                    case Direction.Up: xyPosition1 = new XYPosition(xyPosition1.x, xyPosition1.y + 1); break;
+                }
+                if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].BlockableObject is Block)
+                {
+                    if ((int)((Block)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].BlockableObject).type == (int)BlockType.Cooker)
                     {
-                        ((Block)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].blockableObject).UseCooker();
+                        ((Block)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].BlockableObject).UseCooker();
                     }
-                    else if (((Block)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].blockableObject).blockType == Block.Type.TaskPoint)
+                    else if (((Block)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].BlockableObject).blockType == BlockType.TaskPoint)
                     {
-                        int temp = ((Block)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].blockableObject).HandIn(dish);
+                        int temp = ((Block)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].BlockableObject).HandIn(dish);
                         if (temp > 0)
-                        { score += temp; dish = Dish.Type.Empty; }
+                        { score += temp; dish = DishType.Empty; }
                     }
                 }
             }
@@ -202,23 +221,16 @@ namespace Logic.Server
             }
             status = CommandType.Stop;
         }
-        //public void Stop(object i = null)
-        //{
-        //    status = CommandType.Stop;
-        //    if (timer != null)
-        //        timer.Dispose();
-        //    Move(0);
-        //}
 
-        public void Function(Tool.Type type)//在捡起装备时生效，仅对捡起即生效的装备有用
+        public void Function(ToolType type)//在捡起装备时生效，仅对捡起即生效的装备有用
         {
-            if (type == Tool.Type.TigerShoes) moveSpeed += Convert.ToDouble(ConfigurationManager.AppSettings["TigerShoeExtraMoveSpeed"]);
-            else if (type == Tool.Type.TeleScope) SightRange += Convert.ToInt32(ConfigurationManager.AppSettings["TeleScopeExtraSightRange"]);
+            if (type == ToolType.TigerShoes) moveSpeed += Convert.ToDouble(ConfigurationManager.AppSettings["TigerShoeExtraMoveSpeed"]);
+            else if (type == ToolType.TeleScope) SightRange += Convert.ToInt32(ConfigurationManager.AppSettings["TeleScopeExtraSightRange"]);
         }
-        public void DeFunction(Tool.Type type)//在丢弃装备时生效
+        public void DeFunction(ToolType type)//在丢弃装备时生效
         {
-            if (type == Tool.Type.TigerShoes) moveSpeed -= Convert.ToDouble(ConfigurationManager.AppSettings["TigerShoeExtraMoveSpeed"]);
-            else if (type == Tool.Type.TeleScope) SightRange -= Convert.ToInt32(ConfigurationManager.AppSettings["TeleScopeExtraSightRange"]);
+            if (type == ToolType.TigerShoes) moveSpeed -= Convert.ToDouble(ConfigurationManager.AppSettings["TigerShoeExtraMoveSpeed"]);
+            else if (type == ToolType.TeleScope) SightRange -= Convert.ToInt32(ConfigurationManager.AppSettings["TeleScopeExtraSightRange"]);
         }
 
         public void GetTalent(TALENT t)
@@ -230,8 +242,8 @@ namespace Logic.Server
 
         public void UseTool(int parameter)
         {
-            if (tool == Tool.Type.TigerShoes || tool == Tool.Type.TeleScope || tool == Tool.Type.Empty) { Console.WriteLine("物品使用失败（为空或无需使用）！"); }
-            else if (tool == Tool.Type.SpeedBuff)
+            if (tool == ToolType.TigerShoes || tool == ToolType.TeleScope || tool == ToolType.Empty) { Console.WriteLine("物品使用失败（为空或无需使用）！"); }
+            else if (tool == ToolType.SpeedBuff)
             {
                 void Off(object i)
                 {
@@ -241,7 +253,7 @@ namespace Logic.Server
                 System.Threading.Timer t = new System.Threading.Timer(Off, null,
                     Convert.ToInt32(ConfigurationManager.AppSettings["SpeedBuffDuration"]), 0);
             }
-            else if (tool == Tool.Type.StrenthBuff)
+            else if (tool == ToolType.StrenthBuff)
             {
                 void Off(object i)
                 {

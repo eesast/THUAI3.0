@@ -21,55 +21,63 @@ namespace Client
         static Thread operationThread;
         public static DateTime lastSendTime = new DateTime();
         public Communication.CAPI.API ClientCommunication = new Communication.CAPI.API();
-        public void moveFormLabelMethod(Int64 id_t, XYPosition xy_t, Direction direction_t)
+        public void moveFormLabelMethod(Int64 id_t, GameObjectMessage gameObjectMessage)
         {
-            Program.form.playerLabels[id_t].Location = new System.Drawing.Point((int)((xy_t.x - 0.5) * GameForm.Form1.LABEL_WIDTH), Convert.ToInt32((WorldMap.Height - xy_t.y - 0.5) * GameForm.Form1.LABEL_WIDTH));
-            switch (direction_t)
+            Program.form.playerLabels[id_t].Location = new System.Drawing.Point(
+                (int)((gameObjectMessage.Position.X - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL),
+                Convert.ToInt32((WorldMap.Height - gameObjectMessage.Position.Y - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL));
+
+            switch (gameObjectMessage.ObjType)
             {
-                case Direction.Right:
-                    Program.form.playerLabels[id_t].Text = "→";
+                case ObjTypeMessage.People:
+                    switch ((Direction)gameObjectMessage.Direction)
+                    {
+                        case Direction.Right: Program.form.playerLabels[id_t].Text = "→"; break;
+                        case Direction.RightUp: Program.form.playerLabels[id_t].Text = "↗"; break;
+                        case Direction.Up: Program.form.playerLabels[id_t].Text = "↑"; break;
+                        case Direction.LeftUp: Program.form.playerLabels[id_t].Text = "↖"; break;
+                        case Direction.Left: Program.form.playerLabels[id_t].Text = "←"; break;
+                        case Direction.LeftDown: Program.form.playerLabels[id_t].Text = "↙"; break;
+                        case Direction.Down: Program.form.playerLabels[id_t].Text = "↓"; break;
+                        case Direction.RightDown: Program.form.playerLabels[id_t].Text = "↘"; break;
+                        default: break;
+                    }
                     break;
-                case Direction.RightUp:
-                    Program.form.playerLabels[id_t].Text = "↗";
-                    break;
-                case Direction.Up:
-                    Program.form.playerLabels[id_t].Text = "↑";
-                    break;
-                case Direction.LeftUp:
-                    Program.form.playerLabels[id_t].Text = "↖";
-                    break;
-                case Direction.Left:
-                    Program.form.playerLabels[id_t].Text = "←";
-                    break;
-                case Direction.LeftDown:
-                    Program.form.playerLabels[id_t].Text = "↙";
-                    break;
-                case Direction.Down:
-                    Program.form.playerLabels[id_t].Text = "↓";
-                    break;
-                case Direction.RightDown:
-                    Program.form.playerLabels[id_t].Text = "↘";
-                    break;
-                default:
+                case ObjTypeMessage.Block:
                     break;
             }
         }
+        public void initializeFormLabelMethod(Int64 id_t, GameObjectMessage gameObjectMessage)
+        {
+            switch (gameObjectMessage.ObjType)
+            {
+                case ObjTypeMessage.People: Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.Red; break;
+                case ObjTypeMessage.Block:
+                    switch (gameObjectMessage.BlockType)
+                    {
+                        case BlockTypeMessage.FoodPoint:
+                            Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.Purple;
+                            Program.form.playerLabels[id_t].Text = gameObjectMessage.DishType.ToString();
+                            break;
+                    }
+                    break;
+            }
+            Program.form.playerLabels[id_t].TabIndex = 1;
+            Program.form.playerLabels[id_t].Size = new System.Drawing.Size(Form1.LABEL_WIDTH - Form1.LABEL_INTERVAL, Form1.LABEL_WIDTH - Form1.LABEL_INTERVAL);
+            Program.form.playerLabels[id_t].BringToFront();
+        }
 
-        public void moveFormLabel(Int64 id_t, XYPosition xy_t, Direction direction_t)
+        public void moveFormLabel(Int64 id_t, GameObjectMessage gameObjectMessage)
         {
             if (!Program.form.playerLabels.ContainsKey(id_t))
             {
                 Program.form.playerLabels.Add(id_t, new System.Windows.Forms.Label());
-                Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.Red;
-                Program.form.playerLabels[id_t].Name = "playerLabel";
-                Program.form.playerLabels[id_t].TabIndex = 1;
                 if (Program.form.InvokeRequired)
                 {
-                    Action<object> actionDelegate1 = (o) =>
+                    Program.form.Invoke(new Action(() =>
                     {
                         Program.form.Controls.Add(Program.form.playerLabels[id_t]);
-                    };
-                    Program.form.Invoke(actionDelegate1, new object());
+                    }));
                 }
                 else
                 {
@@ -78,60 +86,20 @@ namespace Client
 
                 if (Program.form.playerLabels[id_t].InvokeRequired)
                 {
-                    Action<object> actionDelegate1 = (o) =>
-                    {
-                        Program.form.playerLabels[id_t].Size = new System.Drawing.Size(Form1.LABEL_WIDTH, Form1.LABEL_WIDTH);
-                        Program.form.playerLabels[id_t].SendToBack();
-                    };
-                    Program.form.playerLabels[id_t].Invoke(actionDelegate1, new object());
+                    Program.form.playerLabels[id_t].Invoke(new Action<Int64, GameObjectMessage>(initializeFormLabelMethod), id_t, gameObjectMessage);
                 }
                 else
                 {
-                    Program.form.playerLabels[id_t].Size = new System.Drawing.Size(Form1.LABEL_WIDTH, Form1.LABEL_WIDTH);
-                    Program.form.playerLabels[id_t].SendToBack();
+                    initializeFormLabelMethod(id_t, gameObjectMessage);
                 }
             }
             if (Program.form.playerLabels[id_t].InvokeRequired)
             {
-                // 当一个控件的InvokeRequired属性值为真时，说明有一个创建它以外的线程想访问它
-                //Action<XYPosition, Direction> actionDelegate = (xy_t2, direction_t2) =>
-                //{
-                //    Program.form.playerLabels[id_t].Location = new System.Drawing.Point(Convert.ToInt32((xy_t2.x - 0.5) * Convert.ToDouble(GameForm.Form1.LABEL_WIDTH)), Convert.ToInt32((Convert.ToDouble(WorldMap.Height) - xy_t2.y - 0.5) * Convert.ToDouble(GameForm.Form1.LABEL_WIDTH)));
-                //    switch (direction_t2)
-                //    {
-                //        case Direction.Right:
-                //            Program.form.playerLabels[id_t].Text = "→";
-                //            break;
-                //        case Direction.RightUp:
-                //            Program.form.playerLabels[id_t].Text = "↗";
-                //            break;
-                //        case Direction.Up:
-                //            Program.form.playerLabels[id_t].Text = "↑";
-                //            break;
-                //        case Direction.LeftUp:
-                //            Program.form.playerLabels[id_t].Text = "↖";
-                //            break;
-                //        case Direction.Left:
-                //            Program.form.playerLabels[id_t].Text = "←";
-                //            break;
-                //        case Direction.LeftDown:
-                //            Program.form.playerLabels[id_t].Text = "↙";
-                //            break;
-                //        case Direction.Down:
-                //            Program.form.playerLabels[id_t].Text = "↓";
-                //            break;
-                //        case Direction.RightDown:
-                //            Program.form.playerLabels[id_t].Text = "↘";
-                //            break;
-                //        default:
-                //            break;
-                //    }
-                //};
-                Program.form.playerLabels[id_t].Invoke(new Action<Int64, XYPosition, Direction>(moveFormLabelMethod), id_t, xy_t, direction_t);
+                Program.form.playerLabels[id_t].Invoke(new Action<Int64, GameObjectMessage>(moveFormLabelMethod), id_t, gameObjectMessage);
             }
             else
             {
-                moveFormLabelMethod(id_t, xy_t, direction_t);
+                moveFormLabelMethod(id_t, gameObjectMessage);
             }
         }
         public Player(double x, double y) :
@@ -211,7 +179,7 @@ namespace Client
                     this.Position = new XYPosition(gameObject.Value.Position.X, gameObject.Value.Position.Y);
                     this.facingDirection = (Tools.Direction)(int)gameObject.Value.Direction;
                     Console.WriteLine("\nThis Player :\n" + "\t" + id.ToString() + "\n\tposition: " + Position.ToString());
-                    moveFormLabel(this.id, this.Position, this.facingDirection);
+                    moveFormLabel(this.id, gameObject.Value);
                     return;
                 }
             }
@@ -221,8 +189,8 @@ namespace Client
 
             foreach (var gameObject in msg.GameObjectMessageList)
             {
-                Console.WriteLine("\nPlayer " + gameObject.Key.ToString() + "  position: " + Position.ToString());
-                moveFormLabel(gameObject.Key, Position, facingDirection);
+                //Console.WriteLine("\nPlayer " + gameObject.Key.ToString() + "  position: " + Position.ToString());
+                moveFormLabel(gameObject.Key, gameObject.Value);
             }
         }
     }
