@@ -68,15 +68,14 @@ namespace Logic.Server
             Console.WriteLine("Server begin to run");
 
             //此定时器无法正常工作！！！？？？
-            //new System.Threading.Timer(
-            //    (o) =>
-            //    {
-            //        SendMessageToAllClient();
-            //        Console.WriteLine("\nSend!!!\n");
-            //    },
-            //    new object(),
-            //    TimeSpan.FromSeconds(TimeInterval),
-            //    TimeSpan.FromSeconds(TimeInterval));
+            System.Threading.Timer timer = new System.Threading.Timer(
+                (o) =>
+                {
+                    SendMessageToAllClient();
+                },
+                new object(),
+                TimeSpan.FromSeconds(TimeInterval),
+                TimeSpan.FromSeconds(TimeInterval));
 
             while (true)
             {
@@ -96,16 +95,14 @@ namespace Logic.Server
 
             Console.WriteLine("GameTime : " + Time.GameTime().TotalSeconds.ToString("F3") + "s");
             PlayerList[new Tuple<int, int>(messageEventArgs.message.Agent, messageEventArgs.message.Client)].ExecuteMessage(communicationImpl, (MessageToServer)((ServerMessage)messageEventArgs.message).Message);
-            SendMessageToAllClient();
+            //SendMessageToAllClient();
         }
 
         //向所有Client发送消息，按照帧率定时发送，严禁在其他地方调用此函数
         protected void SendMessageToAllClient()
         {
-            Console.WriteLine("SendMessageToAllClient");
             lock (Program.MessageToClientLock)
             {
-                Console.WriteLine("Go into lock");
                 ServerCommunication.SendMessage(new ServerMessage
                 {
                     Agent = -2,
