@@ -33,18 +33,18 @@ enum DirectionMessage{
     Left = 4;
     LeftDown = 5;
     Down = 6;
-    RightDown = 7;
+	RightDown = 7;
+	DirectionSize = 8;
 }
 message GameObjectMessage{
-	int64 ID = 1;
-	ObjectTypeMessage Type = 2;
-	bool isMoving = 3;
-	XYPositionMessage Position = 4;
-	int32 Width = 5;
-	int32 Height = 6;
-	DirectionMessage Direction = 7;
-	repeated BuffMessage Buff = 8;
-	DishStateMessage DishState = 9;
+	ObjectTypeMessage Type = 1;
+	bool isMoving = 2;
+	XYPositionMessage Position = 3;
+	int32 Width = 4;
+	int32 Height = 5;
+	DirectionMessage Direction = 6;
+	repeated BuffMessage Buff = 7;
+	DishStateMessage DishState = 8;
 }
 message MessageToClient {
 	map<int64, GameObjectMessage> GameObjectMessageList = 1;

@@ -34,6 +34,8 @@ namespace GameForm
             for (int x = 0; x < WorldMap.Width; x++)
                 for (int y = 0; y < WorldMap.Height; y++)
                 {
+                    if (this.mapLabels[x, y] == null)
+                        continue;
                     this.mapLabels[x, y].Location = new System.Drawing.Point(x * LABEL_WIDTH + HALF_LABEL_INTERVAL, (WorldMap.Height - 1 - y) * LABEL_WIDTH + HALF_LABEL_INTERVAL);
                     this.mapLabels[x, y].Size = new System.Drawing.Size(LABEL_WIDTH - LABEL_INTERVAL, LABEL_WIDTH - LABEL_INTERVAL);
                 }

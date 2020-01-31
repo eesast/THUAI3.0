@@ -3,14 +3,14 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Text;
 using Logic.Constant;
-#pragma warning disable CS8622
+//#pragma warning disable CS8622
 namespace Timer
 {
     public static class Time
     {
         private static DateTime initTime = new DateTime();
         public static bool run = true;
-        public static void initializeTime()
+        public static void InitializeTime()
         {
             initTime = DateTime.Now;
         }

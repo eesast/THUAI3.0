@@ -6,10 +6,8 @@ using Logic.Constant;
 //using UnityEngine;
 namespace Logic.Constant
 {
-
     public static class Map
     {
-
         public static uint[,] map = new uint[,]
         {
             { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -53,16 +51,14 @@ namespace Logic.Constant
             { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
             { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
         };
-        //public static int WorldMap.Width = map.GetLength(0);
-        //public static int WorldMap.Height = map.GetLength(1);
-        //public static Obj?[,,] WorldMap = new Obj?[WorldMap.Width, WorldMap.Height, 2];
 
         private static THUnity2D.Map _worldMap = null;
         public static THUnity2D.Map WorldMap
         {
             get
             {
-                _worldMap = _worldMap ?? new THUnity2D.Map(map.GetLength(0), map.GetLength(1), Constant.FrameRate);
+                _worldMap = _worldMap ?? new THUnity2D.Map(map.GetLength(0), map.GetLength(1));
+                _worldMap.FrameRate = Constant.FrameRate;
                 return _worldMap;
             }
         }

@@ -15,42 +15,60 @@ namespace Logic.Server
 {
     class Player : Character
     {
-        public System.Threading.Timer timer;
-        public System.Threading.Timer StopTimer;
-        public COMMAND_TYPE status;
-        public TimeSpan LastActTime;
-        public TimeSpan LeftTime;
+        //public System.Threading.Timer timer;
+        public System.Threading.Timer MoveStopTimer;
+        public CommandType status;
+        //public TimeSpan LastActTime;
+        //public TimeSpan LeftTime;
 
         public Player(double x, double y) :
             base(x, y)
         {
-            status = COMMAND_TYPE.STOP;
-            LastActTime = Time.GameTime();
+            Parent = WorldMap;
+            status = CommandType.Stop;
+            //LastActTime = Time.GameTime();
             //timer = new System.Threading.Timer(new System.Threading.TimerCallback(Move), (object)1, -1, 0);
-            StopTimer = new System.Threading.Timer(new System.Threading.TimerCallback(Stop), (object)1, 0, 0);
+            //StopTimer = new System.Threading.Timer(new System.Threading.TimerCallback(Stop), (object)1, 0, 0);
         }
         public void ExecuteMessage(CommunicationImpl communication, MessageToServer msg)
         {
-            if (msg.CommandType < 0 || msg.CommandType >= (int)COMMAND_TYPE.SIZE)
+            if (msg.CommandType < 0 || msg.CommandType >= CommandTypeMessage.CommandTypeSize)
                 return;
-            if (msg.CommandType == (int)COMMAND_TYPE.MOVE && msg.Parameter1 >= 0 && msg.Parameter1 < (int)Direction.Size)
+            switch (msg.CommandType)
             {
-                Move(new MoveEventArgs(msg.Parameter1 * Math.PI / 4, MoveDistancePerFrame));
-                MessageToClient msgToCl = new MessageToClient();
-                msgToCl.GameObjectMessageList.Add(this.ID, new GameObjectMessage
-                {
-                    Type = ObjectTypeMessage.People,
-                    Position = new XYPositionMessage { X = this.Position.x, Y = this.Position.y },
-                    Direction = (DirectionMessage)(int)this.facingDirection
-                }); ;
-                Program.server.ServerCommunication.SendMessage(new ServerMessage
-                {
-                    Agent = -2,
-                    Client = -2,
-                    Message = msgToCl
-                }
-                );
+                case CommandTypeMessage.Move:
+                    if (msg.MoveDirection >= 0 && msg.MoveDirection < DirectionMessage.DirectionSize)
+                        Move((Direction)msg.MoveDirection);
+                    break;
+                case CommandTypeMessage.Pick:
+                    break;
+                case CommandTypeMessage.Put:
+                    break;
+                case CommandTypeMessage.Stop:
+                    break;
+                case CommandTypeMessage.Use:
+                    break;
+                default:
+                    break;
             }
+        }
+
+        public void Move(Direction direction)
+        {
+            Move(new MoveEventArgs((int)direction * Math.PI / 4, moveSpeed / Constant.Constant.FrameRate));
+            Program.MessageToClient.GameObjectMessageList[this.ID].Position.X = this.Position.x;
+            Program.MessageToClient.GameObjectMessageList[this.ID].Position.Y = this.Position.y;
+        }
+        public void Move(double angle, int durationMilliseconds)
+        {
+            this.Velocity = new Vector(angle, moveSpeed);
+            this.status = CommandType.Move;
+            new System.Threading.Timer(
+                (o) =>
+                {
+                    this.Velocity = new Vector(angle, 0);
+                    this.status = CommandType.Stop;
+                }, new object(), TimeSpan.FromMilliseconds(durationMilliseconds), TimeSpan.FromMilliseconds(-1));
         }
         public override void Pick()
         {
@@ -58,11 +76,12 @@ namespace Logic.Server
             {
                 bool CheckItem(XYPosition xypos)
                 {
-                    for (int i = 0; i < WorldMap.Grid[(int)xypos.x, (int)xypos.y].unblockableObjects.Count; i++)
+                    if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].blockableObject is Block && ((Block)WorldMap.Grid[(int)xypos.x, (int)xypos.y].blockableObject).dish != Dish.Type.Empty)
+                        return true;
+                    foreach (var item in WorldMap.Grid[(int)xypos.x, (int)xypos.y].unblockableObjects)
                     {
-                        if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].unblockableObjects[i] is Dish
-                            || WorldMap.Grid[(int)xypos.x, (int)xypos.y].unblockableObjects[i] is Tool
-                            || WorldMap.Grid[(int)xypos.x, (int)xypos.y].blockableObject is Block) { return true; }
+                        if (item is Dish || item is Tool)
+                            return true;
                     }
                     //等地图做完写
                     return false;
@@ -89,23 +108,25 @@ namespace Logic.Server
             }
             void GetItem(XYPosition xypos)
             {
-                for (int i = 0; i < WorldMap.Grid[(int)xypos.x, (int)xypos.y].unblockableObjects.Count; i++)
+                if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].blockableObject is Block
+                    && ((Block)WorldMap.Grid[(int)xypos.x, (int)xypos.y].blockableObject).blockType == Block.Type.FoodPoint
+                    && ((Block)WorldMap.Grid[(int)xypos.x, (int)xypos.y].blockableObject).dish != Dish.Type.Empty)
                 {
-                    if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].unblockableObjects[i] is Dish)
+                    dish = ((Block)WorldMap.Grid[(int)xypos.x, (int)xypos.y].blockableObject).GetDish(dish);
+                }
+
+                foreach (var item in WorldMap.Grid[(int)xypos.x, (int)xypos.y].unblockableObjects)
+                {
+                    if (item is Dish)
                     {
-                        dish = ((Dish)WorldMap.Grid[(int)xypos.x, (int)xypos.y].unblockableObjects[i]).GetDish(dish);
+                        dish = ((Dish)item).GetDish(dish);
                     }
-                    else if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].unblockableObjects[i] is Tool)
+                    else if (item is Tool)
                     {
                         Console.Write("GetTool!");
                         DeFunction(tool);
-                        tool = ((Tool)WorldMap.Grid[(int)xypos.x, (int)xypos.y].unblockableObjects[i]).GetTool(tool);
+                        tool = ((Tool)item).GetTool(tool);
                         Function(tool);
-                    }
-                    else if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].unblockableObjects[i] is Block
-                        && ((Block)WorldMap.Grid[(int)xypos.x, (int)xypos.y].unblockableObjects[i]).type == Block.Type.FoodPoint)
-                    {
-                        dish = ((Dish)WorldMap.Grid[(int)xypos.x, (int)xypos.y].unblockableObjects[i]).GetDish(dish);
                     }
                 }
             }
@@ -115,7 +136,7 @@ namespace Logic.Server
             {
                 GetItem(xypos);
             }
-            status = COMMAND_TYPE.STOP;
+            status = CommandType.Stop;
         }
         public override void Put(int distance, int ThrowDish)
         {
@@ -145,7 +166,7 @@ namespace Logic.Server
 
             }
             else Console.WriteLine("没有可以扔的东西");
-            status = COMMAND_TYPE.STOP;
+            status = CommandType.Stop;
         }
         public override void Use(int type, int parameter)
         {
@@ -163,13 +184,15 @@ namespace Logic.Server
 
                 if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].blockableObject is Block)
                 {
-                    if (((Block)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].blockableObject).type == Block.Type.Cooker)
+                    if ((int)((Block)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].blockableObject).type == (int)Block.Type.Cooker)
                     {
                         ((Block)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].blockableObject).UseCooker();
                     }
-                    else if (((Block)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].blockableObject).type == Block.Type.TaskPoint)
+                    else if (((Block)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].blockableObject).blockType == Block.Type.TaskPoint)
                     {
-
+                        int temp = ((Block)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].blockableObject).HandIn(dish);
+                        if (temp > 0)
+                        { score += temp; dish = Dish.Type.Empty; }
                     }
                 }
             }
@@ -177,15 +200,15 @@ namespace Logic.Server
             {
                 UseTool(0);
             }
-            status = COMMAND_TYPE.STOP;
+            status = CommandType.Stop;
         }
-        public void Stop(object i = null)
-        {
-            status = COMMAND_TYPE.STOP;
-            if (timer != null)
-                timer.Dispose();
-            Move(0);
-        }
+        //public void Stop(object i = null)
+        //{
+        //    status = CommandType.Stop;
+        //    if (timer != null)
+        //        timer.Dispose();
+        //    Move(0);
+        //}
 
         public void Function(Tool.Type type)//在捡起装备时生效，仅对捡起即生效的装备有用
         {

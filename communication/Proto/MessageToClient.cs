@@ -25,32 +25,32 @@ namespace Communication.Proto {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "ChVNZXNzYWdlVG9DbGllbnQucHJvdG8SD2dvb2dsZS5wcm90b2J1ZiIpChFY",
-            "WVBvc2l0aW9uTWVzc2FnZRIJCgFYGAEgASgBEgkKAVkYAiABKAEi0AIKEUdh",
-            "bWVPYmplY3RNZXNzYWdlEgoKAklEGAEgASgDEjAKBFR5cGUYAiABKA4yIi5n",
-            "b29nbGUucHJvdG9idWYuT2JqZWN0VHlwZU1lc3NhZ2USEAoIaXNNb3ZpbmcY",
-            "AyABKAgSNAoIUG9zaXRpb24YBCABKAsyIi5nb29nbGUucHJvdG9idWYuWFlQ",
-            "b3NpdGlvbk1lc3NhZ2USDQoFV2lkdGgYBSABKAUSDgoGSGVpZ2h0GAYgASgF",
-            "EjQKCURpcmVjdGlvbhgHIAEoDjIhLmdvb2dsZS5wcm90b2J1Zi5EaXJlY3Rp",
-            "b25NZXNzYWdlEioKBEJ1ZmYYCCADKA4yHC5nb29nbGUucHJvdG9idWYuQnVm",
-            "Zk1lc3NhZ2USNAoJRGlzaFN0YXRlGAkgASgOMiEuZ29vZ2xlLnByb3RvYnVm",
-            "LkRpc2hTdGF0ZU1lc3NhZ2UizwEKD01lc3NhZ2VUb0NsaWVudBJaChVHYW1l",
-            "T2JqZWN0TWVzc2FnZUxpc3QYASADKAsyOy5nb29nbGUucHJvdG9idWYuTWVz",
-            "c2FnZVRvQ2xpZW50LkdhbWVPYmplY3RNZXNzYWdlTGlzdEVudHJ5GmAKGkdh",
-            "bWVPYmplY3RNZXNzYWdlTGlzdEVudHJ5EgsKA2tleRgBIAEoAxIxCgV2YWx1",
-            "ZRgCIAEoCzIiLmdvb2dsZS5wcm90b2J1Zi5HYW1lT2JqZWN0TWVzc2FnZToC",
-            "OAEqSwoRT2JqZWN0VHlwZU1lc3NhZ2USCgoGUGVvcGxlEAASCQoFQmxvY2sQ",
-            "ARIICgREaXNoEAISCAoEVG9vbBADEgsKB1RyaWdnZXIQBCpBCgtCdWZmTWVz",
-            "c2FnZRIKCgZGcm96ZW4QABILCgdTdHVubmVkEAESCwoHU3BlZWRVcBACEgwK",
-            "CFNsb3dEb3duEAMqNQoQRGlzaFN0YXRlTWVzc2FnZRIHCgNSYXcQABIICgRH",
-            "b29kEAESDgoKT3ZlckNvb2tlZBACKm8KEERpcmVjdGlvbk1lc3NhZ2USCQoF",
-            "UmlnaHQQABILCgdSaWdodFVwEAESBgoCVXAQAhIKCgZMZWZ0VXAQAxIICgRM",
-            "ZWZ0EAQSDAoITGVmdERvd24QBRIICgREb3duEAYSDQoJUmlnaHREb3duEAdC",
-            "FqoCE0NvbW11bmljYXRpb24uUHJvdG9iBnByb3RvMw=="));
+            "WVBvc2l0aW9uTWVzc2FnZRIJCgFYGAEgASgBEgkKAVkYAiABKAEixAIKEUdh",
+            "bWVPYmplY3RNZXNzYWdlEjAKBFR5cGUYASABKA4yIi5nb29nbGUucHJvdG9i",
+            "dWYuT2JqZWN0VHlwZU1lc3NhZ2USEAoIaXNNb3ZpbmcYAiABKAgSNAoIUG9z",
+            "aXRpb24YAyABKAsyIi5nb29nbGUucHJvdG9idWYuWFlQb3NpdGlvbk1lc3Nh",
+            "Z2USDQoFV2lkdGgYBCABKAUSDgoGSGVpZ2h0GAUgASgFEjQKCURpcmVjdGlv",
+            "bhgGIAEoDjIhLmdvb2dsZS5wcm90b2J1Zi5EaXJlY3Rpb25NZXNzYWdlEioK",
+            "BEJ1ZmYYByADKA4yHC5nb29nbGUucHJvdG9idWYuQnVmZk1lc3NhZ2USNAoJ",
+            "RGlzaFN0YXRlGAggASgOMiEuZ29vZ2xlLnByb3RvYnVmLkRpc2hTdGF0ZU1l",
+            "c3NhZ2UizwEKD01lc3NhZ2VUb0NsaWVudBJaChVHYW1lT2JqZWN0TWVzc2Fn",
+            "ZUxpc3QYASADKAsyOy5nb29nbGUucHJvdG9idWYuTWVzc2FnZVRvQ2xpZW50",
+            "LkdhbWVPYmplY3RNZXNzYWdlTGlzdEVudHJ5GmAKGkdhbWVPYmplY3RNZXNz",
+            "YWdlTGlzdEVudHJ5EgsKA2tleRgBIAEoAxIxCgV2YWx1ZRgCIAEoCzIiLmdv",
+            "b2dsZS5wcm90b2J1Zi5HYW1lT2JqZWN0TWVzc2FnZToCOAEqSwoRT2JqZWN0",
+            "VHlwZU1lc3NhZ2USCgoGUGVvcGxlEAASCQoFQmxvY2sQARIICgREaXNoEAIS",
+            "CAoEVG9vbBADEgsKB1RyaWdnZXIQBCpBCgtCdWZmTWVzc2FnZRIKCgZGcm96",
+            "ZW4QABILCgdTdHVubmVkEAESCwoHU3BlZWRVcBACEgwKCFNsb3dEb3duEAMq",
+            "NQoQRGlzaFN0YXRlTWVzc2FnZRIHCgNSYXcQABIICgRHb29kEAESDgoKT3Zl",
+            "ckNvb2tlZBACKoIBChBEaXJlY3Rpb25NZXNzYWdlEgkKBVJpZ2h0EAASCwoH",
+            "UmlnaHRVcBABEgYKAlVwEAISCgoGTGVmdFVwEAMSCAoETGVmdBAEEgwKCExl",
+            "ZnREb3duEAUSCAoERG93bhAGEg0KCVJpZ2h0RG93bhAHEhEKDURpcmVjdGlv",
+            "blNpemUQCEIWqgITQ29tbXVuaWNhdGlvbi5Qcm90b2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Communication.Proto.ObjectTypeMessage), typeof(global::Communication.Proto.BuffMessage), typeof(global::Communication.Proto.DishStateMessage), typeof(global::Communication.Proto.DirectionMessage), }, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.XYPositionMessage), global::Communication.Proto.XYPositionMessage.Parser, new[]{ "X", "Y" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.GameObjectMessage), global::Communication.Proto.GameObjectMessage.Parser, new[]{ "ID", "Type", "IsMoving", "Position", "Width", "Height", "Direction", "Buff", "DishState" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.GameObjectMessage), global::Communication.Proto.GameObjectMessage.Parser, new[]{ "Type", "IsMoving", "Position", "Width", "Height", "Direction", "Buff", "DishState" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.MessageToClient), global::Communication.Proto.MessageToClient.Parser, new[]{ "GameObjectMessageList" }, null, null, new pbr::GeneratedClrTypeInfo[] { null, })
           }));
     }
@@ -88,6 +88,7 @@ namespace Communication.Proto {
     [pbr::OriginalName("LeftDown")] LeftDown = 5,
     [pbr::OriginalName("Down")] Down = 6,
     [pbr::OriginalName("RightDown")] RightDown = 7,
+    [pbr::OriginalName("DirectionSize")] DirectionSize = 8,
   }
 
   #endregion
@@ -275,7 +276,6 @@ namespace Communication.Proto {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public GameObjectMessage(GameObjectMessage other) : this() {
-      iD_ = other.iD_;
       type_ = other.type_;
       isMoving_ = other.isMoving_;
       position_ = other.position_ != null ? other.position_.Clone() : null;
@@ -292,19 +292,8 @@ namespace Communication.Proto {
       return new GameObjectMessage(this);
     }
 
-    /// <summary>Field number for the "ID" field.</summary>
-    public const int IDFieldNumber = 1;
-    private long iD_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public long ID {
-      get { return iD_; }
-      set {
-        iD_ = value;
-      }
-    }
-
     /// <summary>Field number for the "Type" field.</summary>
-    public const int TypeFieldNumber = 2;
+    public const int TypeFieldNumber = 1;
     private global::Communication.Proto.ObjectTypeMessage type_ = 0;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Communication.Proto.ObjectTypeMessage Type {
@@ -315,7 +304,7 @@ namespace Communication.Proto {
     }
 
     /// <summary>Field number for the "isMoving" field.</summary>
-    public const int IsMovingFieldNumber = 3;
+    public const int IsMovingFieldNumber = 2;
     private bool isMoving_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool IsMoving {
@@ -326,7 +315,7 @@ namespace Communication.Proto {
     }
 
     /// <summary>Field number for the "Position" field.</summary>
-    public const int PositionFieldNumber = 4;
+    public const int PositionFieldNumber = 3;
     private global::Communication.Proto.XYPositionMessage position_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Communication.Proto.XYPositionMessage Position {
@@ -337,7 +326,7 @@ namespace Communication.Proto {
     }
 
     /// <summary>Field number for the "Width" field.</summary>
-    public const int WidthFieldNumber = 5;
+    public const int WidthFieldNumber = 4;
     private int width_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int Width {
@@ -348,7 +337,7 @@ namespace Communication.Proto {
     }
 
     /// <summary>Field number for the "Height" field.</summary>
-    public const int HeightFieldNumber = 6;
+    public const int HeightFieldNumber = 5;
     private int height_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int Height {
@@ -359,7 +348,7 @@ namespace Communication.Proto {
     }
 
     /// <summary>Field number for the "Direction" field.</summary>
-    public const int DirectionFieldNumber = 7;
+    public const int DirectionFieldNumber = 6;
     private global::Communication.Proto.DirectionMessage direction_ = 0;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Communication.Proto.DirectionMessage Direction {
@@ -370,9 +359,9 @@ namespace Communication.Proto {
     }
 
     /// <summary>Field number for the "Buff" field.</summary>
-    public const int BuffFieldNumber = 8;
+    public const int BuffFieldNumber = 7;
     private static readonly pb::FieldCodec<global::Communication.Proto.BuffMessage> _repeated_buff_codec
-        = pb::FieldCodec.ForEnum(66, x => (int) x, x => (global::Communication.Proto.BuffMessage) x);
+        = pb::FieldCodec.ForEnum(58, x => (int) x, x => (global::Communication.Proto.BuffMessage) x);
     private readonly pbc::RepeatedField<global::Communication.Proto.BuffMessage> buff_ = new pbc::RepeatedField<global::Communication.Proto.BuffMessage>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public pbc::RepeatedField<global::Communication.Proto.BuffMessage> Buff {
@@ -380,7 +369,7 @@ namespace Communication.Proto {
     }
 
     /// <summary>Field number for the "DishState" field.</summary>
-    public const int DishStateFieldNumber = 9;
+    public const int DishStateFieldNumber = 8;
     private global::Communication.Proto.DishStateMessage dishState_ = 0;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Communication.Proto.DishStateMessage DishState {
@@ -403,7 +392,6 @@ namespace Communication.Proto {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (ID != other.ID) return false;
       if (Type != other.Type) return false;
       if (IsMoving != other.IsMoving) return false;
       if (!object.Equals(Position, other.Position)) return false;
@@ -418,7 +406,6 @@ namespace Communication.Proto {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
-      if (ID != 0L) hash ^= ID.GetHashCode();
       if (Type != 0) hash ^= Type.GetHashCode();
       if (IsMoving != false) hash ^= IsMoving.GetHashCode();
       if (position_ != null) hash ^= Position.GetHashCode();
@@ -440,37 +427,33 @@ namespace Communication.Proto {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void WriteTo(pb::CodedOutputStream output) {
-      if (ID != 0L) {
-        output.WriteRawTag(8);
-        output.WriteInt64(ID);
-      }
       if (Type != 0) {
-        output.WriteRawTag(16);
+        output.WriteRawTag(8);
         output.WriteEnum((int) Type);
       }
       if (IsMoving != false) {
-        output.WriteRawTag(24);
+        output.WriteRawTag(16);
         output.WriteBool(IsMoving);
       }
       if (position_ != null) {
-        output.WriteRawTag(34);
+        output.WriteRawTag(26);
         output.WriteMessage(Position);
       }
       if (Width != 0) {
-        output.WriteRawTag(40);
+        output.WriteRawTag(32);
         output.WriteInt32(Width);
       }
       if (Height != 0) {
-        output.WriteRawTag(48);
+        output.WriteRawTag(40);
         output.WriteInt32(Height);
       }
       if (Direction != 0) {
-        output.WriteRawTag(56);
+        output.WriteRawTag(48);
         output.WriteEnum((int) Direction);
       }
       buff_.WriteTo(output, _repeated_buff_codec);
       if (DishState != 0) {
-        output.WriteRawTag(72);
+        output.WriteRawTag(64);
         output.WriteEnum((int) DishState);
       }
       if (_unknownFields != null) {
@@ -481,9 +464,6 @@ namespace Communication.Proto {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
-      if (ID != 0L) {
-        size += 1 + pb::CodedOutputStream.ComputeInt64Size(ID);
-      }
       if (Type != 0) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Type);
       }
@@ -516,9 +496,6 @@ namespace Communication.Proto {
     public void MergeFrom(GameObjectMessage other) {
       if (other == null) {
         return;
-      }
-      if (other.ID != 0L) {
-        ID = other.ID;
       }
       if (other.Type != 0) {
         Type = other.Type;
@@ -557,42 +534,38 @@ namespace Communication.Proto {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 8: {
-            ID = input.ReadInt64();
-            break;
-          }
-          case 16: {
             Type = (global::Communication.Proto.ObjectTypeMessage) input.ReadEnum();
             break;
           }
-          case 24: {
+          case 16: {
             IsMoving = input.ReadBool();
             break;
           }
-          case 34: {
+          case 26: {
             if (position_ == null) {
               Position = new global::Communication.Proto.XYPositionMessage();
             }
             input.ReadMessage(Position);
             break;
           }
-          case 40: {
+          case 32: {
             Width = input.ReadInt32();
             break;
           }
-          case 48: {
+          case 40: {
             Height = input.ReadInt32();
             break;
           }
-          case 56: {
+          case 48: {
             Direction = (global::Communication.Proto.DirectionMessage) input.ReadEnum();
             break;
           }
-          case 66:
-          case 64: {
+          case 58:
+          case 56: {
             buff_.AddEntriesFrom(input, _repeated_buff_codec);
             break;
           }
-          case 72: {
+          case 64: {
             DishState = (global::Communication.Proto.DishStateMessage) input.ReadEnum();
             break;
           }
