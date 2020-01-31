@@ -63,30 +63,6 @@ namespace Logic.Constant
             }
         }
 
-        // Start is called before the first frame update
-        public static void InitializeMap()
-        {
-            for (uint x = 0; x < WorldMap.Width; x++)
-                for (uint y = 0; y < WorldMap.Height; y++)
-                {
-                    if (map[x, y] == 6)
-                    {
-                        new Block(x + 0.5, y + 0.5, Block.Type.FoodPoint).Parent = WorldMap;
-                    }
-                    else if (map[x, y] == 5)
-                    {
-                        new Block(x + 0.5, y + 0.5, Block.Type.TaskPoint).Parent = WorldMap;
-                    }
-                    else if (map[x, y] == 0)
-                    {
-                    }
-                    else
-                    {
-                        new Block(x + 0.5, y + 0.5, Block.Type.Wall).Parent = WorldMap;
-                    }
-                }
-
-        }
 
         // Update is called once per frame
         public static void Update()

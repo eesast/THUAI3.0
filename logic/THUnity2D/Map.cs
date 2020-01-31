@@ -37,7 +37,7 @@ namespace THUnity2D
             childrenObject.Position = CorrectPosition(childrenObject.Position, childrenObject.Width, childrenObject.Height, childrenObject.Blockable);
             base.OnChildrenAdded(childrenObject);
             if (childrenObject.Blockable)
-                this.Grid[(int)childrenObject.Position.x, (int)childrenObject.Position.y].blockableObject = childrenObject;
+                this.Grid[(int)childrenObject.Position.x, (int)childrenObject.Position.y].BlockableObject = childrenObject;
             else
                 this.Grid[(int)childrenObject.Position.x, (int)childrenObject.Position.y].unblockableObjects.AddLast(childrenObject);
             this.Debug("Grid (" + (int)childrenObject.Position.x + "," + (int)childrenObject.Position.y + ") add " + childrenObject.ID);
@@ -47,7 +47,7 @@ namespace THUnity2D
             base.OnChildrenDelete(childrenObject);
             if (childrenObject.Blockable)
             {
-                _grid[(int)childrenObject.Position.x, (int)childrenObject.Position.y].blockableObject = null;
+                _grid[(int)childrenObject.Position.x, (int)childrenObject.Position.y].BlockableObject = null;
                 this.Debug("Grid (" + (int)childrenObject.Position.x + "," + (int)childrenObject.Position.y + ") delete blockable " + childrenObject.ID);
             }
             else
@@ -63,14 +63,14 @@ namespace THUnity2D
 
             if (XIsLegal((int)e.previousPosition.x) && YIsLegal((int)e.previousPosition.y)
                 && childrenGameObject.Blockable
-                && this._grid[(int)e.previousPosition.x, (int)e.previousPosition.y].blockableObject == childrenGameObject)
-                this._grid[(int)e.previousPosition.x, (int)e.previousPosition.y].blockableObject = null;//如果需要把childrenGameObject从Grid上拿掉且可以拿掉
+                && this._grid[(int)e.previousPosition.x, (int)e.previousPosition.y].BlockableObject == childrenGameObject)
+                this._grid[(int)e.previousPosition.x, (int)e.previousPosition.y].BlockableObject = null;//如果需要把childrenGameObject从Grid上拿掉且可以拿掉
 
             XYPosition newPosition = CorrectPosition(e.position, childrenGameObject.Width, childrenGameObject.Height, childrenGameObject.Blockable);
             eOut = new PositionChangeReturnEventArgs(true, newPosition);
 
             if (childrenGameObject.Blockable)
-                this._grid[(int)newPosition.x, (int)newPosition.y].blockableObject = childrenGameObject;
+                this._grid[(int)newPosition.x, (int)newPosition.y].BlockableObject = childrenGameObject;
             else if ((int)e.previousPosition.x != (int)newPosition.x || (int)e.previousPosition.y != (int)newPosition.y)
             {
                 this._grid[(int)e.previousPosition.x, (int)e.previousPosition.y].unblockableObjects.Remove(childrenGameObject);
@@ -78,6 +78,7 @@ namespace THUnity2D
             }
 
         }
+
 
         //protected bool XIsLegal(GameObject childrenGameObject)
         //{
@@ -137,7 +138,7 @@ namespace THUnity2D
                 this.DebugWithoutID("true");
                 return true;
             }
-            if (this._grid[(uint)(position.x), (uint)(position.y)].blockableObject != null)
+            if (this._grid[(uint)(position.x), (uint)(position.y)].BlockableObject != null)
             {
                 this.DebugWithoutID("false");
                 return false;
@@ -152,11 +153,11 @@ namespace THUnity2D
                 {
                     continue;
                 }
-                else if (_grid[(uint)toCheckPosition.x, (uint)toCheckPosition.y].blockableObject != null)
+                else if (_grid[(uint)toCheckPosition.x, (uint)toCheckPosition.y].BlockableObject != null)
                 {
                     //Debug("Not null");
-                    if (Math.Abs(_grid[(uint)toCheckPosition.x, (uint)toCheckPosition.y].blockableObject.Position.x - position.x) < 1
-                        && Math.Abs(_grid[(uint)toCheckPosition.x, (uint)toCheckPosition.y].blockableObject.Position.y - position.y) < 1)
+                    if (Math.Abs(_grid[(uint)toCheckPosition.x, (uint)toCheckPosition.y].BlockableObject.Position.x - position.x) < 1
+                        && Math.Abs(_grid[(uint)toCheckPosition.x, (uint)toCheckPosition.y].BlockableObject.Position.y - position.y) < 1)
                     {
                         this.DebugWithoutID("false");
                         return false;
@@ -312,7 +313,7 @@ namespace THUnity2D
                 {
                     if (!XIsLegal(column))
                         continue;
-                    if (this._grid[column, row].blockableObject != null)
+                    if (this._grid[column, row].BlockableObject != null)
                     {
                         toCheckPositions.Add(new Tuple<int, int>(column, row));
                         this.Debug("toCheckPosition : (" + column + "," + row + ")  Added");
@@ -329,7 +330,7 @@ namespace THUnity2D
                 {
                     if (!YIsLegal(row))
                         continue;
-                    if (this._grid[column, row].blockableObject != null)
+                    if (this._grid[column, row].BlockableObject != null)
                     {
                         toCheckPositions.Add(new Tuple<int, int>(column, row));
                         this.Debug("toCheckPosition : (" + column + "," + row + ")  Added");
@@ -344,8 +345,8 @@ namespace THUnity2D
                 double yDown = childrenGameObject.Position.y - 0.5 + (xToCheck - (childrenGameObject.Position.x + ((LeftOrRightBound == Direction.Left) ? -0.5 : 0.5))) * Math.Tan(e.angle);
                 double yToCheck = (int)(yDown - 0.5) + 1 + 0.5;
                 if (YIsLegal((int)yToCheck) && XIsLegal((int)xToCheck)
-                    && this._grid[(int)xToCheck, (int)yToCheck].blockableObject != null
-                    && this._grid[(int)xToCheck, (int)yToCheck].blockableObject != childrenGameObject)
+                    && this._grid[(int)xToCheck, (int)yToCheck].BlockableObject != null
+                    && this._grid[(int)xToCheck, (int)yToCheck].BlockableObject != childrenGameObject)
                 {
                     toCheckPositions.Add(new Tuple<int, int>((int)xToCheck, (int)yToCheck));
                     this.Debug("toCheckPosition : (" + (int)xToCheck + "," + (int)yToCheck + ")  Added");
@@ -357,8 +358,8 @@ namespace THUnity2D
                     int xToAdd = (int)(xToCheck + 2 * item.Value.x);
                     int yToAdd = (int)(yToCheck + 2 * item.Value.y);
                     if (YIsLegal(yToAdd) && XIsLegal(xToAdd)
-                        && this._grid[xToAdd, yToAdd].blockableObject != null
-                        && this._grid[xToAdd, yToAdd].blockableObject != childrenGameObject)
+                        && this._grid[xToAdd, yToAdd].BlockableObject != null
+                        && this._grid[xToAdd, yToAdd].BlockableObject != childrenGameObject)
                     {
                         toCheckPositions.Add(new Tuple<int, int>(xToAdd, yToAdd));
                         this.Debug("toCheckPosition : (" + xToAdd + "," + yToAdd + ")  Added");
@@ -372,8 +373,8 @@ namespace THUnity2D
                 double xLeft = childrenGameObject.Position.x - 0.5 + (yToCheck - (childrenGameObject.Position.y + ((UpOrDownBound == Direction.Down) ? -0.5 : 0.5))) / Math.Tan(e.angle);
                 double xToCheck = (int)(xLeft - 0.5) + 1 + 0.5;
                 if (YIsLegal((int)yToCheck) && XIsLegal((int)xToCheck)
-                    && this._grid[(int)xToCheck, (int)yToCheck].blockableObject != null
-                    && this._grid[(int)xToCheck, (int)yToCheck].blockableObject != childrenGameObject)
+                    && this._grid[(int)xToCheck, (int)yToCheck].BlockableObject != null
+                    && this._grid[(int)xToCheck, (int)yToCheck].BlockableObject != childrenGameObject)
                 {
                     toCheckPositions.Add(new Tuple<int, int>((int)xToCheck, (int)yToCheck));
                     this.Debug("toCheckPosition : (" + (int)xToCheck + "," + (int)yToCheck + ")  Added");
@@ -385,8 +386,8 @@ namespace THUnity2D
                     int xToAdd = (int)(xToCheck + 2 * item.Value.x);
                     int yToAdd = (int)(yToCheck + 2 * item.Value.y);
                     if (YIsLegal(yToAdd) && XIsLegal(xToAdd)
-                        && this._grid[xToAdd, yToAdd].blockableObject != null
-                        && this._grid[xToAdd, yToAdd].blockableObject != childrenGameObject)
+                        && this._grid[xToAdd, yToAdd].BlockableObject != null
+                        && this._grid[xToAdd, yToAdd].BlockableObject != childrenGameObject)
                     {
                         toCheckPositions.Add(new Tuple<int, int>(xToAdd, yToAdd));
                         this.Debug("toCheckPosition : (" + xToAdd + "," + yToAdd + ")  Added");
@@ -403,13 +404,13 @@ namespace THUnity2D
                 double tempResultDistance = resultDistance;
                 double LeftRightDistance = resultDistance;
                 double intervalX = (LeftOrRightBound == Direction.Left) ?
-                    Math.Abs((this._grid[toCheckPosition.Item1, toCheckPosition.Item2].blockableObject.Position.x + 0.5) - (childrenGameObject.Position.x - 0.5)) :
-                    Math.Abs((this._grid[toCheckPosition.Item1, toCheckPosition.Item2].blockableObject.Position.x - 0.5) - (childrenGameObject.Position.x + 0.5));
+                    Math.Abs((this._grid[toCheckPosition.Item1, toCheckPosition.Item2].BlockableObject.Position.x + 0.5) - (childrenGameObject.Position.x - 0.5)) :
+                    Math.Abs((this._grid[toCheckPosition.Item1, toCheckPosition.Item2].BlockableObject.Position.x - 0.5) - (childrenGameObject.Position.x + 0.5));
                 if (intervalX < Math.Abs(deltaVector.x))
                 {
                     double yDown = childrenGameObject.Position.y - 0.5 + intervalX * Math.Sign(deltaVector.x) * deltaVector.y / deltaVector.x;
-                    if (yDown > this._grid[toCheckPosition.Item1, toCheckPosition.Item2].blockableObject.Position.y - 0.5 - 1
-                        && yDown < this._grid[toCheckPosition.Item1, toCheckPosition.Item2].blockableObject.Position.y + 0.5)
+                    if (yDown > this._grid[toCheckPosition.Item1, toCheckPosition.Item2].BlockableObject.Position.y - 0.5 - 1
+                        && yDown < this._grid[toCheckPosition.Item1, toCheckPosition.Item2].BlockableObject.Position.y + 0.5)
                     {
                         //this.Debug("intervalX : " + intervalX);
                         LeftRightDistance = intervalX * resultDistance / Math.Abs(deltaVector.x);
@@ -419,13 +420,13 @@ namespace THUnity2D
 
                 double UpDownDistance = resultDistance;
                 double intervalY = (UpOrDownBound == Direction.Down) ?
-                    Math.Abs((this._grid[toCheckPosition.Item1, toCheckPosition.Item2].blockableObject.Position.y + 0.5) - (childrenGameObject.Position.y - 0.5)) :
-                    Math.Abs((this._grid[toCheckPosition.Item1, toCheckPosition.Item2].blockableObject.Position.y - 0.5) - (childrenGameObject.Position.y + 0.5));
+                    Math.Abs((this._grid[toCheckPosition.Item1, toCheckPosition.Item2].BlockableObject.Position.y + 0.5) - (childrenGameObject.Position.y - 0.5)) :
+                    Math.Abs((this._grid[toCheckPosition.Item1, toCheckPosition.Item2].BlockableObject.Position.y - 0.5) - (childrenGameObject.Position.y + 0.5));
                 if (intervalY < Math.Abs(deltaVector.y))
                 {
                     double xLeft = childrenGameObject.Position.x - 0.5 + intervalY * Math.Sign(deltaVector.y) * deltaVector.x / deltaVector.y;
-                    if (xLeft > this._grid[toCheckPosition.Item1, toCheckPosition.Item2].blockableObject.Position.x - 0.5 - 1
-                        && xLeft < this._grid[toCheckPosition.Item1, toCheckPosition.Item2].blockableObject.Position.x + 0.5)
+                    if (xLeft > this._grid[toCheckPosition.Item1, toCheckPosition.Item2].BlockableObject.Position.x - 0.5 - 1
+                        && xLeft < this._grid[toCheckPosition.Item1, toCheckPosition.Item2].BlockableObject.Position.x + 0.5)
                         UpDownDistance = intervalY * resultDistance / Math.Abs(deltaVector.y);
                 }
                 //this.Debug("UpDownDistance : " + UpDownDistance);
@@ -441,8 +442,8 @@ namespace THUnity2D
             }
             Debug("resultDistance : " + resultDistance);
             XYPosition resultPosition = childrenGameObject.Position + new XYPosition(resultDistance * Math.Cos(e.angle), resultDistance * Math.Sin(e.angle));
-            this._grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].blockableObject = null;
-            this._grid[(int)resultPosition.x, (int)resultPosition.y].blockableObject = childrenGameObject;
+            this._grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].BlockableObject = null;
+            this._grid[(int)resultPosition.x, (int)resultPosition.y].BlockableObject = childrenGameObject;
             eOut = new PositionChangeReturnEventArgs(true, resultPosition);
         }
         protected override void OnChildrenBlockableChanged(GameObject childrenGameObject, BlockableChangedEventArgs e)
@@ -452,16 +453,16 @@ namespace THUnity2D
                 && XIsLegal((int)childrenGameObject.Position.x) && YIsLegal((int)childrenGameObject.Position.y))
             {
                 if (e.previousBlockable
-                    && this._grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].blockableObject == childrenGameObject)
+                    && this._grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].BlockableObject == childrenGameObject)
                 {
-                    this._grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].blockableObject = null;
+                    this._grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].BlockableObject = null;
                     this._grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].unblockableObjects.AddLast(childrenGameObject);
                 }
                 else
                 {
                     this._grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].unblockableObjects.Remove(childrenGameObject);
                     childrenGameObject.Position = CorrectPosition(childrenGameObject.Position, childrenGameObject.Width, childrenGameObject.Height, childrenGameObject.Blockable);
-                    this._grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].blockableObject = childrenGameObject;
+                    this._grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].BlockableObject = childrenGameObject;
                 }
             }
         }
@@ -469,7 +470,13 @@ namespace THUnity2D
     public class MapCell
     {
         public readonly object publicLock = new object();
-        public GameObject? blockableObject = null;
+        protected readonly object privateLock = new object();
+        protected GameObject? _blockableObject = null;
+        public GameObject? BlockableObject
+        {
+            get { lock (privateLock) { return this._blockableObject; } }
+            set { lock (privateLock) { this._blockableObject = value; } }
+        }
         public LinkedList<GameObject> unblockableObjects = new LinkedList<GameObject>();
     }
 }

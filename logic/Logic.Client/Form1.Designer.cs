@@ -37,13 +37,6 @@ namespace GameForm
             this.playerLabels = new Dictionary<Int64, System.Windows.Forms.Label>();
             this.SuspendLayout();
             //
-            //playerLabel
-            //
-            //for (int a = 0; a < Communication.Proto.Constants.AgentCount; a++)
-            //    for (int c = 0; c < Communication.Proto.Constants.PlayerCount; c++)
-            //    {
-            //    }
-            //
             //mapLabels
             //
             for (int x = 0; x < WorldMap.Width; x++)

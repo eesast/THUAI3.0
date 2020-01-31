@@ -2,7 +2,7 @@
   "profiles": {
     "Communication.Agent": {
       "commandName": "Project",
-      "commandLineArgs": "127.0.0.1:5403 30000"
+      "commandLineArgs": "127.0.0.1:8888 30000"
     }
   }
 }
