@@ -35,6 +35,16 @@ namespace Logic.Server
                         Direction = (DirectionMessage)(int)this.facingDirection
                     });
             }
+            this.MoveComplete += new MoveCompleteHandler(
+                (thisGameObject) =>
+                {
+                    lock (Program.MessageToClientLock)
+                    {
+                        Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.X = thisGameObject.Position.x;
+                        Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.Y = thisGameObject.Position.y;
+                        Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Direction = (DirectionMessage)((Player)thisGameObject).facingDirection;
+                    }
+                });
         }
         public void ExecuteMessage(CommunicationImpl communication, MessageToServer msg)
         {
@@ -44,7 +54,7 @@ namespace Logic.Server
             {
                 case CommandTypeMessage.Move:
                     if (msg.MoveDirection >= 0 && msg.MoveDirection < DirectionMessage.DirectionSize)
-                        Move((Direction)msg.MoveDirection);
+                        Move((Direction)msg.MoveDirection, 1000);
                     break;
                 case CommandTypeMessage.Pick:
                     break;
@@ -63,21 +73,18 @@ namespace Logic.Server
         {
             this.facingDirection = direction;
             Move(new MoveEventArgs((int)direction * Math.PI / 4, moveSpeed / Constant.Constant.FrameRate));
-            lock (Program.MessageToClientLock)
-            {
-                Program.MessageToClient.GameObjectMessageList[this.ID].Position.X = this.Position.x;
-                Program.MessageToClient.GameObjectMessageList[this.ID].Position.Y = this.Position.y;
-                Program.MessageToClient.GameObjectMessageList[this.ID].Direction = (DirectionMessage)this.facingDirection;
-            }
         }
-        public void Move(double angle, int durationMilliseconds)
+
+        public override void Move(Direction direction, int durationMilliseconds)
         {
-            this.Velocity = new Vector(angle, moveSpeed);
+            this.facingDirection = direction;
+            this.Velocity = new Vector(0, 0);
+            this.Velocity = new Vector(((double)(int)direction) * Math.PI / 4, moveSpeed);
             this.status = CommandType.Move;
             new System.Threading.Timer(
                 (o) =>
                 {
-                    this.Velocity = new Vector(angle, 0);
+                    this.Velocity = new Vector(((double)(int)direction) * Math.PI / 4, 0);
                     this.status = CommandType.Stop;
                 }, new object(), TimeSpan.FromMilliseconds(durationMilliseconds), TimeSpan.FromMilliseconds(-1));
         }
@@ -97,18 +104,18 @@ namespace Logic.Server
                     //等地图做完写
                     return false;
                 }
-                XYPosition xyPosition1 = Position;
-                switch (facingDirection)
-                {
-                    case Direction.Down: xyPosition1 = new XYPosition(xyPosition1.x, xyPosition1.y - 1); break;
-                    case Direction.Left: xyPosition1 = new XYPosition(xyPosition1.x - 1, xyPosition1.y); break;
-                    case Direction.LeftDown: xyPosition1 = new XYPosition(xyPosition1.x - 1, xyPosition1.y - 1); break;
-                    case Direction.LeftUp: xyPosition1 = new XYPosition(xyPosition1.x - 1, xyPosition1.y + 1); break;
-                    case Direction.Right: xyPosition1 = new XYPosition(xyPosition1.x + 1, xyPosition1.y); break;
-                    case Direction.RightDown: xyPosition1 = new XYPosition(xyPosition1.x + 1, xyPosition1.y - 1); break;
-                    case Direction.RightUp: xyPosition1 = new XYPosition(xyPosition1.x + 1, xyPosition1.y + 1); break;
-                    case Direction.Up: xyPosition1 = new XYPosition(xyPosition1.x, xyPosition1.y + 1); break;
-                }
+                XYPosition xyPosition1 = Position + 2 * THUnity2D.Tools.EightCornerVector[facingDirection];
+                //switch (facingDirection)
+                //{
+                //    case Direction.Down: xyPosition1 = new XYPosition(xyPosition1.x, xyPosition1.y - 1); break;
+                //    case Direction.Left: xyPosition1 = new XYPosition(xyPosition1.x - 1, xyPosition1.y); break;
+                //    case Direction.LeftDown: xyPosition1 = new XYPosition(xyPosition1.x - 1, xyPosition1.y - 1); break;
+                //    case Direction.LeftUp: xyPosition1 = new XYPosition(xyPosition1.x - 1, xyPosition1.y + 1); break;
+                //    case Direction.Right: xyPosition1 = new XYPosition(xyPosition1.x + 1, xyPosition1.y); break;
+                //    case Direction.RightDown: xyPosition1 = new XYPosition(xyPosition1.x + 1, xyPosition1.y - 1); break;
+                //    case Direction.RightUp: xyPosition1 = new XYPosition(xyPosition1.x + 1, xyPosition1.y + 1); break;
+                //    case Direction.Up: xyPosition1 = new XYPosition(xyPosition1.x, xyPosition1.y + 1); break;
+                //}
 
                 if (CheckItem(Position))
                 {
@@ -155,18 +162,19 @@ namespace Logic.Server
         public override void Put(int distance, int ThrowDish)
         {
             if (distance > MaxThrowDistance) distance = MaxThrowDistance;
-            XYPosition d_xyPos, aim = Position;
-            switch (facingDirection)
-            {
-                case Direction.Down: d_xyPos = new XYPosition(0, -1); break;
-                case Direction.Left: d_xyPos = new XYPosition(-1, 0); break;
-                case Direction.LeftDown: d_xyPos = new XYPosition(-0.7071, -0.7071); break;
-                case Direction.LeftUp: d_xyPos = new XYPosition(-0.7071, 0.7071); break;
-                case Direction.Right: d_xyPos = new XYPosition(1, 0); break;
-                case Direction.RightDown: d_xyPos = new XYPosition(0.7071, -0.7071); break;
-                case Direction.RightUp: d_xyPos = new XYPosition(0.7071, 0.7071); break;
-                case Direction.Up: d_xyPos = new XYPosition(0, 1); break;
-            }
+            XYPosition aim = Position;
+            XYPosition d_xyPos = THUnity2D.Tools.EightUnitVector[facingDirection];
+            //switch (facingDirection)
+            //{
+            //    case Direction.Down: d_xyPos = new XYPosition(0, -1); break;
+            //    case Direction.Left: d_xyPos = new XYPosition(-1, 0); break;
+            //    case Direction.LeftDown: d_xyPos = new XYPosition(-0.7071, -0.7071); break;
+            //    case Direction.LeftUp: d_xyPos = new XYPosition(-0.7071, 0.7071); break;
+            //    case Direction.Right: d_xyPos = new XYPosition(1, 0); break;
+            //    case Direction.RightDown: d_xyPos = new XYPosition(0.7071, -0.7071); break;
+            //    case Direction.RightUp: d_xyPos = new XYPosition(0.7071, 0.7071); break;
+            //    case Direction.Up: d_xyPos = new XYPosition(0, 1); break;
+            //}
 
             while (distance > 0)
             {
@@ -189,18 +197,18 @@ namespace Logic.Server
         {
             if (type == 0)//type为0表示使用厨具做菜和提交菜品
             {
-                XYPosition xyPosition1 = Position;
-                switch (facingDirection)
-                {
-                    case Direction.Down: xyPosition1 = new XYPosition(xyPosition1.x, xyPosition1.y - 1); break;
-                    case Direction.Left: xyPosition1 = new XYPosition(xyPosition1.x - 1, xyPosition1.y); break;
-                    case Direction.LeftDown: xyPosition1 = new XYPosition(xyPosition1.x - 1, xyPosition1.y - 1); break;
-                    case Direction.LeftUp: xyPosition1 = new XYPosition(xyPosition1.x - 1, xyPosition1.y + 1); break;
-                    case Direction.Right: xyPosition1 = new XYPosition(xyPosition1.x + 1, xyPosition1.y); break;
-                    case Direction.RightDown: xyPosition1 = new XYPosition(xyPosition1.x + 1, xyPosition1.y - 1); break;
-                    case Direction.RightUp: xyPosition1 = new XYPosition(xyPosition1.x + 1, xyPosition1.y + 1); break;
-                    case Direction.Up: xyPosition1 = new XYPosition(xyPosition1.x, xyPosition1.y + 1); break;
-                }
+                XYPosition xyPosition1 = Position + 2 * THUnity2D.Tools.EightCornerVector[facingDirection];
+                //switch (facingDirection)
+                //{
+                //    case Direction.Down: xyPosition1 = new XYPosition(xyPosition1.x, xyPosition1.y - 1); break;
+                //    case Direction.Left: xyPosition1 = new XYPosition(xyPosition1.x - 1, xyPosition1.y); break;
+                //    case Direction.LeftDown: xyPosition1 = new XYPosition(xyPosition1.x - 1, xyPosition1.y - 1); break;
+                //    case Direction.LeftUp: xyPosition1 = new XYPosition(xyPosition1.x - 1, xyPosition1.y + 1); break;
+                //    case Direction.Right: xyPosition1 = new XYPosition(xyPosition1.x + 1, xyPosition1.y); break;
+                //    case Direction.RightDown: xyPosition1 = new XYPosition(xyPosition1.x + 1, xyPosition1.y - 1); break;
+                //    case Direction.RightUp: xyPosition1 = new XYPosition(xyPosition1.x + 1, xyPosition1.y + 1); break;
+                //    case Direction.Up: xyPosition1 = new XYPosition(xyPosition1.x, xyPosition1.y + 1); break;
+                //}
                 if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].BlockableObject is Block)
                 {
                     if ((int)((Block)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].BlockableObject).type == (int)BlockType.Cooker)

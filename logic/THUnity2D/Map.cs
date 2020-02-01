@@ -56,7 +56,7 @@ namespace THUnity2D
                 this.Debug("Grid (" + (int)childrenObject.Position.x + "," + (int)childrenObject.Position.y + ") delete unBlockable " + childrenObject.ID);
             }
         }
-        protected override void OnChildrenPositionChanged(GameObject childrenGameObject, PositionChangedEventArgs e, out PositionChangeReturnEventArgs eOut)
+        protected override PositionChangeReturnEventArgs OnChildrenPositionChanged(GameObject childrenGameObject, PositionChangedEventArgs e)
         {
             this.Debug("Children object " + childrenGameObject.ID + " position change. from : " + e.previousPosition.ToString() + " aim : " + e.position.ToString());
             //base.OnChildrenPositionChanged(childrenGameObject, e, out eOut);
@@ -67,7 +67,6 @@ namespace THUnity2D
                 this._grid[(int)e.previousPosition.x, (int)e.previousPosition.y].BlockableObject = null;//如果需要把childrenGameObject从Grid上拿掉且可以拿掉
 
             XYPosition newPosition = CorrectPosition(e.position, childrenGameObject.Width, childrenGameObject.Height, childrenGameObject.Blockable);
-            eOut = new PositionChangeReturnEventArgs(true, newPosition);
 
             if (childrenGameObject.Blockable)
                 this._grid[(int)newPosition.x, (int)newPosition.y].BlockableObject = childrenGameObject;
@@ -77,23 +76,10 @@ namespace THUnity2D
                 this._grid[(int)newPosition.x, (int)newPosition.y].unblockableObjects.AddLast(childrenGameObject);
             }
 
+            return new PositionChangeReturnEventArgs(true, newPosition);
         }
 
 
-        //protected bool XIsLegal(GameObject childrenGameObject)
-        //{
-        //    if (childrenGameObject.Position.x - (double)childrenGameObject.Width / 2 < 0
-        //        || childrenGameObject.Position.x + (double)childrenGameObject.Width / 2 > (double)this._width)
-        //        return false;
-        //    return true;
-        //}
-        //protected bool YIsLegal(GameObject childrenGameObject)
-        //{
-        //    if (childrenGameObject.Position.y - (double)childrenGameObject.Height / 2 < 0
-        //        || childrenGameObject.Position.y + (double)childrenGameObject.Height / 2 > (double)this._height)
-        //        return false;
-        //    return true;
-        //}
         protected bool XIsLegal(double x, int objectWidth = 0)
         {
             if (x - (double)objectWidth / 2 < 0 || x + (double)objectWidth / 2 > (double)this._width)
@@ -255,13 +241,13 @@ namespace THUnity2D
             aim = new XYPosition(childrenGameObject.Position.x + deltaX, childrenGameObject.Position.y + deltaY);
         }
 
-        protected override void OnChildrenMove(GameObject childrenGameObject, MoveEventArgs e, out PositionChangeReturnEventArgs eOut)
+        protected override PositionChangeReturnEventArgs OnChildrenMove(GameObject childrenGameObject, MoveEventArgs e)
         {
             this.Debug("Attempting to move Children : " + childrenGameObject.ID);
             //base.OnChildrenMove(childrenGameObject, e, out eOut);
             XYPosition aim;
             CorrectMoveEventArgs(childrenGameObject, ref e, out aim);
-            eOut = new PositionChangeReturnEventArgs(true, aim);
+            //eOut = new PositionChangeReturnEventArgs(true, aim);
 
             if (!childrenGameObject.Blockable)//如果childrenGameObject不可碰撞，无需检测，直接返回
             {
@@ -270,7 +256,7 @@ namespace THUnity2D
                     this._grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].unblockableObjects.Remove(childrenGameObject);
                     this._grid[(int)aim.x, (int)aim.y].unblockableObjects.AddLast(childrenGameObject);
                 }
-                return;
+                return new PositionChangeReturnEventArgs(true, aim);
             }
 
             XYPosition deltaVector = aim - childrenGameObject.Position;
@@ -444,7 +430,7 @@ namespace THUnity2D
             XYPosition resultPosition = childrenGameObject.Position + new XYPosition(resultDistance * Math.Cos(e.angle), resultDistance * Math.Sin(e.angle));
             this._grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].BlockableObject = null;
             this._grid[(int)resultPosition.x, (int)resultPosition.y].BlockableObject = childrenGameObject;
-            eOut = new PositionChangeReturnEventArgs(true, resultPosition);
+            return new PositionChangeReturnEventArgs(true, resultPosition);
         }
         protected override void OnChildrenBlockableChanged(GameObject childrenGameObject, BlockableChangedEventArgs e)
         {

@@ -68,13 +68,13 @@ namespace THUnity2D
                 childrenObject.OnBlockableChanged -= this.OnChildrenBlockableChanged;
             }
         }
-        protected virtual void OnChildrenPositionChanged(GameObject gameObject, PositionChangedEventArgs e, out PositionChangeReturnEventArgs eOut)
+        protected virtual PositionChangeReturnEventArgs OnChildrenPositionChanged(GameObject gameObject, PositionChangedEventArgs e)
         {
-            eOut = new PositionChangeReturnEventArgs(false, e.position);
+            return new PositionChangeReturnEventArgs(false, e.position);
         }
-        protected virtual void OnChildrenMove(GameObject gameObject, MoveEventArgs e, out PositionChangeReturnEventArgs eOut)
+        protected virtual PositionChangeReturnEventArgs OnChildrenMove(GameObject gameObject, MoveEventArgs e)
         {
-            eOut = new PositionChangeReturnEventArgs(false, gameObject.Position + new XYPosition(e.distance * Math.Cos(e.angle), e.distance * Math.Sin(e.angle)));
+            return new PositionChangeReturnEventArgs(false, gameObject.Position + new XYPosition(e.distance * Math.Cos(e.angle), e.distance * Math.Sin(e.angle)));
         }
         protected virtual void OnChildrenBlockableChanged(GameObject gameObject, BlockableChangedEventArgs e)
         {
@@ -126,30 +126,24 @@ namespace THUnity2D
                 this.position = e.position;
             }
         }
-        public delegate void PositionChangedHandler(GameObject sender, PositionChangedEventArgs e, out PositionChangeReturnEventArgs eOut);
+        public delegate PositionChangeReturnEventArgs PositionChangedHandler(GameObject sender, PositionChangedEventArgs e);
         public event PositionChangedHandler? OnPositionChanged; // 声明事件
         protected virtual void PositionChanged(PositionChangedEventArgs e)
         {
             lock (privateLock)
             {
+                PositionChangeReturnEventArgs positionChangeReturnEventArgs = new PositionChangeReturnEventArgs(false, e.position);
                 if (OnPositionChanged != null)
                 {
                     Delegate[] delegates = OnPositionChanged.GetInvocationList();
-                    PositionChangeReturnEventArgs positionChangeReturnEventArgs = new PositionChangeReturnEventArgs(false, e.position);
                     foreach (var delegateItem in delegates)
                     {
-                        PositionChangeReturnEventArgs tempPositionChangeReturnEventArgs = new PositionChangeReturnEventArgs(false, e.position);
-                        PositionChangedHandler PositionChangedMethod = (PositionChangedHandler)delegateItem;
-                        PositionChangedMethod(this, e, out tempPositionChangeReturnEventArgs);
+                        PositionChangeReturnEventArgs tempPositionChangeReturnEventArgs = ((PositionChangedHandler)delegateItem)(this, e);
                         if (tempPositionChangeReturnEventArgs.isReset)
                             positionChangeReturnEventArgs = tempPositionChangeReturnEventArgs;
                     }
-                    this._position = positionChangeReturnEventArgs.position;
                 }
-                else
-                {
-                    this._position = e.position;
-                }
+                this._position = positionChangeReturnEventArgs.position;
             }
         }
         //Position end
@@ -205,7 +199,7 @@ namespace THUnity2D
                 }
             }
         }
-        System.Threading.Timer MovingTimer = new System.Threading.Timer(new System.Threading.TimerCallback((o) => { }));
+        private System.Threading.Timer MovingTimer = new System.Threading.Timer(new System.Threading.TimerCallback((o) => { }));
         protected Vector _velocity = new Vector();
         public Vector Velocity
         {
@@ -357,28 +351,30 @@ namespace THUnity2D
                 this.distance = distance_t;
             }
         }
-        public delegate void MoveHandler(GameObject sender, MoveEventArgs e, out PositionChangeReturnEventArgs eOut);
+        public delegate PositionChangeReturnEventArgs MoveHandler(GameObject sender, MoveEventArgs e);
         public event MoveHandler? OnMove;
+        public delegate void MoveCompleteHandler(GameObject sender);
+        public event MoveCompleteHandler? MoveComplete;
         public virtual void Move(MoveEventArgs e)
         {
             lock (privateLock)
             {
                 Debug("Move : angle : " + e.angle + " distance : " + e.distance);
+                PositionChangeReturnEventArgs positionChangeReturnEventArgs = new PositionChangeReturnEventArgs(false, this.Position + new XYPosition(e.distance * Math.Cos(e.angle), e.distance * Math.Sin(e.angle)));
                 if (OnMove != null && this._movable)
                 {
                     Delegate[] delegates = OnMove.GetInvocationList();
-                    PositionChangeReturnEventArgs positionChangeReturnEventArgs = new PositionChangeReturnEventArgs(false, this.Position + new XYPosition(e.distance * Math.Cos(e.angle), e.distance * Math.Sin(e.angle)));
                     foreach (var delegateItem in delegates)
                     {
-                        PositionChangeReturnEventArgs tempPositionChangeReturnEventArgs = new PositionChangeReturnEventArgs(positionChangeReturnEventArgs);
-                        MoveHandler OnMoveMethod = (MoveHandler)delegateItem;
-                        OnMoveMethod(this, e, out tempPositionChangeReturnEventArgs);
+                        PositionChangeReturnEventArgs tempPositionChangeReturnEventArgs = ((MoveHandler)delegateItem)(this, e);
                         if (tempPositionChangeReturnEventArgs.isReset)
                             positionChangeReturnEventArgs = tempPositionChangeReturnEventArgs;
                     }
-                    this._position = positionChangeReturnEventArgs.position;
                 }
+                this._position = positionChangeReturnEventArgs.position;
                 Debug("Move result poition : " + this._position.ToString());
+                if (MoveComplete != null)
+                    MoveComplete(this);
             }
         }
         //Move end
