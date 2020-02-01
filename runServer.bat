@@ -1,1 +1,1 @@
-@dotnet logic\Logic.Server\bin\Debug\netcoreapp2.1\Logic.Server.dll
+@dotnet logic\Logic.Server\bin\Debug\netcoreapp3.0\Logic.Server.dll

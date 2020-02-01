@@ -24,19 +24,35 @@ namespace Communication.Proto {
     static MessageToServerReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChVNZXNzYWdlVG9TZXJ2ZXIucHJvdG8SD2dvb2dsZS5wcm90b2J1ZiJOCg9N",
-            "ZXNzYWdlVG9TZXJ2ZXISEwoLQ29tbWFuZFR5cGUYASABKAUSEgoKUGFyYW1l",
-            "dGVyMRgCIAEoBRISCgpQYXJhbWV0ZXIyGAMgASgFQhaqAhNDb21tdW5pY2F0",
-            "aW9uLlByb3RvYgZwcm90bzM="));
+            "ChVNZXNzYWdlVG9TZXJ2ZXIucHJvdG8SD2dvb2dsZS5wcm90b2J1ZhoVTWVz",
+            "c2FnZVRvQ2xpZW50LnByb3RvIqcBCg9NZXNzYWdlVG9TZXJ2ZXISCgoCSUQY",
+            "ASABKAMSOAoLQ29tbWFuZFR5cGUYAiABKA4yIy5nb29nbGUucHJvdG9idWYu",
+            "Q29tbWFuZFR5cGVNZXNzYWdlEjgKDU1vdmVEaXJlY3Rpb24YAyABKA4yIS5n",
+            "b29nbGUucHJvdG9idWYuRGlyZWN0aW9uTWVzc2FnZRIUCgxNb3ZlRHVyYXRp",
+            "b24YBCABKAEqWQoSQ29tbWFuZFR5cGVNZXNzYWdlEggKBE1vdmUQABIICgRQ",
+            "aWNrEAESBwoDUHV0EAISBwoDVXNlEAMSCAoEU3RvcBAEEhMKD0NvbW1hbmRU",
+            "eXBlU2l6ZRAFQhaqAhNDb21tdW5pY2F0aW9uLlByb3RvYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { },
-          new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.MessageToServer), global::Communication.Proto.MessageToServer.Parser, new[]{ "CommandType", "Parameter1", "Parameter2" }, null, null, null)
+          new pbr::FileDescriptor[] { global::Communication.Proto.MessageToClientReflection.Descriptor, },
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Communication.Proto.CommandTypeMessage), }, new pbr::GeneratedClrTypeInfo[] {
+            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.MessageToServer), global::Communication.Proto.MessageToServer.Parser, new[]{ "ID", "CommandType", "MoveDirection", "MoveDuration" }, null, null, null)
           }));
     }
     #endregion
 
   }
+  #region Enums
+  public enum CommandTypeMessage {
+    [pbr::OriginalName("Move")] Move = 0,
+    [pbr::OriginalName("Pick")] Pick = 1,
+    [pbr::OriginalName("Put")] Put = 2,
+    [pbr::OriginalName("Use")] Use = 3,
+    [pbr::OriginalName("Stop")] Stop = 4,
+    [pbr::OriginalName("CommandTypeSize")] CommandTypeSize = 5,
+  }
+
+  #endregion
+
   #region Messages
   public sealed partial class MessageToServer : pb::IMessage<MessageToServer> {
     private static readonly pb::MessageParser<MessageToServer> _parser = new pb::MessageParser<MessageToServer>(() => new MessageToServer());
@@ -63,9 +79,10 @@ namespace Communication.Proto {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public MessageToServer(MessageToServer other) : this() {
+      iD_ = other.iD_;
       commandType_ = other.commandType_;
-      parameter1_ = other.parameter1_;
-      parameter2_ = other.parameter2_;
+      moveDirection_ = other.moveDirection_;
+      moveDuration_ = other.moveDuration_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -74,36 +91,47 @@ namespace Communication.Proto {
       return new MessageToServer(this);
     }
 
-    /// <summary>Field number for the "CommandType" field.</summary>
-    public const int CommandTypeFieldNumber = 1;
-    private int commandType_;
+    /// <summary>Field number for the "ID" field.</summary>
+    public const int IDFieldNumber = 1;
+    private long iD_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int CommandType {
+    public long ID {
+      get { return iD_; }
+      set {
+        iD_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "CommandType" field.</summary>
+    public const int CommandTypeFieldNumber = 2;
+    private global::Communication.Proto.CommandTypeMessage commandType_ = 0;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Communication.Proto.CommandTypeMessage CommandType {
       get { return commandType_; }
       set {
         commandType_ = value;
       }
     }
 
-    /// <summary>Field number for the "Parameter1" field.</summary>
-    public const int Parameter1FieldNumber = 2;
-    private int parameter1_;
+    /// <summary>Field number for the "MoveDirection" field.</summary>
+    public const int MoveDirectionFieldNumber = 3;
+    private global::Communication.Proto.DirectionMessage moveDirection_ = 0;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int Parameter1 {
-      get { return parameter1_; }
+    public global::Communication.Proto.DirectionMessage MoveDirection {
+      get { return moveDirection_; }
       set {
-        parameter1_ = value;
+        moveDirection_ = value;
       }
     }
 
-    /// <summary>Field number for the "Parameter2" field.</summary>
-    public const int Parameter2FieldNumber = 3;
-    private int parameter2_;
+    /// <summary>Field number for the "MoveDuration" field.</summary>
+    public const int MoveDurationFieldNumber = 4;
+    private double moveDuration_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int Parameter2 {
-      get { return parameter2_; }
+    public double MoveDuration {
+      get { return moveDuration_; }
       set {
-        parameter2_ = value;
+        moveDuration_ = value;
       }
     }
 
@@ -120,18 +148,20 @@ namespace Communication.Proto {
       if (ReferenceEquals(other, this)) {
         return true;
       }
+      if (ID != other.ID) return false;
       if (CommandType != other.CommandType) return false;
-      if (Parameter1 != other.Parameter1) return false;
-      if (Parameter2 != other.Parameter2) return false;
+      if (MoveDirection != other.MoveDirection) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(MoveDuration, other.MoveDuration)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
+      if (ID != 0L) hash ^= ID.GetHashCode();
       if (CommandType != 0) hash ^= CommandType.GetHashCode();
-      if (Parameter1 != 0) hash ^= Parameter1.GetHashCode();
-      if (Parameter2 != 0) hash ^= Parameter2.GetHashCode();
+      if (MoveDirection != 0) hash ^= MoveDirection.GetHashCode();
+      if (MoveDuration != 0D) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(MoveDuration);
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -145,17 +175,21 @@ namespace Communication.Proto {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void WriteTo(pb::CodedOutputStream output) {
-      if (CommandType != 0) {
+      if (ID != 0L) {
         output.WriteRawTag(8);
-        output.WriteInt32(CommandType);
+        output.WriteInt64(ID);
       }
-      if (Parameter1 != 0) {
+      if (CommandType != 0) {
         output.WriteRawTag(16);
-        output.WriteInt32(Parameter1);
+        output.WriteEnum((int) CommandType);
       }
-      if (Parameter2 != 0) {
+      if (MoveDirection != 0) {
         output.WriteRawTag(24);
-        output.WriteInt32(Parameter2);
+        output.WriteEnum((int) MoveDirection);
+      }
+      if (MoveDuration != 0D) {
+        output.WriteRawTag(33);
+        output.WriteDouble(MoveDuration);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -165,14 +199,17 @@ namespace Communication.Proto {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
+      if (ID != 0L) {
+        size += 1 + pb::CodedOutputStream.ComputeInt64Size(ID);
+      }
       if (CommandType != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(CommandType);
+        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) CommandType);
       }
-      if (Parameter1 != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Parameter1);
+      if (MoveDirection != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) MoveDirection);
       }
-      if (Parameter2 != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Parameter2);
+      if (MoveDuration != 0D) {
+        size += 1 + 8;
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -185,14 +222,17 @@ namespace Communication.Proto {
       if (other == null) {
         return;
       }
+      if (other.ID != 0L) {
+        ID = other.ID;
+      }
       if (other.CommandType != 0) {
         CommandType = other.CommandType;
       }
-      if (other.Parameter1 != 0) {
-        Parameter1 = other.Parameter1;
+      if (other.MoveDirection != 0) {
+        MoveDirection = other.MoveDirection;
       }
-      if (other.Parameter2 != 0) {
-        Parameter2 = other.Parameter2;
+      if (other.MoveDuration != 0D) {
+        MoveDuration = other.MoveDuration;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -206,15 +246,19 @@ namespace Communication.Proto {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 8: {
-            CommandType = input.ReadInt32();
+            ID = input.ReadInt64();
             break;
           }
           case 16: {
-            Parameter1 = input.ReadInt32();
+            CommandType = (global::Communication.Proto.CommandTypeMessage) input.ReadEnum();
             break;
           }
           case 24: {
-            Parameter2 = input.ReadInt32();
+            MoveDirection = (global::Communication.Proto.DirectionMessage) input.ReadEnum();
+            break;
+          }
+          case 33: {
+            MoveDuration = input.ReadDouble();
             break;
           }
         }

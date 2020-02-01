@@ -7,10 +7,10 @@ using System.Threading;
 namespace Communication.Proto
 {
     internal delegate void OnDisconnectCallback();
-    internal class IDClient
+    internal sealed class IDClient : IDisposable
     {
         private IPEndPoint endPoint;
-        private TcpClient client;
+        private readonly TcpClient client;
         
         public int Address { get; private set; }
         public bool Closed { get; private set; }
@@ -105,6 +105,22 @@ namespace Communication.Proto
             byte[] raw = ostream.ToArray();
             client.Send(raw, raw.Length);
             Constants.Debug($"ClientSide: Data sent {message.Content.GetType().FullName}");
+        }
+
+        public void Quit()
+        {
+            MemoryStream ostream = new MemoryStream();
+            BinaryWriter bw = new BinaryWriter(ostream);
+            bw.Write((int)PacketType.Quit);
+            byte[] raw = ostream.ToArray();
+            client.Send(raw, raw.Length);
+            Disconnect();
+        }
+
+        public void Dispose()
+        {
+            client.Destroy();
+            GC.SuppressFinalize(this);
         }
 
         public event OnReceiveCallback OnReceive;

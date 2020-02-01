@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Client;
+//using Client;
 
 namespace WindowsFormsApp2
 {
@@ -14,7 +14,7 @@ namespace WindowsFormsApp2
         [STAThread]
         static void Main()
         {
-            Player player = new Player(10, 10);
+           // Player player = new Player(10, 10);
         }
     }
 }

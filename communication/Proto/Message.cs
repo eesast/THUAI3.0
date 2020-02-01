@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace Communication.Proto
 {
-    internal class Message : IMessage //Communication�ڲ�ʹ�õ�Message
+    internal class Message : IMessage //Communication�ڲ�ʹ�õ�Message 
     {
         public int Address; //������/�����ߣ��򻷾�����
         public IMessage Content; //������
@@ -21,14 +21,7 @@ namespace Communication.Proto
 
         public void MergeFrom(Stream stream)
         {
-            BinaryReader br = new BinaryReader(stream);
-            Address = br.ReadInt32();
-            string PacketType = br.ReadString(); //�����͵�FullName
-
-            Content = Activator.CreateInstance(Type.GetType(PacketType)) as IMessage;
-
-            Content.MergeFrom(stream);
-            Constants.Debug($"{PacketType} received ({Content.CalculateSize()} bytes)");
+            MergeFrom(new CodedInputStream(stream));
         }
 
         public void MergeFrom(CodedInputStream input)
@@ -44,11 +37,11 @@ namespace Communication.Proto
 
         public void WriteTo(Stream stream)
         {
-            BinaryWriter bw = new BinaryWriter(stream);
-            bw.Write(Address);
-            bw.Write(Content.GetType().FullName); //�����͵�FullName
-            Content.WriteTo(stream);
-            Constants.Debug($"{Content.GetType().FullName} sent ({Content.CalculateSize()} bytes)");
+            using (CodedOutputStream costream = new CodedOutputStream(stream, true))
+            {
+                WriteTo(costream);
+                costream.Flush();
+            }
         }
 
         public void WriteTo(CodedOutputStream output)

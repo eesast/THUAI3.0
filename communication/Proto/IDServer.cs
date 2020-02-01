@@ -1,16 +1,18 @@
 ﻿using HPSocketCS;
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.IO;
 
 namespace Communication.Proto
 {
     internal delegate void OnReceiveCallback(Message message);
     internal delegate void OnAcceptCallback();
-    internal class IDServer
+    internal delegate void OnClientQuit();
+    internal sealed class IDServer : IDisposable
     {
-        private List<IntPtr> clientList;
-        private TcpServer server;
+        private ConcurrentDictionary<int, IntPtr> clientList;
+        private readonly TcpServer server;
         private bool isListening;
 
         public ushort Port
@@ -22,7 +24,7 @@ namespace Communication.Proto
         public int Count => clientList.Count;
         public IDServer()
         {
-            clientList = new List<IntPtr>();
+            clientList = new ConcurrentDictionary<int, IntPtr>();
             server = new TcpPackServer();
             isListening = false;
             server.OnReceive += delegate (IServer sender, IntPtr connId, byte[] bytes)
@@ -41,7 +43,16 @@ namespace Communication.Proto
                         }
                         clientList[br.ReadInt32()] = connId;
                         OnAccept?.Invoke();
-                        Constants.Debug($"ServerSide: Using Pre-Allocated ID #{clientList.IndexOf(connId)}");
+                        int id=-1;
+                        foreach (int key in clientList.Keys)
+                        {
+                            if(clientList[key]==connId)
+                            {
+                                id = key;
+                                break;
+                            }
+                        }
+                        Constants.Debug($"ServerSide: Using Pre-Allocated ID #{id}");
                         break;
                     case PacketType.IdRequest: //客户端请求ID
                         if (!isListening)
@@ -49,21 +60,55 @@ namespace Communication.Proto
                             server.Disconnect(connId);
                             break;
                         }
-                        clientList.Add(connId);
+                        id = -1;
+                        for(int i=0; ;i++)
+                        {
+                            if(!clientList.ContainsKey(i))
+                            {
+                                id = i;
+                                break;
+                            }
+                        }
+                        clientList.TryAdd(id,connId);
                         MemoryStream ostream = new MemoryStream();
                         BinaryWriter bw = new BinaryWriter(ostream);
                         bw.Write((int)PacketType.IdAllocate);
-                        bw.Write(clientList.Count - 1);
+                        bw.Write(id);
                         byte[] raw = ostream.ToArray();
                         server.Send(connId, raw, raw.Length);
                         OnAccept?.Invoke();
-                        Constants.Debug($"ServerSide: Allocate ID #{clientList.Count - 1}");
+                        Constants.Debug($"ServerSide: Allocate ID #{id}");
                         break;
                     case PacketType.ProtoPacket: //接收到包
                         Message message = new Message();
                         message.MergeFrom(istream);
                         Constants.Debug($"ServerSide: Data received {message.Content.GetType().FullName}");
-                        InternalSend(message, clientList.IndexOf(connId));
+                        id = -1;
+                        foreach (int key in clientList.Keys)
+                        {
+                            if (clientList[key] == connId)
+                            {
+                                id = key;
+                                break;
+                            }
+                        }
+                        InternalSend(message, id);
+                        break;
+                    case PacketType.Quit:  // 申请退出房间
+                        id = -1;
+                        foreach (int key in clientList.Keys)
+                        {
+                            if (clientList[key] == connId)
+                            {
+                                id = key;
+                                break;
+                            }
+                        }
+                        IntPtr tmp;
+                        clientList.TryRemove(id,out tmp);
+                        Constants.Debug($"ServerSide: ID #{id } has quited");
+                        server.Disconnect(tmp);
+                        InternalQuit?.Invoke();
                         break;
                     default:
                         throw new Exception($"unknown Packet Type : {type}");
@@ -98,7 +143,7 @@ namespace Communication.Proto
             BinaryWriter bw = new BinaryWriter(ostream);
             bw.Write((int)PacketType.Disconnected);
             byte[] raw = ostream.ToArray();
-            foreach (IntPtr client in clientList)
+            foreach (IntPtr client in clientList.Values)
                 server.Send(client, raw, raw.Length);
             server.Stop();
         }
@@ -118,20 +163,34 @@ namespace Communication.Proto
                 message.WriteTo(ostream);
                 byte[] raw = ostream.ToArray();
                 if (message.Address == -2) //广播包
-                    foreach(IntPtr client in clientList)
+                    foreach(IntPtr client in clientList.Values)
                         server.Send(client, raw, raw.Length);
                 else
-                    server.Send(clientList[message.Address], raw, raw.Length);
+                {
+                    if(clientList.ContainsKey(message.Address))server.Send(clientList[message.Address], raw, raw.Length);
+                }
+                    
             }
         }
 
         public void Send(Message message) //发包
         {
-            InternalSend(message, -1);
-            Constants.Debug($"ServerSide: Data sent {message.Content.GetType().FullName}");
+            if(clientList.Count>0)
+            {
+                InternalSend(message, -1);
+                Constants.Debug($"ServerSide: Data sent {message.Content.GetType().FullName}");
+            }
+
+        }
+
+        public void Dispose()
+        {
+            server.Destroy();
+            GC.SuppressFinalize(this);
         }
 
         public event OnReceiveCallback OnReceive;
         public event OnAcceptCallback OnAccept; //当客户端被分配到/已请求ID而非TCP的Accept时触发
+        public event OnClientQuit InternalQuit;  // client退出事件
     }
 }

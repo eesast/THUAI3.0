@@ -1,4 +1,5 @@
-﻿using static Map;
+﻿using static Logic.Constant.Map;
+using THUnity2D;
 using System;
 using System.Collections.Generic;
 
@@ -32,33 +33,22 @@ namespace GameForm
         /// </summary>
         private void InitializeComponent()
         {
-            this.mapLabels = new System.Windows.Forms.Label[WORLD_MAP_WIDTH, WORLD_MAP_HEIGHT];
-            this.playerLabels = new Dictionary<Tuple<int, int>, System.Windows.Forms.Label>();
+            this.mapLabels = new System.Windows.Forms.Label[WorldMap.Width, WorldMap.Height];
+            this.playerLabels = new Dictionary<Int64, System.Windows.Forms.Label>();
             this.SuspendLayout();
-            //
-            //playerLabel
-            //
-            for (int a = 0; a < Communication.Proto.Constants.AgentCount; a++)
-                for (int c = 0; c < Communication.Proto.Constants.PlayerCount; c++)
-                {
-                    this.playerLabels.Add(new Tuple<int, int>(a, c), new System.Windows.Forms.Label());
-                    this.playerLabels[new Tuple<int, int>(a, c)].BackColor = System.Drawing.Color.Red;
-                    this.playerLabels[new Tuple<int, int>(a, c)].Name = "playerLabel";
-                    this.playerLabels[new Tuple<int, int>(a, c)].TabIndex = 1;
-                    this.Controls.Add(this.playerLabels[new Tuple<int, int>(a, c)]);
-                }
             //
             //mapLabels
             //
-            for (int x = 0; x < WORLD_MAP_WIDTH; x++)
-                for (int y = 0; y < WORLD_MAP_HEIGHT; y++)
+            for (int x = 0; x < WorldMap.Width; x++)
+                for (int y = 0; y < WorldMap.Height; y++)
                 {
-                    this.mapLabels[x, y] = new System.Windows.Forms.Label();
+                    if (map[x, y] == 0)
+                        continue;
 
+                    this.mapLabels[x, y] = new System.Windows.Forms.Label();
                     switch (map[x, y])
                     {
                         case 0:
-                            this.mapLabels[x, y].BackColor = System.Drawing.Color.Black;
                             break;
                         case 1:
                             this.mapLabels[x, y].BackColor = System.Drawing.Color.White;
@@ -83,7 +73,7 @@ namespace GameForm
                             break;
                     }
 
-                    this.mapLabels[x, y].Location = new System.Drawing.Point(x * LABEL_WIDTH + HALF_LABEL_INTERVAL, (WORLD_MAP_HEIGHT - 1 - y) * LABEL_WIDTH + HALF_LABEL_INTERVAL);
+                    this.mapLabels[x, y].Location = new System.Drawing.Point(x * LABEL_WIDTH + HALF_LABEL_INTERVAL, (WorldMap.Height - 1 - y) * LABEL_WIDTH + HALF_LABEL_INTERVAL);
                     this.mapLabels[x, y].Name = "Label" + x.ToString() + "," + y.ToString();
                     this.mapLabels[x, y].Size = new System.Drawing.Size(LABEL_WIDTH - LABEL_INTERVAL, LABEL_WIDTH - LABEL_INTERVAL);
 
@@ -110,7 +100,7 @@ namespace GameForm
         #endregion
 
         public System.Windows.Forms.Label[,] mapLabels;
-        public Dictionary<Tuple<int, int>, System.Windows.Forms.Label> playerLabels;
+        public Dictionary<Int64, System.Windows.Forms.Label> playerLabels;
     }
 }
 

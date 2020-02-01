@@ -2,6 +2,7 @@
 using System.Net;
 using Communication.Proto;
 using Google.Protobuf;
+using System.IO;
 
 namespace Communication.CAPI
 {
@@ -91,7 +92,10 @@ namespace Communication.CAPI
                 }
             });
         }
-
+        public void SendQuitMessage()
+        {
+            client.Quit();
+        }
         public string BufferedMessage()
         {
             string t;
