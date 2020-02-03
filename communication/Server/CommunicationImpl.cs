@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.Threading;
 using Communication.Proto;
 using System;
@@ -60,6 +60,7 @@ namespace Communication.Server
                 server.Resume();
             };
             full = new ManualResetEvent(false);
+            server.Port = Constants.ServerPort;
             server.Start();
             status = DockerGameStatus.Listening;
             Constants.Debug("Waiting for clients");

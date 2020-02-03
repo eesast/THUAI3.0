@@ -1,11 +1,19 @@
 syntax = "proto3";
 package google.protobuf;
-
+import "MessageToClient.proto";
 option csharp_namespace = "Communication.Proto";
 
+enum CommandTypeMessage{
+	Move = 0;
+	Pick = 1;
+	Put = 2;
+	Use = 3;
+	Stop = 4;
+	CommandTypeSize = 5;
+}
 message MessageToServer {
 	int64 ID = 1;
-	int32 CommandType = 2;
-	int32 Parameter1 = 3;
-	int32 Parameter2 = 4;
+	CommandTypeMessage CommandType = 2;
+	DirectionMessage MoveDirection = 3;
+	double MoveDuration = 4;
 }
