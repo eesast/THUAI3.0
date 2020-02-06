@@ -75,6 +75,7 @@ namespace Logic.Constant
     }
     public enum TriggerType
     {
+        WaveGlue,
         Trap,
         Mine,
         Size

@@ -9,8 +9,9 @@ namespace Logic.Server
     {
         public Tool(double x_t, double y_t, ToolType type_t) : base(x_t, y_t)
         {
-            Blockable = false;
-            Movable = false;
+            Layer = (int)Logic.Constant.Map.MapLayer.ItemLayer;
+            Movable = true;
+            Bouncable = true;
             tool = type_t;
         }
         public override ToolType GetTool(ToolType t)

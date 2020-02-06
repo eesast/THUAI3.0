@@ -10,7 +10,7 @@ namespace Logic.Server
         public TriggerType trigger;
         public Trigger(double x_t, double y_t, TriggerType type_t) : base(x_t, y_t)
         {
-            Blockable = false;
+            Layer = (int)Logic.Constant.Map.MapLayer.ItemLayer;
             Movable = false;
             trigger = type_t;
         }

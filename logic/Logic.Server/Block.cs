@@ -4,6 +4,7 @@ using System.Text;
 using THUnity2D;
 using System.Configuration;
 using Logic.Constant;
+using Communication.Proto;
 
 namespace Logic.Server
 {
@@ -14,7 +15,8 @@ namespace Logic.Server
         public List<DishType> Task = null;//任务点的任务列表
         public Block(double x_t, double y_t, BlockType type_t) : base(x_t, y_t)
         {
-            Blockable = true;
+            type = ObjType.Block;
+            Layer = (int)Logic.Constant.Map.MapLayer.BlockLayer;
             Movable = false;
             blockType = type_t;
             if (blockType == BlockType.FoodPoint)
@@ -26,14 +28,13 @@ namespace Logic.Server
                 {
                     Program.MessageToClient.GameObjectMessageList.Add(
                         this.ID,
-                        new Communication.Proto.GameObjectMessage
+                        new GameObjectMessage
                         {
-                            ObjType = Communication.Proto.ObjTypeMessage.Block,
-                            BlockType = Communication.Proto.BlockTypeMessage.FoodPoint,
-                            DishType = (Communication.Proto.DishTypeMessage)this.dish,
-                            Position = new Communication.Proto.XYPositionMessage { X = this.Position.x, Y = this.Position.y }
-                        }
-                        );
+                            ObjType = (ObjTypeMessage)ObjType.Block,
+                            BlockType = BlockTypeMessage.FoodPoint,
+                            DishType = (DishTypeMessage)dish,
+                            Position = new XYPositionMessage { X = Position.x, Y = Position.y }
+                        });
                 }
             }
             else if (blockType == BlockType.TaskPoint)
@@ -44,13 +45,13 @@ namespace Logic.Server
                 {
                     Program.MessageToClient.GameObjectMessageList.Add(
                         this.ID,
-                        new Communication.Proto.GameObjectMessage
+                        new GameObjectMessage
                         {
-                            ObjType = Communication.Proto.ObjTypeMessage.Block,
-                            BlockType = Communication.Proto.BlockTypeMessage.TaskPoint,
-                            Position = new Communication.Proto.XYPositionMessage { X = this.Position.x, Y = this.Position.y }
-                        }
-                        );
+                            ObjType = (ObjTypeMessage)ObjType.Block,
+                            BlockType = BlockTypeMessage.TaskPoint,
+                            DishType = (DishTypeMessage)dish,
+                            Position = new XYPositionMessage { X = Position.x, Y = Position.y }
+                        });
                 }
             }
         }
@@ -72,10 +73,10 @@ namespace Logic.Server
             string Material = "";
 
             SortedSet<DishType> dishTypeSet = new SortedSet<DishType>();
-            foreach (var unBlockableObject in Logic.Constant.Map.WorldMap.Grid[(int)Position.x, (int)Position.y].unblockableObjects)
+            foreach (var GameObject in Logic.Constant.Map.WorldMap.Grid[(int)Position.x, (int)Position.y].Layers[(int)Logic.Constant.Map.MapLayer.ItemLayer])
             {
-                if (unBlockableObject is Dish)
-                    dishTypeSet.Add(((Dish)unBlockableObject).dish);
+                if (GameObject is Dish)
+                    dishTypeSet.Add(((Dish)GameObject).dish);
             }
 
             foreach (var dishType in dishTypeSet)
