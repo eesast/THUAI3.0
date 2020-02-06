@@ -209,14 +209,22 @@ namespace THUnity2D
             XYPosition aim;
             double resultDistance = e.distance;
             double deltaX = e.distance * Math.Cos(e.angle);
+            if (Math.Abs(deltaX) < 1E-8)
+                deltaX = 0;
             double deltaY = e.distance * Math.Sin(e.angle);
+            if (Math.Abs(deltaY) < 1E-8)
+                deltaY = 0;
             Direction collisionDirection = 0;
             Debug("initialize resultDistance : " + resultDistance);
 
             void RefreshResultDistanceDeltaXDeltaY(double newResultDistance)
             {
                 deltaX = deltaX * newResultDistance / resultDistance;
+                if (double.IsNaN(deltaX))
+                    deltaX = 0;
                 deltaY = deltaY * newResultDistance / resultDistance;
+                if (double.IsNaN(deltaY))
+                    deltaY = 0;
                 resultDistance = newResultDistance;
             }
 
@@ -284,9 +292,8 @@ namespace THUnity2D
             aim = new XYPosition(previousPosition.x + deltaX, previousPosition.y + deltaY);
 
 
-
-
             //XYPosition deltaVector = new XYPosition(deltaX, deltaY);
+            //this.Debug(previousPosition.ToString() + "  " + deltaX + "  " + deltaY + "  " + e.angle + "  " + e.distance);
             this.Debug("Move Children : " + childrenGameObject.ID + " from : " + previousPosition.ToString() + " aim : " + aim.ToString());
             XDirection = deltaX < 0 ? Direction.Left : Direction.Right;
             YDirection = deltaY >= 0 ? Direction.Up : Direction.Down;

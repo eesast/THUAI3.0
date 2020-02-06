@@ -18,7 +18,6 @@ namespace Logic.Constant
     }
     public enum ObjType
     {
-        Air = 0,
         People,
         Block,
         Dish,

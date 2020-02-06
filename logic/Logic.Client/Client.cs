@@ -58,6 +58,7 @@ namespace Client
                         case BlockTypeMessage.FoodPoint:
                             Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.Purple;
                             Program.form.playerLabels[id_t].Text = gameObjectMessage.DishType.ToString();
+                            Console.WriteLine("New FootPoint Label");
                             break;
                     }
                     break;

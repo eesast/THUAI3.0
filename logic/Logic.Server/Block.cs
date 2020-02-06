@@ -30,7 +30,7 @@ namespace Logic.Server
                         this.ID,
                         new GameObjectMessage
                         {
-                            ObjType = (ObjTypeMessage)ObjType.Block,
+                            ObjType = ObjTypeMessage.Block,
                             BlockType = BlockTypeMessage.FoodPoint,
                             DishType = (DishTypeMessage)dish,
                             Position = new XYPositionMessage { X = Position.x, Y = Position.y }
@@ -47,7 +47,7 @@ namespace Logic.Server
                         this.ID,
                         new GameObjectMessage
                         {
-                            ObjType = (ObjTypeMessage)ObjType.Block,
+                            ObjType = ObjTypeMessage.Block,
                             BlockType = BlockTypeMessage.TaskPoint,
                             DishType = (DishTypeMessage)dish,
                             Position = new XYPositionMessage { X = Position.x, Y = Position.y }
