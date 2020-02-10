@@ -63,6 +63,7 @@ namespace Logic.Server
                         Move((Direction)msg.MoveDirection, 1000);
                     break;
                 case CommandTypeMessage.Pick:
+                    Pick();
                     break;
                 case CommandTypeMessage.Put:
                     break;
@@ -101,14 +102,14 @@ namespace Logic.Server
             {
                 bool CheckItem(XYPosition xypos)
                 {
-                    if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].Types.ContainsKey(typeof(Block)))
-                        foreach (var gameObject in WorldMap.Grid[(int)xypos.x, (int)xypos.y].Types[typeof(Block)])
+                    if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].ContainsType(typeof(Block)))
+                        foreach (var gameObject in WorldMap.Grid[(int)xypos.x, (int)xypos.y].GetType(typeof(Block)))
                         {
                             if (((Block)gameObject).dish != DishType.Empty)
                                 return true;
                         }
 
-                    foreach (var item in WorldMap.Grid[(int)xypos.x, (int)xypos.y].Layers[2])
+                    foreach (var item in WorldMap.Grid[(int)xypos.x, (int)xypos.y].GetLayer((int)Constant.Map.MapLayer.ItemLayer))
                     {
                         if (item is Dish || item is Tool)
                             return true;
@@ -130,11 +131,12 @@ namespace Logic.Server
             }
             void GetItem(XYPosition xypos)
             {
-                if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].Types.ContainsKey(typeof(Block)))
+                if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].ContainsType(typeof(Block)))
                 {
-                    foreach (Block block in WorldMap.Grid[(int)xypos.x, (int)xypos.y].Types[typeof(Block)])
+                    foreach (Block block in WorldMap.Grid[(int)xypos.x, (int)xypos.y].GetType(typeof(Block)))
                     {
-                        if ((block.blockType == BlockType.FoodPoint || block.blockType == BlockType.Cooker) && block.dish != DishType.Empty)
+                        if ((block.blockType == BlockType.FoodPoint || block.blockType == BlockType.Cooker)
+                            && block.dish != DishType.Empty)
                         {
                             dish = block.GetDish(dish);
                             return;
@@ -143,7 +145,7 @@ namespace Logic.Server
                     }
                 }
 
-                foreach (var item in WorldMap.Grid[(int)xypos.x, (int)xypos.y].Layers[(int)MapLayer.ItemLayer])
+                foreach (var item in WorldMap.Grid[(int)xypos.x, (int)xypos.y].GetLayer((int)MapLayer.ItemLayer))
                 {
                     if (item is Dish)
                     {
@@ -173,57 +175,13 @@ namespace Logic.Server
             //XYPosition aim = Position;
             //XYPosition d_xyPos = THUnity2D.Tools.EightUnitVector[facingDirection];
 
-            //while (distance > 0)//寻找投掷物品的目的地
-            //{
-            //    distance--;
-            //    aim += d_xyPos;//以距离1为单位逐步搜寻
-            //    if (WorldMap.Grid[(int)aim.x, (int)aim.y].Types.ContainsKey(typeof(Block)))
-            //        foreach (Block block in WorldMap.Grid[(int)aim.x, (int)aim.y].Types[typeof(Block)])
-            //            if (block.blockType == BlockType.Wall)
-            //            {//处理物品撞到墙的情况（就是反弹，最终投掷的距离不会改变）
-            //                if (d_xyPos.x == 0 || d_xyPos.y == 0)
-            //                {
-            //                    aim -= d_xyPos;
-            //                    d_xyPos *= -1;
-            //                    distance++;
-            //                }
-            //                else
-            //                {
-            //                    aim -= d_xyPos;
-            //                    distance++;
-            //                    if (WorldMap.Grid[(int)(aim.x - d_xyPos.x), (int)aim.y].BlockableObject is Block && ((Block)WorldMap.Grid[(int)(aim.x - d_xyPos.x), (int)aim.y].BlockableObject).blockType == BlockType.Wall)
-            //                    {
-            //                        d_xyPos -= new XYPosition(0, 2 * d_xyPos.y);
-            //                    }
-            //                    if (WorldMap.Grid[(int)aim.x, (int)(aim.y - d_xyPos.y)].BlockableObject is Block && ((Block)WorldMap.Grid[(int)aim.x, (int)(aim.y - d_xyPos.y)].BlockableObject).blockType == BlockType.Wall)
-            //                    {
-            //                        d_xyPos -= new XYPosition(2 * d_xyPos.x, 0);
-            //                    }
-            //                }
-            //            }
-            //    bool temp = true;
-            //    foreach (var item in WorldMap.Grid[(int)aim.x, (int)aim.y].unblockableObjects)
-            //    {
-            //        if (item is Dish || item is Tool) { temp = false; return; }
-            //    }
-            //    if (distance == 0 && temp == false && ((Block)WorldMap.Grid[(int)(aim.x - d_xyPos.x), (int)aim.y].BlockableObject).blockType != BlockType.Cooker)
-            //    {//distance减少到0时即判断落地，但如果落地点有其他物品且该落地点不是灶台的话就会多飞一格（目前规定除灶台外一格只能有一个道具或菜品）
-            //        distance++; dueTime += 100;
-            //    }
-            //}
-
-            //暂时没有写物体的移动。。就是过一段时间在目的地创建一个物品，这段时间的长度和投掷距离成正比
             if ((int)dish != (int)DishType.Empty && ThrowDish != 0)
             {
                 Dish dishToThrow = new Dish(Position.x, Position.y, dish);
                 dishToThrow.Parent = WorldMap;
                 dishToThrow.Layer = (int)MapLayer.FlyingLayer;
                 dishToThrow.Velocity = new Vector((double)(int)facingDirection * Math.PI / 4, 5);
-                new System.Threading.Timer(
-                    (o) =>
-                    {
-                        dishToThrow.Velocity = new Vector(0, 0);
-                    }, new object(), TimeSpan.FromSeconds(dueTime), TimeSpan.FromSeconds(-1));
+                dishToThrow.StopMovingTimer.Change(TimeSpan.FromSeconds(dueTime), TimeSpan.FromSeconds(-1));
 
             }
             else if ((int)tool != (int)ToolType.Empty && ThrowDish == 0)
@@ -232,11 +190,7 @@ namespace Logic.Server
                 toolToThrow.Parent = WorldMap;
                 toolToThrow.Layer = (int)MapLayer.FlyingLayer;
                 toolToThrow.Velocity = new Vector((double)(int)facingDirection * Math.PI / 4, 5);
-                new System.Threading.Timer(
-                    (o) =>
-                    {
-                        toolToThrow.Velocity = new Vector(0, 0);
-                    }, new object(), TimeSpan.FromSeconds(dueTime), TimeSpan.FromSeconds(-1));
+                toolToThrow.StopMovingTimer.Change(TimeSpan.FromSeconds(dueTime), TimeSpan.FromSeconds(-1));
             }
             else Console.WriteLine("没有可以扔的东西");
             status = CommandType.Stop;
@@ -246,9 +200,9 @@ namespace Logic.Server
             if (type == 0)//type为0表示使用厨具做菜和提交菜品
             {
                 XYPosition xyPosition1 = Position + 2 * THUnity2D.Tools.EightCornerVector[facingDirection];
-                if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].Types.ContainsKey(typeof(Block)))
+                if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].ContainsType(typeof(Block)))
                 {
-                    foreach (Block block in WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].Types[typeof(Block)])
+                    foreach (Block block in WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetType(typeof(Block)))
                     {
                         if ((int)block.type == (int)BlockType.Cooker)
                         {
@@ -318,8 +272,8 @@ namespace Logic.Server
             else if (tool == ToolType.Fertilizer)
             {
                 XYPosition xyPosition1 = Position.GetMid() + 2 * THUnity2D.Tools.EightCornerVector[facingDirection];
-                if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].Types.ContainsKey(typeof(Block)))
-                    foreach (Block block in WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].Types[typeof(Block)])
+                if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].ContainsType(typeof(Block)))
+                    foreach (Block block in WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetType(typeof(Block)))
                     {
                         if (block.blockType == BlockType.FoodPoint)
                             block.RefreshTime /= 2;

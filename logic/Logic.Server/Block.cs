@@ -12,6 +12,7 @@ namespace Logic.Server
     {
         public int RefreshTime;//食物刷新点的食物刷新速率，毫秒
 
+
         public List<DishType> Task = null;//任务点的任务列表
         public Block(double x_t, double y_t, BlockType type_t) : base(x_t, y_t)
         {
@@ -21,7 +22,7 @@ namespace Logic.Server
             blockType = type_t;
             if (blockType == BlockType.FoodPoint)
             {
-                dish = (DishType)new Random().Next(1, (int)DishType.Size1 - 1);
+                dish = (DishType)Program.Random.Next(1, (int)DishType.Size1 - 1);
                 RefreshTime = 1000;
                 Console.WriteLine("食品刷新：地点（" + Position.x + "," + Position.y + "）,种类" + blockType);
                 lock (Program.MessageToClientLock)
@@ -59,13 +60,26 @@ namespace Logic.Server
         {
             DishType temp = dish;
             dish = DishType.Empty;
-            new System.Threading.Timer(new System.Threading.TimerCallback(Refresh), 0, RefreshTime, 0);
+            lock (Program.MessageToClientLock)
+                Program.MessageToClient.GameObjectMessageList[this.ID].DishType = (DishTypeMessage)dish;
+            RefreshTimer.Change(RefreshTime, 0);
             return temp;
+        }
+        protected System.Threading.Timer _refreshTimer;
+        public System.Threading.Timer RefreshTimer
+        {
+            get
+            {
+                _refreshTimer = _refreshTimer ?? new System.Threading.Timer(Refresh);
+                return _refreshTimer;
+            }
         }
         public void Refresh(object i)
         {
-            dish = DishType.Apple;//(Dish.Type)new Random().Next(1, (int)Dish.Type.Size1 - 1);
-            Console.WriteLine("食品刷新：地点（" + Position.x + "," + Position.y + "）,种类" + blockType);
+            dish = (DishType)Program.Random.Next(1, (int)DishType.Size1 - 1);
+            lock (Program.MessageToClientLock)
+                Program.MessageToClient.GameObjectMessageList[this.ID].DishType = (DishTypeMessage)dish;
+            Console.WriteLine("食品刷新：地点（" + Position.x + "," + Position.y + "）,种类" + dish);
         }
 
         public override void UseCooker()
@@ -73,7 +87,7 @@ namespace Logic.Server
             string Material = "";
 
             SortedSet<DishType> dishTypeSet = new SortedSet<DishType>();
-            foreach (var GameObject in Logic.Constant.Map.WorldMap.Grid[(int)Position.x, (int)Position.y].Layers[(int)Logic.Constant.Map.MapLayer.ItemLayer])
+            foreach (var GameObject in Constant.Map.WorldMap.Grid[(int)Position.x, (int)Position.y].GetLayer((int)Constant.Map.MapLayer.ItemLayer))
             {
                 if (GameObject is Dish)
                     dishTypeSet.Add(((Dish)GameObject).dish);

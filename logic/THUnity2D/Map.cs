@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Text;
 using static THUnity2D.Tools;
 
@@ -128,7 +129,7 @@ namespace THUnity2D
                 {
                     if (!_grid[(int)toCheckPosition.x, (int)toCheckPosition.y].Layers.ContainsKey(layer))
                         continue;
-                    foreach (var gameObject in _grid[(int)toCheckPosition.x, (int)toCheckPosition.y].Layers[layer])
+                    foreach (var gameObject in _grid[(int)toCheckPosition.x, (int)toCheckPosition.y].Layers[layer].Keys)
                     {
                         if (Math.Abs(gameObject.Position.x - position.x) < 1
                             && Math.Abs(gameObject.Position.y - position.y) < 1)
@@ -236,25 +237,21 @@ namespace THUnity2D
             if (deltaX + previousPosition.x < (double)childrenGameObject.Width / 2)
             {
                 XDistance = XDistance * ((double)childrenGameObject.Width / 2 - previousPosition.x) / deltaX;
-                //deltaX = (double)childrenGameObject.Width / 2 - previousPosition.x;
                 XDirection = Direction.Left;
             }
             else if (deltaX + previousPosition.x > (double)this._width - (double)childrenGameObject.Width / 2)
             {
                 XDistance = XDistance * ((double)this._width - (double)childrenGameObject.Width / 2 - previousPosition.x) / deltaX;
-                //deltaX = (double)this._width - (double)childrenGameObject.Width / 2 - previousPosition.x;
                 XDirection = Direction.Right;
             }
             if (deltaY + previousPosition.y < (double)childrenGameObject.Height / 2)
             {
                 YDistance = YDistance * ((double)childrenGameObject.Height / 2 - previousPosition.y) / deltaY;
-                //deltaY = (double)childrenGameObject.Height / 2 - previousPosition.y;
                 YDirection = Direction.Down;
             }
             else if (deltaY + previousPosition.y > (double)this._height - (double)childrenGameObject.Height / 2)
             {
                 YDistance = YDistance * ((double)this._height - (double)childrenGameObject.Height / 2 - previousPosition.y) / deltaY;
-                //deltaY = (double)this._height - (double)childrenGameObject.Height / 2 - previousPosition.y;
                 YDirection = Direction.Up;
             }
             RefreshCollisionDirection();
@@ -331,7 +328,7 @@ namespace THUnity2D
                 {
                     if (!_grid[x, y].Layers.ContainsKey(layer))//如果这个方格里没有这个层，则跳过
                         continue;
-                    foreach (var gameObject in _grid[x, y].Layers[layer])
+                    foreach (var gameObject in _grid[x, y].Layers[layer].Keys)
                     {
                         if (gameObject != childrenGameObject)//避免添加自己
                             toCheckGameObjects.Add(gameObject);
@@ -413,16 +410,16 @@ namespace THUnity2D
                     Math.Abs((toCheckGameObject.Position.x - 0.5) - (previousPosition.x + 0.5));
                 if (intervalX < Math.Abs(deltaX))
                 {
-                    this.Debug("deltaX : " + deltaX);
+                    //this.Debug("deltaX : " + deltaX);
                     double yDown = previousPosition.y - 0.5 + intervalX * Math.Sign(deltaX) * deltaY / deltaX;
                     if (yDown > toCheckGameObject.Position.y - 0.5 - 1
                         && yDown < toCheckGameObject.Position.y + 0.5)
                     {
-                        this.Debug("intervalX : " + intervalX);
+                        //this.Debug("intervalX : " + intervalX);
                         XDistance = intervalX * resultDistance / Math.Abs(deltaX);
                     }
                 }
-                this.Debug("XDistance : " + XDistance);
+                //this.Debug("XDistance : " + XDistance);
 
                 //double UpDownDistance = resultDistance;
                 YDistance = resultDistance;
@@ -431,16 +428,16 @@ namespace THUnity2D
                     Math.Abs((toCheckGameObject.Position.y - 0.5) - (previousPosition.y + 0.5));
                 if (intervalY < Math.Abs(deltaY))
                 {
-                    this.Debug("deltaY : " + deltaY);
+                    //this.Debug("deltaY : " + deltaY);
                     double xLeft = previousPosition.x - 0.5 + intervalY * Math.Sign(deltaY) * deltaX / deltaY;
                     if (xLeft > toCheckGameObject.Position.x - 0.5 - 1
                         && xLeft < toCheckGameObject.Position.x + 0.5)
                     {
-                        this.Debug("intervalY : " + intervalY);
+                        //this.Debug("intervalY : " + intervalY);
                         YDistance = intervalY * resultDistance / Math.Abs(deltaY);
                     }
                 }
-                this.Debug("YDistance : " + YDistance);
+                //this.Debug("YDistance : " + YDistance);
 
                 RefreshCollisionDirection();
             }
@@ -598,7 +595,7 @@ namespace THUnity2D
                         foreach (var layer in this.Grid[i, j].Layers)
                         {
                             Console.Write("Layer:" + layer.Key + " ");
-                            foreach (var gameObject in layer.Value)
+                            foreach (var gameObject in layer.Value.Keys)
                             {
                                 Console.Write(gameObject.ID + ":(" + gameObject.Position.x + "," + gameObject.Position.y + ") ");
                             }
@@ -608,65 +605,6 @@ namespace THUnity2D
                 }
             Console.WriteLine("=======================================");
 
-        }
-    }
-    public class MapCell
-    {
-        public readonly object publicLock = new object();
-        protected readonly object privateLock = new object();
-        protected Dictionary<int, HashSet<GameObject>> _layers = new Dictionary<int, HashSet<GameObject>>();
-        public Dictionary<int, HashSet<GameObject>> Layers { get { return _layers; } }
-        protected void AddGameObjectByLayer(GameObject gameObject)
-        {
-            if (!_layers.ContainsKey(gameObject.Layer))
-            {
-                _layers.Add(gameObject.Layer, new HashSet<GameObject>());
-            }
-            _layers[gameObject.Layer].Add(gameObject);
-        }
-        protected void DeleteGameObjectByLayer(GameObject gameObject)
-        {
-            if (!_layers.ContainsKey(gameObject.Layer))
-                return;
-            _layers[gameObject.Layer].Remove(gameObject);
-            if (_layers[gameObject.Layer].Count <= 0)
-                _layers.Remove(gameObject.Layer);
-        }
-        protected Dictionary<Type, HashSet<GameObject>> _types = new Dictionary<Type, HashSet<GameObject>>();
-        public Dictionary<Type, HashSet<GameObject>> Types { get { return _types; } }
-        protected void AddGameObjectByType(GameObject gameObject)
-        {
-            if (!_types.ContainsKey(gameObject.GetType()))
-            {
-                _types.Add(gameObject.GetType(), new HashSet<GameObject>());
-            }
-            _types[gameObject.GetType()].Add(gameObject);
-        }
-        protected void DeleteGameObjectByType(GameObject gameObject)
-        {
-            _types[gameObject.GetType()].Remove(gameObject);
-            if (_types[gameObject.GetType()].Count <= 0)
-                _types.Remove(gameObject.GetType());
-        }
-        public void AddGameObject(GameObject gameObject)
-        {
-            AddGameObjectByLayer(gameObject);
-            AddGameObjectByType(gameObject);
-        }
-        public void DeleteGameObject(GameObject gameObject)
-        {
-            DeleteGameObjectByLayer(gameObject);
-            DeleteGameObjectByType(gameObject);
-        }
-        public bool ContainsGameObject(GameObject gameObject)
-        {
-            if (!_layers.ContainsKey(gameObject.Layer))
-                return false;
-            return _layers[gameObject.Layer].Contains(gameObject);
-        }
-        public bool IsEmpty()
-        {
-            return _layers.Count == 0;
         }
     }
 }

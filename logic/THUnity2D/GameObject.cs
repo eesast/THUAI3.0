@@ -56,7 +56,6 @@ namespace THUnity2D
                 this.ChildrenGameObjectList.Add(childrenObject);
                 childrenObject.OnPositionChanged += this.OnChildrenPositionChanged;
                 childrenObject.OnMove += this.OnChildrenMove;
-                //childrenObject.OnBlockableChanged += this.OnChildrenBlockableChanged;
                 childrenObject.FrameRate = this.FrameRate;
             }
         }
@@ -67,7 +66,6 @@ namespace THUnity2D
                 this.ChildrenGameObjectList.Remove(childrenObject);
                 childrenObject.OnPositionChanged -= this.OnChildrenPositionChanged;
                 childrenObject.OnMove -= this.OnChildrenMove;
-                //childrenObject.OnBlockableChanged -= this.OnChildrenBlockableChanged;
             }
         }
         protected virtual void OnChildrenPositionChanged(GameObject gameObject, PositionChangedEventArgs e)
@@ -299,10 +297,7 @@ namespace THUnity2D
             lock (privateLock)
             {
                 _layer = e.layer;
-                if (OnLayerChange != null)
-                {
-                    OnLayerChange(this, e);
-                }
+                OnLayerChange?.Invoke(this, e);
             }
         }
         //Layer
@@ -352,10 +347,8 @@ namespace THUnity2D
                 Debug("Move from " + _position.ToString() + " angle : " + e.angle + " distance : " + e.distance);
                 XYPosition previousPosition = _position;
                 _position = _position + new XYPosition(e.distance * Math.Cos(e.angle), e.distance * Math.Sin(e.angle));
-                if (OnMove != null && this._movable)
-                {
-                    OnMove(this, e, previousPosition);
-                }
+                if (this._movable)
+                    OnMove?.Invoke(this, e, previousPosition);
                 Debug("Move result poition : " + this._position.ToString());
             }
             if (MoveComplete != null)
