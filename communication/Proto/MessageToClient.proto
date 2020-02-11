@@ -1,0 +1,102 @@
+﻿syntax = "proto3";
+package google.protobuf;
+
+option csharp_namespace = "Communication.Proto";
+
+message XYPositionMessage{
+	double X = 1;
+	double Y = 2;
+}
+enum ObjTypeMessage{
+    People = 0;
+    Block = 1;
+    Dish = 2;
+    Tool = 3;
+	Trigger = 4;
+	ObjTypeSize = 5;
+}
+enum BlockTypeMessage
+{
+	Wall = 0;
+	Table = 1;
+	FoodPoint = 2;
+	Cooker = 3;
+	RubbishBin = 4;
+	TaskPoint = 5;
+	BlockTypeSize = 6;
+}
+enum DishTypeMessage
+{
+	DishEmpty = 0;
+	Apple = 1;
+	Banana = 2;
+	Potato = 3;
+	Tomato = 4;
+	DarkDish = 5;
+	DishTypeSize = 6;
+}
+enum ToolTypeMessage
+{
+	ToolEmpty = 0;
+	TigerShoes = 1;
+	SpeedBuff = 2;
+	StrenthBuff = 3;
+	TeleScope = 4;
+	Condiment = 5;
+	Fertilizer = 6;
+	BreastPlate = 7;
+	SpaceGate = 8;
+	Eye = 9;
+	WaveGlue = 10;
+	LandMine = 11;
+	Trap = 12;
+	FlashBomb = 13;
+	Hammer = 14;
+	Brick = 15;
+	Stealer = 16;
+	ToolTypeSize = 17;
+}
+enum TriggerTypeMessage
+{
+	TrapTrigger = 0;
+	Mine = 1;
+	TriggerTypeSize = 2;
+}
+enum BuffMessage{
+	Frozen = 0;
+	Stunned = 1;
+	SpeedUp = 2;
+	SlowDown = 3;
+}
+enum DishStateMessage{
+	Raw = 0;
+	Good = 1;
+	OverCooked = 2;
+}
+enum DirectionMessage{
+    Right = 0;
+    RightUp = 1;
+    Up = 2;
+    LeftUp = 3;
+    Left = 4;
+    LeftDown = 5;
+    Down = 6;
+	RightDown = 7;
+	DirectionSize = 8;
+}
+message GameObjectMessage{
+	XYPositionMessage Position = 1;
+	int32 Width = 2;
+	int32 Height = 3;
+	DirectionMessage Direction = 4;
+	ObjTypeMessage ObjType = 5;
+	BlockTypeMessage BlockType = 6;
+	DishTypeMessage DishType = 7;
+	ToolTypeMessage ToolType = 8;
+	bool isMoving = 9;
+	repeated BuffMessage Buff = 10;
+	DishStateMessage DishState = 11;
+}
+message MessageToClient {
+	map<int64, GameObjectMessage> GameObjectMessageList = 1;
+}

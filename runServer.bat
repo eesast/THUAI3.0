@@ -1,0 +1,1 @@
+@dotnet logic\Logic.Server\bin\Debug\netcoreapp3.0\Logic.Server.dll
