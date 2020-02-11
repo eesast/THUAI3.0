@@ -1,4 +1,3 @@
-
 ﻿using Communication.CAPI;
 using Communication.Proto;
 using System;

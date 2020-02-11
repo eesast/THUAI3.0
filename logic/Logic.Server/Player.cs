@@ -263,6 +263,7 @@ namespace Logic.Server
             {
                 moveSpeed += Convert.ToDouble(ConfigurationManager.AppSettings["SpeedBuffExtraMoveSpeed"]);
                 SpeedBuffTimer.Change(Convert.ToInt32(ConfigurationManager.AppSettings["SpeedBuffDuration"]), 0);
+                this.Velocity = new Vector(Velocity.angle, moveSpeed + GlueExtraMoveSpeed);
                 tool = ToolType.Empty;
             }
             else if (tool == ToolType.StrenthBuff)
@@ -282,21 +283,25 @@ namespace Logic.Server
                         else
                         { Console.WriteLine("物品使用失败（未检测到施肥对象）！"); }
                     }
+                tool = ToolType.Empty;
             }
             else if (tool == ToolType.WaveGlue)
             {
                 XYPosition xyPosition1 = Position.GetMid() + 2 * EightCornerVector[facingDirection];
                 new Trigger(xyPosition1.x, xyPosition1.y, TriggerType.WaveGlue, team).Parent = WorldMap;
+                tool = ToolType.Empty;
             }
             else if (tool == ToolType.LandMine)
             {
                 XYPosition xyPosition1 = Position.GetMid() + 2 * EightCornerVector[facingDirection];
                 new Trigger(xyPosition1.x, xyPosition1.y, TriggerType.Mine, team).Parent = WorldMap;
+                tool = ToolType.Empty;
             }
             else if (tool == ToolType.Trap)
             {
                 XYPosition xyPosition1 = Position.GetMid() + 2 * EightCornerVector[facingDirection];
-                new Trigger(xyPosition1.x, xyPosition1.y, TriggerType.Trap, team).Parent = WorldMap;
+                new Trigger(xyPosition1.x, xyPosition1.y, TriggerType.Trap, -1).Parent = WorldMap;
+                tool = ToolType.Empty;
             }
         }
         public override bool TouchTrigger(GameObject gameObject)
@@ -305,8 +310,7 @@ namespace Logic.Server
             {
                 GlueExtraMoveSpeed = Convert.ToDouble(ConfigurationManager.AppSettings["WaveGlueExtraMoveSpeed"]);
                 Console.WriteLine(GlueExtraMoveSpeed);
-                Vector temp = Velocity;
-                this.Velocity = new Vector(temp.angle, moveSpeed + GlueExtraMoveSpeed);
+                this.Velocity = new Vector(Velocity.angle, moveSpeed + GlueExtraMoveSpeed);
             }
             else if (((Trigger)gameObject).triggerType == TriggerType.Mine && ((Trigger)gameObject).OwnerTeam != team)
             {

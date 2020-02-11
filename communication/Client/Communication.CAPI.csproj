@@ -7,7 +7,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Proto\Communication.Proto.csproj" />
-
   </ItemGroup>
 
 </Project>
