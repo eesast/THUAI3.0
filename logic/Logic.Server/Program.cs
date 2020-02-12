@@ -59,6 +59,7 @@ namespace Logic.Server
         private static Server server;
         public static void Main(string[] args)
         {
+            Communication.Proto.Constants.Debug = new Constants.DebugFunc((str) => { });
             InitializeMap();
             server = new Server();
         }
