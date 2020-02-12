@@ -24,6 +24,7 @@ namespace Logic.Server
                         (o) =>
                         {
                             Velocity = new THUnity2D.Vector(Velocity.angle, 0);
+                            this.Layer = (int)MapLayer.ItemLayer;
                         });
                 return _stopMovingTimer;
             }

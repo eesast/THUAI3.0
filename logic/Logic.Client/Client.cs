@@ -156,7 +156,7 @@ namespace Client
                         Use(1, 0);
                         break;
                     case 't':
-                        Put(1, 0);
+                        Put(5, 0);
                         break;
                 }
                 lastSendTime = DateTime.Now;
@@ -203,16 +203,6 @@ namespace Client
                       CommandType = (CommandTypeMessage)CommandType.Use,
                   }
               );
-        }
-        public override void Pick()
-        {
-            ClientCommunication.SendMessage(
-                new MessageToServer
-                {
-                    ID = this.id,
-                    CommandType = (CommandTypeMessage)CommandType.Pick
-                }
-            );
         }
 
         public void OnReceive(IMessage message)
