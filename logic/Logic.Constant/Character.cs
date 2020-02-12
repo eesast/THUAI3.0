@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 using THUnity2D;
 using static THUnity2D.Tools;
+using static THUnity2D._Map;
 
 namespace Logic.Constant
 {
     public class Character : GameObject
     {
+        public int team = 0;
         public double moveSpeed = 5;
         //public double moveSpeed = Convert.ToDouble(System.Configuration.ConfigurationManager.AppSettings["PlayerInitMoveSpeed"]);
         public Direction facingDirection;
@@ -18,11 +20,11 @@ namespace Logic.Constant
         public TALENT talent;
         public int score = 0;
         public DishType dish = DishType.Empty;
-        public ToolType tool = ToolType.Empty;
+        public ToolType tool = ToolType.Trap;
         //public Tuple<int, int> id = new Tuple<int, int>(-1, -1);  //first:Agent, second:Client
         public Character(double x, double y) : base(new XYPosition(x, y))
         {
-            Layer = (int)Logic.Constant.Map.MapLayer.PlayerLayer;
+            Layer = (int)MapLayer.PlayerLayer;
             Movable = true;
         }
         public virtual void Move(Direction direction_t, int duration = 50)

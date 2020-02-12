@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using static THUnity2D.Tools;
+using static THUnity2D._Map;
 using Logic.Constant;
 using Communication.Proto;
 
@@ -29,7 +30,7 @@ namespace Logic.Server
         }
         public Dish(double x_t, double y_t, DishType type_t) : base(x_t, y_t)
         {
-            Layer = (int)Logic.Constant.Map.MapLayer.ItemLayer;
+            Layer = (int)MapLayer.ItemLayer;
             Movable = true;
             Bouncable = true;
             dish = type_t;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using THUnity2D;
+using static THUnity2D._Map;
 using System.Configuration;
 using Logic.Constant;
 using Communication.Proto;
@@ -17,7 +17,7 @@ namespace Logic.Server
         public Block(double x_t, double y_t, BlockType type_t) : base(x_t, y_t)
         {
             type = ObjType.Block;
-            Layer = (int)Logic.Constant.Map.MapLayer.BlockLayer;
+            Layer = (int)MapLayer.BlockLayer;
             Movable = false;
             blockType = type_t;
             if (blockType == BlockType.FoodPoint)
@@ -87,7 +87,7 @@ namespace Logic.Server
             string Material = "";
 
             SortedSet<DishType> dishTypeSet = new SortedSet<DishType>();
-            foreach (var GameObject in Constant.Map.WorldMap.Grid[(int)Position.x, (int)Position.y].GetLayer((int)Constant.Map.MapLayer.ItemLayer))
+            foreach (var GameObject in WorldMap.Grid[(int)Position.x, (int)Position.y].GetLayer((int)MapLayer.ItemLayer))
             {
                 if (GameObject is Dish)
                     dishTypeSet.Add(((Dish)GameObject).dish);

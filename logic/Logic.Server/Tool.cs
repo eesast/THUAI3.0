@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Logic.Constant;
+using static THUnity2D._Map;
 
 namespace Logic.Server
 {
@@ -24,7 +25,7 @@ namespace Logic.Server
 
         public Tool(double x_t, double y_t, ToolType type_t) : base(x_t, y_t)
         {
-            Layer = (int)Logic.Constant.Map.MapLayer.ItemLayer;
+            Layer = (int)MapLayer.ItemLayer;
             Movable = true;
             Bouncable = true;
             tool = type_t;

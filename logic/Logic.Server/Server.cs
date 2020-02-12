@@ -7,7 +7,7 @@ using System.Threading;
 using Logic.Constant;
 using static Logic.Constant.Constant;
 using System.Collections.Generic;
-using static Logic.Constant.Map;
+using static THUnity2D._Map;
 using Communication.Server;
 using Communication.Proto;
 using Timer;

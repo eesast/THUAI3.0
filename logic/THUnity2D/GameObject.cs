@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using System.Text;
 using static THUnity2D.Tools;
+using static THUnity2D._Map;
 
 namespace THUnity2D
 {
     public class GameObject
     {
         public const double MinSpeed = 0.0001;
+
+        public double GlueExtraMoveSpeed = 0;
+        public bool IsTrigger = false;
 
         private readonly Object privateLock = new Object();
         public readonly Object publicLock = new Object();
@@ -348,11 +352,23 @@ namespace THUnity2D
                 XYPosition previousPosition = _position;
                 _position = _position + new XYPosition(e.distance * Math.Cos(e.angle), e.distance * Math.Sin(e.angle));
                 if (this._movable)
+                { 
                     OnMove?.Invoke(this, e, previousPosition);
+                    if ((int)previousPosition.x != (int)_position.x || (int)previousPosition.y != (int)_position.y)
+                    {
+                        GlueExtraMoveSpeed = 0;
+                        foreach (var GameObject in WorldMap.Grid[(int)Position.x, (int)Position.y].GetLayer((int)MapLayer.ItemLayer))
+                        {
+                            if (GameObject.IsTrigger)
+                            {
+                                if(this.TouchTrigger(GameObject)) GameObject.Parent = null; 
+                            }
+                        }
+                    }
+                }
                 Debug("Move result poition : " + this._position.ToString());
             }
-            if (MoveComplete != null)
-                MoveComplete(this);
+            MoveComplete?.Invoke(this);
         }
         //Move end
 
@@ -394,6 +410,14 @@ namespace THUnity2D
                 Console.WriteLine(child.GetType() + " : " + child.ID + " (" + child.Position.x + "," + child.Position.y + ")");
             }
             Console.WriteLine("==============================================");
+        }
+        public virtual bool TouchTrigger(GameObject gameObject)
+        {
+            return false;
+        }
+        public virtual int Touch()
+        {
+            return 0;
         }
     }
 }
