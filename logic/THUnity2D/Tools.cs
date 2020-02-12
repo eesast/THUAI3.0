@@ -45,6 +45,11 @@ namespace THUnity2D
 
         public static double CorrectAngle(double angle)
         {
+            if (double.IsNaN(angle))
+            {
+                angle = 0;
+                return angle;
+            }
             while (angle < 0)
                 angle += 2 * Math.PI;
             while (angle >= 2 * Math.PI)

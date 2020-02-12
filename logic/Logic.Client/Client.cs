@@ -58,6 +58,7 @@ namespace Client
                         case BlockTypeMessage.FoodPoint:
                             Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.Purple;
                             Program.form.playerLabels[id_t].Text = gameObjectMessage.DishType.ToString();
+                            Console.WriteLine("New FootPoint Label");
                             break;
                     }
                     break;
@@ -148,6 +149,9 @@ namespace Client
                     case 'c':
                         Move(Direction.RightDown);
                         break;
+                    case 'f':
+                        Pick();
+                        break;
                 }
                 lastSendTime = DateTime.Now;
             }
@@ -160,6 +164,16 @@ namespace Client
                     ID = this.id,
                     CommandType = (CommandTypeMessage)CommandType.Move,
                     MoveDirection = (DirectionMessage)direction
+                }
+            );
+        }
+        public override void Pick()
+        {
+            ClientCommunication.SendMessage(
+                new MessageToServer
+                {
+                    ID = this.id,
+                    CommandType = (CommandTypeMessage)CommandType.Pick
                 }
             );
         }

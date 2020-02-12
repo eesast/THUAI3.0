@@ -15,7 +15,6 @@ namespace Logic.Server
 {
     class Server
     {
-        //private const int serverPort = 8888;
         protected Dictionary<Tuple<int, int>, Player> PlayerList = new Dictionary<Tuple<int, int>, Player>();
         public ICommunication ServerCommunication = new CommunicationImpl();
 
@@ -23,7 +22,6 @@ namespace Logic.Server
         {
             ServerCommunication.Initialize();
             ServerCommunication.MsgProcess += OnRecieve;
-            //ServerCommunication.Port = serverPort;
             ServerCommunication.GameStart();
 
             //初始化playerList
@@ -67,7 +65,6 @@ namespace Logic.Server
             Time.InitializeTime();
             Console.WriteLine("Server begin to run");
 
-            //此定时器无法正常工作！！！？？？
             System.Threading.Timer timer = new System.Threading.Timer(
                 (o) =>
                 {
