@@ -1,24 +1,5 @@
-#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+# Server
 
 FROM mcr.microsoft.com/dotnet/core/runtime:3.0-buster-slim AS base
-WORKDIR /app
-
-FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
-WORKDIR /src
-COPY ["Logic.Server/Logic.Server.csproj", "Logic.Server/"]
-COPY ["Logic.Constant/Logic.Constant.csproj", "Logic.Constant/"]
-COPY ["THUnity2D/THUnity2D.csproj", "THUnity2D/"]
-COPY ["../communication/Proto/Communication.Proto.csproj", "../communication/Proto/"]
-COPY ["../communication/Server/Communication.Server.csproj", "../communication/Server/"]
-RUN dotnet restore "Logic.Server/Logic.Server.csproj"
-COPY . .
-WORKDIR "/src/Logic.Server"
-RUN dotnet build "Logic.Server.csproj" -c Release -r linux-x64 -o /app/build
-
-FROM build AS publish
-RUN dotnet publish "Logic.Server.csproj" -c Release -r linux-x64 -o /app/publish
-
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
+COPY logic/Logic.Server/bin/Release/netcoreapp3.0/ app/
 ENTRYPOINT ["dotnet", "Logic.Server.dll"]

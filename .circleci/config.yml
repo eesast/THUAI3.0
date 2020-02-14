@@ -1,1 +1,66 @@
-version: 2
+version: 2.1
+
+orbs:
+  win: circleci/windows@1.0.0
+
+workflows: # Define a Workflow running the build job, then the deploy job
+  version: 2
+  build-deploy: # Make a workflow to build and deploy your project
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: master
+      - deploy:
+          requires:
+            - build # Only run deploy job once the build job has completed
+          
+  
+jobs:
+  build:
+    executor:
+      name: win/vs2019
+      shell: powershell.exe
+    steps:
+      - checkout
+    #   - restore_cache:
+    #       keys:
+    #         - dotnet-packages-v1-{{ checksum "DeploymentTest/DeploymentTest.csproj" }}
+      - run:
+          name: "Install project dependencies"
+          command: dotnet.exe restore
+    #   - save_cache:
+    #       paths:
+    #         - C:\Users\circleci\.nuget\packages
+    #       key: dotnet-packages-v1-{{ checksum "DeploymentTest/DeploymentTest.csproj" }}
+      - run:
+          name: "Run Build step: Server"
+          command: dotnet.exe publish "logic/Logic.Server/Logic.Server.csproj" -c Release -r linux-x64
+      - run:
+          name: "Run Build step: Agent"
+          command: dotnet.exe publish "communication/Agent/Communication.Agent.csproj" -c Release -r linux-x64
+      - run:
+          name: "Run Build step: Client"
+          command: dotnet.exe publish "logic/Logic.Client/Logic.Client.csproj" -c Release -r linux-x64
+    #   - store_artifacts:
+    #       path: .\bin\Release\netcoreapp3.0\win10-x64\publish
+  
+  deploy:
+    machine: true
+    steps:
+      - checkout
+      - run:
+          name: "Log in to DockerHub"
+          command: docker login --username $DOCKER_USER --password $DOCKER_PASS
+      - run:
+          name: "Build docker image: Server"
+          command: docker build -t $DOCKER_USER/thuai3_server -f ServerDockerfile .
+      - run:
+          name: "Build docker image: Client"
+          command: docker build -t $DOCKER_USER/thuai3_client -f ClientDockerfile .
+      - run:
+          name: "Push docker image"
+          command: docker push $DOCKER_USER/thuai3_server
+      - run:
+          name: "Push docker image"
+          command: docker push $DOCKER_USER/thuai3_client
