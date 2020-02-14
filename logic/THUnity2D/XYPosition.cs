@@ -29,12 +29,9 @@ namespace THUnity2D
         {
             return new XYPosition(a.x * b, a.y * b);
         }
-        public double get(bool flag)
+        public XYPosition GetMid()
         {
-            if (flag)
-                return y;
-            else
-                return x;
+            return new XYPosition((int)x + 0.5, (int)y + 0.5);
         }
         public static double Distance(XYPosition position1, XYPosition position2)
         {
