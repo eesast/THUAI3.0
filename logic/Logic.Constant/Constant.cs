@@ -18,7 +18,6 @@ namespace Logic.Constant
     }
     public enum ObjType
     {
-        Air = 0,
         People,
         Block,
         Dish,
@@ -75,6 +74,7 @@ namespace Logic.Constant
     }
     public enum TriggerType
     {
+        WaveGlue,
         Trap,
         Mine,
         Size

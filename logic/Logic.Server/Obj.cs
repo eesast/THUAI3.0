@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using THUnity2D;
 using Logic.Constant;
+using Communication.Proto;
 
 namespace Logic.Server
 {

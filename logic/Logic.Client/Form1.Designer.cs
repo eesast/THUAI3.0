@@ -1,4 +1,4 @@
-﻿using static Logic.Constant.Map;
+﻿using static THUnity2D._Map;
 using THUnity2D;
 using System;
 using System.Collections.Generic;

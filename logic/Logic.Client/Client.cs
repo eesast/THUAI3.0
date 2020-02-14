@@ -8,7 +8,7 @@ using Google.Protobuf;
 using Logic.Constant;
 using Communication.Proto;
 using static Logic.Constant.Constant;
-using static Logic.Constant.Map;
+using static THUnity2D._Map;
 using THUnity2D;
 using static THUnity2D.Tools;
 using GameForm;
@@ -58,6 +58,7 @@ namespace Client
                         case BlockTypeMessage.FoodPoint:
                             Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.Purple;
                             Program.form.playerLabels[id_t].Text = gameObjectMessage.DishType.ToString();
+                            Console.WriteLine("New FootPoint Label");
                             break;
                     }
                     break;
@@ -148,18 +149,68 @@ namespace Client
                     case 'c':
                         Move(Direction.RightDown);
                         break;
+                    case 'f':
+                        Pick();
+                        break;
+                    case 'u':
+                        Use(1, 0);
+                        break;
+                    case 't':
+                        Put(1, 0);
+                        break;
                 }
                 lastSendTime = DateTime.Now;
             }
         }
-        public void Move(Direction direction)
+        public override void Move(Direction direction_t, int duration = 1000)
+        {
+            ClientCommunication.SendMessage(
+                  new MessageToServer
+                  {
+                      ID = this.id,
+                      CommandType = (CommandTypeMessage)CommandType.Move,
+                      MoveDirection = (DirectionMessage)direction_t,
+                      MoveDuration = duration
+                  }
+              );
+        }
+        public override void Put(int distance, int ThrowDish)
+        {
+            ClientCommunication.SendMessage(
+                    new MessageToServer
+                    {
+                        ID = this.id,
+                        CommandType = (CommandTypeMessage)CommandType.Put,
+                    }
+                ); ;
+        }
+        public override void Pick()
+        {
+            ClientCommunication.SendMessage(
+                  new MessageToServer
+                  {
+                      ID = this.id,
+                      CommandType = (CommandTypeMessage)CommandType.Pick,
+                  }
+              );
+        }
+        public override void Use(int type, int parameter)
+        {
+            ClientCommunication.SendMessage(
+                  new MessageToServer
+                  {
+                      ID = this.id,
+                      CommandType = (CommandTypeMessage)CommandType.Use,
+                  }
+              );
+        }
+        public override void Pick()
         {
             ClientCommunication.SendMessage(
                 new MessageToServer
                 {
                     ID = this.id,
-                    CommandType = (CommandTypeMessage)CommandType.Move,
-                    MoveDirection = (DirectionMessage)direction
+                    CommandType = (CommandTypeMessage)CommandType.Pick
                 }
             );
         }
