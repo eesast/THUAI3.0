@@ -71,10 +71,10 @@ jobs:
           command: docker login --username $DOCKER_USER --password $DOCKER_PASS
       - run:
           name: "Build docker image: Server"
-          command: docker build -t $DOCKER_USER/thuai3_server -f ServerDockerfile .
+          command: docker build -t $DOCKER_USER/thuai3_server -f logic/ServerDockerfile .
       - run:
           name: "Build docker image: Client"
-          command: docker build -t $DOCKER_USER/thuai3_client -f ClientDockerfile .
+          command: docker build -t $DOCKER_USER/thuai3_client -f logic/ClientDockerfile .
       - run:
           name: "Push docker image"
           command: docker push $DOCKER_USER/thuai3_server
