@@ -54,7 +54,7 @@ jobs:
           command: dotnet.exe publish "logic/Logic.Server/Logic.Server.csproj" -c Release -r linux-x64
       - run:
           name: "Run Build step: Agent"
-          command: dotnet.exe publish "communication/Agent/Communication.Agent.csproj" -c Release -r linux-x64
+          command: dotnet.exe publish "communication/Agent/Communication.Agent.csproj" -c Release -f netcoreapp3.0 -r linux-x64
       - run:
           name: "Run Build step: Client"
           command: dotnet.exe publish "logic/Logic.Client/Logic.Client.csproj" -c Release -r linux-x64
