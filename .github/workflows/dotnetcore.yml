@@ -36,9 +36,9 @@ jobs:
         with:
           dotnet-version: 3.0.100
       - name: Publish server
-        run: dotnet publish "logic/Logic.Server/Logic.Server.csproj" -c Release --self-contained true
+        run: dotnet publish "logic/Logic.Server/Logic.Server.csproj" -c Release -r linux-x64 --self-contained true
       - name: Publish agent
-        run: dotnet publish "communication/Agent/Communication.Agent.csproj" -c Release -f netcoreapp3.0 --self-contained true
+        run: dotnet publish "communication/Agent/Communication.Agent.csproj" -c Release -r linux-x64 -f netcoreapp3.0 --self-contained true
 #       - name: Publish client
 #         run: dotnet publish "logic/Logic.Client/Logic.Client.csproj" -c Release -r win-x64 -o logic/Logic.Client/bin/Release/netcoreapp3.0
       - name: Build docker image of server
