@@ -36,7 +36,7 @@ jobs:
           command: dotnet.exe restore communication/Agent/Communication.Agent.csproj
       - run:
           name: "Install project dependencies"
-          command: dotnet.exe restore logic/Logic.Client/Logic.Client.csproj
+          command: dotnet.exe restore logic/Logic.ClientConsole/Logic.ClientConsole.csproj
       - save_cache:
           paths:
             - C:\Users\circleci\.nuget\packages
@@ -48,7 +48,7 @@ jobs:
       - save_cache:
           paths:
             - C:\Users\circleci\.nuget\packages
-          key: dotnet-packages-v1-{{ checksum "logic/Logic.Client/Logic.Client.csproj" }}
+          key: dotnet-packages-v1-{{ checksum "logic/Logic.ClientConsole/Logic.ClientConsole.csproj" }}
       - run:
           name: "Run Build step: Server"
           command: dotnet.exe publish "logic/Logic.Server/Logic.Server.csproj" -c Release -r linux-x64
@@ -57,7 +57,7 @@ jobs:
           command: dotnet.exe publish "communication/Agent/Communication.Agent.csproj" -c Release -f netcoreapp3.0 -r linux-x64
       - run:
           name: "Run Build step: Client"
-          command: dotnet.exe publish "logic/Logic.Client/Logic.Client.csproj" -c Release -r linux-x64
+          command: dotnet.exe publish "logic/Logic.ClientConsole/Logic.ClientConsole.csproj" -c Release -r linux-x64
     #   - store_artifacts:
     #       path: .\bin\Release\netcoreapp3.0\win10-x64\publish
   
