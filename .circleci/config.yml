@@ -3,17 +3,17 @@ version: 2.1
 orbs:
   win: circleci/windows@1.0.0
 
-workflows: # Define a Workflow running the build job, then the deploy job
+workflows:
   version: 2
-  build-deploy: # Make a workflow to build and deploy your project
+  build-deploy:
     jobs:
-      - build:
-          filters:
-            branches:
-              only: master
+      - build
+          # filters:
+          #   branches:
+          #     only: master
       - deploy:
           requires:
-            - build # Only run deploy job once the build job has completed
+            - build
           
   
 jobs:
