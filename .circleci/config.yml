@@ -11,16 +11,16 @@ workflows:
           # filters:
           #   branches:
           #     only: master
-      - deploy:
-          requires:
-            - build
+      # - deploy:
+      #     requires:
+      #       - build
           
   
 jobs:
   build:
     executor:
       name: win/vs2019
-      shell: powershell.exe
+      shell: bash.exe
     steps:
       - checkout
       - restore_cache:
@@ -58,14 +58,14 @@ jobs:
       - run:
           name: "Run Build step: Client"
           command: dotnet publish "logic/Logic.ClientConsole/Logic.ClientConsole.csproj" -c Release -r linux-x64 -o logic/Logic.ClientConsole/bin/Release/netcoreapp3.0
-    #   - store_artifacts:
-    #       path: .\bin\Release\netcoreapp3.0\win10-x64\publish
+  #   #   - store_artifacts:
+  #   #       path: .\bin\Release\netcoreapp3.0\win10-x64\publish
   
-  deploy:
-    executor:
-      name: win/vs2019
-      shell: bash.exe
-    steps:
+  # deploy:
+  #   executor:
+  #     name: win/vs2019
+  #     shell: bash.exe
+  #   steps:
       - run:
           name: "Log in to DockerHub"
           command: docker login --username $DOCKER_USER --password $DOCKER_PASS
