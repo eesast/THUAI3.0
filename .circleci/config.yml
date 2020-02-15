@@ -18,10 +18,9 @@ workflows:
   
 jobs:
   build:
-    machine: true
-    # executor:
-    #   name: win/vs2019
-    #   shell: powershell.exe
+    executor:
+      name: win/vs2019
+      shell: powershell.exe
     steps:
       - checkout
       - restore_cache:
@@ -63,9 +62,10 @@ jobs:
     #       path: .\bin\Release\netcoreapp3.0\win10-x64\publish
   
   deploy:
-    machine: true
+    executor:
+      name: win/vs2019
+      shell: GNUbash.exe
     steps:
-      - checkout
       - run:
           name: "Log in to DockerHub"
           command: docker login --username $DOCKER_USER --password $DOCKER_PASS
