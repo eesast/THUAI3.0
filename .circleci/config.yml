@@ -30,7 +30,7 @@ jobs:
             - dotnet-packages-v1-{{ checksum "logic/Logic.Client/Logic.Client.csproj" }}
       - run:
           name: "Install project dependencies"
-          command: dotnet.exe restore logic/Logic.Server/Logic.Server.csproj && dotnet.exe restore communication/Agent/Communication.Agent.csproj && dotnet.exe restore logic/Logic.Client/Logic.Client.csproj
+          command: dotnet.exe restore logic/Logic.Server/Logic.Server.csproj || dotnet.exe restore communication/Agent/Communication.Agent.csproj || dotnet.exe restore logic/Logic.Client/Logic.Client.csproj
       - save_cache:
           paths:
             - C:\Users\circleci\.nuget\packages
