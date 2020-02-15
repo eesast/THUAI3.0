@@ -1,5 +1,5 @@
 # Server
 
-FROM mcr.microsoft.com/dotnet/core/runtime:3.0-buster-slim AS base
-COPY Logic.Server/bin/Release/netcoreapp3.0/ app/
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0
+COPY logic/Logic.Server/bin/Release/netcoreapp3.0/ app/
 ENTRYPOINT ["dotnet", "Logic.Server.dll"]
