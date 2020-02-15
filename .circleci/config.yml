@@ -34,10 +34,15 @@ jobs:
       - save_cache:
           paths:
             - C:\Users\circleci\.nuget\packages
-          keys: 
-            - dotnet-packages-v1-{{ checksum "logic/Logic.Server/Logic.Server.csproj" }}
-            - dotnet-packages-v1-{{ checksum "communication/Agent/Communication.Agent.csproj" }}
-            - dotnet-packages-v1-{{ checksum "logic/Logic.Client/Logic.Client.csproj" }}
+          key: dotnet-packages-v1-{{ checksum "logic/Logic.Server/Logic.Server.csproj" }}
+      - save_cache:
+          paths:
+            - C:\Users\circleci\.nuget\packages
+          key: dotnet-packages-v1-{{ checksum "communication/Agent/Communication.Agent.csproj" }}
+      - save_cache:
+          paths:
+            - C:\Users\circleci\.nuget\packages
+          key: dotnet-packages-v1-{{ checksum "logic/Logic.Client/Logic.Client.csproj" }}
       - run:
           name: "Run Build step: Server"
           command: dotnet.exe publish "logic/Logic.Server/Logic.Server.csproj" -c Release -r linux-x64
