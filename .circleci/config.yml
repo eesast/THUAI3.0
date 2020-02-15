@@ -31,13 +31,13 @@ jobs:
             - dotnet-packages-v1-{{ checksum "logic/Logic.Client/Logic.Client.csproj" }}
       - run:
           name: "Install project dependencies"
-          command: dotnet.exe restore logic/Logic.Server/Logic.Server.csproj
+          command: dotnet restore logic/Logic.Server/Logic.Server.csproj
       - run:
           name: "Install project dependencies"
-          command: dotnet.exe restore communication/Agent/Communication.Agent.csproj
+          command: dotnet restore communication/Agent/Communication.Agent.csproj
       - run:
           name: "Install project dependencies"
-          command: dotnet.exe restore logic/Logic.ClientConsole/Logic.ClientConsole.csproj
+          command: dotnet restore logic/Logic.ClientConsole/Logic.ClientConsole.csproj
       - save_cache:
           paths:
             - C:\Users\circleci\.nuget\packages
@@ -52,13 +52,13 @@ jobs:
           key: dotnet-packages-v1-{{ checksum "logic/Logic.ClientConsole/Logic.ClientConsole.csproj" }}
       - run:
           name: "Run Build step: Server"
-          command: dotnet.exe publish "logic/Logic.Server/Logic.Server.csproj" -c Release -r linux-x64 -o logic/Logic.Server/bin/Release/netcoreapp3.0
+          command: dotnet publish "logic/Logic.Server/Logic.Server.csproj" -c Release -r linux-x64 -o logic/Logic.Server/bin/Release/netcoreapp3.0
       - run:
           name: "Run Build step: Agent"
-          command: dotnet.exe publish "communication/Agent/Communication.Agent.csproj" -c Release -f netcoreapp3.0 -r linux-x64 -o communication/Agent/bin/Release/netcoreapp3.0
+          command: dotnet publish "communication/Agent/Communication.Agent.csproj" -c Release -f netcoreapp3.0 -r linux-x64 -o communication/Agent/bin/Release/netcoreapp3.0
       - run:
           name: "Run Build step: Client"
-          command: dotnet.exe publish "logic/Logic.ClientConsole/Logic.ClientConsole.csproj" -c Release -r linux-x64 -o logic/Logic.ClientConsole/bin/Release/netcoreapp3.0
+          command: dotnet publish "logic/Logic.ClientConsole/Logic.ClientConsole.csproj" -c Release -r linux-x64 -o logic/Logic.ClientConsole/bin/Release/netcoreapp3.0
     #   - store_artifacts:
     #       path: .\bin\Release\netcoreapp3.0\win10-x64\publish
   
