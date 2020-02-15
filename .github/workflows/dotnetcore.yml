@@ -3,47 +3,49 @@ name: .NET Core
 on: [push]
 
 jobs:
-  build:
-    runs-on: windows-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.0.100
+#   build:
+#     runs-on: windows-latest
+#     steps:
+#     - uses: actions/checkout@v2
+#     - name: Setup .NET Core
+#       uses: actions/setup-dotnet@v1
+#       with:
+#         dotnet-version: 3.0.100
 #     - name: Build server
 #       run: dotnet build "logic/Logic.Server/Logic.Server.csproj" -c Release
 #     - name: Build agent
 #       run: dotnet build "communication/Agent/Communication.Agent.csproj" -c Release -f netcoreapp3.0
 #     - name: Build client
 #       run: dotnet build "logic/Logic.Client/Logic.Client.csproj" -c Release
-    - name: Publish server
-      run: dotnet publish "logic/Logic.Server/Logic.Server.csproj" -c Release -o logic/Logic.Server/bin/Release/netcoreapp3.0
-    - name: Publish agent
-      run: dotnet publish "communication/Agent/Communication.Agent.csproj" -c Release -f netcoreapp3.0 -o communication/Agent/bin/Release/netcoreapp3.0  
-    - name: Publish client
-      run: dotnet publish "logic/Logic.Client/Logic.Client.csproj" -c Release -o logic/Logic.Client/bin/Release/netcoreapp3.0
+#     - name: Publish server
+#       run: dotnet publish "logic/Logic.Server/Logic.Server.csproj" -c Release -o logic/Logic.Server/bin/Release/netcoreapp3.0
+#     - name: Publish agent
+#       run: dotnet publish "communication/Agent/Communication.Agent.csproj" -c Release -f netcoreapp3.0 -o communication/Agent/bin/Release/netcoreapp3.0  
+#     - name: Publish client
+#       run: dotnet publish "logic/Logic.Client/Logic.Client.csproj" -c Release -o logic/Logic.Client/bin/Release/netcoreapp3.0
   
   deploy:
-    runs-on: ubuntu-latest
-    needs: build
+    runs-on: windows-latest
+#     needs: build
     steps:
       - uses: actions/checkout@v1
       - name: Log in to DockerHub
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_ACCESS_TOKEN }}
-#       - name: Setup .NET Core
-#         uses: actions/setup-dotnet@v1
-#         with:
-#           dotnet-version: 3.0.100
-#       - name: Publish server
-#         run: dotnet publish "logic/Logic.Server/Logic.Server.csproj" -c Release -o logic/Logic.Server/bin/Release/netcoreapp3.0
-#       - name: Publish agent
-#         run: dotnet publish "communication/Agent/Communication.Agent.csproj" -c Release -f netcoreapp3.0 -o communication/Agent/bin/Release/netcoreapp3.0  
-#       - name: Publish client
-#         run: dotnet publish "logic/Logic.Client/Logic.Client.csproj" -c Release -o logic/Logic.Client/bin/Release/netcoreapp3.0
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.0.100
+      - name: Publish server
+        run: dotnet publish "logic/Logic.Server/Logic.Server.csproj" -c Release -o logic/Logic.Server/bin/Release/netcoreapp3.0
+      - name: Publish agent
+        run: dotnet publish "communication/Agent/Communication.Agent.csproj" -c Release -f netcoreapp3.0 -o communication/Agent/bin/Release/netcoreapp3.0  
+      - name: Publish client
+        run: dotnet publish "logic/Logic.Client/Logic.Client.csproj" -c Release -o logic/Logic.Client/bin/Release/netcoreapp3.0
       - name: Build docker image of server
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/thuai_server:latest -f logic/ServerDockerfile .
       - name: Build docker image of client
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/thuai_client:latest -f logic/ClientDockerfile .
-      - name: Push Image to DockerHub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/thuai_server:latest && docker push ${{ secrets.DOCKER_USERNAME }}/thuai_client:latest
+      - name: Push server image to DockerHub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/thuai_server:latest
+      - name: Push server image to DockerHub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/thuai_client:latest
