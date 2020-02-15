@@ -1,83 +1,83 @@
 version: 2.1
 
-orbs:
-  win: circleci/windows@1.0.0
+# orbs:
+#   win: circleci/windows@1.0.0
 
-workflows:
-  version: 2
-  build-deploy:
-    jobs:
-      - build
-          filters:
-            branches:
-              only: master
-      # - deploy:
-      #     requires:
-      #       - build
+# workflows:
+#   version: 2
+#   build-deploy:
+#     jobs:
+#       - build
+#           filters:
+#             branches:
+#               only: master
+#       # - deploy:
+#       #     requires:
+#       #       - build
           
   
-jobs:
-  build:
-    executor:
-      name: win/vs2019
-      shell: bash.exe
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - dotnet-packages-v1-{{ checksum "logic/Logic.Server/Logic.Server.csproj" }}
-            - dotnet-packages-v1-{{ checksum "communication/Agent/Communication.Agent.csproj" }}
-            - dotnet-packages-v1-{{ checksum "logic/Logic.Client/Logic.Client.csproj" }}
-      - run:
-          name: "Install project dependencies"
-          command: dotnet restore logic/Logic.Server/Logic.Server.csproj
-      - run:
-          name: "Install project dependencies"
-          command: dotnet restore communication/Agent/Communication.Agent.csproj
-      - run:
-          name: "Install project dependencies"
-          command: dotnet restore logic/Logic.Client/Logic.Client.csproj
-      - save_cache:
-          paths:
-            - C:\Users\circleci\.nuget\packages
-          key: dotnet-packages-v1-{{ checksum "logic/Logic.Server/Logic.Server.csproj" }}
-      - save_cache:
-          paths:
-            - C:\Users\circleci\.nuget\packages
-          key: dotnet-packages-v1-{{ checksum "communication/Agent/Communication.Agent.csproj" }}
-      - save_cache:
-          paths:
-            - C:\Users\circleci\.nuget\packages
-          key: dotnet-packages-v1-{{ checksum "logic/Logic.Client/Logic.Client.csproj" }}
-      - run:
-          name: "Run Build step: Server"
-          command: dotnet publish "logic/Logic.Server/Logic.Server.csproj" -c Release -o logic/Logic.Server/bin/Release/netcoreapp3.0
-      - run:
-          name: "Run Build step: Agent"
-          command: dotnet publish "communication/Agent/Communication.Agent.csproj" -c Release -f netcoreapp3.0 -o communication/Agent/bin/Release/netcoreapp3.0
-      - run:
-          name: "Run Build step: Client"
-          command: dotnet publish "logic/Logic.Client/Logic.Client.csproj" -c Release -o logic/Logic.Client/bin/Release/netcoreapp3.0
-  #   #   - store_artifacts:
-  #   #       path: .\bin\Release\netcoreapp3.0\win10-x64\publish
+# jobs:
+#   build:
+#     executor:
+#       name: win/vs2019
+#       shell: bash.exe
+#     steps:
+#       - checkout
+#       - restore_cache:
+#           keys:
+#             - dotnet-packages-v1-{{ checksum "logic/Logic.Server/Logic.Server.csproj" }}
+#             - dotnet-packages-v1-{{ checksum "communication/Agent/Communication.Agent.csproj" }}
+#             - dotnet-packages-v1-{{ checksum "logic/Logic.Client/Logic.Client.csproj" }}
+#       - run:
+#           name: "Install project dependencies"
+#           command: dotnet restore logic/Logic.Server/Logic.Server.csproj
+#       - run:
+#           name: "Install project dependencies"
+#           command: dotnet restore communication/Agent/Communication.Agent.csproj
+#       - run:
+#           name: "Install project dependencies"
+#           command: dotnet restore logic/Logic.Client/Logic.Client.csproj
+#       - save_cache:
+#           paths:
+#             - C:\Users\circleci\.nuget\packages
+#           key: dotnet-packages-v1-{{ checksum "logic/Logic.Server/Logic.Server.csproj" }}
+#       - save_cache:
+#           paths:
+#             - C:\Users\circleci\.nuget\packages
+#           key: dotnet-packages-v1-{{ checksum "communication/Agent/Communication.Agent.csproj" }}
+#       - save_cache:
+#           paths:
+#             - C:\Users\circleci\.nuget\packages
+#           key: dotnet-packages-v1-{{ checksum "logic/Logic.Client/Logic.Client.csproj" }}
+#       - run:
+#           name: "Run Build step: Server"
+#           command: dotnet publish "logic/Logic.Server/Logic.Server.csproj" -c Release -o logic/Logic.Server/bin/Release/netcoreapp3.0
+#       - run:
+#           name: "Run Build step: Agent"
+#           command: dotnet publish "communication/Agent/Communication.Agent.csproj" -c Release -f netcoreapp3.0 -o communication/Agent/bin/Release/netcoreapp3.0
+#       - run:
+#           name: "Run Build step: Client"
+#           command: dotnet publish "logic/Logic.Client/Logic.Client.csproj" -c Release -o logic/Logic.Client/bin/Release/netcoreapp3.0
+#   #   #   - store_artifacts:
+#   #   #       path: .\bin\Release\netcoreapp3.0\win10-x64\publish
   
-  # deploy:
-  #   executor:
-  #     name: win/vs2019
-  #     shell: bash.exe
-  #   steps:
-      - run:
-          name: "Log in to DockerHub"
-          command: docker login --username $DOCKER_USER --password $DOCKER_PASS
-      - run:
-          name: "Build docker image: Server"
-          command: docker build -t $DOCKER_USER/thuai3_server -f logic/ServerDockerfile .
-      - run:
-          name: "Build docker image: Client"
-          command: docker build -t $DOCKER_USER/thuai3_client -f logic/ClientDockerfile .
-      - run:
-          name: "Push docker image"
-          command: docker push $DOCKER_USER/thuai3_server
-      - run:
-          name: "Push docker image"
-          command: docker push $DOCKER_USER/thuai3_client
+#   # deploy:
+#   #   executor:
+#   #     name: win/vs2019
+#   #     shell: bash.exe
+#   #   steps:
+#       - run:
+#           name: "Log in to DockerHub"
+#           command: docker login --username $DOCKER_USER --password $DOCKER_PASS
+#       - run:
+#           name: "Build docker image: Server"
+#           command: docker build -t $DOCKER_USER/thuai3_server -f logic/ServerDockerfile .
+#       - run:
+#           name: "Build docker image: Client"
+#           command: docker build -t $DOCKER_USER/thuai3_client -f logic/ClientDockerfile .
+#       - run:
+#           name: "Push docker image"
+#           command: docker push $DOCKER_USER/thuai3_server
+#       - run:
+#           name: "Push docker image"
+#           command: docker push $DOCKER_USER/thuai3_client
