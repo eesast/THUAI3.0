@@ -64,7 +64,7 @@ jobs:
   deploy:
     executor:
       name: win/vs2019
-      shell: GNUbash.exe
+      shell: bash.exe
     steps:
       - run:
           name: "Log in to DockerHub"
