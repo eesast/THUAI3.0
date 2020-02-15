@@ -16,4 +16,14 @@ THUAI3.0 原电子系第21届队式程序设计大赛
 - 设计良好的debug接口
 
 ## 开发组成员
-（自己加）
+常灿，王冲
+
+## 说明
+
+- Windows使用时，需要将dll目录中文件放入C:\Windows\SysWOW64目录中。
+- API.h文档中定义了所有的玩家接口。Player.cpp中的player函数为唯一的选手可编辑函数。
+
+## TODO
+
+- 自动生成数据文件
+- makefile脚本
