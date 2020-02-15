@@ -10,7 +10,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.0
+        dotnet-version: 3.0.100
     - name: Build server
       run: dotnet build "logic/Logic.Server/Logic.Server.csproj" -c Release
     - name: Build agent
@@ -28,7 +28,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 3.0
+          dotnet-version: 3.0.100
       - name: Publish server
         run: dotnet publish "logic/Logic.Server/Logic.Server.csproj" -c Release -o logic/Logic.Server/bin/Release/netcoreapp3.0
       - name: Publish agent
