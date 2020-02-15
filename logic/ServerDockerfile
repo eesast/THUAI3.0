@@ -2,4 +2,4 @@
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0
 COPY logic/Logic.Server/bin/Release/netcoreapp3.0/ app/
-ENTRYPOINT ["dotnet", "Logic.Server.dll"]
+ENTRYPOINT ["dotnet", "app/Logic.Server.dll"]

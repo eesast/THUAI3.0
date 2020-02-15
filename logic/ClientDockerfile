@@ -3,5 +3,5 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0
 COPY logic/Logic.Client/bin/Release/netcoreapp3.0/ app/
 COPY communication/Agent/bin/Release/netcoreapp3.0/ app/
-ENTRYPOINT ["dotnet", "Communication.Agent.dll"]
-CMD ["dotnet", "Logic.Client.dll"]
+ENTRYPOINT ["dotnet", "app/Communication.Agent.dll"]
+CMD ["dotnet", "app/Logic.Client.dll"]
