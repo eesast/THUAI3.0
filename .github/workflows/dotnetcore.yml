@@ -45,5 +45,7 @@ jobs:
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/thuai_server:latest -f logic/ServerDockerfile .
       - name: Build docker image of client
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/thuai_client:latest -f logic/ClientDockerfile .
-      - name: Push Image to DockerHub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/thuai_server:latest && docker push ${{ secrets.DOCKER_USERNAME }}/thuai_client:latest
+      - name: Push server image to DockerHub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/thuai_server:latest
+      - name: Push server image to DockerHub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/thuai_client:latest
