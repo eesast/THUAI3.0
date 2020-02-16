@@ -1,5 +1,5 @@
 # Server
 
-FROM mcr.microsoft.com/dotnet/core/runtime:3.0
+FROM mcr.microsoft.com/dotnet/core/runtime:3.0-alpine3.10
 COPY logic/Logic.Server/bin/Release/netcoreapp3.0/linux-x64/ app/
 ENTRYPOINT ["dotnet", "app/Logic.Server.dll"]
