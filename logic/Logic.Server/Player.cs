@@ -40,10 +40,10 @@ namespace Logic.Server
             base(x, y)
         {
             Parent = WorldMap;
-            MoveStopTimer = new System.Threading.Timer((i) => { Velocity = new Vector(0, 0); status = CommandType.Stop; }, new object(), -1, -1);
-            StunTimer = new System.Threading.Timer((i) => { _isStun = false; }, null, -1, -1);
-            SpeedBuffTimer = new System.Threading.Timer((i) => { moveSpeed -= Convert.ToDouble(ConfigurationManager.AppSettings["SpeedBuffExtraMoveSpeed"]); }, null, -1, -1);
-            StrenthBuffTimer = new System.Threading.Timer((i) => { MaxThrowDistance -= Convert.ToInt32(ConfigurationManager.AppSettings["StrenthBuffExtraThrowDistance"]); }, null, -1, -1);
+            MoveStopTimer = new System.Threading.Timer((i) => { Velocity = new Vector(0, 0); status = CommandType.Stop; Program.MessageToClient.GameObjectMessageList[this.ID].IsMoving = false; });
+            StunTimer = new System.Threading.Timer((i) => { _isStun = false; });
+            SpeedBuffTimer = new System.Threading.Timer((i) => { moveSpeed -= Convert.ToDouble(ConfigurationManager.AppSettings["SpeedBuffExtraMoveSpeed"]); });
+            StrenthBuffTimer = new System.Threading.Timer((i) => { MaxThrowDistance -= Convert.ToInt32(ConfigurationManager.AppSettings["StrenthBuffExtraThrowDistance"]); });
 
             lock (Program.MessageToClientLock)
             {
@@ -108,9 +108,10 @@ namespace Logic.Server
         public override void Move(Direction direction, int durationMilliseconds)
         {
             this.facingDirection = direction;
-            this.Velocity = new Vector(0, 0);
+            //this.Velocity = new Vector(0, 0);
             this.Velocity = new Vector(((double)(int)direction) * Math.PI / 4, moveSpeed + GlueExtraMoveSpeed);
             this.status = CommandType.Move;
+            Program.MessageToClient.GameObjectMessageList[this.ID].IsMoving = true;
             MoveStopTimer.Change(durationMilliseconds, 0);
         }
         public override void Pick()
@@ -188,7 +189,7 @@ namespace Logic.Server
         public override void Put(int distance, int ThrowDish)
         {
             if (distance > MaxThrowDistance) distance = MaxThrowDistance;
-            int dueTime = distance / 5;
+            int dueTime = 200 * distance;
 
             if ((int)dish != (int)DishType.Empty && ThrowDish != 0)
             {
@@ -196,7 +197,9 @@ namespace Logic.Server
                 dishToThrow.Parent = WorldMap;
                 dishToThrow.Layer = (int)MapLayer.FlyingLayer;
                 dishToThrow.Velocity = new Vector((double)(int)facingDirection * Math.PI / 4, 5);
-                dishToThrow.StopMovingTimer.Change(TimeSpan.FromSeconds(dueTime), TimeSpan.FromSeconds(-1));
+                dishToThrow.StopMovingTimer.Change(dueTime, 0);
+                dish = DishType.Empty;
+
             }
             else if ((int)tool != (int)ToolType.Empty && ThrowDish == 0)
             {
@@ -204,7 +207,8 @@ namespace Logic.Server
                 toolToThrow.Parent = WorldMap;
                 toolToThrow.Layer = (int)MapLayer.FlyingLayer;
                 toolToThrow.Velocity = new Vector((double)(int)facingDirection * Math.PI / 4, 5);
-                toolToThrow.StopMovingTimer.Change(TimeSpan.FromSeconds(dueTime), TimeSpan.FromSeconds(-1));
+                toolToThrow.StopMovingTimer.Change(dueTime, 0);
+                tool = ToolType.Empty;
             }
             else Console.WriteLine("没有可以扔的东西");
             status = CommandType.Stop;
@@ -322,7 +326,7 @@ namespace Logic.Server
         {
             if (trigger.OwnerTeam == team)
                 return false;
-            switch(trigger.triggerType)
+            switch (trigger.triggerType)
             {
                 case TriggerType.WaveGlue:
                     {
