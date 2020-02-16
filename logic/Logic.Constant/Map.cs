@@ -6,7 +6,7 @@ using Logic.Constant;
 //using UnityEngine;
 namespace Logic.Constant
 {
-    public static class Map
+    public static class MapInfo
     {
         public static uint[,] map = new uint[,]
         {
@@ -66,6 +66,7 @@ namespace Logic.Constant
                     _worldMap.SetLayerCollisionTrue((int)MapLayer.BlockLayer, (int)MapLayer.BlockLayer);
                     _worldMap.SetLayerCollisionTrue((int)MapLayer.PlayerLayer, (int)MapLayer.PlayerLayer);
                     _worldMap.SetLayerCollisionTrue((int)MapLayer.BlockLayer, (int)MapLayer.FlyingLayer);
+                    _worldMap.SetLayerTriggerTrue((int)MapLayer.PlayerLayer, (int)MapLayer.TriggerLayer);
                     _worldMap.FrameRate = Constant.FrameRate;
                 }
                 return _worldMap;
@@ -76,6 +77,7 @@ namespace Logic.Constant
             BlockLayer = 0,
             PlayerLayer,
             ItemLayer,
+            TriggerLayer,
             FlyingLayer
         }
 

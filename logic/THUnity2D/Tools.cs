@@ -61,5 +61,64 @@ namespace THUnity2D
         {
             Console.WriteLine(str);
         }
+
+        public static double DivisionWithoutNaN(double d1, double d2)
+        {
+            if (d1 == 0)
+                return 0;
+            return d1 / d2;
+        }
+
+        public static bool IsInOpenInterval(double toCheckNumber, double IntervalA, double IntervalB)
+        {
+            if (IntervalA < IntervalB)
+            {
+                return toCheckNumber > IntervalA && toCheckNumber < IntervalB;
+            }
+            else if (IntervalA > IntervalB)
+            {
+                return toCheckNumber > IntervalB && toCheckNumber < IntervalA;
+            }
+            return false;
+        }
+
+        public static bool IsInCloseInterval(double toCheckNumber, double IntervalA, double IntervalB)
+        {
+            if (IntervalA <= IntervalB)
+            {
+                return toCheckNumber >= IntervalA && toCheckNumber <= IntervalB;
+            }
+            else if (IntervalA >= IntervalB)
+            {
+                return toCheckNumber >= IntervalB && toCheckNumber <= IntervalA;
+            }
+            return false;
+        }
+
+        public static bool IsInOpenCloseInterval(double toCheckNumber, double IntervalA, double IntervalB)
+        {
+            if (IntervalA < IntervalB)
+            {
+                return toCheckNumber > IntervalA && toCheckNumber <= IntervalB;
+            }
+            else if (IntervalA > IntervalB)
+            {
+                return toCheckNumber >= IntervalB && toCheckNumber < IntervalA;
+            }
+            return false;
+        }
+
+        public static bool IsInCloseOpenInterval(double toCheckNumber, double IntervalA, double IntervalB)
+        {
+            if (IntervalA < IntervalB)
+            {
+                return toCheckNumber >= IntervalA && toCheckNumber < IntervalB;
+            }
+            else if (IntervalA > IntervalB)
+            {
+                return toCheckNumber > IntervalB && toCheckNumber <= IntervalA;
+            }
+            return false;
+        }
     }
 }

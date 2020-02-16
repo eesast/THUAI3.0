@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using static THUnity2D.Tools;
+using static Logic.Constant.MapInfo;
 using Logic.Constant;
 using Communication.Proto;
 
@@ -23,13 +24,14 @@ namespace Logic.Server
                         (o) =>
                         {
                             Velocity = new THUnity2D.Vector(Velocity.angle, 0);
+                            Layer = (int)MapLayer.ItemLayer;
                         });
                 return _stopMovingTimer;
             }
         }
         public Dish(double x_t, double y_t, DishType type_t) : base(x_t, y_t)
         {
-            Layer = (int)Logic.Constant.Map.MapLayer.ItemLayer;
+            Layer = (int)MapLayer.ItemLayer;
             Movable = true;
             Bouncable = true;
             dish = type_t;
