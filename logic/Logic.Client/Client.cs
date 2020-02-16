@@ -194,16 +194,6 @@ namespace Client
                   }
               );
         }
-        public override void Pick()
-        {
-            ClientCommunication.SendMessage(
-                new MessageToServer
-                {
-                    ID = this.id,
-                    CommandType = (CommandTypeMessage)CommandType.Pick
-                }
-            );
-        }
 
         public void OnReceive(IMessage message)
         {
