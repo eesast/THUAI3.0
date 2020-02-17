@@ -28,20 +28,20 @@ namespace THUnity2D
                 {
                     if (value != null && this._parent != null)
                     {
-                        this.Debug("Reset Parent to : " + value.ID);
+                        Debug(this, "Reset Parent to : " + value.ID);
                         this._parent.OnChildrenDelete(this);
                         this._parent = value;
                         this._parent.OnChildrenAdded(this);
                     }
                     else if (value != null && this._parent == null)
                     {
-                        this.Debug("Set new Parent : " + value.ID);
+                        Debug(this, "Set new Parent : " + value.ID);
                         this._parent = value;
                         this._parent.OnChildrenAdded(this);
                     }
                     else if (value == null && this._parent != null)
                     {
-                        this.Debug("Delete Parent : " + this._parent.ID);
+                        Debug(this, "Delete Parent : " + this._parent.ID);
                         this._parent.OnChildrenDelete(this);
                         this._parent = null;
                     }
@@ -86,9 +86,9 @@ namespace THUnity2D
             {
                 lock (privateLock)
                 {
-                    this.Debug("Prompt to change position to : " + value.ToString());
+                    Debug(this, "Prompt to change position to : " + value.ToString());
                     PositionChanged(new PositionChangedEventArgs(this._position, value));
-                    this.Debug("change position to : " + this._position.ToString());
+                    Debug(this, "change position to : " + this._position.ToString());
                 }
             }
         }
@@ -193,12 +193,13 @@ namespace THUnity2D
             }
         }
         protected Vector _velocity = new Vector();
+        protected object _velocityLock = new object();
         public Vector Velocity
         {
-            get { lock (privateLock) { return this._velocity; } }
+            get { lock (_velocityLock) { return this._velocity; } }
             set
             {
-                lock (privateLock)
+                lock (_velocityLock)
                 {
                     if (Math.Abs(value.length) < MinSpeed)
                     {
@@ -287,9 +288,9 @@ namespace THUnity2D
             {
                 lock (privateLock)
                 {
-                    this.Debug("Prompt to change layer from " + this._layer + " to " + value);
+                    Debug(this, "Prompt to change layer from " + this._layer + " to " + value);
                     LayerChange(new LayerChangedEventArgs(this._layer, value));
-                    this.Debug("Change layer to " + this._layer);
+                    Debug(this, "Change layer to " + this._layer);
                 }
             }
         }
@@ -329,7 +330,7 @@ namespace THUnity2D
             ID = currentMaxID;
             currentMaxID++;
             this.Parent = parent;
-            this.Debug("has been newed . ");
+            Debug(this, "has been newed . ");
         }
         public GameObject(XYPosition position, GameObject? parent = null) : this(parent)
         {
@@ -353,31 +354,23 @@ namespace THUnity2D
         public event MoveHandler? OnMove;
         public delegate void MoveCompleteHandler(GameObject sender);
         public event MoveCompleteHandler? MoveComplete;
+        protected DateTime lastMoveTime = DateTime.Now;
         public virtual void Move(MoveEventArgs e)
         {
             if (e.distance == 0)
                 return;
             lock (privateLock)
             {
+                if ((DateTime.Now - lastMoveTime).TotalSeconds < 1 / _frameRate)
+                    return;
                 XYPosition previousPosition = _position;
                 _position = _position + new XYPosition(e.distance * Math.Cos(e.angle), e.distance * Math.Sin(e.angle));
-                Debug("Move from " + previousPosition.ToString() + " angle : " + e.angle + " distance : " + e.distance + " aim : " + _position.ToString());
+                Debug(this, "Move from " + previousPosition.ToString() + " angle : " + e.angle + " distance : " + e.distance + " aim : " + _position.ToString());
                 if (this._movable)
                 {
                     OnMove?.Invoke(this, e, previousPosition);
-                    //if ((int)previousPosition.x != (int)_position.x || (int)previousPosition.y != (int)_position.y)
-                    //{
-                    //    GlueExtraMoveSpeed = 0;
-                    //    foreach (var GameObject in WorldMap.Grid[(int)Position.x, (int)Position.y].GetType(typeof()))
-                    //    {
-                    //        if (GameObject.IsTrigger)
-                    //        {
-                    //            if (this.TouchTrigger(GameObject)) GameObject.Parent = null;
-                    //        }
-                    //    }
-                    //}
                 }
-                Debug("Move result poition : " + this._position.ToString());
+                Debug(this, "Move result poition : " + this._position.ToString());
                 MoveComplete?.Invoke(this);
             }
         }
@@ -391,7 +384,7 @@ namespace THUnity2D
             set
             {
                 _bouncable = value;
-                Debug("Set Bouncable " + _bouncable);
+                Debug(this, "Set Bouncable " + _bouncable);
             }
         }
         //Bouncable
@@ -413,13 +406,13 @@ namespace THUnity2D
         {
             lock (privateLock)
             {
-                DebugWithoutEndline("Collide with : ");
+                DebugWithoutEndline(this, "Collide with : ");
                 if (e.collisionGameObjects != null)
                     foreach (var gameObject in e.collisionGameObjects)
                     {
-                        DebugWithoutIDEndline(gameObject.ID + "  ");
+                        DebugWithoutIDEndline(this, gameObject.ID + "  ");
                     }
-                DebugWithoutID(" Direction : " + e.collisionDirection);
+                DebugWithoutID(this, " Direction : " + e.collisionDirection);
                 OnCollision?.Invoke(e);
             }
         }
@@ -434,13 +427,13 @@ namespace THUnity2D
                 return;
             lock (privateLock)
             {
-                DebugWithoutEndline("Trigger with : ");
+                DebugWithoutEndline(this, "Trigger with : ");
                 if (triggerGameObjects != null)
                     foreach (var gameObject in triggerGameObjects)
                     {
-                        DebugWithoutIDEndline(gameObject.ID + "  ");
+                        DebugWithoutIDEndline(this, gameObject.ID + "  ");
                     }
-                DebugWithoutID("");
+                DebugWithoutID(this, "");
                 OnTrigger?.Invoke(triggerGameObjects);
             }
         }
@@ -451,22 +444,22 @@ namespace THUnity2D
             this.Parent = null;
         }
 
-        public void Debug(string str)
+        public static Action<GameObject, string> Debug = (gameObject, str) =>
         {
-            Console.WriteLine(this.GetType() + " " + this.ID + " : " + str);
-        }
-        public void DebugWithoutEndline(string str)
+            Console.WriteLine(gameObject.GetType() + " " + gameObject.ID + " : " + str);
+        };
+        public static Action<GameObject, string> DebugWithoutEndline = (gameObject, str) =>
         {
-            Console.Write(this.GetType() + " " + this.ID + " : " + str + " ");
-        }
-        public void DebugWithoutID(string str)
+            Console.Write(gameObject.GetType() + " " + gameObject.ID + " : " + str + " ");
+        };
+        public static Action<GameObject, string> DebugWithoutID = (gameObject, str) =>
         {
             Console.WriteLine(str);
-        }
-        public void DebugWithoutIDEndline(string str)
+        };
+        public static Action<GameObject, string> DebugWithoutIDEndline = (gameObject, str) =>
         {
             Console.Write(str);
-        }
+        };
 
         public void PrintChildrenList()
         {
@@ -477,13 +470,5 @@ namespace THUnity2D
             }
             Console.WriteLine("==============================================");
         }
-        //public virtual bool TouchTrigger(GameObject gameObject)
-        //{
-        //    return false;
-        //}
-        //public virtual int Touch()
-        //{
-        //    return 0;
-        //}
     }
 }

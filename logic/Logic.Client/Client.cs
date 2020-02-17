@@ -22,15 +22,26 @@ namespace Client
         protected static DateTime lastSendTime = new DateTime();
         protected Communication.CAPI.API ClientCommunication = new Communication.CAPI.API();
         protected MessageToServer messageToServer = new MessageToServer();
-        public void moveFormLabelMethod(Int64 id_t, GameObjectMessage gameObjectMessage)
+        public void ChangeControlLabelText(string id, string str)
         {
-            Program.form.playerLabels[id_t].Location = new System.Drawing.Point(
-                (int)((gameObjectMessage.Position.X - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL),
-                Convert.ToInt32((WorldMap.Height - gameObjectMessage.Position.Y - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL));
-
+            if (Program.form.ControlLabels[id].InvokeRequired)
+            {
+                Program.form.ControlLabels[id].Invoke(new Action<object>((o) => { Program.form.ControlLabels[id].Text = id + "  " + str; }));
+            }
+            else
+            {
+                Program.form.ControlLabels[id].Text = id + "  " + str;
+            }
+        }
+        public void RefreshFormLabelMethod(Int64 id_t, GameObjectMessage gameObjectMessage)
+        {
             switch (gameObjectMessage.ObjType)
             {
                 case ObjTypeMessage.People:
+                    Program.form.playerLabels[id_t].Location =
+                        new System.Drawing.Point(
+                            (int)((gameObjectMessage.Position.X - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL),
+                            Convert.ToInt32((WorldMap.Height - gameObjectMessage.Position.Y - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL));
                     switch ((Direction)gameObjectMessage.Direction)
                     {
                         case Direction.Right: Program.form.playerLabels[id_t].Text = "→"; break;
@@ -43,8 +54,24 @@ namespace Client
                         case Direction.RightDown: Program.form.playerLabels[id_t].Text = "↘"; break;
                         default: break;
                     }
+                    if (gameObjectMessage.DishType != DishTypeMessage.DishEmpty)
+                        ChangeControlLabelText("Dish", gameObjectMessage.DishType.ToString());
+                    else
+                        ChangeControlLabelText("Dish", "");
                     break;
                 case ObjTypeMessage.Block:
+                    switch (gameObjectMessage.BlockType)
+                    {
+                        case BlockTypeMessage.Wall:
+                            Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.White;
+                            break;
+                        case BlockTypeMessage.FoodPoint:
+                            if (gameObjectMessage.DishType == DishTypeMessage.DishEmpty)
+                                Program.form.playerLabels[id_t].Text = "";
+                            else
+                                Program.form.playerLabels[id_t].Text = gameObjectMessage.DishType.ToString();
+                            break;
+                    }
                     break;
             }
         }
@@ -56,36 +83,55 @@ namespace Client
                 case ObjTypeMessage.Block:
                     switch (gameObjectMessage.BlockType)
                     {
+                        case BlockTypeMessage.Wall:
+                            Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.White;
+                            break;
                         case BlockTypeMessage.FoodPoint:
                             Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.Purple;
                             Program.form.playerLabels[id_t].Text = gameObjectMessage.DishType.ToString();
-                            Console.WriteLine("New FootPoint Label");
+                            Console.WriteLine("New FoodPoint Label");
                             break;
                     }
                     break;
+                case ObjTypeMessage.Dish:
+                    Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.LightSalmon;
+                    Program.form.playerLabels[id_t].Text = gameObjectMessage.DishType.ToString();
+                    break;
+                case ObjTypeMessage.Tool:
+                    Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.LightCyan;
+                    Program.form.playerLabels[id_t].Text = gameObjectMessage.ToolType.ToString();
+                    break;
             }
             Program.form.playerLabels[id_t].TabIndex = 1;
+            Program.form.playerLabels[id_t].Location =
+                        new System.Drawing.Point(
+                            (int)((gameObjectMessage.Position.X - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL),
+                            Convert.ToInt32((WorldMap.Height - gameObjectMessage.Position.Y - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL));
             Program.form.playerLabels[id_t].Size = new System.Drawing.Size(Form1.LABEL_WIDTH - Form1.LABEL_INTERVAL, Form1.LABEL_WIDTH - Form1.LABEL_INTERVAL);
             Program.form.playerLabels[id_t].BringToFront();
+        }
+
+        public void CreatePlayerLabel(Int64 id_t)
+        {
+            Program.form.playerLabels.Add(id_t, new System.Windows.Forms.Label());
+            if (Program.form.InvokeRequired)
+            {
+                Program.form.Invoke(new Action(() =>
+                {
+                    Program.form.Controls.Add(Program.form.playerLabels[id_t]);
+                }));
+            }
+            else
+            {
+                Program.form.Controls.Add(Program.form.playerLabels[id_t]);
+            }
         }
 
         public void moveFormLabel(Int64 id_t, GameObjectMessage gameObjectMessage)
         {
             if (!Program.form.playerLabels.ContainsKey(id_t))
             {
-                Program.form.playerLabels.Add(id_t, new System.Windows.Forms.Label());
-                if (Program.form.InvokeRequired)
-                {
-                    Program.form.Invoke(new Action(() =>
-                    {
-                        Program.form.Controls.Add(Program.form.playerLabels[id_t]);
-                    }));
-                }
-                else
-                {
-                    Program.form.Controls.Add(Program.form.playerLabels[id_t]);
-                }
-
+                CreatePlayerLabel(id_t);
                 if (Program.form.playerLabels[id_t].InvokeRequired)
                 {
                     Program.form.playerLabels[id_t].Invoke(new Action<Int64, GameObjectMessage>(initializeFormLabelMethod), id_t, gameObjectMessage);
@@ -97,11 +143,11 @@ namespace Client
             }
             if (Program.form.playerLabels[id_t].InvokeRequired)
             {
-                Program.form.playerLabels[id_t].Invoke(new Action<Int64, GameObjectMessage>(moveFormLabelMethod), id_t, gameObjectMessage);
+                Program.form.playerLabels[id_t].Invoke(new Action<Int64, GameObjectMessage>(RefreshFormLabelMethod), id_t, gameObjectMessage);
             }
             else
             {
-                moveFormLabelMethod(id_t, gameObjectMessage);
+                RefreshFormLabelMethod(id_t, gameObjectMessage);
             }
         }
         public Player(double x, double y) :
@@ -126,39 +172,17 @@ namespace Client
                     continue;
                 switch (key)
                 {
-                    case 'd':
-                        Move(Direction.Right);
-                        break;
-                    case 'e':
-                        Move(Direction.RightUp);
-                        break;
-                    case 'w':
-                        Move(Direction.Up);
-                        break;
-                    case 'q':
-                        Move(Direction.LeftUp);
-                        break;
-                    case 'a':
-                        Move(Direction.Left);
-                        break;
-                    case 'z':
-                        Move(Direction.LeftDown); ;
-                        break;
-                    case 'x':
-                        Move(Direction.Down);
-                        break;
-                    case 'c':
-                        Move(Direction.RightDown);
-                        break;
-                    case 'f':
-                        Pick();
-                        break;
-                    case 'u':
-                        Use(1, 0);
-                        break;
-                    case 't':
-                        Put(1, 0);
-                        break;
+                    case 'd': Move(Direction.Right); break;
+                    case 'e': Move(Direction.RightUp); break;
+                    case 'w': Move(Direction.Up); break;
+                    case 'q': Move(Direction.LeftUp); break;
+                    case 'a': Move(Direction.Left); break;
+                    case 'z': Move(Direction.LeftDown); break;
+                    case 'x': Move(Direction.Down); break;
+                    case 'c': Move(Direction.RightDown); break;
+                    case 'f': Pick(); break;
+                    case 'u': Use(1, 0); break;
+                    case 't': Put(1, 0); break;
                 }
                 lastSendTime = DateTime.Now;
             }
@@ -178,6 +202,11 @@ namespace Client
         public override void Use(int type, int parameter)
         {
             messageToServer.CommandType = CommandTypeMessage.Use;
+            ClientCommunication.SendMessage(messageToServer);
+        }
+        public override void Pick()
+        {
+            messageToServer.CommandType = CommandTypeMessage.Pick;
             ClientCommunication.SendMessage(messageToServer);
         }
 

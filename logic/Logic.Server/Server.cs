@@ -107,5 +107,7 @@ namespace Logic.Server
                 });
             }
         }
+
+        public static Action<string> ServerDebug = (str) => { Console.WriteLine(str); };
     }
 }

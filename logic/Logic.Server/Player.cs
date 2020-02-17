@@ -18,7 +18,7 @@ namespace Logic.Server
     {
         public System.Threading.Timer MoveStopTimer;
         public System.Threading.Timer SpeedBuffTimer;
-        public System.Threading.Timer StrenthBuffTimer;
+        public System.Threading.Timer StrengthBuffTimer;
         public CommandType status = CommandType.Stop;
 
         public bool _isStun = false;
@@ -40,10 +40,10 @@ namespace Logic.Server
             base(x, y)
         {
             Parent = WorldMap;
-            MoveStopTimer = new System.Threading.Timer((i) => { Velocity = new Vector(0, 0); status = CommandType.Stop; Program.MessageToClient.GameObjectMessageList[this.ID].IsMoving = false; });
+            MoveStopTimer = new System.Threading.Timer((i) => { Velocity = new Vector(Velocity.angle, 0); status = CommandType.Stop; Program.MessageToClient.GameObjectMessageList[this.ID].IsMoving = false; });
             StunTimer = new System.Threading.Timer((i) => { _isStun = false; });
             SpeedBuffTimer = new System.Threading.Timer((i) => { moveSpeed -= Convert.ToDouble(ConfigurationManager.AppSettings["SpeedBuffExtraMoveSpeed"]); });
-            StrenthBuffTimer = new System.Threading.Timer((i) => { MaxThrowDistance -= Convert.ToInt32(ConfigurationManager.AppSettings["StrenthBuffExtraThrowDistance"]); });
+            StrengthBuffTimer = new System.Threading.Timer((i) => { MaxThrowDistance -= Convert.ToInt32(ConfigurationManager.AppSettings["StrenthBuffExtraThrowDistance"]); });
 
             lock (Program.MessageToClientLock)
             {
@@ -83,13 +83,13 @@ namespace Logic.Server
             {
                 case CommandTypeMessage.Move:
                     if (msg.MoveDirection >= 0 && msg.MoveDirection < DirectionMessage.DirectionSize)
-                        Move((Direction)msg.MoveDirection, 1000);
+                        Move((Direction)msg.MoveDirection, msg.MoveDuration);
                     break;
                 case CommandTypeMessage.Pick:
                     Pick();
                     break;
                 case CommandTypeMessage.Put:
-                    Put(1, 0);
+                    Put(5, 1);
                     break;
                 case CommandTypeMessage.Use:
                     Use(1, 0);
@@ -111,80 +111,56 @@ namespace Logic.Server
             //this.Velocity = new Vector(0, 0);
             this.Velocity = new Vector(((double)(int)direction) * Math.PI / 4, moveSpeed + GlueExtraMoveSpeed);
             this.status = CommandType.Move;
-            Program.MessageToClient.GameObjectMessageList[this.ID].IsMoving = true;
+            lock (Program.MessageToClientLock)
+                Program.MessageToClient.GameObjectMessageList[this.ID].IsMoving = true;
             MoveStopTimer.Change(durationMilliseconds, 0);
         }
         public override void Pick()
         {
-            XYPosition Check()
+            status = CommandType.Stop;
+            XYPosition[] toCheckPositions = { Position, Position + 2 * THUnity2D.Tools.EightCornerVector[facingDirection] };
+            foreach (var position in toCheckPositions)
             {
-                bool CheckItem(XYPosition xypos)
+                if (WorldMap.Grid[(int)position.x, (int)position.y].ContainsType(typeof(Block)))
                 {
-                    if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].ContainsType(typeof(Block)))
-                        foreach (var gameObject in WorldMap.Grid[(int)xypos.x, (int)xypos.y].GetType(typeof(Block)))
-                        {
-                            if (((Block)gameObject).dish != DishType.Empty)
-                                return true;
-                        }
-
-                    foreach (var item in WorldMap.Grid[(int)xypos.x, (int)xypos.y].GetLayer((int)MapLayer.ItemLayer))
-                    {
-                        if (item is Dish || item is Tool)
-                            return true;
-                    }
-                    //等地图做完写
-                    return false;
-                }
-                XYPosition xyPosition1 = Position + 2 * THUnity2D.Tools.EightCornerVector[facingDirection];
-
-                if (CheckItem(Position))
-                {
-                    return Position;
-                }
-                if (CheckItem(xyPosition1))
-                {
-                    return xyPosition1;
-                }
-                return new XYPosition(-1, -1);
-            }
-            void GetItem(XYPosition xypos)
-            {
-                if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].ContainsType(typeof(Block)))
-                {
-                    foreach (Block block in WorldMap.Grid[(int)xypos.x, (int)xypos.y].GetType(typeof(Block)))
+                    foreach (Block block in WorldMap.Grid[(int)position.x, (int)position.y].GetType(typeof(Block)))
                     {
                         if ((block.blockType == BlockType.FoodPoint || block.blockType == BlockType.Cooker)
                             && block.dish != DishType.Empty)
                         {
                             dish = block.GetDish(dish);
+                            lock (Program.MessageToClientLock)
+                                Program.MessageToClient.GameObjectMessageList[this.ID].DishType = (DishTypeMessage)dish;
+                            Server.ServerDebug("Player : " + ID + " Get Dish " + dish.ToString());
                             return;
                         }
                         break;
                     }
                 }
 
-                foreach (var item in WorldMap.Grid[(int)xypos.x, (int)xypos.y].GetLayer((int)MapLayer.ItemLayer))
+                foreach (var item in WorldMap.Grid[(int)position.x, (int)position.y].GetLayer((int)MapLayer.ItemLayer))
                 {
                     if (item is Dish)
                     {
                         dish = ((Dish)item).GetDish(dish);
+                        lock (Program.MessageToClientLock)
+                            Program.MessageToClient.GameObjectMessageList[this.ID].DishType = (DishTypeMessage)dish;
+                        Server.ServerDebug("Player : " + ID + " Get Dish " + dish.ToString());
+                        return;
                     }
                     else if (item is Tool)
                     {
-                        Console.Write("GetTool!");
                         DeFunction(tool);
                         tool = ((Tool)item).GetTool(tool);
+                        lock (Program.MessageToClientLock)
+                            Program.MessageToClient.GameObjectMessageList[this.ID].ToolType = (ToolTypeMessage)tool;
+                        Server.ServerDebug("Player : " + ID + " Get Tool " + tool.ToString());
                         Function(tool);
+                        return;
                     }
                 }
             }
-            XYPosition xypos = Check();
-            if (xypos.x < 0) Console.WriteLine("没东西捡");
-            else
-            {
-                GetItem(xypos);
-            }
-            status = CommandType.Stop;
+            Console.WriteLine("没东西捡");
         }
         public override void Put(int distance, int ThrowDish)
         {
@@ -195,11 +171,12 @@ namespace Logic.Server
             {
                 Dish dishToThrow = new Dish(Position.x, Position.y, dish);
                 dishToThrow.Layer = (int)MapLayer.FlyingLayer;
-                dishToThrow.Parent = WorldMap;                
+                dishToThrow.Parent = WorldMap;
                 dishToThrow.Velocity = new Vector((double)(int)facingDirection * Math.PI / 4, 5);
                 dishToThrow.StopMovingTimer.Change(dueTime, 0);
                 dish = DishType.Empty;
-
+                lock (Program.MessageToClientLock)
+                    Program.MessageToClient.GameObjectMessageList[this.ID].DishType = (DishTypeMessage)dish;
             }
             else if ((int)tool != (int)ToolType.Empty && ThrowDish == 0)
             {
@@ -209,6 +186,8 @@ namespace Logic.Server
                 toolToThrow.Velocity = new Vector((double)(int)facingDirection * Math.PI / 4, 5);
                 toolToThrow.StopMovingTimer.Change(dueTime, 0);
                 tool = ToolType.Empty;
+                lock (Program.MessageToClientLock)
+                    Program.MessageToClient.GameObjectMessageList[this.ID].ToolType = (ToolTypeMessage)tool;
             }
             else Console.WriteLine("没有可以扔的东西");
             status = CommandType.Stop;
@@ -274,14 +253,14 @@ namespace Logic.Server
                     {
                         moveSpeed += Convert.ToDouble(ConfigurationManager.AppSettings["SpeedBuffExtraMoveSpeed"]);
                         SpeedBuffTimer.Change(Convert.ToInt32(ConfigurationManager.AppSettings["SpeedBuffDuration"]), 0);
-                        this.Velocity = new Vector(Velocity.angle, moveSpeed + GlueExtraMoveSpeed);
+                        this.Velocity = new Vector(Velocity.angle, (moveSpeed + GlueExtraMoveSpeed) / moveSpeed * Velocity.length);
                         tool = ToolType.Empty;
                     }
                     break;
                 case ToolType.StrenthBuff:
                     {
                         MaxThrowDistance += Convert.ToInt32(ConfigurationManager.AppSettings["StrenthBuffExtraThrowDistance"]);
-                        StrenthBuffTimer.Change(Convert.ToInt32(ConfigurationManager.AppSettings["StrenthBuffDuration"]), 0);
+                        StrengthBuffTimer.Change(Convert.ToInt32(ConfigurationManager.AppSettings["StrenthBuffDuration"]), 0);
                         tool = ToolType.Empty;
                     }
                     break;
@@ -332,7 +311,7 @@ namespace Logic.Server
                     {
                         GlueExtraMoveSpeed = Convert.ToDouble(ConfigurationManager.AppSettings["WaveGlueExtraMoveSpeed"]);
                         Console.WriteLine(GlueExtraMoveSpeed);
-                        this.Velocity = new Vector(Velocity.angle, moveSpeed + GlueExtraMoveSpeed);
+                        this.Velocity = new Vector(Velocity.angle, (moveSpeed + GlueExtraMoveSpeed) / moveSpeed * Velocity.length);
                     }
                     break;
                 case TriggerType.Mine:
@@ -349,7 +328,7 @@ namespace Logic.Server
                 default:
                     return false;
             }
-            trigger.Parent = null;
+            //trigger.Parent = null;
             return true;
         }
     }
