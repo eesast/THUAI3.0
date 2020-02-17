@@ -1,7 +1,7 @@
-﻿using static Logic.Constant.Map;
-using THUnity2D;
+﻿using THUnity2D;
 using System;
 using System.Collections.Generic;
+using static Logic.Constant.MapInfo;
 
 namespace GameForm
 {
@@ -36,13 +36,6 @@ namespace GameForm
             this.mapLabels = new System.Windows.Forms.Label[WorldMap.Width, WorldMap.Height];
             this.playerLabels = new Dictionary<Int64, System.Windows.Forms.Label>();
             this.SuspendLayout();
-            //
-            //playerLabel
-            //
-            //for (int a = 0; a < Communication.Proto.Constants.AgentCount; a++)
-            //    for (int c = 0; c < Communication.Proto.Constants.PlayerCount; c++)
-            //    {
-            //    }
             //
             //mapLabels
             //

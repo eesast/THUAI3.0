@@ -19,14 +19,11 @@ namespace GameForm
         public static extern Boolean FreeConsole();
 
 
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
         [STAThread]
         static void Main()
         {
+            Communication.Proto.Constants.Debug = new Communication.Proto.Constants.DebugFunc((str) => { });
             AllocConsole();
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             form = new Form1();
