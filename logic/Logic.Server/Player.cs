@@ -194,8 +194,8 @@ namespace Logic.Server
             if ((int)dish != (int)DishType.Empty && ThrowDish != 0)
             {
                 Dish dishToThrow = new Dish(Position.x, Position.y, dish);
-                dishToThrow.Parent = WorldMap;
                 dishToThrow.Layer = (int)MapLayer.FlyingLayer;
+                dishToThrow.Parent = WorldMap;                
                 dishToThrow.Velocity = new Vector((double)(int)facingDirection * Math.PI / 4, 5);
                 dishToThrow.StopMovingTimer.Change(dueTime, 0);
                 dish = DishType.Empty;
