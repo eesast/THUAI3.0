@@ -11,7 +11,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using Logic.Constant;
 using Client;
-using static THUnity2D._Map;
+using static Logic.Constant.MapInfo;
 
 namespace GameForm
 {

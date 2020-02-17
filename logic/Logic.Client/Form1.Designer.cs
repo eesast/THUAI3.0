@@ -1,7 +1,7 @@
-﻿using static THUnity2D._Map;
-using THUnity2D;
+﻿using THUnity2D;
 using System;
 using System.Collections.Generic;
+using static Logic.Constant.MapInfo;
 
 namespace GameForm
 {

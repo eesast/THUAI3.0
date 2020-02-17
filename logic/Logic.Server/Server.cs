@@ -7,7 +7,6 @@ using System.Threading;
 using Logic.Constant;
 using static Logic.Constant.Constant;
 using System.Collections.Generic;
-using static THUnity2D._Map;
 using Communication.Server;
 using Communication.Proto;
 using Timer;
@@ -32,7 +31,7 @@ namespace Logic.Server
                 {
                     Tuple<int, int> playerIDTuple = new Tuple<int, int>(a, c);
                     PlayerList.Add(playerIDTuple, new Player(2.5, 1.5));//new Random().Next(2, WORLD_MAP_WIDTH - 2), new Random().Next(2, WORLD_MAP_HEIGHT - 2)));
-
+                    PlayerList[playerIDTuple].team = a;
                     MessageToClient msg = new MessageToClient();
                     msg.GameObjectMessageList.Add(
                         PlayerList[playerIDTuple].ID,

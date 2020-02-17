@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using static THUnity2D.Tools;
-using static THUnity2D._Map;
+using static Logic.Constant.MapInfo;
 using Logic.Constant;
 using Communication.Proto;
 
@@ -24,6 +24,7 @@ namespace Logic.Server
                         (o) =>
                         {
                             Velocity = new THUnity2D.Vector(Velocity.angle, 0);
+                            Layer = (int)MapLayer.ItemLayer;
                         });
                 return _stopMovingTimer;
             }

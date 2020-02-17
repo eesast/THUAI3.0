@@ -8,7 +8,7 @@ using Google.Protobuf;
 using Logic.Constant;
 using Communication.Proto;
 using static Logic.Constant.Constant;
-using static THUnity2D._Map;
+using static Logic.Constant.MapInfo;
 using THUnity2D;
 using static THUnity2D.Tools;
 using GameForm;
@@ -19,8 +19,9 @@ namespace Client
         protected Int64 id = -1;
         private static int port = 30000;
         static Thread operationThread;
-        public static DateTime lastSendTime = new DateTime();
-        public Communication.CAPI.API ClientCommunication = new Communication.CAPI.API();
+        protected static DateTime lastSendTime = new DateTime();
+        protected Communication.CAPI.API ClientCommunication = new Communication.CAPI.API();
+        protected MessageToServer messageToServer = new MessageToServer();
         public void moveFormLabelMethod(Int64 id_t, GameObjectMessage gameObjectMessage)
         {
             Program.form.playerLabels[id_t].Location = new System.Drawing.Point(
@@ -164,45 +165,20 @@ namespace Client
         }
         public override void Move(Direction direction_t, int duration = 1000)
         {
-            ClientCommunication.SendMessage(
-                  new MessageToServer
-                  {
-                      ID = this.id,
-                      CommandType = (CommandTypeMessage)CommandType.Move,
-                      MoveDirection = (DirectionMessage)direction_t,
-                      MoveDuration = duration
-                  }
-              );
+            messageToServer.CommandType = CommandTypeMessage.Move;
+            messageToServer.MoveDirection = (DirectionMessage)direction_t;
+            messageToServer.MoveDuration = duration;
+            ClientCommunication.SendMessage(messageToServer);
         }
         public override void Put(int distance, int ThrowDish)
         {
-            ClientCommunication.SendMessage(
-                    new MessageToServer
-                    {
-                        ID = this.id,
-                        CommandType = (CommandTypeMessage)CommandType.Put,
-                    }
-                ); ;
-        }
-        public override void Pick()
-        {
-            ClientCommunication.SendMessage(
-                  new MessageToServer
-                  {
-                      ID = this.id,
-                      CommandType = (CommandTypeMessage)CommandType.Pick,
-                  }
-              );
+            messageToServer.CommandType = CommandTypeMessage.Put;
+            ClientCommunication.SendMessage(messageToServer);
         }
         public override void Use(int type, int parameter)
         {
-            ClientCommunication.SendMessage(
-                  new MessageToServer
-                  {
-                      ID = this.id,
-                      CommandType = (CommandTypeMessage)CommandType.Use,
-                  }
-              );
+            messageToServer.CommandType = CommandTypeMessage.Use;
+            ClientCommunication.SendMessage(messageToServer);
         }
 
         public void OnReceive(IMessage message)
@@ -223,6 +199,7 @@ namespace Client
                     moveFormLabel(this.id, gameObject.Value);
                     return;
                 }
+                messageToServer.ID = this.id;
             }
 
             this.Position = new XYPosition(msg.GameObjectMessageList[this.id].Position.X, msg.GameObjectMessageList[this.id].Position.Y);

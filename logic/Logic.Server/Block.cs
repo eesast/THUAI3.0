@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using static THUnity2D._Map;
+using static Logic.Constant.MapInfo;
 using System.Configuration;
 using Logic.Constant;
 using Communication.Proto;

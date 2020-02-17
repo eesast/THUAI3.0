@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Communication.Proto;
 using Logic.Constant;
-using static THUnity2D._Map;
+using static Logic.Constant.MapInfo;
 
 namespace Logic.Server
 {
@@ -63,6 +63,7 @@ namespace Logic.Server
         private static Server server;
         public static void Main(string[] args)
         {
+            Communication.Proto.Constants.Debug = new Constants.DebugFunc((str) => { });
             InitializeMap();
             server = new Server();
         }

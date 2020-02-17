@@ -6,7 +6,7 @@ using Logic.Constant;
 //using UnityEngine;
 namespace Logic.Constant
 {
-    public static class Map
+    public static class MapInfo
     {
         // 50x50
         // 0 : 空地
@@ -80,10 +80,11 @@ namespace Logic.Constant
                     _worldMap = new THUnity2D.Map(map.GetLength(0), map.GetLength(1));
                     _worldMap.LayerCount = 4;
                     //分4层，0层为墙，1层为人，2层为不碰撞的物品，3层为可以与墙壁碰撞但不与人碰撞的物品
-                    _worldMap.SetLayerCollisionTrue((int) MapLayer.BlockLayer, (int) MapLayer.PlayerLayer);
-                    _worldMap.SetLayerCollisionTrue((int) MapLayer.BlockLayer, (int) MapLayer.BlockLayer);
-                    _worldMap.SetLayerCollisionTrue((int) MapLayer.PlayerLayer, (int) MapLayer.PlayerLayer);
-                    _worldMap.SetLayerCollisionTrue((int) MapLayer.BlockLayer, (int) MapLayer.FlyingLayer);
+                    _worldMap.SetLayerCollisionTrue((int)MapLayer.BlockLayer, (int)MapLayer.PlayerLayer);
+                    _worldMap.SetLayerCollisionTrue((int)MapLayer.BlockLayer, (int)MapLayer.BlockLayer);
+                    _worldMap.SetLayerCollisionTrue((int)MapLayer.PlayerLayer, (int)MapLayer.PlayerLayer);
+                    _worldMap.SetLayerCollisionTrue((int)MapLayer.BlockLayer, (int)MapLayer.FlyingLayer);
+                    _worldMap.SetLayerTriggerTrue((int)MapLayer.PlayerLayer, (int)MapLayer.TriggerLayer);
                     _worldMap.FrameRate = Constant.FrameRate;
                 }
                 return _worldMap;
@@ -94,6 +95,7 @@ namespace Logic.Constant
             BlockLayer = 0,
             PlayerLayer,
             ItemLayer,
+            TriggerLayer,
             FlyingLayer
         }
 

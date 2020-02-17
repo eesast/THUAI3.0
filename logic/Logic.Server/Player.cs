@@ -4,7 +4,7 @@ using System.Text;
 using Logic.Constant;
 using static Logic.Constant.Constant;
 using THUnity2D;
-using static THUnity2D._Map;
+using static Logic.Constant.MapInfo;
 using static THUnity2D.Tools;
 using Communication.Proto;
 using Communication.Server;
@@ -40,11 +40,11 @@ namespace Logic.Server
             base(x, y)
         {
             Parent = WorldMap;
-            MoveStopTimer = new System.Threading.Timer((i)=> { Velocity = new Vector(0, 0);status = CommandType.Stop; }, new object(), -1, -1);
-            StunTimer = new System.Threading.Timer((i) => { _isStun = false; }, null, -1, -1);
-            SpeedBuffTimer= new System.Threading.Timer((i) => { moveSpeed -= Convert.ToDouble(ConfigurationManager.AppSettings["SpeedBuffExtraMoveSpeed"]); }, null, -1, -1);
-            StrenthBuffTimer= new System.Threading.Timer((i) => { MaxThrowDistance -= Convert.ToInt32(ConfigurationManager.AppSettings["StrenthBuffExtraThrowDistance"]); }, null, -1, -1);
-           
+            MoveStopTimer = new System.Threading.Timer((i) => { Velocity = new Vector(0, 0); status = CommandType.Stop; Program.MessageToClient.GameObjectMessageList[this.ID].IsMoving = false; });
+            StunTimer = new System.Threading.Timer((i) => { _isStun = false; });
+            SpeedBuffTimer = new System.Threading.Timer((i) => { moveSpeed -= Convert.ToDouble(ConfigurationManager.AppSettings["SpeedBuffExtraMoveSpeed"]); });
+            StrenthBuffTimer = new System.Threading.Timer((i) => { MaxThrowDistance -= Convert.ToInt32(ConfigurationManager.AppSettings["StrenthBuffExtraThrowDistance"]); });
+
             lock (Program.MessageToClientLock)
             {
                 Program.MessageToClient.GameObjectMessageList.Add(
@@ -66,6 +66,12 @@ namespace Logic.Server
                         Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.Y = thisGameObject.Position.y;
                         Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Direction = (DirectionMessage)((Player)thisGameObject).facingDirection;
                     }
+                });
+            this.OnTrigger += new TriggerHandler(
+                (triggerGameObjects) =>
+                {
+                    foreach (Trigger trigger in triggerGameObjects)
+                        this.TouchTrigger(trigger);
                 });
         }
         public void ExecuteMessage(CommunicationImpl communication, MessageToServer msg)
@@ -102,10 +108,10 @@ namespace Logic.Server
         public override void Move(Direction direction, int durationMilliseconds)
         {
             this.facingDirection = direction;
-            this.Velocity = new Vector(0, 0);
+            //this.Velocity = new Vector(0, 0);
             this.Velocity = new Vector(((double)(int)direction) * Math.PI / 4, moveSpeed + GlueExtraMoveSpeed);
             this.status = CommandType.Move;
-
+            Program.MessageToClient.GameObjectMessageList[this.ID].IsMoving = true;
             MoveStopTimer.Change(durationMilliseconds, 0);
         }
         public override void Pick()
@@ -183,17 +189,16 @@ namespace Logic.Server
         public override void Put(int distance, int ThrowDish)
         {
             if (distance > MaxThrowDistance) distance = MaxThrowDistance;
-            int dueTime = distance / 5;
-            //XYPosition aim = Position;
-            //XYPosition d_xyPos = THUnity2D.Tools.EightUnitVector[facingDirection];
+            int dueTime = 200 * distance;
 
             if ((int)dish != (int)DishType.Empty && ThrowDish != 0)
             {
                 Dish dishToThrow = new Dish(Position.x, Position.y, dish);
-                dishToThrow.Parent = WorldMap;
                 dishToThrow.Layer = (int)MapLayer.FlyingLayer;
+                dishToThrow.Parent = WorldMap;                
                 dishToThrow.Velocity = new Vector((double)(int)facingDirection * Math.PI / 4, 5);
-                dishToThrow.StopMovingTimer.Change(TimeSpan.FromSeconds(dueTime), TimeSpan.FromSeconds(-1));
+                dishToThrow.StopMovingTimer.Change(dueTime, 0);
+                dish = DishType.Empty;
 
             }
             else if ((int)tool != (int)ToolType.Empty && ThrowDish == 0)
@@ -202,7 +207,8 @@ namespace Logic.Server
                 toolToThrow.Parent = WorldMap;
                 toolToThrow.Layer = (int)MapLayer.FlyingLayer;
                 toolToThrow.Velocity = new Vector((double)(int)facingDirection * Math.PI / 4, 5);
-                toolToThrow.StopMovingTimer.Change(TimeSpan.FromSeconds(dueTime), TimeSpan.FromSeconds(-1));
+                toolToThrow.StopMovingTimer.Change(dueTime, 0);
+                tool = ToolType.Empty;
             }
             else Console.WriteLine("没有可以扔的东西");
             status = CommandType.Stop;
@@ -257,73 +263,94 @@ namespace Logic.Server
 
         public void UseTool(int parameter)
         {
-            if (tool == ToolType.TigerShoes || tool == ToolType.TeleScope || tool == ToolType.BreastPlate || tool == ToolType.Condiment || tool == ToolType.Empty)
-            { Console.WriteLine("物品使用失败（为空或无需使用）！"); }
-            else if (tool == ToolType.SpeedBuff)
+            switch (tool)
             {
-                moveSpeed += Convert.ToDouble(ConfigurationManager.AppSettings["SpeedBuffExtraMoveSpeed"]);
-                SpeedBuffTimer.Change(Convert.ToInt32(ConfigurationManager.AppSettings["SpeedBuffDuration"]), 0);
-                this.Velocity = new Vector(Velocity.angle, moveSpeed + GlueExtraMoveSpeed);
-                tool = ToolType.Empty;
-            }
-            else if (tool == ToolType.StrenthBuff)
-            {
-                MaxThrowDistance += Convert.ToInt32(ConfigurationManager.AppSettings["StrenthBuffExtraThrowDistance"]);
-                StrenthBuffTimer.Change(Convert.ToInt32(ConfigurationManager.AppSettings["StrenthBuffDuration"]), 0);
-                tool = ToolType.Empty;
-            }
-            else if (tool == ToolType.Fertilizer)
-            {
-                XYPosition xyPosition1 = Position.GetMid() + 2 * EightCornerVector[facingDirection];
-                if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].ContainsType(typeof(Block)))
-                    foreach (Block block in WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetType(typeof(Block)))
+                case ToolType.TigerShoes:
+                case ToolType.TeleScope:
+                case ToolType.BreastPlate:
+                case ToolType.Condiment:
+                case ToolType.Empty: Console.WriteLine("物品使用失败（为空或无需使用）！"); break;
+                case ToolType.SpeedBuff:
                     {
-                        if (block.blockType == BlockType.FoodPoint)
-                            block.RefreshTime /= 2;
-                        else
-                        { Console.WriteLine("物品使用失败（未检测到施肥对象）！"); }
+                        moveSpeed += Convert.ToDouble(ConfigurationManager.AppSettings["SpeedBuffExtraMoveSpeed"]);
+                        SpeedBuffTimer.Change(Convert.ToInt32(ConfigurationManager.AppSettings["SpeedBuffDuration"]), 0);
+                        this.Velocity = new Vector(Velocity.angle, moveSpeed + GlueExtraMoveSpeed);
+                        tool = ToolType.Empty;
                     }
-                tool = ToolType.Empty;
-            }
-            else if (tool == ToolType.WaveGlue)
-            {
-                XYPosition xyPosition1 = Position.GetMid() + 2 * EightCornerVector[facingDirection];
-                new Trigger(xyPosition1.x, xyPosition1.y, TriggerType.WaveGlue, team).Parent = WorldMap;
-                tool = ToolType.Empty;
-            }
-            else if (tool == ToolType.LandMine)
-            {
-                XYPosition xyPosition1 = Position.GetMid() + 2 * EightCornerVector[facingDirection];
-                new Trigger(xyPosition1.x, xyPosition1.y, TriggerType.Mine, team).Parent = WorldMap;
-                tool = ToolType.Empty;
-            }
-            else if (tool == ToolType.Trap)
-            {
-                XYPosition xyPosition1 = Position.GetMid() + 2 * EightCornerVector[facingDirection];
-                new Trigger(xyPosition1.x, xyPosition1.y, TriggerType.Trap, -1).Parent = WorldMap;
-                tool = ToolType.Empty;
+                    break;
+                case ToolType.StrenthBuff:
+                    {
+                        MaxThrowDistance += Convert.ToInt32(ConfigurationManager.AppSettings["StrenthBuffExtraThrowDistance"]);
+                        StrenthBuffTimer.Change(Convert.ToInt32(ConfigurationManager.AppSettings["StrenthBuffDuration"]), 0);
+                        tool = ToolType.Empty;
+                    }
+                    break;
+                case ToolType.Fertilizer:
+                    {
+                        XYPosition xyPosition1 = Position.GetMid() + 2 * EightCornerVector[facingDirection];
+                        if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].ContainsType(typeof(Block)))
+                            foreach (Block block in WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetType(typeof(Block)))
+                            {
+                                if (block.blockType == BlockType.FoodPoint)
+                                    block.RefreshTime /= 2;
+                                else
+                                { Console.WriteLine("物品使用失败（未检测到施肥对象）！"); }
+                            }
+                        tool = ToolType.Empty;
+                    }
+                    break;
+                case ToolType.WaveGlue:
+                    {
+                        XYPosition xyPosition1 = Position.GetMid() + 2 * EightCornerVector[facingDirection];
+                        new Trigger(xyPosition1.x, xyPosition1.y, TriggerType.WaveGlue, team).Parent = WorldMap;
+                        tool = ToolType.Empty;
+                    }
+                    break;
+                case ToolType.LandMine:
+                    {
+                        XYPosition xyPosition1 = Position.GetMid() + 2 * EightCornerVector[facingDirection];
+                        new Trigger(xyPosition1.x, xyPosition1.y, TriggerType.Mine, team).Parent = WorldMap;
+                        tool = ToolType.Empty;
+                    }
+                    break;
+                case ToolType.Trap:
+                    {
+                        XYPosition xyPosition1 = Position.GetMid() + 2 * EightCornerVector[facingDirection];
+                        new Trigger(xyPosition1.x, xyPosition1.y, TriggerType.Trap, -1).Parent = WorldMap;
+                        tool = ToolType.Empty;
+                    }
+                    break;
             }
         }
-        public override bool TouchTrigger(GameObject gameObject)
+        public bool TouchTrigger(Trigger trigger)
         {
-            if (((Trigger)gameObject).triggerType == TriggerType.WaveGlue && ((Trigger)gameObject).OwnerTeam != team)
+            if (trigger.OwnerTeam == team)
+                return false;
+            switch (trigger.triggerType)
             {
-                GlueExtraMoveSpeed = Convert.ToDouble(ConfigurationManager.AppSettings["WaveGlueExtraMoveSpeed"]);
-                Console.WriteLine(GlueExtraMoveSpeed);
-                this.Velocity = new Vector(Velocity.angle, moveSpeed + GlueExtraMoveSpeed);
+                case TriggerType.WaveGlue:
+                    {
+                        GlueExtraMoveSpeed = Convert.ToDouble(ConfigurationManager.AppSettings["WaveGlueExtraMoveSpeed"]);
+                        Console.WriteLine(GlueExtraMoveSpeed);
+                        this.Velocity = new Vector(Velocity.angle, moveSpeed + GlueExtraMoveSpeed);
+                    }
+                    break;
+                case TriggerType.Mine:
+                    {
+                        score += Convert.ToInt32(ConfigurationManager.AppSettings["MineScore"]);
+                    }
+                    break;
+                case TriggerType.Trap:
+                    {
+                        IsStun = true;
+                        Velocity = new Vector(0, 0);
+                    }
+                    break;
+                default:
+                    return false;
             }
-            else if (((Trigger)gameObject).triggerType == TriggerType.Mine && ((Trigger)gameObject).OwnerTeam != team)
-            {
-                score += Convert.ToInt32(ConfigurationManager.AppSettings["MineScore"]);
-                return true;
-            }
-            else if (((Trigger)gameObject).triggerType == TriggerType.Trap && ((Trigger)gameObject).OwnerTeam != team)
-            {
-                IsStun = true;
-                Velocity = new Vector(0, 0);
-                return true;
-            }
-            return false;
+            trigger.Parent = null;
+            return true;
         }
     }
 }

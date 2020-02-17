@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using THUnity2D;
 using static THUnity2D.Tools;
-using static THUnity2D._Map;
+using static Logic.Constant.MapInfo;
 
 namespace Logic.Constant
 {
@@ -11,6 +11,7 @@ namespace Logic.Constant
     {
         public int team = 0;
         public double moveSpeed = 5;
+        public double GlueExtraMoveSpeed = 0;
         //public double moveSpeed = Convert.ToDouble(System.Configuration.ConfigurationManager.AppSettings["PlayerInitMoveSpeed"]);
         public Direction facingDirection;
         public int MaxThrowDistance = 10;

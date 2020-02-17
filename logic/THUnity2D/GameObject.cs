@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using static THUnity2D.Tools;
-using static THUnity2D._Map;
 
 namespace THUnity2D
 {
@@ -10,8 +9,8 @@ namespace THUnity2D
     {
         public const double MinSpeed = 0.0001;
 
-        public double GlueExtraMoveSpeed = 0;
-        public bool IsTrigger = false;
+        //public double GlueExtraMoveSpeed = 0;
+        //public bool IsTrigger = false;
 
         private readonly Object privateLock = new Object();
         public readonly Object publicLock = new Object();
@@ -201,13 +200,14 @@ namespace THUnity2D
             {
                 lock (privateLock)
                 {
-                    Debug("Dispose MovingTimer");
                     if (Math.Abs(value.length) < MinSpeed)
                     {
                         this._velocity = new Vector(value.angle, 0);
                         MovingTimer.Change(-1, -1);
                         return;
                     }
+                    if (value == this._velocity)
+                        return;
                     this._velocity = value;
                     MovingTimer.Change(TimeSpan.FromSeconds(0), TimeSpan.FromSeconds(1 / this.FrameRate));
                 }
@@ -215,6 +215,15 @@ namespace THUnity2D
         }
         //Velocity end
 
+        //GetLength
+        //为了提高代码复用性，减少大量X，Y对称的代码，加入此函数。
+        public int GetLength(int flag)
+        {
+            if (flag == 0)
+                return _width;
+            else
+                return _height;
+        }
 
         //Width
         protected int _width = 1;
@@ -328,7 +337,7 @@ namespace THUnity2D
         }
 
         //Move
-        public class MoveEventArgs : EventArgs
+        public class MoveEventArgs
         {
             public readonly double angle;
             public readonly double distance;
@@ -346,29 +355,31 @@ namespace THUnity2D
         public event MoveCompleteHandler? MoveComplete;
         public virtual void Move(MoveEventArgs e)
         {
+            if (e.distance == 0)
+                return;
             lock (privateLock)
             {
-                Debug("Move from " + _position.ToString() + " angle : " + e.angle + " distance : " + e.distance);
                 XYPosition previousPosition = _position;
                 _position = _position + new XYPosition(e.distance * Math.Cos(e.angle), e.distance * Math.Sin(e.angle));
+                Debug("Move from " + previousPosition.ToString() + " angle : " + e.angle + " distance : " + e.distance + " aim : " + _position.ToString());
                 if (this._movable)
-                { 
+                {
                     OnMove?.Invoke(this, e, previousPosition);
-                    if ((int)previousPosition.x != (int)_position.x || (int)previousPosition.y != (int)_position.y)
-                    {
-                        GlueExtraMoveSpeed = 0;
-                        foreach (var GameObject in WorldMap.Grid[(int)Position.x, (int)Position.y].GetLayer((int)MapLayer.ItemLayer))
-                        {
-                            if (GameObject.IsTrigger)
-                            {
-                                if(this.TouchTrigger(GameObject)) GameObject.Parent = null; 
-                            }
-                        }
-                    }
+                    //if ((int)previousPosition.x != (int)_position.x || (int)previousPosition.y != (int)_position.y)
+                    //{
+                    //    GlueExtraMoveSpeed = 0;
+                    //    foreach (var GameObject in WorldMap.Grid[(int)Position.x, (int)Position.y].GetType(typeof()))
+                    //    {
+                    //        if (GameObject.IsTrigger)
+                    //        {
+                    //            if (this.TouchTrigger(GameObject)) GameObject.Parent = null;
+                    //        }
+                    //    }
+                    //}
                 }
                 Debug("Move result poition : " + this._position.ToString());
+                MoveComplete?.Invoke(this);
             }
-            MoveComplete?.Invoke(this);
         }
         //Move end
 
@@ -384,6 +395,56 @@ namespace THUnity2D
             }
         }
         //Bouncable
+
+        //Collision
+        public class CollisionEventArgs : EventArgs
+        {
+            public readonly Direction collisionDirection;
+            public readonly HashSet<GameObject>? collisionGameObjects;
+            public CollisionEventArgs(Direction collisionDirection, HashSet<GameObject>? collisionGameObjects)
+            {
+                this.collisionDirection = collisionDirection;
+                this.collisionGameObjects = collisionGameObjects;
+            }
+        }
+        public delegate void CollisionHandler(CollisionEventArgs e);
+        public event CollisionHandler? OnCollision;
+        protected internal void Collide(CollisionEventArgs e)
+        {
+            lock (privateLock)
+            {
+                DebugWithoutEndline("Collide with : ");
+                if (e.collisionGameObjects != null)
+                    foreach (var gameObject in e.collisionGameObjects)
+                    {
+                        DebugWithoutIDEndline(gameObject.ID + "  ");
+                    }
+                DebugWithoutID(" Direction : " + e.collisionDirection);
+                OnCollision?.Invoke(e);
+            }
+        }
+        //Collision
+
+        //Trigger
+        public delegate void TriggerHandler(HashSet<GameObject>? triggerGameObjects);
+        public event TriggerHandler? OnTrigger;
+        protected internal void Trigger(HashSet<GameObject>? triggerGameObjects)
+        {
+            if (triggerGameObjects == null || triggerGameObjects.Count == 0)
+                return;
+            lock (privateLock)
+            {
+                DebugWithoutEndline("Trigger with : ");
+                if (triggerGameObjects != null)
+                    foreach (var gameObject in triggerGameObjects)
+                    {
+                        DebugWithoutIDEndline(gameObject.ID + "  ");
+                    }
+                DebugWithoutID("");
+                OnTrigger?.Invoke(triggerGameObjects);
+            }
+        }
+        //Trigger
 
         ~GameObject()
         {
@@ -402,6 +463,11 @@ namespace THUnity2D
         {
             Console.WriteLine(str);
         }
+        public void DebugWithoutIDEndline(string str)
+        {
+            Console.Write(str);
+        }
+
         public void PrintChildrenList()
         {
             Console.WriteLine("========= " + this.GetType() + " : " + this.ID + " children GameObject list =========");
@@ -411,13 +477,13 @@ namespace THUnity2D
             }
             Console.WriteLine("==============================================");
         }
-        public virtual bool TouchTrigger(GameObject gameObject)
-        {
-            return false;
-        }
-        public virtual int Touch()
-        {
-            return 0;
-        }
+        //public virtual bool TouchTrigger(GameObject gameObject)
+        //{
+        //    return false;
+        //}
+        //public virtual int Touch()
+        //{
+        //    return 0;
+        //}
     }
 }
