@@ -393,6 +393,19 @@ namespace THUnity2D
                 }
             }
 
+            {//这段代码检查是否准备移动到地图外，若是，把它移回地图内
+                double[] aim = { previousPosition.x + delta[0], previousPosition.y + delta[1] };
+                double[] Distance = { resultDistance, resultDistance };
+                double[] HalfLength = { (double)childrenGameObject.Width / 2.0, (double)childrenGameObject.Height / 2.0 };
+                for (int i = 0; i < 2; i++)
+                    if (aim[i] < HalfLength[i])
+                        Distance[i] = (HalfLength[i] - previousPosition.GetProperty(i)) / delta[i] * resultDistance;
+                    else if (aim[i] > this.GetLength(i) - HalfLength[i])
+                        Distance[i] = (this.GetLength(i) - HalfLength[i] - previousPosition.GetProperty(i)) / delta[i] * resultDistance;
+                RefreshResultDistance(Math.Min(Distance[0], Distance[1]));
+                RefreshCollisionDirection(Distance);
+            }
+
             //搜索可能碰撞的GameObject
             //建议不要尝试读懂这段代码
             bool[] SearchCompleted = { false, false };
