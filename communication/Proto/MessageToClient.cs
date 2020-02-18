@@ -47,24 +47,24 @@ namespace Communication.Proto {
             "EAISCAoEVG9vbBADEgsKB1RyaWdnZXIQBBIPCgtPYmpUeXBlU2l6ZRAFKnQK",
             "EEJsb2NrVHlwZU1lc3NhZ2USCAoEV2FsbBAAEgkKBVRhYmxlEAESDQoJRm9v",
             "ZFBvaW50EAISCgoGQ29va2VyEAMSDgoKUnViYmlzaEJpbhAEEg0KCVRhc2tQ",
-            "b2ludBAFEhEKDUJsb2NrVHlwZVNpemUQBipvCg9EaXNoVHlwZU1lc3NhZ2US",
-            "DQoJRGlzaEVtcHR5EAASCQoFQXBwbGUQARIKCgZCYW5hbmEQAhIKCgZQb3Rh",
-            "dG8QAxIKCgZUb21hdG8QBBIMCghEYXJrRGlzaBAFEhAKDERpc2hUeXBlU2l6",
-            "ZRAGKpICCg9Ub29sVHlwZU1lc3NhZ2USDQoJVG9vbEVtcHR5EAASDgoKVGln",
-            "ZXJTaG9lcxABEg0KCVNwZWVkQnVmZhACEg8KC1N0cmVudGhCdWZmEAMSDQoJ",
-            "VGVsZVNjb3BlEAQSDQoJQ29uZGltZW50EAUSDgoKRmVydGlsaXplchAGEg8K",
-            "C0JyZWFzdFBsYXRlEAcSDQoJU3BhY2VHYXRlEAgSBwoDRXllEAkSDAoIV2F2",
-            "ZUdsdWUQChIMCghMYW5kTWluZRALEggKBFRyYXAQDBINCglGbGFzaEJvbWIQ",
-            "DRIKCgZIYW1tZXIQDhIJCgVCcmljaxAPEgsKB1N0ZWFsZXIQEBIQCgxUb29s",
-            "VHlwZVNpemUQESpEChJUcmlnZ2VyVHlwZU1lc3NhZ2USDwoLVHJhcFRyaWdn",
-            "ZXIQABIICgRNaW5lEAESEwoPVHJpZ2dlclR5cGVTaXplEAIqQQoLQnVmZk1l",
-            "c3NhZ2USCgoGRnJvemVuEAASCwoHU3R1bm5lZBABEgsKB1NwZWVkVXAQAhIM",
-            "CghTbG93RG93bhADKjUKEERpc2hTdGF0ZU1lc3NhZ2USBwoDUmF3EAASCAoE",
-            "R29vZBABEg4KCk92ZXJDb29rZWQQAiqCAQoQRGlyZWN0aW9uTWVzc2FnZRIJ",
-            "CgVSaWdodBAAEgsKB1JpZ2h0VXAQARIGCgJVcBACEgoKBkxlZnRVcBADEggK",
-            "BExlZnQQBBIMCghMZWZ0RG93bhAFEggKBERvd24QBhINCglSaWdodERvd24Q",
-            "BxIRCg1EaXJlY3Rpb25TaXplEAhCFqoCE0NvbW11bmljYXRpb24uUHJvdG9i",
-            "BnByb3RvMw=="));
+            "b2ludBAFEhEKDUJsb2NrVHlwZVNpemUQBiqDAQoPRGlzaFR5cGVNZXNzYWdl",
+            "Eg0KCURpc2hFbXB0eRAAEgkKBUFwcGxlEAESCgoGQmFuYW5hEAISCgoGUG90",
+            "YXRvEAMSCgoGVG9tYXRvEAQSEQoNRGlzaFR5cGVTaXplMRAFEgwKCERhcmtE",
+            "aXNoEAYSEQoNRGlzaFR5cGVTaXplMhAHKpICCg9Ub29sVHlwZU1lc3NhZ2US",
+            "DQoJVG9vbEVtcHR5EAASDgoKVGlnZXJTaG9lcxABEg0KCVNwZWVkQnVmZhAC",
+            "Eg8KC1N0cmVudGhCdWZmEAMSDQoJVGVsZVNjb3BlEAQSDQoJQ29uZGltZW50",
+            "EAUSDgoKRmVydGlsaXplchAGEg8KC0JyZWFzdFBsYXRlEAcSDQoJU3BhY2VH",
+            "YXRlEAgSBwoDRXllEAkSDAoIV2F2ZUdsdWUQChIMCghMYW5kTWluZRALEggK",
+            "BFRyYXAQDBINCglGbGFzaEJvbWIQDRIKCgZIYW1tZXIQDhIJCgVCcmljaxAP",
+            "EgsKB1N0ZWFsZXIQEBIQCgxUb29sVHlwZVNpemUQESpEChJUcmlnZ2VyVHlw",
+            "ZU1lc3NhZ2USDwoLVHJhcFRyaWdnZXIQABIICgRNaW5lEAESEwoPVHJpZ2dl",
+            "clR5cGVTaXplEAIqQQoLQnVmZk1lc3NhZ2USCgoGRnJvemVuEAASCwoHU3R1",
+            "bm5lZBABEgsKB1NwZWVkVXAQAhIMCghTbG93RG93bhADKjUKEERpc2hTdGF0",
+            "ZU1lc3NhZ2USBwoDUmF3EAASCAoER29vZBABEg4KCk92ZXJDb29rZWQQAiqC",
+            "AQoQRGlyZWN0aW9uTWVzc2FnZRIJCgVSaWdodBAAEgsKB1JpZ2h0VXAQARIG",
+            "CgJVcBACEgoKBkxlZnRVcBADEggKBExlZnQQBBIMCghMZWZ0RG93bhAFEggK",
+            "BERvd24QBhINCglSaWdodERvd24QBxIRCg1EaXJlY3Rpb25TaXplEAhCFqoC",
+            "E0NvbW11bmljYXRpb24uUHJvdG9iBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Communication.Proto.ObjTypeMessage), typeof(global::Communication.Proto.BlockTypeMessage), typeof(global::Communication.Proto.DishTypeMessage), typeof(global::Communication.Proto.ToolTypeMessage), typeof(global::Communication.Proto.TriggerTypeMessage), typeof(global::Communication.Proto.BuffMessage), typeof(global::Communication.Proto.DishStateMessage), typeof(global::Communication.Proto.DirectionMessage), }, new pbr::GeneratedClrTypeInfo[] {
@@ -102,8 +102,12 @@ namespace Communication.Proto {
     [pbr::OriginalName("Banana")] Banana = 2,
     [pbr::OriginalName("Potato")] Potato = 3,
     [pbr::OriginalName("Tomato")] Tomato = 4,
-    [pbr::OriginalName("DarkDish")] DarkDish = 5,
-    [pbr::OriginalName("DishTypeSize")] DishTypeSize = 6,
+    /// <summary>
+    ///以下为菜品
+    /// </summary>
+    [pbr::OriginalName("DishTypeSize1")] DishTypeSize1 = 5,
+    [pbr::OriginalName("DarkDish")] DarkDish = 6,
+    [pbr::OriginalName("DishTypeSize2")] DishTypeSize2 = 7,
   }
 
   public enum ToolTypeMessage {

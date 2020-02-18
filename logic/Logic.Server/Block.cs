@@ -58,7 +58,7 @@ namespace Logic.Server
         }
         public override DishType GetDish(DishType t)
         {
-            switch(this.blockType)
+            switch (this.blockType)
             {
                 case BlockType.FoodPoint:
                     DishType temp = Dish;
@@ -71,7 +71,7 @@ namespace Logic.Server
                     Dish = DishType.Empty;
                     return tmp;
             }
-            
+
         }
         protected System.Threading.Timer _refreshTimer;
         public System.Threading.Timer RefreshTimer
