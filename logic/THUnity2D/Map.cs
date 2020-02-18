@@ -15,7 +15,7 @@ namespace THUnity2D
             get { return _grid; }
             set
             {
-                this.Debug("Set Grid : " + value.GetLength(0).ToString() + " , " + value.GetLength(1).ToString());
+                Debug(this, "Set Grid : " + value.GetLength(0).ToString() + " , " + value.GetLength(1).ToString());
                 this._grid = value;
                 for (int row = 0; row < this._grid.GetLength(0); row++)
                     for (int column = 0; column < this._grid.GetLength(1); column++)
@@ -27,7 +27,7 @@ namespace THUnity2D
 
         public Map(int width, int height) : base(null)
         {
-            this.Debug("new Map : " + width.ToString() + " , " + height.ToString());
+            Debug(this, "new Map : " + width.ToString() + " , " + height.ToString());
             this.Width = width;
             this.Height = height;
             this.Grid = new MapCell[Width, Height];
@@ -35,14 +35,12 @@ namespace THUnity2D
 
         protected override void OnChildrenAdded(GameObject childrenObject)
         {
-            if (childrenObject.Layer >= _layerCount)
-                childrenObject._layer = 0;
             childrenObject._position = CorrectPosition(childrenObject.Position, childrenObject.Width, childrenObject.Height, childrenObject.Layer);
             base.OnChildrenAdded(childrenObject);
             childrenObject.OnLayerChange += this.OnChildrenLayerChange;
             AddToGameObjectListByLayer(childrenObject);
             this.Grid[(int)childrenObject.Position.x, (int)childrenObject.Position.y].AddGameObject(childrenObject);
-            this.Debug("Grid (" + (int)childrenObject.Position.x + "," + (int)childrenObject.Position.y + ") add " + childrenObject.ID);
+            Debug(this, "Grid (" + (int)childrenObject.Position.x + "," + (int)childrenObject.Position.y + ") add " + childrenObject.ID);
             TryToTrigger(childrenObject);
         }
         protected override void OnChildrenDelete(GameObject childrenObject)
@@ -54,7 +52,7 @@ namespace THUnity2D
         }
         protected override void OnChildrenPositionChanged(GameObject childrenGameObject, PositionChangedEventArgs e)
         {
-            this.Debug("Children object " + childrenGameObject.ID + " position change. from : " + e.previousPosition.ToString() + " aim : " + e.position.ToString());
+            Debug(this, "Children object " + childrenGameObject.ID + " position change. from : " + e.previousPosition.ToString() + " aim : " + e.position.ToString());
             //base.OnChildrenPositionChanged(childrenGameObject, e, out eOut);
 
             if (XIsLegal((int)e.previousPosition.x) && YIsLegal((int)e.previousPosition.y))
@@ -97,18 +95,18 @@ namespace THUnity2D
         //如果方块为可碰撞的，则方块不能与其他可碰撞方块有重叠部分。
         protected bool XYPositionIsLegal(XYPosition position, int objectWidth = 0, int objectHeight = 0, int objectLayer = 0)
         {
-            this.DebugWithoutEndline("Checking position : " + position.ToString() + " width : " + objectWidth + " height : " + objectHeight + " layer : " + objectLayer);
+            DebugWithoutEndline(this, "Checking position : " + position.ToString() + " width : " + objectWidth + " height : " + objectHeight + " layer : " + objectLayer);
 
             if (!XIsLegal(position.x, objectWidth) || !YIsLegal(position.y, objectHeight))
             {
-                this.DebugWithoutID("false");
+                DebugWithoutID(this, "false");
                 return false;
             }
-            if (objectLayer >= _layerCount)
-            {
-                this.DebugWithoutID("false");
-                return true;
-            }
+            //if (objectLayer >= _layerCount)
+            //{
+            //    DebugWithoutID(this, "false");
+            //    return true;
+            //}
             for (int x = (int)position.x - 1; x <= (int)position.x + 1; x++)
                 for (int y = (int)position.y - 1; y <= (int)position.y + 1; y++)
                 {
@@ -125,13 +123,13 @@ namespace THUnity2D
                             if (Math.Abs(gameObject.Position.x - position.x) < 1
                                 && Math.Abs(gameObject.Position.y - position.y) < 1)
                             {
-                                this.DebugWithoutID("false");
+                                DebugWithoutID(this, "false");
                                 return false;
                             }
                         }
                     }
                 }
-            this.DebugWithoutID("true");
+            DebugWithoutID(this, "true");
             return true;
         }
 
@@ -141,7 +139,7 @@ namespace THUnity2D
         //输入：一个GameObject（不一定是地图的子GameObject）
         protected XYPosition CorrectPosition(XYPosition position, int objectWidth = 1, int objectHeight = 1, int objectLayer = 0)
         {
-            Debug("Correcting Position : " + position.ToString() + " width : " + objectWidth + " height : " + objectHeight + " layer : " + objectLayer);
+            Debug(this, "Correcting Position : " + position.ToString() + " width : " + objectWidth + " height : " + objectHeight + " layer : " + objectLayer);
 
             if (XYPositionIsLegal(position, objectWidth, objectHeight, objectLayer))
                 return position;
@@ -162,7 +160,7 @@ namespace THUnity2D
             XYPosition testPosition = newCenterPosition;
             for (int round = 1; round < Math.Max(this._width, this._height); round++)
             {
-                //this.Debug("round : " + round);
+                //Debug(this,"round : " + round);
                 for (double ySearch = newCenterPosition.y - (double)round; ySearch <= newCenterPosition.y + (double)round + 0.1; ySearch += 2 * (double)round)
                 {
                     if (!YIsLegal(ySearch))
@@ -196,7 +194,7 @@ namespace THUnity2D
         //为提高代码复用性，此函数内大量采用长度为2的数组表示X和Y，0表示X，1表示Y
         protected override void OnChildrenMove(GameObject childrenGameObject, MoveEventArgs e, XYPosition previousPosition)
         {
-            this.Debug("Attempting to move Children : " + childrenGameObject.ID);
+            Debug(this, "Attempting to move Children : " + childrenGameObject.ID);
             //base.OnChildrenMove(childrenGameObject, e, out eOut);
             //XYPosition aim;
             double resultDistance = e.distance;
@@ -230,7 +228,7 @@ namespace THUnity2D
                 }
             }
 
-            Debug("initialize resultDistance : " + resultDistance);
+            Debug(this, "initialize resultDistance : " + resultDistance);
 
             double ClosestGreater0_5(double d)
             {
@@ -273,7 +271,7 @@ namespace THUnity2D
                 {
                     return;
                 }
-                Debug("Refresh resultDistance : " + newResultDistance);
+                Debug(this, "Refresh resultDistance : " + newResultDistance);
                 for (int i = 0; i < 2; i++)
                 {
                     delta[i] = DivisionWithoutNaN(delta[i] * newResultDistance, resultDistance);
@@ -314,14 +312,14 @@ namespace THUnity2D
                     startPoint[i] = previousPosition.GetProperty(i) + startPointAdd[i];
                     if (IsInCloseOpenInterval(toCheck[i], startPoint[i], infinityBound[i]))
                     {
-                        //this.Debug("delta[" + i + "] : " + delta[i]);
+                        //Debug(this,"delta[" + i + "] : " + delta[i]);
                         double temp = previousPosition.GetProperty(j) - 0.5 + (toCheck[i] - startPoint[i]) * delta[j] / delta[i];
                         if (IsInOpenInterval(temp, gameObject.Position.GetProperty(j) - 0.5 - 1, gameObject.Position.GetProperty(j) + 0.5))
                         {
                             Distance[i] = (toCheck[i] - startPoint[i]) * resultDistance / delta[i];
                         }
                     }
-                    //this.Debug("Distance[" + i + "] : " + Distance[i]);
+                    //Debug(this,"Distance[" + i + "] : " + Distance[i]);
                 }
                 double maxReachDistance = Math.Min(Distance[0], Distance[1]);
                 {
@@ -331,7 +329,7 @@ namespace THUnity2D
                     else if (coefficient[0] == coefficient[1])
                         maxReachDistance = coefficient[0] * resultDistance;
                 }
-                Debug("maxReachDistance : " + maxReachDistance);
+                Debug(this, "maxReachDistance : " + maxReachDistance);
                 return maxReachDistance;
             }
             //=================
@@ -393,6 +391,19 @@ namespace THUnity2D
                 }
             }
 
+            {//这段代码检查是否准备移动到地图外，若是，把它移回地图内
+                double[] aim = { previousPosition.x + delta[0], previousPosition.y + delta[1] };
+                double[] Distance = { resultDistance, resultDistance };
+                double[] HalfLength = { (double)childrenGameObject.Width / 2.0, (double)childrenGameObject.Height / 2.0 };
+                for (int i = 0; i < 2; i++)
+                    if (aim[i] < HalfLength[i])
+                        Distance[i] = (HalfLength[i] - previousPosition.GetProperty(i)) / delta[i] * resultDistance;
+                    else if (aim[i] > this.GetLength(i) - HalfLength[i])
+                        Distance[i] = (this.GetLength(i) - HalfLength[i] - previousPosition.GetProperty(i)) / delta[i] * resultDistance;
+                RefreshResultDistance(Math.Min(Distance[0], Distance[1]));
+                RefreshCollisionDirection(Distance);
+            }
+
             //搜索可能碰撞的GameObject
             //建议不要尝试读懂这段代码
             bool[] SearchCompleted = { false, false };
@@ -433,7 +444,7 @@ namespace THUnity2D
                                         end[j]));
                              z = z + Step[j])
                         {
-                            Debug("Checking : (" + (i == 0 ? Search[i] : z) + "," + (i == 0 ? z : Search[i]) + ")");
+                            //Debug(this, "Checking : (" + (i == 0 ? Search[i] : z) + "," + (i == 0 ? z : Search[i]) + ")");
                             CheckBlockAndAdjustPosition(i == 0 ? (int)Search[i] : (int)z, i == 0 ? (int)z : (int)Search[i]);
                         }
                         Search[i] = Search[i] + Step[i];
@@ -447,7 +458,7 @@ namespace THUnity2D
             //搜索可能碰撞的GameObject
             //建议不要尝试读懂这段代码
 
-            Debug("resultDistance : " + resultDistance);
+            Debug(this, "resultDistance : " + resultDistance);
             childrenGameObject._position = previousPosition + new XYPosition(resultDistance * Math.Cos(e.angle), resultDistance * Math.Sin(e.angle));
             this._grid[(int)previousPosition.x, (int)previousPosition.y].DeleteGameObject(childrenGameObject);
             this._grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].AddGameObject(childrenGameObject);
@@ -505,7 +516,7 @@ namespace THUnity2D
             get { return this._layerCount; }
             set
             {
-                Debug("set LayCount to " + LayerCount);
+                Debug(this, "set LayCount to " + LayerCount);
                 if (value > this._layerCount)
                 {
                     for (int i = this._layerCount; i < value; i++)
@@ -520,7 +531,7 @@ namespace THUnity2D
         }
         public void AddLayer()
         {
-            Debug("Add Layer");
+            Debug(this, "Add Layer");
             this._layerCollisionMatrix.Add(this._layerCount, new Dictionary<bool, HashSet<int>>
             {
                 { true, new HashSet<int>() },
@@ -576,9 +587,7 @@ namespace THUnity2D
         };
         public bool SetLayerCollisionTrue(int layer1, int layer2)
         {
-            if (layer1 >= this._layerCount || layer2 >= this._layerCount)
-                return false;
-            Debug("Enable " + layer1 + " and " + layer2 + " collision");
+            Debug(this, "Enable " + layer1 + " and " + layer2 + " collision");
             this._layerCollisionMatrix[layer1][false].Remove(layer2);
             this._layerCollisionMatrix[layer1][true].Add(layer2);
             this._layerCollisionMatrix[layer2][false].Remove(layer1);
@@ -593,9 +602,7 @@ namespace THUnity2D
         }
         public bool SetLayerCollisionFalse(int layer1, int layer2)
         {
-            if (layer1 >= this._layerCount || layer2 >= this._layerCount)
-                return false;
-            Debug("Disable " + layer1 + " and " + layer2 + " collision");
+            Debug(this, "Disable " + layer1 + " and " + layer2 + " collision");
             this._layerCollisionMatrix[layer1][true].Remove(layer2);
             this._layerCollisionMatrix[layer1][false].Add(layer2);
             this._layerCollisionMatrix[layer2][true].Remove(layer1);
@@ -604,9 +611,7 @@ namespace THUnity2D
         }
         public bool SetLayerTriggerTrue(int layer1, int layer2)
         {
-            if (layer1 >= this._layerCount || layer2 >= this._layerCount)
-                return false;
-            Debug("Enable " + layer1 + " and " + layer2 + " trigger");
+            Debug(this, "Enable " + layer1 + " and " + layer2 + " trigger");
             this._layerTriggerMatrix[layer1][false].Remove(layer2);
             this._layerTriggerMatrix[layer1][true].Add(layer2);
             this._layerTriggerMatrix[layer2][false].Remove(layer1);
@@ -621,9 +626,7 @@ namespace THUnity2D
         }
         public bool SetLayerTriggerFalse(int layer1, int layer2)
         {
-            if (layer1 >= this._layerCount || layer2 >= this._layerCount)
-                return false;
-            Debug("Disable " + layer1 + " and " + layer2 + " collision");
+            Debug(this, "Disable " + layer1 + " and " + layer2 + " collision");
             this._layerTriggerMatrix[layer1][true].Remove(layer2);
             this._layerTriggerMatrix[layer1][false].Add(layer2);
             this._layerTriggerMatrix[layer2][true].Remove(layer1);
@@ -640,19 +643,12 @@ namespace THUnity2D
         }
         protected void DeleteFromGameObjectListByLayer(GameObject gameObject)
         {
-            if (!_gameObjectListByLayer.ContainsKey(gameObject.Layer))
-                return;
             _gameObjectListByLayer[gameObject.Layer].Remove(gameObject);
             if (_gameObjectListByLayer[gameObject.Layer].Count <= 0)
                 _gameObjectListByLayer.Remove(gameObject.Layer);
         }
         protected void OnChildrenLayerChange(GameObject childrenGameObject, LayerChangedEventArgs e)
         {
-            if (e.layer >= _layerCount)
-            {
-                childrenGameObject._layer = e.previousLayer;
-                return;
-            }
             DeleteFromGameObjectListByLayer(childrenGameObject);
             _grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].DeleteGameObject(childrenGameObject);
             childrenGameObject._layer = e.layer;
@@ -660,7 +656,6 @@ namespace THUnity2D
             AddToGameObjectListByLayer(childrenGameObject);
             _grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].AddGameObject(childrenGameObject);
             TryToTrigger(childrenGameObject);
-            return;
         }
         //Layer
 

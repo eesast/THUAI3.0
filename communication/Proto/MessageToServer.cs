@@ -29,7 +29,7 @@ namespace Communication.Proto {
             "ASABKAMSOAoLQ29tbWFuZFR5cGUYAiABKA4yIy5nb29nbGUucHJvdG9idWYu",
             "Q29tbWFuZFR5cGVNZXNzYWdlEjgKDU1vdmVEaXJlY3Rpb24YAyABKA4yIS5n",
             "b29nbGUucHJvdG9idWYuRGlyZWN0aW9uTWVzc2FnZRIUCgxNb3ZlRHVyYXRp",
-            "b24YBCABKAEqWQoSQ29tbWFuZFR5cGVNZXNzYWdlEggKBE1vdmUQABIICgRQ",
+            "b24YBCABKAUqWQoSQ29tbWFuZFR5cGVNZXNzYWdlEggKBE1vdmUQABIICgRQ",
             "aWNrEAESBwoDUHV0EAISBwoDVXNlEAMSCAoEU3RvcBAEEhMKD0NvbW1hbmRU",
             "eXBlU2l6ZRAFQhaqAhNDb21tdW5pY2F0aW9uLlByb3RvYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
@@ -126,9 +126,9 @@ namespace Communication.Proto {
 
     /// <summary>Field number for the "MoveDuration" field.</summary>
     public const int MoveDurationFieldNumber = 4;
-    private double moveDuration_;
+    private int moveDuration_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public double MoveDuration {
+    public int MoveDuration {
       get { return moveDuration_; }
       set {
         moveDuration_ = value;
@@ -151,7 +151,7 @@ namespace Communication.Proto {
       if (ID != other.ID) return false;
       if (CommandType != other.CommandType) return false;
       if (MoveDirection != other.MoveDirection) return false;
-      if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(MoveDuration, other.MoveDuration)) return false;
+      if (MoveDuration != other.MoveDuration) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -161,7 +161,7 @@ namespace Communication.Proto {
       if (ID != 0L) hash ^= ID.GetHashCode();
       if (CommandType != 0) hash ^= CommandType.GetHashCode();
       if (MoveDirection != 0) hash ^= MoveDirection.GetHashCode();
-      if (MoveDuration != 0D) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(MoveDuration);
+      if (MoveDuration != 0) hash ^= MoveDuration.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -187,9 +187,9 @@ namespace Communication.Proto {
         output.WriteRawTag(24);
         output.WriteEnum((int) MoveDirection);
       }
-      if (MoveDuration != 0D) {
-        output.WriteRawTag(33);
-        output.WriteDouble(MoveDuration);
+      if (MoveDuration != 0) {
+        output.WriteRawTag(32);
+        output.WriteInt32(MoveDuration);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -208,8 +208,8 @@ namespace Communication.Proto {
       if (MoveDirection != 0) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) MoveDirection);
       }
-      if (MoveDuration != 0D) {
-        size += 1 + 8;
+      if (MoveDuration != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(MoveDuration);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -231,7 +231,7 @@ namespace Communication.Proto {
       if (other.MoveDirection != 0) {
         MoveDirection = other.MoveDirection;
       }
-      if (other.MoveDuration != 0D) {
+      if (other.MoveDuration != 0) {
         MoveDuration = other.MoveDuration;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
@@ -257,8 +257,8 @@ namespace Communication.Proto {
             MoveDirection = (global::Communication.Proto.DirectionMessage) input.ReadEnum();
             break;
           }
-          case 33: {
-            MoveDuration = input.ReadDouble();
+          case 32: {
+            MoveDuration = input.ReadInt32();
             break;
           }
         }

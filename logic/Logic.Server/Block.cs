@@ -23,8 +23,8 @@ namespace Logic.Server
             if (blockType == BlockType.FoodPoint)
             {
                 dish = (DishType)Program.Random.Next(1, (int)DishType.Size1 - 1);
-                RefreshTime = 1000;
-                Console.WriteLine("食品刷新：地点（" + Position.x + "," + Position.y + "）,种类" + blockType);
+                RefreshTime = 4000;
+                Console.WriteLine("食品刷新：地点（" + Position.x + "," + Position.y + "）, 种类 : " + dish);
                 lock (Program.MessageToClientLock)
                 {
                     Program.MessageToClient.GameObjectMessageList.Add(
@@ -79,7 +79,7 @@ namespace Logic.Server
             dish = (DishType)Program.Random.Next(1, (int)DishType.Size1 - 1);
             lock (Program.MessageToClientLock)
                 Program.MessageToClient.GameObjectMessageList[this.ID].DishType = (DishTypeMessage)dish;
-            Console.WriteLine("食品刷新：地点（" + Position.x + "," + Position.y + "）,种类" + dish);
+            Console.WriteLine("食品刷新：地点（" + Position.x + "," + Position.y + "）, 种类 : " + dish);
         }
 
         public override void UseCooker()
