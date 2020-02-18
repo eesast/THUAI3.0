@@ -13,7 +13,7 @@ namespace Logic.Server
         public TriggerType triggerType;
         public int OwnerTeam;
         public System.Threading.Timer DurationTimer;
-        public Trigger(double x_t, double y_t, TriggerType type_t, int owner_t) : base(x_t, y_t)
+        public Trigger(double x_t, double y_t, TriggerType type_t, int owner_t) : base(x_t, y_t, ObjType.Trigger)
         {
             Layer = (int)MapLayer.TriggerLayer;
             Movable = false;
@@ -27,18 +27,9 @@ namespace Logic.Server
                     if (triggerType != TriggerType.WaveGlue)
                         this.Parent = null;
                 });
+            AddToMessage();
             lock (Program.MessageToClientLock)
-            {
-                Program.MessageToClient.GameObjectMessageList.Add(
-                    this.ID,
-                    new GameObjectMessage
-                    {
-                        ObjType = (ObjTypeMessage)ObjType.Trigger,
-                        TriggerType = (TriggerTypeMessage)triggerType,
-                        Position = new XYPositionMessage { X = Position.x, Y = Position.y }
-                    });
-                Server.ServerDebug("Add Trigger to Message list : " + type_t);
-            }
+                Program.MessageToClient.GameObjectMessageList[ID].TriggerType = (TriggerTypeMessage)triggerType;
             this.OnParentDelete += new ParentDeleteHandler(
                 () =>
                 {

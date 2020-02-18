@@ -13,49 +13,33 @@ namespace Logic.Server
         public int RefreshTime;//食物刷新点的食物刷新速率，毫秒
 
 
-        public List<DishType> Task = null;//任务点的任务列表
-        public Block(double x_t, double y_t, BlockType type_t) : base(x_t, y_t)
+        public HashSet<DishType> Task = null;//任务点的任务列表
+        public Block(double x_t, double y_t, BlockType type_t) : base(x_t, y_t, ObjType.Block)
         {
-            type = ObjType.Block;
-            Layer = (int)MapLayer.BlockLayer;
+            if (type_t == BlockType.Wall)
+                Layer = (int)MapLayer.WallLayer;
+            else
+                Layer = (int)MapLayer.BlockLayer;
             Movable = false;
             blockType = type_t;
             switch (blockType)
             {
                 case BlockType.FoodPoint:
-                    _dish = (DishType)Program.Random.Next(1, (int)DishType.Size1 - 1);
+                    AddToMessage();
+                    Dish = (DishType)Program.Random.Next(1, (int)DishType.Size1 - 1);
+                    lock (Program.MessageToClientLock)
+                        Program.MessageToClient.GameObjectMessageList[ID].BlockType = BlockTypeMessage.FoodPoint;
                     RefreshTime = 4000;
                     Console.WriteLine("食品刷新：地点（" + Position.x + "," + Position.y + "）, 种类 : " + Dish);
-                    lock (Program.MessageToClientLock)
-                    {
-                        Program.MessageToClient.GameObjectMessageList.Add(
-                            this.ID,
-                            new GameObjectMessage
-                            {
-                                ObjType = ObjTypeMessage.Block,
-                                BlockType = BlockTypeMessage.FoodPoint,
-                                DishType = (DishTypeMessage)Dish,
-                                Position = new XYPositionMessage { X = Position.x, Y = Position.y }
-                            });
-                    }
                     break;
                 case BlockType.Cooker:
-                    _dish = DishType.Empty;
+                    AddToMessage();
+                    Dish = DishType.Empty;
                     lock (Program.MessageToClientLock)
-                    {
-                        Program.MessageToClient.GameObjectMessageList.Add(
-                            this.ID,
-                            new GameObjectMessage
-                            {
-                                ObjType = ObjTypeMessage.Block,
-                                BlockType = BlockTypeMessage.Cooker,
-                                DishType = (DishTypeMessage)Dish,
-                                Position = new XYPositionMessage { X = Position.x, Y = Position.y }
-                            });
-                    }
+                        Program.MessageToClient.GameObjectMessageList[ID].BlockType = BlockTypeMessage.Cooker;
                     break;
                 case BlockType.TaskPoint:
-                    //Task = new List<DishType>();
+                    Task = new HashSet<DishType>();
                     //new System.Threading.Timer(TaskProduce, null, 1000, Convert.ToInt32(ConfigurationManager.AppSettings["TaskRefreshTime"]));
                     //lock (Program.MessageToClientLock)
                     //{
@@ -74,10 +58,20 @@ namespace Logic.Server
         }
         public override DishType GetDish(DishType t)
         {
-            DishType temp = Dish;
-            Dish = DishType.Empty;
-            RefreshTimer.Change(RefreshTime, 0);
-            return temp;
+            switch(this.blockType)
+            {
+                case BlockType.FoodPoint:
+                    DishType temp = Dish;
+                    Dish = DishType.Empty;
+                    RefreshTimer.Change(RefreshTime, 0);
+                    return temp;
+                    break;
+                default:
+                    DishType tmp = Dish;
+                    Dish = DishType.Empty;
+                    return tmp;
+            }
+            
         }
         protected System.Threading.Timer _refreshTimer;
         public System.Threading.Timer RefreshTimer
@@ -99,19 +93,19 @@ namespace Logic.Server
             string Material = "";
 
             SortedSet<DishType> dishTypeSet = new SortedSet<DishType>();
-            foreach (var GameObject in WorldMap.Grid[(int)Position.x, (int)Position.y].GetLayer((int)MapLayer.ItemLayer))
+            foreach (Dish GameObject in WorldMap.Grid[(int)Position.x, (int)Position.y].GetType(typeof(Dish)))
             {
-                if (GameObject is Dish)
-                    dishTypeSet.Add(((Dish)GameObject).Dish);
+                dishTypeSet.Add(GameObject.Dish);
+                GameObject.Parent = null;
             }
 
             foreach (var dishType in dishTypeSet)
             {
-                Material += dishType.ToString() + " ";
+                Material += dishType.ToString();
             }
 
             string result = ConfigurationManager.AppSettings[Material];
-            System.Threading.Timer timer = new System.Threading.Timer(Cook, result, Convert.ToInt32(ConfigurationManager.AppSettings[result + "Time"]), 0);
+            System.Threading.Timer timer = new System.Threading.Timer(Cook, result, int.Parse(ConfigurationManager.AppSettings[result + "Time"]), 0);
             DishType GetResult(string s)
             {
                 return DishType.DarkDish;
@@ -128,7 +122,7 @@ namespace Logic.Server
             DishType temp = DishType.Apple;//(Dish.Type)new Random().Next();
             Task.Add(temp);
             new System.Threading.Timer(remove, temp,
-                Convert.ToInt32(ConfigurationManager.AppSettings["TaskTimeLimit"]), 0);
+                int.Parse(ConfigurationManager.AppSettings["TaskTimeLimit"]), 0);
 
             void remove(object task)
             {
@@ -142,7 +136,7 @@ namespace Logic.Server
             if (Task.Contains(dish_t))
             {
                 Task.Remove(dish_t);
-                return Convert.ToInt32(ConfigurationManager.AppSettings[dish_t.ToString() + "Score"]);//菜品名+Score，在App.config里加，里面有AppleScore
+                return int.Parse(ConfigurationManager.AppSettings[dish_t.ToString() + "Score"]);//菜品名+Score，在App.config里加，里面有AppleScore
                 //测试的时候能直接把食材交进去，比赛的只会产生菜品任务
             }
             return 0;

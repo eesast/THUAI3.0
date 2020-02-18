@@ -17,7 +17,7 @@ namespace Client
 {
     class Player : Character
     {
-        protected Int64 id = -1;
+        protected Int64 id = -1;//注意！！！在这个类里基类的ID已被弃用
         private static int port = 30000;
         static Thread operationThread;
         protected static DateTime lastSendTime = new DateTime();
@@ -55,15 +55,19 @@ namespace Client
                         case Direction.RightDown: Program.form.playerLabels[id_t].Text = "↘"; break;
                         default: break;
                     }
-                    if (gameObjectMessage.DishType != DishTypeMessage.DishEmpty)
-                        ChangeControlLabelText("Dish", gameObjectMessage.DishType.ToString());
-                    else
-                        ChangeControlLabelText("Dish", "");
-                    if (gameObjectMessage.ToolType != ToolTypeMessage.ToolEmpty
-                        && gameObjectMessage.ToolType != ToolTypeMessage.ToolTypeSize)
-                        ChangeControlLabelText("Tool", gameObjectMessage.ToolType.ToString());
-                    else
-                        ChangeControlLabelText("Tool", "");
+                    if (id_t == this.id)
+                    {
+                        if (gameObjectMessage.DishType != DishTypeMessage.DishEmpty)
+                            ChangeControlLabelText("Dish", gameObjectMessage.DishType.ToString());
+                        else
+                            ChangeControlLabelText("Dish", "");
+                        if (gameObjectMessage.ToolType != ToolTypeMessage.ToolEmpty
+                            && gameObjectMessage.ToolType != ToolTypeMessage.ToolTypeSize)
+                            ChangeControlLabelText("Tool", gameObjectMessage.ToolType.ToString());
+                        else
+                            ChangeControlLabelText("Tool", "");
+                        ChangeControlLabelText("Score", gameObjectMessage.Score.ToString());
+                    }
                     break;
                 case ObjTypeMessage.Block:
                     switch (gameObjectMessage.BlockType)
@@ -75,6 +79,10 @@ namespace Client
                                 Program.form.playerLabels[id_t].Text = gameObjectMessage.DishType.ToString();
                             break;
                         case BlockTypeMessage.Cooker:
+                            if (gameObjectMessage.DishType == DishTypeMessage.DishEmpty)
+                                Program.form.playerLabels[id_t].Text = "";
+                            else
+                                Program.form.playerLabels[id_t].Text = gameObjectMessage.DishType.ToString();
                             break;
                     }
                     break;
@@ -98,13 +106,13 @@ namespace Client
         {
             switch (gameObjectMessage.ObjType)
             {
-                case ObjTypeMessage.People: Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.Red; break;
+                case ObjTypeMessage.People:
+                    Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.Red;
+                    Program.form.playerLabels[id_t].TabIndex = 1;
+                    break;
                 case ObjTypeMessage.Block:
                     switch (gameObjectMessage.BlockType)
                     {
-                        case BlockTypeMessage.Wall:
-                            Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.White;
-                            break;
                         case BlockTypeMessage.FoodPoint:
                             Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.Purple;
                             Program.form.playerLabels[id_t].Text = gameObjectMessage.DishType.ToString();
@@ -127,7 +135,7 @@ namespace Client
                     Program.form.playerLabels[id_t].Text = gameObjectMessage.TriggerType.ToString();
                     break;
             }
-            Program.form.playerLabels[id_t].TabIndex = 1;
+
             Program.form.playerLabels[id_t].Location =
                         new System.Drawing.Point(
                             (int)((gameObjectMessage.Position.X - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL),
@@ -152,7 +160,7 @@ namespace Client
             }
         }
 
-        public void moveFormLabel(Int64 id_t, GameObjectMessage gameObjectMessage, ref Dictionary<bool, HashSet<Int64>> recordDic)
+        public void moveFormLabel(Int64 id_t, GameObjectMessage gameObjectMessage, ref HashSet<Int64> IDsToDelete)
         {
             if (!Program.form.playerLabels.ContainsKey(id_t))
             {
@@ -171,7 +179,7 @@ namespace Client
             else
             {
                 //recordDic[true].Add(id_t);
-                recordDic[false].Remove(id_t);
+                IDsToDelete.Remove(id_t);
                 //Console.WriteLine("Change Form");
             }
 
@@ -216,8 +224,20 @@ namespace Client
                     case 'c': Move(Direction.RightDown); break;
                     case 'f': Pick(); break;
                     case 'u': Use(1, 0); break;
-                    case 'r': Put(5, true); break;
-                    case 't': Put(5, false); break;
+                    case 'r':
+                        char temp = Console.ReadKey().KeyChar;
+                        if (temp >= '0' && temp <= '9')
+                        {
+                            Put(temp - '0', true);
+                        }
+                        break;
+                    case 't':
+                        char tmp = Console.ReadKey().KeyChar;
+                        if (tmp >= '0' && tmp <= '9')
+                        {
+                            Put(tmp - '0', true);
+                        }
+                        break;
                 }
                 lastSendTime = DateTime.Now;
             }
@@ -241,7 +261,7 @@ namespace Client
 
             ClientCommunication.SendMessage(messageToServer);
         }
-        public override void Put(int distance, bool isThrowDish)
+        public override void Put(double distance, bool isThrowDish)
         {
             if (distance < 0)
                 distance = 0;
@@ -280,11 +300,7 @@ namespace Client
                     this.Position = new XYPosition(gameObject.Value.Position.X, gameObject.Value.Position.Y);
                     this.facingDirection = (Tools.Direction)(int)gameObject.Value.Direction;
                     Console.WriteLine("\nThis Player :\n" + "\t" + id.ToString() + "\n\tposition: " + Position.ToString());
-                    Dictionary<bool, HashSet<long>> tempDic = new Dictionary<bool, HashSet<long>>
-                    {
-                        { false, new HashSet<long>(Program.form.playerLabels.Keys) },
-                        { true, new HashSet<long>() }
-                    };
+                    HashSet<long> tempDic = new HashSet<long>(Program.form.playerLabels.Keys);
                     moveFormLabel(this.id, gameObject.Value, ref tempDic);
                     return;
                 }
@@ -297,20 +313,16 @@ namespace Client
             ChangeAllLabels(msg);
         }
 
-        Dictionary<bool, HashSet<Int64>> recordDic = new Dictionary<bool, HashSet<long>>
-                {
-                    { false, new HashSet<long>(Program.form.playerLabels.Keys) },
-                    { true, new HashSet<long>() }
-                };
+        HashSet<Int64> IDsToDelete = new HashSet<long>();
         public void ChangeAllLabels(MessageToClient msg)
         {
-            recordDic[false] = new HashSet<long>(Program.form.playerLabels.Keys);
+            IDsToDelete = new HashSet<long>(Program.form.playerLabels.Keys);
             //recordDic[true].Clear();
             foreach (var gameObject in msg.GameObjectMessageList)
             {
-                moveFormLabel(gameObject.Key, gameObject.Value, ref recordDic);
+                moveFormLabel(gameObject.Key, gameObject.Value, ref IDsToDelete);
             }
-            foreach (var number in recordDic[false])
+            foreach (var number in IDsToDelete)
             {
                 Console.WriteLine("Delete Form : " + number);
                 if (Program.form.InvokeRequired)
