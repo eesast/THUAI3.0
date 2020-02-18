@@ -4,6 +4,7 @@ using System.Text;
 using Logic.Constant;
 using System.Configuration;
 using static Logic.Constant.MapInfo;
+using Communication.Proto;
 
 namespace Logic.Server
 {
@@ -23,8 +24,30 @@ namespace Logic.Server
             this.OnTrigger += new TriggerHandler(
                 (t) =>
                 {
-                    this.Parent = null;
+                    if (triggerType != TriggerType.WaveGlue)
+                        this.Parent = null;
                 });
+            lock (Program.MessageToClientLock)
+            {
+                Program.MessageToClient.GameObjectMessageList.Add(
+                    this.ID,
+                    new GameObjectMessage
+                    {
+                        ObjType = (ObjTypeMessage)ObjType.Trigger,
+                        TriggerType = (TriggerTypeMessage)triggerType,
+                        Position = new XYPositionMessage { X = Position.x, Y = Position.y }
+                    });
+                Server.ServerDebug("Add Trigger to Message list : " + type_t);
+            }
+            this.OnParentDelete += new ParentDeleteHandler(
+                () =>
+                {
+                    lock (Program.MessageToClientLock)
+                    {
+                        Program.MessageToClient.GameObjectMessageList.Remove(ID);
+                    }
+                });
+
         }
     }
 }

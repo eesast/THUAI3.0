@@ -93,9 +93,10 @@ message GameObjectMessage{
 	BlockTypeMessage BlockType = 6;
 	DishTypeMessage DishType = 7;
 	ToolTypeMessage ToolType = 8;
-	bool isMoving = 9;
-	repeated BuffMessage Buff = 10;
-	DishStateMessage DishState = 11;
+	TriggerTypeMessage TriggerType = 9;
+	bool isMoving = 10;
+	repeated BuffMessage Buff = 11;
+	DishStateMessage DishState = 12;
 }
 message MessageToClient {
 	map<int64, GameObjectMessage> GameObjectMessageList = 1;

@@ -17,8 +17,11 @@ namespace Logic.Server
         protected Dictionary<Tuple<int, int>, Player> PlayerList = new Dictionary<Tuple<int, int>, Player>();
         public ICommunication ServerCommunication = new CommunicationImpl();
 
-        public Server()
+        public Server(ushort serverPort, ushort playerCount, ushort agentCount, uint MaxGameTimeSeconds)
         {
+            Communication.Proto.Constants.ServerPort = serverPort;
+            Communication.Proto.Constants.PlayerCount = playerCount;
+            Communication.Proto.Constants.AgentCount = agentCount;
             ServerCommunication.Initialize();
             ServerCommunication.MsgProcess += OnRecieve;
             ServerCommunication.GameStart();
@@ -78,13 +81,61 @@ namespace Logic.Server
                 /*
                 这里应该放定时、刷新物品等代码。
                 */
-                Console.ReadKey();
+                char key = Console.ReadKey().KeyChar;
+                switch (key)
+                {
+                    case '`': GodMode(); break;
+                }
+
             }
 
             Console.WriteLine("Server stop running");
         }
 
-        public void OnRecieve(Object communication, EventArgs e)
+        protected void GodMode()
+        {
+            Console.WriteLine("\n======= Welcome to God Mode ========\n");
+            string[] words = Console.ReadLine().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            if (words.Length < 5)
+                return;
+            try
+            {
+                switch (words[0])
+                {
+                    case "Add":
+                        switch (words[1])
+                        {
+                            case "Dish":
+                                DishType dishtype = (DishType)int.Parse(words[2]);
+                                if (dishtype >= DishType.Size2 || dishtype == DishType.Size1 || dishtype == DishType.Empty)
+                                    return;
+                                new Dish(double.Parse(words[3]), double.Parse(words[4]), dishtype).Parent = MapInfo.WorldMap;
+                                break;
+                            case "Tool":
+                                ToolType tooltype = (ToolType)int.Parse(words[2]);
+                                if (tooltype >= ToolType.Size || tooltype == ToolType.Empty)
+                                    return;
+                                new Tool(double.Parse(words[3]), double.Parse(words[4]), tooltype).Parent = MapInfo.WorldMap;
+                                break;
+                            case "Trigger":
+                                TriggerType triggertype = (TriggerType)int.Parse(words[2]);
+                                if (triggertype >= TriggerType.Size)
+                                    return;
+                                new Trigger(double.Parse(words[3]), double.Parse(words[4]), triggertype, -1).Parent = MapInfo.WorldMap;
+                                break;
+                        }
+                        break;
+                    case "Remove":
+                        break;
+                }
+            }
+            catch (FormatException)
+            {
+                ServerDebug("Format Error");
+            }
+        }
+
+        protected void OnRecieve(Object communication, EventArgs e)
         {
             CommunicationImpl communicationImpl = communication as CommunicationImpl;
             MessageEventArgs messageEventArgs = e as MessageEventArgs;

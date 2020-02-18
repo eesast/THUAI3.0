@@ -20,6 +20,7 @@ namespace Logic.Server
         protected System.Threading.Timer SpeedBuffTimer;
         protected System.Threading.Timer StrengthBuffTimer;
         public CommandType status = CommandType.Stop;
+        protected bool isStepOnGlue = false;
 
         protected bool _isStun = false;
         protected bool IsStun
@@ -68,6 +69,24 @@ namespace Logic.Server
                         Direction = (DirectionMessage)(int)this.facingDirection
                     });
             }
+            this.MoveStart += new MoveStartHandler(
+                (thisGameObject) =>
+                {
+                    if (isStepOnGlue)
+                    {
+                        GlueExtraMoveSpeed = int.Parse(ConfigurationManager.AppSettings["WaveGlueExtraMoveSpeed"]);
+                        if (Velocity.length > 3)
+                            this.Velocity = new Vector(Velocity.angle, moveSpeed + GlueExtraMoveSpeed);
+                    }
+                    else
+                    {
+                        GlueExtraMoveSpeed = 0;
+                        if (Velocity.length > 0 && Velocity.length < 4)
+                            this.Velocity = new Vector(Velocity.angle, moveSpeed);
+                    }
+
+                    isStepOnGlue = false;
+                });
             this.MoveComplete += new MoveCompleteHandler(
                 (thisGameObject) =>
                 {
@@ -93,17 +112,16 @@ namespace Logic.Server
             switch (msg.CommandType)
             {
                 case CommandTypeMessage.Move:
-                    if (msg.MoveDirection >= 0 && msg.MoveDirection < DirectionMessage.DirectionSize)
-                        Move((Direction)msg.MoveDirection, msg.MoveDuration);
+                    Move((Direction)msg.MoveDirection, msg.MoveDuration);
                     break;
                 case CommandTypeMessage.Pick:
                     Pick();
                     break;
                 case CommandTypeMessage.Put:
-                    Put(5, 1);
+                    Put(msg.ThrowDistance, msg.IsThrowDish);
                     break;
                 case CommandTypeMessage.Use:
-                    Use(1, 0);
+                    Use(msg.UseType, 0);
                     break;
                 default:
                     break;
@@ -137,7 +155,7 @@ namespace Logic.Server
                     foreach (Block block in WorldMap.Grid[(int)position.x, (int)position.y].GetType(typeof(Block)))
                     {
                         if ((block.blockType == BlockType.FoodPoint || block.blockType == BlockType.Cooker)
-                            && block.dish != DishType.Empty)
+                            && block.Dish != DishType.Empty)
                         {
                             Dish = block.GetDish(dish);
                             Server.ServerDebug("Player : " + ID + " Get Dish " + dish.ToString());
@@ -169,12 +187,12 @@ namespace Logic.Server
             }
             Console.WriteLine("没东西捡");
         }
-        public override void Put(int distance, int ThrowDish)
+        public override void Put(int distance, bool isThrowDish)
         {
             if (distance > MaxThrowDistance) distance = MaxThrowDistance;
             int dueTime = 200 * distance;
 
-            if ((int)dish != (int)DishType.Empty && ThrowDish != 0)
+            if ((int)dish != (int)DishType.Empty && isThrowDish)
             {
                 Dish dishToThrow = new Dish(Position.x, Position.y, dish);
                 dishToThrow.Layer = (int)MapLayer.FlyingLayer;
@@ -183,7 +201,7 @@ namespace Logic.Server
                 dishToThrow.StopMovingTimer.Change(dueTime, 0);
                 Dish = DishType.Empty;
             }
-            else if ((int)tool != (int)ToolType.Empty && ThrowDish == 0)
+            else if ((int)tool != (int)ToolType.Empty && !isThrowDish)
             {
                 Tool toolToThrow = new Tool(Position.x, Position.y, tool);
                 toolToThrow.Parent = WorldMap;
@@ -229,20 +247,20 @@ namespace Logic.Server
 
         public void Function(ToolType type)//在捡起装备时生效，仅对捡起即生效的装备有用
         {
-            if (type == ToolType.TigerShoes) moveSpeed += Convert.ToDouble(ConfigurationManager.AppSettings["TigerShoeExtraMoveSpeed"]);
-            else if (type == ToolType.TeleScope) SightRange += Convert.ToInt32(ConfigurationManager.AppSettings["TeleScopeExtraSightRange"]);
+            if (type == ToolType.TigerShoes) moveSpeed += double.Parse(ConfigurationManager.AppSettings["TigerShoeExtraMoveSpeed"]);
+            else if (type == ToolType.TeleScope) SightRange += int.Parse(ConfigurationManager.AppSettings["TeleScopeExtraSightRange"]);
         }
         public void DeFunction(ToolType type)//在丢弃装备时生效
         {
-            if (type == ToolType.TigerShoes) moveSpeed -= Convert.ToDouble(ConfigurationManager.AppSettings["TigerShoeExtraMoveSpeed"]);
-            else if (type == ToolType.TeleScope) SightRange -= Convert.ToInt32(ConfigurationManager.AppSettings["TeleScopeExtraSightRange"]);
+            if (type == ToolType.TigerShoes) moveSpeed -= double.Parse(ConfigurationManager.AppSettings["TigerShoeExtraMoveSpeed"]);
+            else if (type == ToolType.TeleScope) SightRange -= int.Parse(ConfigurationManager.AppSettings["TeleScopeExtraSightRange"]);
         }
 
         public void GetTalent(TALENT t)
         {
             talent = t;
-            if (talent == TALENT.Run) moveSpeed += Convert.ToDouble(ConfigurationManager.AppSettings["RunnerTalentExtraMoveSpeed"]);
-            else if (talent == TALENT.Strenth) MaxThrowDistance += Convert.ToInt32(ConfigurationManager.AppSettings["StrenthTalentExtraMoveSpeed"]);
+            if (talent == TALENT.Run) moveSpeed += double.Parse(ConfigurationManager.AppSettings["RunnerTalentExtraMoveSpeed"]);
+            else if (talent == TALENT.Strenth) MaxThrowDistance += int.Parse(ConfigurationManager.AppSettings["StrenthTalentExtraMoveSpeed"]);
         }
 
         public void UseTool(int parameter)
@@ -256,16 +274,16 @@ namespace Logic.Server
                 case ToolType.Empty: Console.WriteLine("物品使用失败（为空或无需使用）！"); break;
                 case ToolType.SpeedBuff:
                     {
-                        moveSpeed += Convert.ToDouble(ConfigurationManager.AppSettings["SpeedBuffExtraMoveSpeed"]);
-                        SpeedBuffTimer.Change(Convert.ToInt32(ConfigurationManager.AppSettings["SpeedBuffDuration"]), 0);
+                        moveSpeed += double.Parse(ConfigurationManager.AppSettings["SpeedBuffExtraMoveSpeed"]);
+                        SpeedBuffTimer.Change(int.Parse(ConfigurationManager.AppSettings["SpeedBuffDuration"]), 0);
                         this.Velocity = new Vector(Velocity.angle, (moveSpeed + GlueExtraMoveSpeed) / moveSpeed * Velocity.length);
                         tool = ToolType.Empty;
                     }
                     break;
                 case ToolType.StrenthBuff:
                     {
-                        MaxThrowDistance += Convert.ToInt32(ConfigurationManager.AppSettings["StrenthBuffExtraThrowDistance"]);
-                        StrengthBuffTimer.Change(Convert.ToInt32(ConfigurationManager.AppSettings["StrenthBuffDuration"]), 0);
+                        MaxThrowDistance += int.Parse(ConfigurationManager.AppSettings["StrenthBuffExtraThrowDistance"]);
+                        StrengthBuffTimer.Change(int.Parse(ConfigurationManager.AppSettings["StrenthBuffDuration"]), 0);
                         tool = ToolType.Empty;
                     }
                     break;
@@ -314,20 +332,21 @@ namespace Logic.Server
             {
                 case TriggerType.WaveGlue:
                     {
-                        GlueExtraMoveSpeed = Convert.ToDouble(ConfigurationManager.AppSettings["WaveGlueExtraMoveSpeed"]);
-                        Console.WriteLine(GlueExtraMoveSpeed);
-                        this.Velocity = new Vector(Velocity.angle, (moveSpeed + GlueExtraMoveSpeed) / moveSpeed * Velocity.length);
+                        isStepOnGlue = true;
+                        //GlueExtraMoveSpeed = double.Parse(ConfigurationManager.AppSettings["WaveGlueExtraMoveSpeed"]);
+                        //Console.WriteLine(GlueExtraMoveSpeed);
+                        //this.Velocity = new Vector(Velocity.angle, (moveSpeed + GlueExtraMoveSpeed) / moveSpeed * Velocity.length);
                     }
                     break;
                 case TriggerType.Mine:
                     {
-                        score += Convert.ToInt32(ConfigurationManager.AppSettings["MineScore"]);
+                        score += int.Parse(ConfigurationManager.AppSettings["MineScore"]);
                     }
                     break;
                 case TriggerType.Trap:
                     {
                         IsStun = true;
-                        Velocity = new Vector(0, 0);
+                        Velocity = new Vector(Velocity.angle, 0);
                     }
                     break;
                 default:

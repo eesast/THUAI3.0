@@ -25,7 +25,7 @@ namespace Communication.Proto {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "ChVNZXNzYWdlVG9DbGllbnQucHJvdG8SD2dvb2dsZS5wcm90b2J1ZiIpChFY",
-            "WVBvc2l0aW9uTWVzc2FnZRIJCgFYGAEgASgBEgkKAVkYAiABKAEi4gMKEUdh",
+            "WVBvc2l0aW9uTWVzc2FnZRIJCgFYGAEgASgBEgkKAVkYAiABKAEinAQKEUdh",
             "bWVPYmplY3RNZXNzYWdlEjQKCFBvc2l0aW9uGAEgASgLMiIuZ29vZ2xlLnBy",
             "b3RvYnVmLlhZUG9zaXRpb25NZXNzYWdlEg0KBVdpZHRoGAIgASgFEg4KBkhl",
             "aWdodBgDIAEoBRI0CglEaXJlY3Rpb24YBCABKA4yIS5nb29nbGUucHJvdG9i",
@@ -34,40 +34,41 @@ namespace Communication.Proto {
             "Lmdvb2dsZS5wcm90b2J1Zi5CbG9ja1R5cGVNZXNzYWdlEjIKCERpc2hUeXBl",
             "GAcgASgOMiAuZ29vZ2xlLnByb3RvYnVmLkRpc2hUeXBlTWVzc2FnZRIyCghU",
             "b29sVHlwZRgIIAEoDjIgLmdvb2dsZS5wcm90b2J1Zi5Ub29sVHlwZU1lc3Nh",
-            "Z2USEAoIaXNNb3ZpbmcYCSABKAgSKgoEQnVmZhgKIAMoDjIcLmdvb2dsZS5w",
-            "cm90b2J1Zi5CdWZmTWVzc2FnZRI0CglEaXNoU3RhdGUYCyABKA4yIS5nb29n",
-            "bGUucHJvdG9idWYuRGlzaFN0YXRlTWVzc2FnZSLPAQoPTWVzc2FnZVRvQ2xp",
-            "ZW50EloKFUdhbWVPYmplY3RNZXNzYWdlTGlzdBgBIAMoCzI7Lmdvb2dsZS5w",
-            "cm90b2J1Zi5NZXNzYWdlVG9DbGllbnQuR2FtZU9iamVjdE1lc3NhZ2VMaXN0",
-            "RW50cnkaYAoaR2FtZU9iamVjdE1lc3NhZ2VMaXN0RW50cnkSCwoDa2V5GAEg",
-            "ASgDEjEKBXZhbHVlGAIgASgLMiIuZ29vZ2xlLnByb3RvYnVmLkdhbWVPYmpl",
-            "Y3RNZXNzYWdlOgI4ASpZCg5PYmpUeXBlTWVzc2FnZRIKCgZQZW9wbGUQABIJ",
-            "CgVCbG9jaxABEggKBERpc2gQAhIICgRUb29sEAMSCwoHVHJpZ2dlchAEEg8K",
-            "C09ialR5cGVTaXplEAUqdAoQQmxvY2tUeXBlTWVzc2FnZRIICgRXYWxsEAAS",
-            "CQoFVGFibGUQARINCglGb29kUG9pbnQQAhIKCgZDb29rZXIQAxIOCgpSdWJi",
-            "aXNoQmluEAQSDQoJVGFza1BvaW50EAUSEQoNQmxvY2tUeXBlU2l6ZRAGKm8K",
-            "D0Rpc2hUeXBlTWVzc2FnZRINCglEaXNoRW1wdHkQABIJCgVBcHBsZRABEgoK",
-            "BkJhbmFuYRACEgoKBlBvdGF0bxADEgoKBlRvbWF0bxAEEgwKCERhcmtEaXNo",
-            "EAUSEAoMRGlzaFR5cGVTaXplEAYqkgIKD1Rvb2xUeXBlTWVzc2FnZRINCglU",
-            "b29sRW1wdHkQABIOCgpUaWdlclNob2VzEAESDQoJU3BlZWRCdWZmEAISDwoL",
-            "U3RyZW50aEJ1ZmYQAxINCglUZWxlU2NvcGUQBBINCglDb25kaW1lbnQQBRIO",
-            "CgpGZXJ0aWxpemVyEAYSDwoLQnJlYXN0UGxhdGUQBxINCglTcGFjZUdhdGUQ",
-            "CBIHCgNFeWUQCRIMCghXYXZlR2x1ZRAKEgwKCExhbmRNaW5lEAsSCAoEVHJh",
-            "cBAMEg0KCUZsYXNoQm9tYhANEgoKBkhhbW1lchAOEgkKBUJyaWNrEA8SCwoH",
-            "U3RlYWxlchAQEhAKDFRvb2xUeXBlU2l6ZRARKkQKElRyaWdnZXJUeXBlTWVz",
-            "c2FnZRIPCgtUcmFwVHJpZ2dlchAAEggKBE1pbmUQARITCg9UcmlnZ2VyVHlw",
-            "ZVNpemUQAipBCgtCdWZmTWVzc2FnZRIKCgZGcm96ZW4QABILCgdTdHVubmVk",
-            "EAESCwoHU3BlZWRVcBACEgwKCFNsb3dEb3duEAMqNQoQRGlzaFN0YXRlTWVz",
-            "c2FnZRIHCgNSYXcQABIICgRHb29kEAESDgoKT3ZlckNvb2tlZBACKoIBChBE",
-            "aXJlY3Rpb25NZXNzYWdlEgkKBVJpZ2h0EAASCwoHUmlnaHRVcBABEgYKAlVw",
-            "EAISCgoGTGVmdFVwEAMSCAoETGVmdBAEEgwKCExlZnREb3duEAUSCAoERG93",
-            "bhAGEg0KCVJpZ2h0RG93bhAHEhEKDURpcmVjdGlvblNpemUQCEIWqgITQ29t",
-            "bXVuaWNhdGlvbi5Qcm90b2IGcHJvdG8z"));
+            "Z2USOAoLVHJpZ2dlclR5cGUYCSABKA4yIy5nb29nbGUucHJvdG9idWYuVHJp",
+            "Z2dlclR5cGVNZXNzYWdlEhAKCGlzTW92aW5nGAogASgIEioKBEJ1ZmYYCyAD",
+            "KA4yHC5nb29nbGUucHJvdG9idWYuQnVmZk1lc3NhZ2USNAoJRGlzaFN0YXRl",
+            "GAwgASgOMiEuZ29vZ2xlLnByb3RvYnVmLkRpc2hTdGF0ZU1lc3NhZ2UizwEK",
+            "D01lc3NhZ2VUb0NsaWVudBJaChVHYW1lT2JqZWN0TWVzc2FnZUxpc3QYASAD",
+            "KAsyOy5nb29nbGUucHJvdG9idWYuTWVzc2FnZVRvQ2xpZW50LkdhbWVPYmpl",
+            "Y3RNZXNzYWdlTGlzdEVudHJ5GmAKGkdhbWVPYmplY3RNZXNzYWdlTGlzdEVu",
+            "dHJ5EgsKA2tleRgBIAEoAxIxCgV2YWx1ZRgCIAEoCzIiLmdvb2dsZS5wcm90",
+            "b2J1Zi5HYW1lT2JqZWN0TWVzc2FnZToCOAEqWQoOT2JqVHlwZU1lc3NhZ2US",
+            "CgoGUGVvcGxlEAASCQoFQmxvY2sQARIICgREaXNoEAISCAoEVG9vbBADEgsK",
+            "B1RyaWdnZXIQBBIPCgtPYmpUeXBlU2l6ZRAFKnQKEEJsb2NrVHlwZU1lc3Nh",
+            "Z2USCAoEV2FsbBAAEgkKBVRhYmxlEAESDQoJRm9vZFBvaW50EAISCgoGQ29v",
+            "a2VyEAMSDgoKUnViYmlzaEJpbhAEEg0KCVRhc2tQb2ludBAFEhEKDUJsb2Nr",
+            "VHlwZVNpemUQBipvCg9EaXNoVHlwZU1lc3NhZ2USDQoJRGlzaEVtcHR5EAAS",
+            "CQoFQXBwbGUQARIKCgZCYW5hbmEQAhIKCgZQb3RhdG8QAxIKCgZUb21hdG8Q",
+            "BBIMCghEYXJrRGlzaBAFEhAKDERpc2hUeXBlU2l6ZRAGKpICCg9Ub29sVHlw",
+            "ZU1lc3NhZ2USDQoJVG9vbEVtcHR5EAASDgoKVGlnZXJTaG9lcxABEg0KCVNw",
+            "ZWVkQnVmZhACEg8KC1N0cmVudGhCdWZmEAMSDQoJVGVsZVNjb3BlEAQSDQoJ",
+            "Q29uZGltZW50EAUSDgoKRmVydGlsaXplchAGEg8KC0JyZWFzdFBsYXRlEAcS",
+            "DQoJU3BhY2VHYXRlEAgSBwoDRXllEAkSDAoIV2F2ZUdsdWUQChIMCghMYW5k",
+            "TWluZRALEggKBFRyYXAQDBINCglGbGFzaEJvbWIQDRIKCgZIYW1tZXIQDhIJ",
+            "CgVCcmljaxAPEgsKB1N0ZWFsZXIQEBIQCgxUb29sVHlwZVNpemUQESpEChJU",
+            "cmlnZ2VyVHlwZU1lc3NhZ2USDwoLVHJhcFRyaWdnZXIQABIICgRNaW5lEAES",
+            "EwoPVHJpZ2dlclR5cGVTaXplEAIqQQoLQnVmZk1lc3NhZ2USCgoGRnJvemVu",
+            "EAASCwoHU3R1bm5lZBABEgsKB1NwZWVkVXAQAhIMCghTbG93RG93bhADKjUK",
+            "EERpc2hTdGF0ZU1lc3NhZ2USBwoDUmF3EAASCAoER29vZBABEg4KCk92ZXJD",
+            "b29rZWQQAiqCAQoQRGlyZWN0aW9uTWVzc2FnZRIJCgVSaWdodBAAEgsKB1Jp",
+            "Z2h0VXAQARIGCgJVcBACEgoKBkxlZnRVcBADEggKBExlZnQQBBIMCghMZWZ0",
+            "RG93bhAFEggKBERvd24QBhINCglSaWdodERvd24QBxIRCg1EaXJlY3Rpb25T",
+            "aXplEAhCFqoCE0NvbW11bmljYXRpb24uUHJvdG9iBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Communication.Proto.ObjTypeMessage), typeof(global::Communication.Proto.BlockTypeMessage), typeof(global::Communication.Proto.DishTypeMessage), typeof(global::Communication.Proto.ToolTypeMessage), typeof(global::Communication.Proto.TriggerTypeMessage), typeof(global::Communication.Proto.BuffMessage), typeof(global::Communication.Proto.DishStateMessage), typeof(global::Communication.Proto.DirectionMessage), }, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.XYPositionMessage), global::Communication.Proto.XYPositionMessage.Parser, new[]{ "X", "Y" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.GameObjectMessage), global::Communication.Proto.GameObjectMessage.Parser, new[]{ "Position", "Width", "Height", "Direction", "ObjType", "BlockType", "DishType", "ToolType", "IsMoving", "Buff", "DishState" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.GameObjectMessage), global::Communication.Proto.GameObjectMessage.Parser, new[]{ "Position", "Width", "Height", "Direction", "ObjType", "BlockType", "DishType", "ToolType", "TriggerType", "IsMoving", "Buff", "DishState" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.MessageToClient), global::Communication.Proto.MessageToClient.Parser, new[]{ "GameObjectMessageList" }, null, null, new pbr::GeneratedClrTypeInfo[] { null, })
           }));
     }
@@ -349,6 +350,7 @@ namespace Communication.Proto {
       blockType_ = other.blockType_;
       dishType_ = other.dishType_;
       toolType_ = other.toolType_;
+      triggerType_ = other.triggerType_;
       isMoving_ = other.isMoving_;
       buff_ = other.buff_.Clone();
       dishState_ = other.dishState_;
@@ -448,8 +450,19 @@ namespace Communication.Proto {
       }
     }
 
+    /// <summary>Field number for the "TriggerType" field.</summary>
+    public const int TriggerTypeFieldNumber = 9;
+    private global::Communication.Proto.TriggerTypeMessage triggerType_ = 0;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Communication.Proto.TriggerTypeMessage TriggerType {
+      get { return triggerType_; }
+      set {
+        triggerType_ = value;
+      }
+    }
+
     /// <summary>Field number for the "isMoving" field.</summary>
-    public const int IsMovingFieldNumber = 9;
+    public const int IsMovingFieldNumber = 10;
     private bool isMoving_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool IsMoving {
@@ -460,9 +473,9 @@ namespace Communication.Proto {
     }
 
     /// <summary>Field number for the "Buff" field.</summary>
-    public const int BuffFieldNumber = 10;
+    public const int BuffFieldNumber = 11;
     private static readonly pb::FieldCodec<global::Communication.Proto.BuffMessage> _repeated_buff_codec
-        = pb::FieldCodec.ForEnum(82, x => (int) x, x => (global::Communication.Proto.BuffMessage) x);
+        = pb::FieldCodec.ForEnum(90, x => (int) x, x => (global::Communication.Proto.BuffMessage) x);
     private readonly pbc::RepeatedField<global::Communication.Proto.BuffMessage> buff_ = new pbc::RepeatedField<global::Communication.Proto.BuffMessage>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public pbc::RepeatedField<global::Communication.Proto.BuffMessage> Buff {
@@ -470,7 +483,7 @@ namespace Communication.Proto {
     }
 
     /// <summary>Field number for the "DishState" field.</summary>
-    public const int DishStateFieldNumber = 11;
+    public const int DishStateFieldNumber = 12;
     private global::Communication.Proto.DishStateMessage dishState_ = 0;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Communication.Proto.DishStateMessage DishState {
@@ -501,6 +514,7 @@ namespace Communication.Proto {
       if (BlockType != other.BlockType) return false;
       if (DishType != other.DishType) return false;
       if (ToolType != other.ToolType) return false;
+      if (TriggerType != other.TriggerType) return false;
       if (IsMoving != other.IsMoving) return false;
       if(!buff_.Equals(other.buff_)) return false;
       if (DishState != other.DishState) return false;
@@ -518,6 +532,7 @@ namespace Communication.Proto {
       if (BlockType != 0) hash ^= BlockType.GetHashCode();
       if (DishType != 0) hash ^= DishType.GetHashCode();
       if (ToolType != 0) hash ^= ToolType.GetHashCode();
+      if (TriggerType != 0) hash ^= TriggerType.GetHashCode();
       if (IsMoving != false) hash ^= IsMoving.GetHashCode();
       hash ^= buff_.GetHashCode();
       if (DishState != 0) hash ^= DishState.GetHashCode();
@@ -566,13 +581,17 @@ namespace Communication.Proto {
         output.WriteRawTag(64);
         output.WriteEnum((int) ToolType);
       }
-      if (IsMoving != false) {
+      if (TriggerType != 0) {
         output.WriteRawTag(72);
+        output.WriteEnum((int) TriggerType);
+      }
+      if (IsMoving != false) {
+        output.WriteRawTag(80);
         output.WriteBool(IsMoving);
       }
       buff_.WriteTo(output, _repeated_buff_codec);
       if (DishState != 0) {
-        output.WriteRawTag(88);
+        output.WriteRawTag(96);
         output.WriteEnum((int) DishState);
       }
       if (_unknownFields != null) {
@@ -606,6 +625,9 @@ namespace Communication.Proto {
       }
       if (ToolType != 0) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) ToolType);
+      }
+      if (TriggerType != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) TriggerType);
       }
       if (IsMoving != false) {
         size += 1 + 1;
@@ -651,6 +673,9 @@ namespace Communication.Proto {
       }
       if (other.ToolType != 0) {
         ToolType = other.ToolType;
+      }
+      if (other.TriggerType != 0) {
+        TriggerType = other.TriggerType;
       }
       if (other.IsMoving != false) {
         IsMoving = other.IsMoving;
@@ -706,15 +731,19 @@ namespace Communication.Proto {
             break;
           }
           case 72: {
+            TriggerType = (global::Communication.Proto.TriggerTypeMessage) input.ReadEnum();
+            break;
+          }
+          case 80: {
             IsMoving = input.ReadBool();
             break;
           }
-          case 82:
-          case 80: {
+          case 90:
+          case 88: {
             buff_.AddEntriesFrom(input, _repeated_buff_codec);
             break;
           }
-          case 88: {
+          case 96: {
             DishState = (global::Communication.Proto.DishStateMessage) input.ReadEnum();
             break;
           }

@@ -36,7 +36,7 @@ namespace Logic.Server
             Layer = (int)MapLayer.ItemLayer;
             Movable = true;
             Bouncable = true;
-            dish = type_t;
+            _dish = type_t;
             lock (Program.MessageToClientLock)
             {
                 Program.MessageToClient.GameObjectMessageList.Add(
@@ -44,7 +44,7 @@ namespace Logic.Server
                     new GameObjectMessage
                     {
                         ObjType = (ObjTypeMessage)ObjType.Dish,
-                        DishType = (DishTypeMessage)dish,
+                        DishType = (DishTypeMessage)Dish,
                         Position = new XYPositionMessage { X = Position.x, Y = Position.y }
                     });
                 Server.ServerDebug("Add Dish to Message list : " + type_t);
@@ -71,9 +71,12 @@ namespace Logic.Server
 
         public override DishType GetDish(DishType t)
         {
-            DishType temp = dish;
+            DishType temp = Dish;
             if (t == DishType.Empty) this.Parent = null;
-            else dish = t;
+            else
+            {
+                Dish = t;
+            }
             return temp;
         }
     }

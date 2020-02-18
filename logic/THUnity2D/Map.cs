@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Text;
+using System.Threading;
 using static THUnity2D.Tools;
 
 namespace THUnity2D
@@ -39,7 +40,8 @@ namespace THUnity2D
             base.OnChildrenAdded(childrenObject);
             childrenObject.OnLayerChange += this.OnChildrenLayerChange;
             AddToGameObjectListByLayer(childrenObject);
-            this.Grid[(int)childrenObject.Position.x, (int)childrenObject.Position.y].AddGameObject(childrenObject);
+            lock (_grid[(int)childrenObject.Position.x, (int)childrenObject.Position.y].publicLock)
+                this._grid[(int)childrenObject.Position.x, (int)childrenObject.Position.y].AddGameObject(childrenObject);
             Debug(this, "Grid (" + (int)childrenObject.Position.x + "," + (int)childrenObject.Position.y + ") add " + childrenObject.ID);
             TryToTrigger(childrenObject);
         }
@@ -48,7 +50,8 @@ namespace THUnity2D
             base.OnChildrenDelete(childrenObject);
             childrenObject.OnLayerChange -= this.OnChildrenLayerChange;
             DeleteFromGameObjectListByLayer(childrenObject);
-            _grid[(int)childrenObject.Position.x, (int)childrenObject.Position.y].DeleteGameObject(childrenObject);
+            lock (_grid[(int)childrenObject.Position.x, (int)childrenObject.Position.y].publicLock)
+                _grid[(int)childrenObject.Position.x, (int)childrenObject.Position.y].DeleteGameObject(childrenObject);
         }
         protected override void OnChildrenPositionChanged(GameObject childrenGameObject, PositionChangedEventArgs e)
         {
@@ -334,10 +337,15 @@ namespace THUnity2D
             }
             //=================
 
+
+            //核心代码，检查(x,y)位置的方块与childrenGameObject的关系，并检查碰撞
+            LinkedList<object> lockList = new LinkedList<object>();
             void CheckBlockAndAdjustPosition(int x, int y)
             {
                 if (!(XIsLegal(x) && YIsLegal(y)))
                     return;
+                Monitor.Enter(_grid[x, y].publicLock);
+                lockList.AddLast(_grid[x, y].publicLock);
                 if (x != (int)childrenGameObject.Position.x || y != (int)childrenGameObject.Position.y)
                     foreach (var layer in _layerCollisionMatrix[childrenGameObject.Layer][true])
                     {
@@ -458,10 +466,21 @@ namespace THUnity2D
             //搜索可能碰撞的GameObject
             //建议不要尝试读懂这段代码
 
+            //调整位置
             Debug(this, "resultDistance : " + resultDistance);
             childrenGameObject._position = previousPosition + new XYPosition(resultDistance * Math.Cos(e.angle), resultDistance * Math.Sin(e.angle));
             this._grid[(int)previousPosition.x, (int)previousPosition.y].DeleteGameObject(childrenGameObject);
             this._grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].AddGameObject(childrenGameObject);
+            //调整位置 End
+
+            //解除锁的占用
+            for (; lockList.Count != 0;)
+            {
+                object o = lockList.First.Value;
+                lockList.RemoveFirst();
+                Monitor.Exit(o);
+            }
+            //解除锁的占用 End
 
             //Collide
             if (resultDistance < e.distance)
@@ -556,7 +575,7 @@ namespace THUnity2D
         }
         public void DeleteLayer()
         {
-            foreach (var gameObject in new HashSet<GameObject>(_gameObjectListByLayer[this._layerCount - 1]))
+            foreach (var gameObject in new HashSet<GameObject>(_gameObjectListByLayer[this._layerCount - 1].Keys))
             {
                 gameObject.Parent = null;
             }
@@ -594,7 +613,7 @@ namespace THUnity2D
             this._layerCollisionMatrix[layer2][true].Add(layer1);
             if (!_gameObjectListByLayer.ContainsKey(layer2))
                 return true;
-            foreach (var gameObject in new HashSet<GameObject>(_gameObjectListByLayer[layer2]))
+            foreach (var gameObject in new HashSet<GameObject>(_gameObjectListByLayer[layer2].Keys))
             {
                 gameObject.Layer = gameObject.Layer;
             }
@@ -618,7 +637,7 @@ namespace THUnity2D
             this._layerTriggerMatrix[layer2][true].Add(layer1);
             if (!_gameObjectListByLayer.ContainsKey(layer2))
                 return true;
-            foreach (var gameObject in new HashSet<GameObject>(_gameObjectListByLayer[layer2]))
+            foreach (var gameObject in new HashSet<GameObject>(_gameObjectListByLayer[layer2].Keys))
             {
                 gameObject.Layer = gameObject.Layer;
             }
@@ -634,27 +653,36 @@ namespace THUnity2D
             return true;
         }
 
-        protected Dictionary<int, HashSet<GameObject>> _gameObjectListByLayer = new Dictionary<int, HashSet<GameObject>> { { 0, new HashSet<GameObject>() } };
+        protected ConcurrentDictionary<int, ConcurrentDictionary<GameObject, byte>> _gameObjectListByLayer = new ConcurrentDictionary<int, ConcurrentDictionary<GameObject, byte>>();
         protected void AddToGameObjectListByLayer(GameObject gameObject)
         {
             if (!_gameObjectListByLayer.ContainsKey(gameObject.Layer))
-                _gameObjectListByLayer.Add(gameObject.Layer, new HashSet<GameObject>());
-            _gameObjectListByLayer[gameObject.Layer].Add(gameObject);
+                _gameObjectListByLayer.TryAdd(gameObject.Layer, new ConcurrentDictionary<GameObject, byte>());
+            _gameObjectListByLayer[gameObject.Layer].TryAdd(gameObject, 0);
         }
         protected void DeleteFromGameObjectListByLayer(GameObject gameObject)
         {
-            _gameObjectListByLayer[gameObject.Layer].Remove(gameObject);
+            byte temp = 0;
+            _gameObjectListByLayer[gameObject.Layer].TryRemove(gameObject, out temp);
             if (_gameObjectListByLayer[gameObject.Layer].Count <= 0)
-                _gameObjectListByLayer.Remove(gameObject.Layer);
+            {
+                ConcurrentDictionary<GameObject, byte> tmp;
+                _gameObjectListByLayer.TryRemove(gameObject.Layer, out tmp);
+            }
         }
         protected void OnChildrenLayerChange(GameObject childrenGameObject, LayerChangedEventArgs e)
         {
+            childrenGameObject._layer = e.previousLayer;
             DeleteFromGameObjectListByLayer(childrenGameObject);
+            Monitor.Enter(_grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].publicLock);
             _grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].DeleteGameObject(childrenGameObject);
+            Monitor.Exit(_grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].publicLock);
             childrenGameObject._layer = e.layer;
             childrenGameObject._position = CorrectPosition(childrenGameObject.Position, childrenGameObject.Width, childrenGameObject.Height, e.layer);
             AddToGameObjectListByLayer(childrenGameObject);
+            Monitor.Enter(_grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].publicLock);
             _grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].AddGameObject(childrenGameObject);
+            Monitor.Exit(_grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].publicLock);
             TryToTrigger(childrenGameObject);
         }
         //Layer

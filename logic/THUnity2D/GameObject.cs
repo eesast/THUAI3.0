@@ -370,6 +370,8 @@ namespace THUnity2D
         public event MoveHandler? OnMove;
         public delegate void MoveCompleteHandler(GameObject sender);
         public event MoveCompleteHandler? MoveComplete;
+        public delegate void MoveStartHandler(GameObject sender);
+        public event MoveStartHandler? MoveStart;
         protected DateTime lastMoveTime = DateTime.Now;
         public virtual void Move(MoveEventArgs e)
         {
@@ -379,6 +381,7 @@ namespace THUnity2D
             {
                 if ((DateTime.Now - lastMoveTime).TotalSeconds < 1 / _frameRate)
                     return;
+                MoveStart?.Invoke(this);
                 XYPosition previousPosition = _position;
                 _position = _position + new XYPosition(e.distance * Math.Cos(e.angle), e.distance * Math.Sin(e.angle));
                 Debug(this, "Move from " + previousPosition.ToString() + " angle : " + e.angle + " distance : " + e.distance + " aim : " + _position.ToString());
