@@ -16,13 +16,13 @@ namespace Logic.Server
 {
     class Player : Character
     {
-        public System.Threading.Timer MoveStopTimer;
-        public System.Threading.Timer SpeedBuffTimer;
-        public System.Threading.Timer StrengthBuffTimer;
+        protected System.Threading.Timer MoveStopTimer;
+        protected System.Threading.Timer SpeedBuffTimer;
+        protected System.Threading.Timer StrengthBuffTimer;
         public CommandType status = CommandType.Stop;
 
-        public bool _isStun = false;
-        public bool IsStun
+        protected bool _isStun = false;
+        protected bool IsStun
         {
             get { return _isStun; }
             set
@@ -34,7 +34,18 @@ namespace Logic.Server
                 }
             }
         }
-        public System.Threading.Timer StunTimer;
+        protected System.Threading.Timer StunTimer;
+
+        protected DishType Dish
+        {
+            get { return dish; }
+            set
+            {
+                dish = value;
+                lock (Program.MessageToClientLock)
+                    Program.MessageToClient.GameObjectMessageList[this.ID].DishType = (DishTypeMessage)dish;
+            }
+        }
 
         public Player(double x, double y) :
             base(x, y)
@@ -128,9 +139,7 @@ namespace Logic.Server
                         if ((block.blockType == BlockType.FoodPoint || block.blockType == BlockType.Cooker)
                             && block.dish != DishType.Empty)
                         {
-                            dish = block.GetDish(dish);
-                            lock (Program.MessageToClientLock)
-                                Program.MessageToClient.GameObjectMessageList[this.ID].DishType = (DishTypeMessage)dish;
+                            Dish = block.GetDish(dish);
                             Server.ServerDebug("Player : " + ID + " Get Dish " + dish.ToString());
                             return;
                         }
@@ -142,9 +151,7 @@ namespace Logic.Server
                 {
                     if (item is Dish)
                     {
-                        dish = ((Dish)item).GetDish(dish);
-                        lock (Program.MessageToClientLock)
-                            Program.MessageToClient.GameObjectMessageList[this.ID].DishType = (DishTypeMessage)dish;
+                        Dish = ((Dish)item).GetDish(dish);
                         Server.ServerDebug("Player : " + ID + " Get Dish " + dish.ToString());
                         return;
                     }
@@ -174,9 +181,7 @@ namespace Logic.Server
                 dishToThrow.Parent = WorldMap;
                 dishToThrow.Velocity = new Vector((double)(int)facingDirection * Math.PI / 4, 5);
                 dishToThrow.StopMovingTimer.Change(dueTime, 0);
-                dish = DishType.Empty;
-                lock (Program.MessageToClientLock)
-                    Program.MessageToClient.GameObjectMessageList[this.ID].DishType = (DishTypeMessage)dish;
+                Dish = DishType.Empty;
             }
             else if ((int)tool != (int)ToolType.Empty && ThrowDish == 0)
             {
@@ -209,7 +214,7 @@ namespace Logic.Server
                         {
                             int temp = block.HandIn(dish);
                             if (temp > 0)
-                            { score += temp; dish = DishType.Empty; }
+                            { score += temp; Dish = DishType.Empty; }
                         }
                         break;
                     }

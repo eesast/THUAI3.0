@@ -18,7 +18,25 @@ namespace THUnity2D
         private static Int64 currentMaxID = 0;
         public readonly Int64 ID;
 
-        protected GameObject? _parent;
+
+        //Parent
+        protected delegate void ParentDeleteHandler();
+        protected event ParentDeleteHandler? OnParentDelete;
+        private void DeleteParent()
+        {
+            this._parent.OnChildrenDelete(this);
+            this._parent = null;
+            OnParentDelete?.Invoke();
+        }
+        protected delegate void ParentAddHandler();
+        protected event ParentAddHandler? OnParentAdd;
+        private void AddParent(GameObject parent)
+        {
+            this._parent = parent;
+            this._parent.OnChildrenAdded(this);
+            OnParentAdd?.Invoke();
+        }
+        private GameObject? _parent;
         public GameObject? Parent
         {
             get { lock (privateLock) { return _parent; } }
@@ -29,25 +47,23 @@ namespace THUnity2D
                     if (value != null && this._parent != null)
                     {
                         Debug(this, "Reset Parent to : " + value.ID);
-                        this._parent.OnChildrenDelete(this);
-                        this._parent = value;
-                        this._parent.OnChildrenAdded(this);
+                        DeleteParent();
+                        AddParent(value);
                     }
                     else if (value != null && this._parent == null)
                     {
                         Debug(this, "Set new Parent : " + value.ID);
-                        this._parent = value;
-                        this._parent.OnChildrenAdded(this);
+                        AddParent(value);
                     }
                     else if (value == null && this._parent != null)
                     {
                         Debug(this, "Delete Parent : " + this._parent.ID);
-                        this._parent.OnChildrenDelete(this);
-                        this._parent = null;
+                        DeleteParent();
                     }
                 }
             }
         }
+        //Parent End
 
         //Children
         protected HashSet<GameObject> _childrenGameObjectList = new HashSet<GameObject>();

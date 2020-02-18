@@ -12,6 +12,7 @@ using static Logic.Constant.MapInfo;
 using THUnity2D;
 using static THUnity2D.Tools;
 using GameForm;
+using System.Collections.Generic;
 namespace Client
 {
     class Player : Character
@@ -73,6 +74,18 @@ namespace Client
                             break;
                     }
                     break;
+                case ObjTypeMessage.Dish:
+                    Program.form.playerLabels[id_t].Location =
+                        new System.Drawing.Point(
+                            (int)((gameObjectMessage.Position.X - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL),
+                            Convert.ToInt32((WorldMap.Height - gameObjectMessage.Position.Y - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL));
+                    break;
+                case ObjTypeMessage.Tool:
+                    Program.form.playerLabels[id_t].Location =
+                        new System.Drawing.Point(
+                            (int)((gameObjectMessage.Position.X - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL),
+                            Convert.ToInt32((WorldMap.Height - gameObjectMessage.Position.Y - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL));
+                    break;
             }
         }
         public void initializeFormLabelMethod(Int64 id_t, GameObjectMessage gameObjectMessage)
@@ -89,7 +102,6 @@ namespace Client
                         case BlockTypeMessage.FoodPoint:
                             Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.Purple;
                             Program.form.playerLabels[id_t].Text = gameObjectMessage.DishType.ToString();
-                            Console.WriteLine("New FoodPoint Label");
                             break;
                     }
                     break;
@@ -127,7 +139,7 @@ namespace Client
             }
         }
 
-        public void moveFormLabel(Int64 id_t, GameObjectMessage gameObjectMessage)
+        public void moveFormLabel(Int64 id_t, GameObjectMessage gameObjectMessage, ref Dictionary<bool, HashSet<Int64>> recordDic)
         {
             if (!Program.form.playerLabels.ContainsKey(id_t))
             {
@@ -140,7 +152,16 @@ namespace Client
                 {
                     initializeFormLabelMethod(id_t, gameObjectMessage);
                 }
+                recordDic[true].Add(id_t);
+                Console.WriteLine("New Form : " + id_t + "  (" + gameObjectMessage.Position.X + "," + gameObjectMessage.Position.Y + ")  " + gameObjectMessage.ObjType);
             }
+            else
+            {
+                recordDic[true].Add(id_t);
+                recordDic[false].Remove(id_t);
+                //Console.WriteLine("Change Form");
+            }
+
             if (Program.form.playerLabels[id_t].InvokeRequired)
             {
                 Program.form.playerLabels[id_t].Invoke(new Action<Int64, GameObjectMessage>(RefreshFormLabelMethod), id_t, gameObjectMessage);
@@ -225,7 +246,12 @@ namespace Client
                     this.Position = new XYPosition(gameObject.Value.Position.X, gameObject.Value.Position.Y);
                     this.facingDirection = (Tools.Direction)(int)gameObject.Value.Direction;
                     Console.WriteLine("\nThis Player :\n" + "\t" + id.ToString() + "\n\tposition: " + Position.ToString());
-                    moveFormLabel(this.id, gameObject.Value);
+                    Dictionary<bool, HashSet<long>> tempDic = new Dictionary<bool, HashSet<long>>
+                    {
+                        { false, new HashSet<long>(Program.form.playerLabels.Keys) },
+                        { true, new HashSet<long>() }
+                    };
+                    moveFormLabel(this.id, gameObject.Value, ref tempDic);
                     return;
                 }
                 messageToServer.ID = this.id;
@@ -234,11 +260,39 @@ namespace Client
             this.Position = new XYPosition(msg.GameObjectMessageList[this.id].Position.X, msg.GameObjectMessageList[this.id].Position.Y);
             this.facingDirection = (Tools.Direction)msg.GameObjectMessageList[this.id].Direction;
 
+            ChangeAllLabels(msg);
+        }
+
+        Dictionary<bool, HashSet<Int64>> recordDic = new Dictionary<bool, HashSet<long>>
+                {
+                    { false, new HashSet<long>(Program.form.playerLabels.Keys) },
+                    { true, new HashSet<long>() }
+                };
+        public void ChangeAllLabels(MessageToClient msg)
+        {
+            recordDic[false] = new HashSet<long>(Program.form.playerLabels.Keys);
+            recordDic[true].Clear();
             foreach (var gameObject in msg.GameObjectMessageList)
             {
-                //Console.WriteLine("\nPlayer " + gameObject.Key.ToString() + "  position: " + Position.ToString());
-                moveFormLabel(gameObject.Key, gameObject.Value);
+                moveFormLabel(gameObject.Key, gameObject.Value, ref recordDic);
             }
+            foreach (var number in recordDic[false])
+            {
+                Console.WriteLine("Delete Form : " + number);
+                if (Program.form.InvokeRequired)
+                {
+                    Program.form.Invoke(new Action(() =>
+                    {
+                        Program.form.Controls.Remove(Program.form.playerLabels[number]);
+                    }));
+                }
+                else
+                {
+                    Program.form.Controls.Remove(Program.form.playerLabels[number]);
+                }
+                Program.form.playerLabels.Remove(number);
+            }
+
         }
     }
 

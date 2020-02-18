@@ -29,6 +29,7 @@ namespace Logic.Server
                 return _stopMovingTimer;
             }
         }
+
         public Dish(double x_t, double y_t, DishType type_t) : base(x_t, y_t)
         {
             Server.ServerDebug("Create Dish : " + type_t);
@@ -56,8 +57,18 @@ namespace Logic.Server
                         Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.X = thisGameObject.Position.x;
                         Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.Y = thisGameObject.Position.y;
                     }
+                    //Server.ServerDebug(this.Position.ToString());
+                });
+            this.OnParentDelete += new ParentDeleteHandler(
+                () =>
+                {
+                    lock (Program.MessageToClientLock)
+                    {
+                        Program.MessageToClient.GameObjectMessageList.Remove(ID);
+                    }
                 });
         }
+
         public override DishType GetDish(DishType t)
         {
             DishType temp = dish;

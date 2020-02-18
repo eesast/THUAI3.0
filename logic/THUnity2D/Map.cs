@@ -35,8 +35,6 @@ namespace THUnity2D
 
         protected override void OnChildrenAdded(GameObject childrenObject)
         {
-            if (childrenObject.Layer >= _layerCount)
-                childrenObject._layer = 0;
             childrenObject._position = CorrectPosition(childrenObject.Position, childrenObject.Width, childrenObject.Height, childrenObject.Layer);
             base.OnChildrenAdded(childrenObject);
             childrenObject.OnLayerChange += this.OnChildrenLayerChange;
@@ -104,11 +102,11 @@ namespace THUnity2D
                 DebugWithoutID(this, "false");
                 return false;
             }
-            if (objectLayer >= _layerCount)
-            {
-                DebugWithoutID(this, "false");
-                return true;
-            }
+            //if (objectLayer >= _layerCount)
+            //{
+            //    DebugWithoutID(this, "false");
+            //    return true;
+            //}
             for (int x = (int)position.x - 1; x <= (int)position.x + 1; x++)
                 for (int y = (int)position.y - 1; y <= (int)position.y + 1; y++)
                 {
@@ -589,8 +587,6 @@ namespace THUnity2D
         };
         public bool SetLayerCollisionTrue(int layer1, int layer2)
         {
-            if (layer1 >= this._layerCount || layer2 >= this._layerCount)
-                return false;
             Debug(this, "Enable " + layer1 + " and " + layer2 + " collision");
             this._layerCollisionMatrix[layer1][false].Remove(layer2);
             this._layerCollisionMatrix[layer1][true].Add(layer2);
@@ -606,8 +602,6 @@ namespace THUnity2D
         }
         public bool SetLayerCollisionFalse(int layer1, int layer2)
         {
-            if (layer1 >= this._layerCount || layer2 >= this._layerCount)
-                return false;
             Debug(this, "Disable " + layer1 + " and " + layer2 + " collision");
             this._layerCollisionMatrix[layer1][true].Remove(layer2);
             this._layerCollisionMatrix[layer1][false].Add(layer2);
@@ -617,8 +611,6 @@ namespace THUnity2D
         }
         public bool SetLayerTriggerTrue(int layer1, int layer2)
         {
-            if (layer1 >= this._layerCount || layer2 >= this._layerCount)
-                return false;
             Debug(this, "Enable " + layer1 + " and " + layer2 + " trigger");
             this._layerTriggerMatrix[layer1][false].Remove(layer2);
             this._layerTriggerMatrix[layer1][true].Add(layer2);
@@ -634,8 +626,6 @@ namespace THUnity2D
         }
         public bool SetLayerTriggerFalse(int layer1, int layer2)
         {
-            if (layer1 >= this._layerCount || layer2 >= this._layerCount)
-                return false;
             Debug(this, "Disable " + layer1 + " and " + layer2 + " collision");
             this._layerTriggerMatrix[layer1][true].Remove(layer2);
             this._layerTriggerMatrix[layer1][false].Add(layer2);
@@ -653,19 +643,12 @@ namespace THUnity2D
         }
         protected void DeleteFromGameObjectListByLayer(GameObject gameObject)
         {
-            if (!_gameObjectListByLayer.ContainsKey(gameObject.Layer))
-                return;
             _gameObjectListByLayer[gameObject.Layer].Remove(gameObject);
             if (_gameObjectListByLayer[gameObject.Layer].Count <= 0)
                 _gameObjectListByLayer.Remove(gameObject.Layer);
         }
         protected void OnChildrenLayerChange(GameObject childrenGameObject, LayerChangedEventArgs e)
         {
-            if (e.layer >= _layerCount)
-            {
-                childrenGameObject._layer = e.previousLayer;
-                return;
-            }
             DeleteFromGameObjectListByLayer(childrenGameObject);
             _grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].DeleteGameObject(childrenGameObject);
             childrenGameObject._layer = e.layer;
@@ -673,7 +656,6 @@ namespace THUnity2D
             AddToGameObjectListByLayer(childrenGameObject);
             _grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].AddGameObject(childrenGameObject);
             TryToTrigger(childrenGameObject);
-            return;
         }
         //Layer
 
