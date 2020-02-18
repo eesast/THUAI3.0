@@ -10,7 +10,7 @@ namespace Logic.Server
     public class Obj : GameObject
     {
         public ObjType type;
-        public DishType dish;
+        public DishType dish=DishType.Banana;
         public ToolType tool;
         public BlockType blockType;
 

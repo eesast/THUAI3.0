@@ -86,7 +86,7 @@ namespace Logic.Server
                     Put(5, 0);
                     break;
                 case CommandTypeMessage.Use:
-                    Use(1, 0);
+                    Use(0, 0);
                     break;
                 default:
                     break;
@@ -125,7 +125,6 @@ namespace Logic.Server
                         if (item is Dish || item is Tool)
                             return true;
                     }
-                    //等地图做完写
                     return false;
                 }
                 XYPosition xyPosition1 = Position + 2 * THUnity2D.Tools.EightCornerVector[facingDirection];
@@ -177,14 +176,13 @@ namespace Logic.Server
             {
                 GetItem(xypos);
             }
+            for (int i = 0; i < 30; i++) Console.WriteLine(Convert.ToString(dish));
             status = CommandType.Stop;
         }
         public override void Put(int distance, int ThrowDish)
         {
             if (distance > MaxThrowDistance) distance = MaxThrowDistance;
             int dueTime = 200 * distance;
-            //XYPosition aim = Position;
-            //XYPosition d_xyPos = THUnity2D.Tools.EightUnitVector[facingDirection];
 
             if ((int)dish != (int)DishType.Empty && ThrowDish != 0)
             {
@@ -194,7 +192,6 @@ namespace Logic.Server
                 dishToThrow.Velocity = new Vector((double)(int)facingDirection * Math.PI / 4, 5);
                 dishToThrow.StopMovingTimer.Change(dueTime, 0);
                 dish = DishType.Empty;
-
             }
             else if ((int)tool != (int)ToolType.Empty && ThrowDish == 0)
             {
@@ -217,7 +214,7 @@ namespace Logic.Server
                 {
                     foreach (Block block in WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetType(typeof(Block)))
                     {
-                        if ((int)block.type == (int)BlockType.Cooker)
+                        if (block.blockType == BlockType.Cooker)
                         {
                             block.UseCooker();
                         }
@@ -225,7 +222,8 @@ namespace Logic.Server
                         {
                             int temp = block.HandIn(dish);
                             if (temp > 0)
-                            { score += temp; dish = DishType.Empty; }
+                            { score += temp;for (int i = 0; i < 30; i++) Console.WriteLine(score);
+                            dish = DishType.Empty; }
                         }
                         break;
                     }

@@ -41,7 +41,9 @@ namespace Logic.Server
             else if (blockType == BlockType.TaskPoint)
             {
                 Task = new List<DishType>();
-                new System.Threading.Timer(TaskProduce, null, 1000, Convert.ToInt32(ConfigurationManager.AppSettings["TaskRefreshTime"]));
+                Task.Add(DishType.Apple);
+                Task.Add(DishType.Banana);
+                //new System.Threading.Timer(TaskProduce, null, 1000, Convert.ToInt32(ConfigurationManager.AppSettings["TaskRefreshTime"]));
                 lock (Program.MessageToClientLock)
                 {
                     Program.MessageToClient.GameObjectMessageList.Add(
@@ -60,9 +62,9 @@ namespace Logic.Server
         {
             DishType temp = dish;
             dish = DishType.Empty;
-            lock (Program.MessageToClientLock)
-                Program.MessageToClient.GameObjectMessageList[this.ID].DishType = (DishTypeMessage)dish;
-            RefreshTimer.Change(RefreshTime, 0);
+            //lock (Program.MessageToClientLock)
+            //    Program.MessageToClient.GameObjectMessageList[this.ID].DishType = (DishTypeMessage)dish;
+            if (this.blockType == BlockType.FoodPoint) RefreshTimer.Change(RefreshTime, 0);
             return temp;
         }
         protected System.Threading.Timer _refreshTimer;
@@ -70,7 +72,9 @@ namespace Logic.Server
         {
             get
             {
-                _refreshTimer = _refreshTimer ?? new System.Threading.Timer(Refresh);
+                if (this.blockType == BlockType.FoodPoint) _refreshTimer = _refreshTimer ?? new System.Threading.Timer(Refresh);
+                else if(this.blockType == BlockType.TaskPoint) _refreshTimer = _refreshTimer ?? 
+                        new System.Threading.Timer(TaskProduce, null, 1000, Convert.ToInt32(ConfigurationManager.AppSettings["TaskRefreshTime"]));
                 return _refreshTimer;
             }
         }
@@ -90,18 +94,22 @@ namespace Logic.Server
             foreach (var GameObject in WorldMap.Grid[(int)Position.x, (int)Position.y].GetLayer((int)MapLayer.ItemLayer))
             {
                 if (GameObject is Dish)
-                    dishTypeSet.Add(((Dish)GameObject).dish);
+                { dishTypeSet.Add(((Dish)GameObject).dish);GameObject.Parent = null; }
             }
 
             foreach (var dishType in dishTypeSet)
             {
                 Material += dishType.ToString() + " ";
+                
             }
-
             string result = ConfigurationManager.AppSettings[Material];
             System.Threading.Timer timer = new System.Threading.Timer(Cook, result, Convert.ToInt32(ConfigurationManager.AppSettings[result + "Time"]), 0);
             DishType GetResult(string s)
             {
+                for (int i = 0; i < (int)DishType.Size2; i++)
+                {
+                    if ((Convert.ToString((DishType)i)) == s) return (DishType)i;
+                }
                 return DishType.DarkDish;
             }
             void Cook(object s)
@@ -115,8 +123,8 @@ namespace Logic.Server
         {
             DishType temp = DishType.Apple;//(Dish.Type)new Random().Next();
             Task.Add(temp);
-            new System.Threading.Timer(remove, temp,
-                Convert.ToInt32(ConfigurationManager.AppSettings["TaskTimeLimit"]), 0);
+            //new System.Threading.Timer(remove, temp,
+                //Convert.ToInt32(ConfigurationManager.AppSettings["TaskTimeLimit"]), 0);
 
             void remove(object task)
             {

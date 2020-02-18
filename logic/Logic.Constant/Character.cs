@@ -19,7 +19,7 @@ namespace Logic.Constant
         //public int SightRange = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["PlayerInitSightRange"]);
         public TALENT talent;
         public int score = 0;
-        public DishType dish = DishType.Empty;
+        public DishType dish = DishType.Apple;
         public ToolType tool = ToolType.Trap;
         //public Tuple<int, int> id = new Tuple<int, int>(-1, -1);  //first:Agent, second:Client
         public Character(double x, double y) : base(new XYPosition(x, y))

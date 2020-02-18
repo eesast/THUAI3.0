@@ -56,7 +56,10 @@ namespace Logic.Server
                     }
                 }
             }
-            new Tool(1.5, 1.5, ToolType.SpeedBuff).Parent = WorldMap;
+            new Block(1.5, 1.5, BlockType.Cooker).Parent = WorldMap;
+            new Block(1.5, 2.5, BlockType.TaskPoint).Parent = WorldMap;
+            new Dish(1.5, 1.5, DishType.Apple).Parent = WorldMap;
+            new Dish(1.5, 1.5, DishType.Potato).Parent = WorldMap;
 
         }
 
