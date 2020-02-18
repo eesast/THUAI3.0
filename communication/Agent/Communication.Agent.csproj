@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFrameworks>netcoreapp3.0;netstandard20</TargetFrameworks>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>

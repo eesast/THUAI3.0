@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Logic.Constant;
-using static THUnity2D._Map;
+using static Logic.Constant.MapInfo;
 
 namespace Logic.Server
 {

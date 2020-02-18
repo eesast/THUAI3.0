@@ -19,14 +19,15 @@ namespace GameForm
         public static extern Boolean FreeConsole();
 
 
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
         [STAThread]
         static void Main()
         {
+            Communication.Proto.Constants.Debug = new Communication.Proto.Constants.DebugFunc((str) => { });
+            THUnity2D.GameObject.Debug = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
+            THUnity2D.GameObject.DebugWithoutEndline = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
+            THUnity2D.GameObject.DebugWithoutID = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
+            THUnity2D.GameObject.DebugWithoutIDEndline = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
             AllocConsole();
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             form = new Form1();

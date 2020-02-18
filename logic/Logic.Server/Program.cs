@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Communication.Proto;
 using Logic.Constant;
-using static THUnity2D._Map;
+using static Logic.Constant.MapInfo;
 
 namespace Logic.Server
 {
@@ -31,28 +31,21 @@ namespace Logic.Server
         public static readonly object MessageToClientLock = new object();
 
 
-        // Start is called before the first frame update
         public static void InitializeMap()
         {
             for (uint x = 0; x < WorldMap.Width; x++)
             {
                 for (uint y = 0; y < WorldMap.Height; y++)
                 {
-                    if (map[x, y] == 6)
+                    switch (map[x, y])
                     {
-                        new Block(x + 0.5, y + 0.5, BlockType.FoodPoint).Parent = WorldMap;
-                    }
-                    else if (map[x, y] == 5)
-                    {
-                        new Block(x + 0.5, y + 0.5, BlockType.Wall).Parent = WorldMap;
-                    }
-                    else if (map[x, y] == 0)
-                    {
-                        //new Trigger(x + 0.5, y + 0.5, TriggerType.Trap, -1).Parent = WorldMap;
-                    }
-                    else
-                    {
-                        new Block(x + 0.5, y + 0.5, BlockType.Wall).Parent = WorldMap;
+                        case 0: break;
+                        case 1: new Block(x + 0.5, y + 0.5, BlockType.TaskPoint).Parent = WorldMap; break;
+                        case 2: new Block(x + 0.5, y + 0.5, BlockType.FoodPoint).Parent = WorldMap; break;
+                        case 3: new Block(x + 0.5, y + 0.5, BlockType.Cooker).Parent = WorldMap; break;
+                        case 4: new Block(x + 0.5, y + 0.5, BlockType.RubbishBin).Parent = WorldMap; break;
+                        case 5: new Block(x + 0.5, y + 0.5, BlockType.Wall).Parent = WorldMap; break;
+                        case 6: new Block(x + 0.5, y + 0.5, BlockType.Table).Parent = WorldMap; break;
                     }
                 }
             }
@@ -66,6 +59,11 @@ namespace Logic.Server
         private static Server server;
         public static void Main(string[] args)
         {
+            Communication.Proto.Constants.Debug = new Constants.DebugFunc((str) => { });
+            THUnity2D.GameObject.Debug = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
+            THUnity2D.GameObject.DebugWithoutEndline = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
+            THUnity2D.GameObject.DebugWithoutID = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
+            THUnity2D.GameObject.DebugWithoutIDEndline = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
             InitializeMap();
             server = new Server();
         }

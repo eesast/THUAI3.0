@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using static THUnity2D.Tools;
-using static THUnity2D._Map;
+using static Logic.Constant.MapInfo;
 using Logic.Constant;
 using Communication.Proto;
 
@@ -24,13 +24,15 @@ namespace Logic.Server
                         (o) =>
                         {
                             Velocity = new THUnity2D.Vector(Velocity.angle, 0);
-                            this.Layer = (int)MapLayer.ItemLayer;
+                            Layer = (int)MapLayer.ItemLayer;
                         });
                 return _stopMovingTimer;
             }
         }
+
         public Dish(double x_t, double y_t, DishType type_t) : base(x_t, y_t)
         {
+            Server.ServerDebug("Create Dish : " + type_t);
             Layer = (int)MapLayer.ItemLayer;
             Movable = true;
             Bouncable = true;
@@ -45,6 +47,7 @@ namespace Logic.Server
                         DishType = (DishTypeMessage)dish,
                         Position = new XYPositionMessage { X = Position.x, Y = Position.y }
                     });
+                Server.ServerDebug("Add Dish to Message list : " + type_t);
             }
             this.MoveComplete += new MoveCompleteHandler(
                 (thisGameObject) =>
@@ -53,10 +56,19 @@ namespace Logic.Server
                     {
                         Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.X = thisGameObject.Position.x;
                         Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.Y = thisGameObject.Position.y;
-                        Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Direction = (DirectionMessage)((Player)thisGameObject).facingDirection;
+                    }
+                    //Server.ServerDebug(this.Position.ToString());
+                });
+            this.OnParentDelete += new ParentDeleteHandler(
+                () =>
+                {
+                    lock (Program.MessageToClientLock)
+                    {
+                        Program.MessageToClient.GameObjectMessageList.Remove(ID);
                     }
                 });
         }
+
         public override DishType GetDish(DishType t)
         {
             DishType temp = dish;

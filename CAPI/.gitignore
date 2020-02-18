@@ -1,6 +1,14 @@
 ## Yours
 
-
+*.dll
+*.lib
+/include/*
+/include(linux)/*
+/lib/*
+/lib(linux)/*
+/proto/*
+*.lib
+!.gitkeep
 
 ## VsCode
 .vscode/

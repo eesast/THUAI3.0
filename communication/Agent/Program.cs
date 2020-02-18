@@ -35,8 +35,8 @@ namespace Communication.Agent
             };
             server.InternalQuit += delegate ()
             {
-                 client.Quit();
-                 server.Resume();
+                client.Quit();
+                server.Resume();
             };
             server.OnReceive += delegate (Message message)
             {
@@ -51,15 +51,15 @@ namespace Communication.Agent
                 }
             };
 
-            client.OnDisconnect+= delegate ()
-            {
-                if(server.Count==0)
-                { 
-                    server.Stop(); //主动Disconnect意味着游戏结束，关闭Agent。
-                    Environment.Exit(0);               
-                }
+            client.OnDisconnect += delegate ()
+             {
+                 if (server.Count == 0)
+                 {
+                     server.Stop(); //主动Disconnect意味着游戏结束，关闭Agent。
+                    Environment.Exit(0);
+                 }
 
-            };
+             };
 
             server.OnAccept += delegate ()
             {
@@ -72,6 +72,8 @@ namespace Communication.Agent
             };
             server.Start();
 
+            Communication.Proto.Constants.Debug = new Constants.DebugFunc((str) => { });//注释掉这一行恢复Debug输出
+
             Thread.Sleep(Int32.MaxValue);
         }
 
@@ -79,7 +81,7 @@ namespace Communication.Agent
         {
 
         }
-            
+
     }
 
 }
