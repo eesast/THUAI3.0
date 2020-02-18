@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Logic.Constant;
 using static Logic.Constant.MapInfo;
+using Communication.Proto;
 
 namespace Logic.Server
 {
@@ -18,7 +19,7 @@ namespace Logic.Server
                         (o) =>
                         {
                             Velocity = new THUnity2D.Vector(Velocity.angle, 0);
-                            this.Layer = (int)MapLayer.ItemLayer;
+                            Layer = (int)MapLayer.ItemLayer;
                         });
                 return _stopMovingTimer;
             }
@@ -26,16 +27,53 @@ namespace Logic.Server
 
         public Tool(double x_t, double y_t, ToolType type_t) : base(x_t, y_t)
         {
+            Server.ServerDebug("Create Tool : " + type_t);
             Layer = (int)MapLayer.ItemLayer;
             Movable = true;
             Bouncable = true;
-            tool = type_t;
+            _tool = type_t;
+
+            lock (Program.MessageToClientLock)
+            {
+                Program.MessageToClient.GameObjectMessageList.Add(
+                    this.ID,
+                    new GameObjectMessage
+                    {
+                        ObjType = ObjTypeMessage.Tool,
+                        ToolType = (ToolTypeMessage)Tool,
+                        Position = new XYPositionMessage { X = Position.x, Y = Position.y }
+                    });
+                Server.ServerDebug("Add Tool to Message list : " + type_t);
+            }
+            this.MoveComplete += new MoveCompleteHandler(
+                (thisGameObject) =>
+                {
+                    lock (Program.MessageToClientLock)
+                    {
+                        Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.X = thisGameObject.Position.x;
+                        Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.Y = thisGameObject.Position.y;
+                    }
+                    //Server.ServerDebug(this.Position.ToString());
+                });
+            this.OnParentDelete += new ParentDeleteHandler(
+                () =>
+                {
+                    lock (Program.MessageToClientLock)
+                    {
+                        Program.MessageToClient.GameObjectMessageList.Remove(ID);
+                        Server.ServerDebug("Delete Tool From Message List");
+                    }
+                });
+
         }
         public override ToolType GetTool(ToolType t)
         {
-            ToolType temp = tool;
+            ToolType temp = Tool;
             if (t == ToolType.Empty) this.Parent = null;
-            else tool = t;
+            else
+            {
+                Tool = t;
+            }
             return temp;
         }
 

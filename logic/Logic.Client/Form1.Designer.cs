@@ -75,8 +75,9 @@ namespace GameForm
             int i = 0;
             foreach (var label in ControlLabels)
             {
-                label.Value.BackColor = System.Drawing.Color.DarkCyan;
+                label.Value.BackColor = System.Drawing.Color.Black;
                 label.Value.Text = label.Key;
+                label.Value.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
                 label.Value.ForeColor = System.Drawing.Color.White;
                 label.Value.Location = new System.Drawing.Point(FORM_WIDTH, i * CONTROL_LABELS_HEIGHT);
                 label.Value.Size = new System.Drawing.Size(CONTROL_LABELS_WIDTH, CONTROL_LABELS_HEIGHT);

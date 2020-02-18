@@ -49,11 +49,7 @@ namespace Logic.Server
                     }
                 }
             }
-            new Block(1.5, 1.5, BlockType.Cooker).Parent = WorldMap;
-            new Block(1.5, 2.5, BlockType.TaskPoint).Parent = WorldMap;
-            new Dish(1.5, 1.5, DishType.Apple).Parent = WorldMap;
-            new Dish(1.5, 1.5, DishType.Potato).Parent = WorldMap;
-
+            //new Tool(1.5, 1.5, ToolType.SpeedBuff).Parent = WorldMap;
         }
 
         private static Server server;
@@ -65,7 +61,25 @@ namespace Logic.Server
             THUnity2D.GameObject.DebugWithoutID = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
             THUnity2D.GameObject.DebugWithoutIDEndline = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
             InitializeMap();
-            server = new Server();
+
+            ushort serverPort = 0, playerCount = 0, agentCount = 0;
+            uint maxGameTimeSecond = 1000;
+            try
+            {
+                serverPort = ushort.Parse(args[0]);
+                playerCount = ushort.Parse(args[1]);
+                agentCount = ushort.Parse(args[2]);
+                maxGameTimeSecond = uint.Parse(args[3]);
+            }
+            catch (FormatException)
+            {
+                Server.ServerDebug("Format Error");
+            }
+            catch (IndexOutOfRangeException)
+            {
+                Server.ServerDebug("Arguments Number Error");
+            }
+            server = new Server(serverPort, playerCount, agentCount, maxGameTimeSecond);
         }
     }
 }

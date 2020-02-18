@@ -6,8 +6,8 @@ namespace Communication.Proto
     public static class Constants
     {
         public delegate void DebugFunc(string DebugMessage);
-        public static readonly int PlayerCount = 1;
-        public static readonly int AgentCount = 1;
+        public static ushort PlayerCount = 1;
+        public static ushort AgentCount = 1;
         public static ushort ServerPort = 10086;
         public static readonly ushort AgentPort = 8887;
         public static readonly int MaxMessage = 3;

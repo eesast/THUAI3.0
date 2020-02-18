@@ -59,18 +59,22 @@ namespace Client
                         ChangeControlLabelText("Dish", gameObjectMessage.DishType.ToString());
                     else
                         ChangeControlLabelText("Dish", "");
+                    if (gameObjectMessage.ToolType != ToolTypeMessage.ToolEmpty
+                        && gameObjectMessage.ToolType != ToolTypeMessage.ToolTypeSize)
+                        ChangeControlLabelText("Tool", gameObjectMessage.ToolType.ToString());
+                    else
+                        ChangeControlLabelText("Tool", "");
                     break;
                 case ObjTypeMessage.Block:
                     switch (gameObjectMessage.BlockType)
                     {
-                        case BlockTypeMessage.Wall:
-                            Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.White;
-                            break;
                         case BlockTypeMessage.FoodPoint:
                             if (gameObjectMessage.DishType == DishTypeMessage.DishEmpty)
                                 Program.form.playerLabels[id_t].Text = "";
                             else
                                 Program.form.playerLabels[id_t].Text = gameObjectMessage.DishType.ToString();
+                            break;
+                        case BlockTypeMessage.Cooker:
                             break;
                     }
                     break;
@@ -85,6 +89,8 @@ namespace Client
                         new System.Drawing.Point(
                             (int)((gameObjectMessage.Position.X - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL),
                             Convert.ToInt32((WorldMap.Height - gameObjectMessage.Position.Y - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL));
+                    break;
+                case ObjTypeMessage.Trigger:
                     break;
             }
         }
@@ -103,6 +109,9 @@ namespace Client
                             Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.Purple;
                             Program.form.playerLabels[id_t].Text = gameObjectMessage.DishType.ToString();
                             break;
+                        case BlockTypeMessage.Cooker:
+                            Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.SandyBrown;
+                            break;
                     }
                     break;
                 case ObjTypeMessage.Dish:
@@ -112,6 +121,10 @@ namespace Client
                 case ObjTypeMessage.Tool:
                     Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.LightCyan;
                     Program.form.playerLabels[id_t].Text = gameObjectMessage.ToolType.ToString();
+                    break;
+                case ObjTypeMessage.Trigger:
+                    Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.DarkBlue;
+                    Program.form.playerLabels[id_t].Text = gameObjectMessage.TriggerType.ToString();
                     break;
             }
             Program.form.playerLabels[id_t].TabIndex = 1;
@@ -152,12 +165,12 @@ namespace Client
                 {
                     initializeFormLabelMethod(id_t, gameObjectMessage);
                 }
-                recordDic[true].Add(id_t);
+                //recordDic[true].Add(id_t);
                 Console.WriteLine("New Form : " + id_t + "  (" + gameObjectMessage.Position.X + "," + gameObjectMessage.Position.Y + ")  " + gameObjectMessage.ObjType);
             }
             else
             {
-                recordDic[true].Add(id_t);
+                //recordDic[true].Add(id_t);
                 recordDic[false].Remove(id_t);
                 //Console.WriteLine("Change Form");
             }
@@ -203,7 +216,8 @@ namespace Client
                     case 'c': Move(Direction.RightDown); break;
                     case 'f': Pick(); break;
                     case 'u': Use(1, 0); break;
-                    case 't': Put(1, 0); break;
+                    case 'r': Put(5, true); break;
+                    case 't': Put(5, false); break;
                 }
                 lastSendTime = DateTime.Now;
             }
@@ -211,17 +225,37 @@ namespace Client
         public override void Move(Direction direction_t, int duration = 1000)
         {
             messageToServer.CommandType = CommandTypeMessage.Move;
+
+            //这里必须做值检查，因为不知道用户会输入什么样的值
+            if (direction_t < 0)
+                direction_t = (Direction)0;
+            else if (direction_t >= Direction.Size)
+                direction_t = Direction.Size;
             messageToServer.MoveDirection = (DirectionMessage)direction_t;
+
+            if (duration < 0)
+                duration = 0;
+            else if (duration > 10000)
+                duration = 10000;
             messageToServer.MoveDuration = duration;
+
             ClientCommunication.SendMessage(messageToServer);
         }
-        public override void Put(int distance, int ThrowDish)
+        public override void Put(int distance, bool isThrowDish)
         {
+            if (distance < 0)
+                distance = 0;
+            else if (distance > 20)
+                distance = 20;
+            messageToServer.ThrowDistance = distance;
+            messageToServer.IsThrowDish = isThrowDish;
+
             messageToServer.CommandType = CommandTypeMessage.Put;
             ClientCommunication.SendMessage(messageToServer);
         }
         public override void Use(int type, int parameter)
         {
+
             messageToServer.CommandType = CommandTypeMessage.Use;
             ClientCommunication.SendMessage(messageToServer);
         }
@@ -271,7 +305,7 @@ namespace Client
         public void ChangeAllLabels(MessageToClient msg)
         {
             recordDic[false] = new HashSet<long>(Program.form.playerLabels.Keys);
-            recordDic[true].Clear();
+            //recordDic[true].Clear();
             foreach (var gameObject in msg.GameObjectMessageList)
             {
                 moveFormLabel(gameObject.Key, gameObject.Value, ref recordDic);
