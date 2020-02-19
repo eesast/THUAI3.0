@@ -22,8 +22,15 @@ namespace Communication.Server
         {
             Task.Run(() =>
             {
-                using (var client = new HttpClient())
-                    client.PostAsync(url, new StringContent(data));
+                try
+                {
+                    using (var client = new HttpClient())
+                        client.PostAsync(url, new StringContent(data));
+                }
+                catch (Exception e)
+                {
+                    Constants.Debug(e.ToString());
+                }
             });
         }
 
