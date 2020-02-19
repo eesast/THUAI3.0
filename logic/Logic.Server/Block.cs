@@ -17,14 +17,16 @@ namespace Logic.Server
         public Block(double x_t, double y_t, BlockType type_t) : base(x_t, y_t)
         {
             type = ObjType.Block;
-            Layer = (int)MapLayer.BlockLayer;
-            Movable = false;
             blockType = type_t;
+            if (blockType == BlockType.Cooker || blockType == BlockType.Table || blockType == BlockType.RubbishBin) Layer = (int)MapLayer.BlockLayer;
+            else Layer = (int)MapLayer.ItemResistBlockLayer;
+            Movable = false;
+            
             switch (blockType)
             {
                 case BlockType.FoodPoint:
                     _dish = (DishType)Program.Random.Next(1, (int)DishType.Size1 - 1);
-                    RefreshTime = 4000;
+                    RefreshTime = Convert.ToInt32(ConfigurationManager.AppSettings["FoodPointInitRefreshTime"]);
                     Console.WriteLine("食品刷新：地点（" + Position.x + "," + Position.y + "）, 种类 : " + Dish);
                     lock (Program.MessageToClientLock)
                     {
@@ -55,27 +57,27 @@ namespace Logic.Server
                     }
                     break;
                 case BlockType.TaskPoint:
-                    //Task = new List<DishType>();
-                    //new System.Threading.Timer(TaskProduce, null, 1000, Convert.ToInt32(ConfigurationManager.AppSettings["TaskRefreshTime"]));
-                    //lock (Program.MessageToClientLock)
-                    //{
-                    //    Program.MessageToClient.GameObjectMessageList.Add(
-                    //        this.ID,
-                    //        new GameObjectMessage
-                    //        {
-                    //            ObjType = ObjTypeMessage.Block,
-                    //            BlockType = BlockTypeMessage.TaskPoint,
-                    //            DishType = (DishTypeMessage)Dish,
-                    //            Position = new XYPositionMessage { X = Position.x, Y = Position.y }
-                    //        });
-                    //}
+                    Task = new List<DishType>();
+                    RefreshTimer.Change(1000, Convert.ToInt32(ConfigurationManager.AppSettings["TaskRefreshTime"]));
+                    lock (Program.MessageToClientLock)
+                    {
+                        Program.MessageToClient.GameObjectMessageList.Add(
+                            this.ID,
+                            new GameObjectMessage
+                            {
+                                ObjType = ObjTypeMessage.Block,
+                                BlockType = BlockTypeMessage.TaskPoint,
+                                DishType = (DishTypeMessage)Dish,
+                                Position = new XYPositionMessage { X = Position.x, Y = Position.y }
+                            });
+                    }
                     break;
             }
         }
         public override DishType GetDish(DishType t)
         {
-            DishType temp = dish;
-            dish = DishType.Empty;
+            DishType temp = Dish;
+            Dish = DishType.Empty;
             if (this.blockType == BlockType.FoodPoint) RefreshTimer.Change(RefreshTime, 0);
             return temp;
         }
@@ -85,11 +87,12 @@ namespace Logic.Server
             get
             {
                 if (this.blockType == BlockType.FoodPoint) _refreshTimer = _refreshTimer ?? new System.Threading.Timer(Refresh);
-                else if(this.blockType == BlockType.TaskPoint) _refreshTimer = _refreshTimer ?? 
-                        new System.Threading.Timer(TaskProduce, null, 1000, Convert.ToInt32(ConfigurationManager.AppSettings["TaskRefreshTime"]));
+                else if(this.blockType == BlockType.TaskPoint) _refreshTimer = _refreshTimer ?? new System.Threading.Timer(TaskProduce);
                 return _refreshTimer;
             }
         }
+        public System.Threading.Timer CookingTimer;
+        public bool Cooking = false;
         public void Refresh(object i)
         {
             Dish = (DishType)Program.Random.Next(1, (int)DishType.Size1 - 1);
@@ -104,16 +107,17 @@ namespace Logic.Server
             foreach (var GameObject in WorldMap.Grid[(int)Position.x, (int)Position.y].GetLayer((int)MapLayer.ItemLayer))
             {
                 if (GameObject is Dish)
-                { dishTypeSet.Add(((Dish)GameObject).dish);GameObject.Parent = null; }
+                { dishTypeSet.Add(((Dish)GameObject).Dish);GameObject.Parent = null; }
             }
-
+            if (dishTypeSet.Count == 0) return;
+            Cooking = true;
             foreach (var dishType in dishTypeSet)
             {
                 Material += dishType.ToString() + " ";
                 
             }
             string result = ConfigurationManager.AppSettings[Material];
-            System.Threading.Timer timer = new System.Threading.Timer(Cook, result, Convert.ToInt32(ConfigurationManager.AppSettings[result + "Time"]), 0);
+            CookingTimer = new System.Threading.Timer(Cook, result, Convert.ToInt32(ConfigurationManager.AppSettings[result + "Time"]), 0);
             DishType GetResult(string s)
             {
                 for (int i = 0; i < (int)DishType.Size2; i++)
@@ -125,13 +129,13 @@ namespace Logic.Server
             void Cook(object s)
             {
                 if (s is string)
-                    Dish = GetResult((string)s);
+                { Dish = GetResult((string)s); Cooking = false; }
             }
         }
 
         public void TaskProduce(object i)
         {
-            DishType temp = (Dish.Type)new Random().Next();
+            DishType temp = DishType.Banana;// (DishType)new Random().Next();
             Task.Add(temp);
             //new System.Threading.Timer(remove, temp,
                 //Convert.ToInt32(ConfigurationManager.AppSettings["TaskTimeLimit"]), 0);
@@ -148,7 +152,8 @@ namespace Logic.Server
             if (Task.Contains(dish_t))
             {
                 Task.Remove(dish_t);
-                return Convert.ToInt32(ConfigurationManager.AppSettings[dish_t.ToString() + "Score"]);//菜品名+Score，在App.config里加，里面有AppleScore
+                Console.WriteLine(Convert.ToInt32(ConfigurationManager.AppSettings[dish_t.ToString() + "Score"]));
+                return Convert.ToInt32(ConfigurationManager.AppSettings[dish_t.ToString() + "Score"]);//菜品名+Score，在App.config里加
                 //测试的时候能直接把食材交进去，比赛的只会产生菜品任务
             }
             return 0;

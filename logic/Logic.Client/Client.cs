@@ -112,6 +112,12 @@ namespace Client
                         case BlockTypeMessage.Cooker:
                             Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.SandyBrown;
                             break;
+                        case BlockTypeMessage.TaskPoint:
+                            Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.DarkRed;
+                            break;
+                        case BlockTypeMessage.RubbishBin:
+                            Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.DarkGreen;
+                            break;
                     }
                     break;
                 case ObjTypeMessage.Dish:
@@ -213,11 +219,12 @@ namespace Client
                     case 'a': Move(Direction.Left); break;
                     case 'z': Move(Direction.LeftDown); break;
                     case 'x': Move(Direction.Down); break;
-                    case 'c': Move(Direction.RightDown); break;
+                    case 'c': Move(Direction.RightDown); break; 
                     case 'f': Pick(); break;
                     case 'u': Use(1, 0); break;
-                    case 'r': Put(5, true); break;
-                    case 't': Put(5, false); break;
+                    case 'i': Use(0, 0); break;
+                    case 'r': Put(1, true); break;
+                    case 't': Put(1, false); break;
                 }
                 lastSendTime = DateTime.Now;
             }
@@ -257,6 +264,7 @@ namespace Client
         {
 
             messageToServer.CommandType = CommandTypeMessage.Use;
+            messageToServer.UseType = type;
             ClientCommunication.SendMessage(messageToServer);
         }
         public override void Pick()
