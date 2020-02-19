@@ -14,12 +14,12 @@ namespace Logic.Constant
         public double GlueExtraMoveSpeed = 0;
         //public double moveSpeed = Convert.ToDouble(System.Configuration.ConfigurationManager.AppSettings["PlayerInitMoveSpeed"]);
         public Direction facingDirection;
-        public int MaxThrowDistance = 10;
+        public double MaxThrowDistance = 10;
         //public int MaxThrowDistance = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["PlayerInitThrowDistance"]);
         public int SightRange = 9;
         //public int SightRange = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["PlayerInitSightRange"]);
         public TALENT talent;
-        public int score = 0;
+        protected int score = 0;
         public DishType dish = DishType.Empty;
         public ToolType tool = ToolType.Empty;
         //public Tuple<int, int> id = new Tuple<int, int>(-1, -1);  //first:Agent, second:Client
@@ -30,7 +30,7 @@ namespace Logic.Constant
         }
         public virtual void Move(Direction direction_t, int duration = 50)
         { }
-        public virtual void Put(int distance, bool isThrowDish)
+        public virtual void Put(double distance, bool isThrowDish)
         { }
         public virtual void Pick()
         { }

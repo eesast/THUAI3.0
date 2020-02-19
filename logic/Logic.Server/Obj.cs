@@ -9,7 +9,7 @@ namespace Logic.Server
 {
     public class Obj : GameObject
     {
-        public ObjType type;
+        public ObjType objType;
         protected DishType _dish;
         public DishType Dish
         {
@@ -39,12 +39,26 @@ namespace Logic.Server
 
         public BlockType blockType;
 
-        public Obj(double x_t, double y_t) : base(new XYPosition(x_t, y_t))
+        public Obj(double x_t, double y_t, ObjType objType) : base(new XYPosition(x_t, y_t))
         {
+            this.objType = objType;
         }
         public virtual DishType GetDish(DishType t) { return DishType.Empty; }
         public virtual ToolType GetTool(ToolType t) { return ToolType.Empty; }
         public virtual void UseCooker() { }
         public virtual int HandIn(DishType dish_t) { return 0; }
+        public void AddToMessage()
+        {
+            lock (Program.MessageToClientLock)
+            {
+                Program.MessageToClient.GameObjectMessageList.Add(
+                    this.ID,
+                    new GameObjectMessage
+                    {
+                        ObjType = (ObjTypeMessage)objType,
+                        Position = new XYPositionMessage { X = Position.x, Y = Position.y }
+                    });
+            }
+        }
     }
 }
