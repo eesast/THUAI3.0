@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Threading;
 using Communication.Proto;
 using System.Net;
+using Microsoft.Extensions.CommandLineUtils;
 
 namespace Communication.Agent
 {
@@ -17,14 +18,27 @@ namespace Communication.Agent
         {
             MessageLimit++;
         }
+
         public static void Main(string[] args)
         {
-            string[] t = args[0].Split(':');
+            var app = new CommandLineApplication();
+            app.HelpOption("-h|--help");
+            var server = app.Option("-s|--server", "game server endpoint", CommandOptionType.SingleValue);
+            var port = app.Option("-p|--port", "agent port", CommandOptionType.SingleValue);
+            var token = app.Option("-h|--token", "player token, leave empty to enable offline mode", CommandOptionType.SingleValue);
+            app.OnExecute(() => MainInternal(server.Value(), ushort.Parse(port.Value()), token.Value()));
+            app.Execute(args);
+        }
+
+        private static int MainInternal(string ep, ushort port, string token)
+        {
+            string[] t = ep.Split(':');
             Console.WriteLine("Server endpoint: " + t);
             Server = new IPEndPoint(IPAddress.Parse(t[0]), int.Parse(t[1]));
-
-            server.Port = ushort.Parse(args[1]);
+            server.Port = port;
             Console.WriteLine("Agent Listen Port: " + server.Port.ToString());
+            Console.WriteLine("Client Token: " + (token ?? "<offline>"));
+
             //init timer
             myTimer.Interval = Interval;
             myTimer.Elapsed += TimedUpdate;
@@ -68,13 +82,26 @@ namespace Communication.Agent
                 {
                     server.Pause();
                     client.Connect(Server); //客户端满人后再向Server发送连接请求，可以省略GameStart包
+                    if (token != "offline")
+                    {
+                        client.Send(new Message //发送token
+                        {
+                            Address = -1,
+                            Content = new PlayerToken
+                            {
+                                Token = token
+                            }
+                        });
+                    }
                 }
             };
+
             server.Start();
 
-            Communication.Proto.Constants.Debug = new Constants.DebugFunc((str) => { });//注释掉这一行恢复Debug输出
+            Constants.Debug = new Constants.DebugFunc((str) => { });//注释掉这一行恢复Debug输出
 
-            Thread.Sleep(Int32.MaxValue);
+            Thread.Sleep(int.MaxValue);
+            return 0;
         }
 
         private static void TimedUpdate(object source, System.Timers.ElapsedEventArgs e) //轮询预留

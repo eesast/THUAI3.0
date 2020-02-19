@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System;
 using System.Net;
 
@@ -17,11 +17,12 @@ namespace Communication.Server
     {
         int PlayerCount { get;}
 
+
         /// <summary>
-        /// be aware it means the http port but not the server listening port
-        /// Please change Constants.ServerPort
+        /// Token for the client api
         /// </summary>
-        IPEndPoint EndPoint { get; set; }
+        string Token { get; set; }
+        ushort ServerPort { get; set; }
 
         /// <summary>
         /// my id in docker for futher usaae
@@ -33,6 +34,7 @@ namespace Communication.Server
         void SendMessage(ServerMessage message);
 
         event MessageHandler MsgProcess;
+        //maybe should be private?
         void OnNewMessage(MessageEventArgs e);
     }
 }

@@ -7,19 +7,51 @@ using System.Net;
 using Google.Protobuf;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Communication.Server
 {
     public sealed class CommunicationImpl : ICommunication
     {
-        private IDServer server;
-        private ManualResetEvent full;
-        private DockerGameStatus status;
+        private readonly IDServer server = new IDServer();
+        private readonly ManualResetEvent full = new ManualResetEvent(false);
+        public string Token { get; set; }
 
-        public IPEndPoint EndPoint { get; set; }
+        private void PostAsync(string url, string data) //不清楚post格式所以暂不使用json
+        {
+            Task.Run(() =>
+            {
+                using (var client = new HttpClient())
+                    client.PostAsync(url, new StringContent(data));
+            });
+        }
+
+        private void NoticeServer(string token, DockerGameStatus status)
+        {
+            if (token == null)
+                PostAsync("http://localhost/", $"token={Token}&status={status}");
+            else
+                PostAsync("http://localhost/", $"token={Token}&client={token}");
+        }
+
+        private DockerGameStatus Status
+        {
+            set
+            {
+                NoticeServer(null, value);
+            }
+        }
+
         public string ID { get; set; }
 
         public int PlayerCount => server.Count;
+
+        public ushort ServerPort
+        {
+            get => server.Port;
+            set => server.Port = value;
+        }
 
         public event MessageHandler MsgProcess;
 
@@ -29,7 +61,7 @@ namespace Communication.Server
         }
         public void GameOver()
         {
-            status = DockerGameStatus.PendingTerminated;
+            Status = DockerGameStatus.PendingTerminated;
             server.Stop();
         }
 
@@ -37,6 +69,11 @@ namespace Communication.Server
         {
             server.OnReceive += delegate (Message message) //收到信息后将消息传给逻辑处理
             {
+                if (message.Content is PlayerToken token)
+                {
+                    NoticeServer(token.Token, default);
+                    return;
+                }
                 ServerMessage msg = new ServerMessage();
                 msg.Agent = message.Address;
                 message = message.Content as Message;
@@ -59,21 +96,20 @@ namespace Communication.Server
             {
                 server.Resume();
             };
-            full = new ManualResetEvent(false);
-            server.Port = Constants.ServerPort;
+            full.Reset();
             server.Start();
-            status = DockerGameStatus.Listening;
+            Status = DockerGameStatus.Listening;
             Constants.Debug("Waiting for clients");
             full.WaitOne();
             //此时应广播通知Client，不过应该由logic广播？
-            status = DockerGameStatus.Heartbeat;
+            Status = DockerGameStatus.Heartbeat;
         }
+
+        //TODO: should be moved to the constructor
         public void Initialize()
         {
-            server = new IDServer();
-            status = DockerGameStatus.Idle;
+            Status = DockerGameStatus.Idle;
             //connect to the rest server
-
         }
 
         public void SendMessage(ServerMessage message)
@@ -93,6 +129,7 @@ namespace Communication.Server
         public void Dispose()
         {
             server.Dispose();
+            full.Dispose();
         }
     }
 }

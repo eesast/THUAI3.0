@@ -1,4 +1,4 @@
-﻿using Communication.Proto;
+using Communication.Proto;
 using Communication.Server;
 using System;
 using System.Net;
@@ -29,6 +29,7 @@ namespace ServerChatTest
 
         public static void Main(string[] args)
         {
+            //这里没有进行更改，因为不知道api还不能进行测试
             using ICommunication comm = new CommunicationImpl();
             string[] t = args[0].Split(':');
             Console.WriteLine(args[0]);
