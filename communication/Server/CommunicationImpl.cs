@@ -9,6 +9,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
+using System.Text;
+using JWT;
+using JWT.Algorithms;
+using JWT.Serializers;
 
 namespace Communication.Server
 {
@@ -16,16 +21,44 @@ namespace Communication.Server
     {
         private readonly IDServer server = new IDServer();
         private readonly ManualResetEvent full = new ManualResetEvent(false);
-        public string Token { get; set; }
+        private string roomID, token;
+        private static readonly IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
+        private static readonly IJsonSerializer serializer = new JsonNetSerializer();
+        private static readonly IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
+        private static readonly IDateTimeProvider provider = new UtcDateTimeProvider();
+        private readonly JwtDecoder decoder = new JwtDecoder(serializer, new JwtValidator(serializer, provider), urlEncoder, algorithm);
+        
+        public string Token
+        {
+            get
+            {
+                return token;
+            }
+            set
+            {
+                roomID = (string) JObject.Parse(decoder.Decode(value))["roomID"];
+                token = value;
+            }
+        }
 
-        private void PostAsync(string url, string data) //不清楚post格式所以暂不使用json
+        private void HttpAsync(string uri, string token, string method, JObject data)
         {
             Task.Run(() =>
             {
                 try
                 {
-                    using (var client = new HttpClient())
-                        client.PostAsync(url, new StringContent(data));
+                    var request = WebRequest.CreateHttp(uri);
+                    request.Method = method;
+                    request.Headers.Add("Authorization", $"bearer {token}");
+                    if (data != null)
+                    {
+                        request.ContentType = "application/json";
+                        var raw = Encoding.UTF8.GetBytes(data.ToString());
+                        request.GetRequestStream().Write(raw, 0, raw.Length);
+                    }
+                    var response = request.GetResponse() as HttpWebResponse;
+                    if ((int)response.StatusCode / 100 != 2)
+                        Constants.Debug(response.StatusDescription);
                 }
                 catch (Exception e)
                 {
@@ -37,9 +70,16 @@ namespace Communication.Server
         private void NoticeServer(string token, DockerGameStatus status)
         {
             if (token == null)
-                PostAsync("http://localhost/", $"token={Token}&status={status}");
+            {
+                HttpAsync($"http://localhost:28888/v1/rooms/{roomID}", this.token, "PUT", new JObject
+                {
+                    ["status"] = status.ToString().ToLower()
+                });
+            }
             else
-                PostAsync("http://localhost/", $"token={Token}&client={token}");
+            {
+                HttpAsync($"http://localhost:28888/v1/rooms/{roomID}/join", token, "GET", null);
+            }
         }
 
         private DockerGameStatus Status
@@ -49,8 +89,6 @@ namespace Communication.Server
                 NoticeServer(null, value);
             }
         }
-
-        public string ID { get; set; }
 
         public int PlayerCount => server.Count;
 
@@ -68,7 +106,7 @@ namespace Communication.Server
         }
         public void GameOver()
         {
-            Status = DockerGameStatus.PendingTerminated;
+            Status = DockerGameStatus.Finish;
             server.Stop();
         }
 
@@ -105,18 +143,15 @@ namespace Communication.Server
             };
             full.Reset();
             server.Start();
-            Status = DockerGameStatus.Listening;
             Constants.Debug("Waiting for clients");
             full.WaitOne();
-            //此时应广播通知Client，不过应该由logic广播？
-            Status = DockerGameStatus.Heartbeat;
+            //FIXME: 现在似乎有的时候会先set状态competing再join，不知道会不会有什么影响
+            Status = DockerGameStatus.Competing;
         }
 
-        //TODO: should be moved to the constructor
         public void Initialize()
         {
-            Status = DockerGameStatus.Idle;
-            //connect to the rest server
+            Status = DockerGameStatus.Waiting;
         }
 
         public void SendMessage(ServerMessage message)

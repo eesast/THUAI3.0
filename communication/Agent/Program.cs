@@ -25,7 +25,7 @@ namespace Communication.Agent
             app.HelpOption("-h|--help");
             var server = app.Option("-s|--server", "game server endpoint", CommandOptionType.SingleValue);
             var port = app.Option("-p|--port", "agent port", CommandOptionType.SingleValue);
-            var token = app.Option("-h|--token", "player token, leave empty to enable offline mode", CommandOptionType.SingleValue);
+            var token = app.Option("-t|--token", "player token, leave empty to enable offline mode", CommandOptionType.SingleValue);
             app.OnExecute(() => MainInternal(server.Value(), ushort.Parse(port.Value()), token.Value()));
             app.Execute(args);
         }
@@ -98,7 +98,7 @@ namespace Communication.Agent
 
             server.Start();
 
-            Constants.Debug = new Constants.DebugFunc((str) => { });//注释掉这一行恢复Debug输出
+            //Constants.Debug = new Constants.DebugFunc((str) => { });//注释掉这一行恢复Debug输出
 
             Thread.Sleep(int.MaxValue);
             return 0;

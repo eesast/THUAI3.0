@@ -23,11 +23,6 @@ namespace Communication.Server
         /// </summary>
         string Token { get; set; }
         ushort ServerPort { get; set; }
-
-        /// <summary>
-        /// my id in docker for futher usaae
-        /// </summary>
-        string ID { get; set; }
         void Initialize();
         void GameStart(); /* This function should return when all the players are connected to server*/
         void GameOver();
