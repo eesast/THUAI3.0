@@ -5,6 +5,7 @@ using static Logic.Constant.MapInfo;
 using System.Configuration;
 using Logic.Constant;
 using Communication.Proto;
+using Timer;
 
 namespace Logic.Server
 {
@@ -40,19 +41,10 @@ namespace Logic.Server
                     break;
                 case BlockType.TaskPoint:
                     Task = new HashSet<DishType>();
-                    //new System.Threading.Timer(TaskProduce, null, 1000, Convert.ToInt32(ConfigurationManager.AppSettings["TaskRefreshTime"]));
-                    //lock (Program.MessageToClientLock)
-                    //{
-                    //    Program.MessageToClient.GameObjectMessageList.Add(
-                    //        this.ID,
-                    //        new GameObjectMessage
-                    //        {
-                    //            ObjType = ObjTypeMessage.Block,
-                    //            BlockType = BlockTypeMessage.TaskPoint,
-                    //            DishType = (DishTypeMessage)Dish,
-                    //            Position = new XYPositionMessage { X = Position.x, Y = Position.y }
-                    //        });
-                    //}
+                    TaskProduceTimer.Add(TaskProduce, 5000);
+                    AddToMessage();
+                    lock (Program.MessageToClientLock)
+                        Program.MessageToClient.GameObjectMessageList[ID].BlockType = BlockTypeMessage.TaskPoint;
                     break;
             }
         }
@@ -117,17 +109,32 @@ namespace Logic.Server
             }
         }
 
-        public void TaskProduce(object i)
+        protected MultiTaskTimer _taskProduceTimer;
+        public MultiTaskTimer TaskProduceTimer
         {
-            DishType temp = DishType.Apple;//(Dish.Type)new Random().Next();
-            Task.Add(temp);
-            new System.Threading.Timer(remove, temp,
-                int.Parse(ConfigurationManager.AppSettings["TaskTimeLimit"]), 0);
-
-            void remove(object task)
+            get
             {
-                if (task is DishType)
-                    Task.Remove((DishType)task);
+                _taskProduceTimer = _taskProduceTimer ?? new MultiTaskTimer();
+                return _taskProduceTimer;
+            }
+        }
+
+        public void TaskProduce(object i, System.Timers.ElapsedEventArgs e)
+        {
+            DishType temp = (DishType)Program.Random.Next((int)DishType.Size1 + 1, (int)DishType.Size2);
+            Task.Add(temp);
+            //Server.ServerDebug("Produce task : " + temp);
+            lock (Program.MessageToClientLock)
+                Program.MessageToClient.GameObjectMessageList[ID].Task = (DishTypeMessage)temp;
+            TaskProduceTimer.Add(remove, 5000);
+            TaskProduceTimer.Add(TaskProduce, 8000);
+
+            void remove(object o, System.Timers.ElapsedEventArgs e)
+            {
+                Task.Remove(temp);
+                //Server.ServerDebug("Remove task : " + temp);
+                lock (Program.MessageToClientLock)
+                    Program.MessageToClient.GameObjectMessageList[ID].Task = (DishTypeMessage)DishType.Empty;
             }
         }
 
@@ -136,10 +143,12 @@ namespace Logic.Server
             if (Task.Contains(dish_t))
             {
                 Task.Remove(dish_t);
+                lock (Program.MessageToClientLock)
+                    Program.MessageToClient.GameObjectMessageList[ID].Task = (DishTypeMessage)DishType.Empty;
                 return int.Parse(ConfigurationManager.AppSettings[dish_t.ToString() + "Score"]);//菜品名+Score，在App.config里加，里面有AppleScore
                 //测试的时候能直接把食材交进去，比赛的只会产生菜品任务
             }
-            return 0;
+            return -10;
         }
     }
 }

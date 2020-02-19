@@ -84,6 +84,12 @@ namespace Client
                             else
                                 Program.form.playerLabels[id_t].Text = gameObjectMessage.DishType.ToString();
                             break;
+                        case BlockTypeMessage.TaskPoint:
+                            if (gameObjectMessage.Task == DishTypeMessage.DishEmpty)
+                                Program.form.playerLabels[id_t].Text = "";
+                            else
+                                Program.form.playerLabels[id_t].Text = gameObjectMessage.Task.ToString();
+                            break;
                     }
                     break;
                 case ObjTypeMessage.Dish:
@@ -119,6 +125,9 @@ namespace Client
                             break;
                         case BlockTypeMessage.Cooker:
                             Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.SandyBrown;
+                            break;
+                        case BlockTypeMessage.TaskPoint:
+                            Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.LightSkyBlue;
                             break;
                     }
                     break;
@@ -238,6 +247,9 @@ namespace Client
                             Put(tmp - '0', true);
                         }
                         break;
+                    case ':':
+                        SpeakToFriend(Console.ReadLine());
+                        break;
                 }
                 lastSendTime = DateTime.Now;
             }
@@ -282,6 +294,14 @@ namespace Client
         public override void Pick()
         {
             messageToServer.CommandType = CommandTypeMessage.Pick;
+            ClientCommunication.SendMessage(messageToServer);
+        }
+        public void SpeakToFriend(string speakText)
+        {
+            messageToServer.CommandType = CommandTypeMessage.Speak;
+            if (speakText.Length > 16)//限制发送的字符串长度为16
+                speakText = speakText.Substring(0, 15);
+            messageToServer.SpeakText = speakText;
             ClientCommunication.SendMessage(messageToServer);
         }
 

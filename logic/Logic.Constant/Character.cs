@@ -9,7 +9,7 @@ namespace Logic.Constant
 {
     public class Character : GameObject
     {
-        public int team = 0;
+        public Tuple<int, int> CommunicationID;//第一个数表示Agent，第二个数表示Client
         public double moveSpeed = 5;
         public double GlueExtraMoveSpeed = 0;
         //public double moveSpeed = Convert.ToDouble(System.Configuration.ConfigurationManager.AppSettings["PlayerInitMoveSpeed"]);

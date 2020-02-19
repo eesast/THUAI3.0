@@ -30,14 +30,7 @@ namespace Logic.Server
             AddToMessage();
             lock (Program.MessageToClientLock)
                 Program.MessageToClient.GameObjectMessageList[ID].TriggerType = (TriggerTypeMessage)triggerType;
-            this.OnParentDelete += new ParentDeleteHandler(
-                () =>
-                {
-                    lock (Program.MessageToClientLock)
-                    {
-                        Program.MessageToClient.GameObjectMessageList.Remove(ID);
-                    }
-                });
+            this.OnParentDelete += new ParentDeleteHandler(DeleteFromMessage);
 
         }
     }

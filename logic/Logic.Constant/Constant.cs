@@ -47,6 +47,10 @@ namespace Logic.Constant
         //以下为菜品
 
         DarkDish,
+        ApplePie,
+        BananaPie,
+        TomatoEgg,
+        MashedPotato,
         Size2
     }
     public enum ToolType
@@ -86,6 +90,7 @@ namespace Logic.Constant
         Put,
         Use,
         Stop,
+        Speak,
         Size
     }
 

@@ -52,6 +52,7 @@ namespace Logic.Server
             //new Tool(1.5, 1.5, ToolType.SpeedBuff).Parent = WorldMap;
         }
 
+        public static Dictionary<Tuple<int, int>, Player> PlayerList = new Dictionary<Tuple<int, int>, Player>();
         private static Server server;
         public static void Main(string[] args)
         {

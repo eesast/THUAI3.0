@@ -134,6 +134,9 @@ namespace Logic.Server
                 case CommandTypeMessage.Use:
                     Use(msg.UseType, 0);
                     break;
+                case CommandTypeMessage.Speak:
+                    SpeakToFriend(msg.SpeakText);
+                    break;
                 default:
                     break;
             }
@@ -242,8 +245,7 @@ namespace Logic.Server
                         else if (block.blockType == BlockType.TaskPoint)
                         {
                             int temp = block.HandIn(dish);
-                            if (temp > 0)
-                            { score += temp; Dish = DishType.Empty; }
+                            { Score += temp; Dish = DishType.Empty; }
                         }
                         break;
                     }
@@ -315,14 +317,14 @@ namespace Logic.Server
                 case ToolType.WaveGlue:
                     {
                         XYPosition xyPosition1 = Position.GetMid() + 2 * EightCornerVector[facingDirection];
-                        new Trigger(xyPosition1.x, xyPosition1.y, TriggerType.WaveGlue, team).Parent = WorldMap;
+                        new Trigger(xyPosition1.x, xyPosition1.y, TriggerType.WaveGlue, CommunicationID.Item1).Parent = WorldMap;
                         tool = ToolType.Empty;
                     }
                     break;
                 case ToolType.LandMine:
                     {
                         XYPosition xyPosition1 = Position.GetMid() + 2 * EightCornerVector[facingDirection];
-                        new Trigger(xyPosition1.x, xyPosition1.y, TriggerType.Mine, team).Parent = WorldMap;
+                        new Trigger(xyPosition1.x, xyPosition1.y, TriggerType.Mine, CommunicationID.Item1).Parent = WorldMap;
                         tool = ToolType.Empty;
                     }
                     break;
@@ -337,21 +339,18 @@ namespace Logic.Server
         }
         public bool TouchTrigger(Trigger trigger)
         {
-            if (trigger.OwnerTeam == team)
+            if (trigger.OwnerTeam == CommunicationID.Item1)
                 return false;
             switch (trigger.triggerType)
             {
                 case TriggerType.WaveGlue:
                     {
                         isStepOnGlue = true;
-                        //GlueExtraMoveSpeed = double.Parse(ConfigurationManager.AppSettings["WaveGlueExtraMoveSpeed"]);
-                        //Console.WriteLine(GlueExtraMoveSpeed);
-                        //this.Velocity = new Vector(Velocity.angle, (moveSpeed + GlueExtraMoveSpeed) / moveSpeed * Velocity.length);
                     }
                     break;
                 case TriggerType.Mine:
                     {
-                        score += int.Parse(ConfigurationManager.AppSettings["MineScore"]);
+                        Score += int.Parse(ConfigurationManager.AppSettings["MineScore"]);
                     }
                     break;
                 case TriggerType.Trap:
@@ -365,6 +364,18 @@ namespace Logic.Server
             }
             //trigger.Parent = null;
             return true;
+        }
+
+        protected void SpeakToFriend(string speakText)
+        {
+            Server.ServerDebug("Recieve text : " + speakText);
+            for (int i = 0; i < Communication.Proto.Constants.PlayerCount; i++)
+            {
+                if (i == CommunicationID.Item2)
+                    continue;
+                lock (Program.MessageToClientLock)
+                    Program.MessageToClient.GameObjectMessageList[Program.PlayerList[new Tuple<int, int>(CommunicationID.Item1, i)].ID].SpeakText = speakText;
+            }
         }
     }
 }

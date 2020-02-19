@@ -36,7 +36,11 @@ enum DishTypeMessage
 //以下为菜品
 
 	DarkDish = 6;
-	DishTypeSize2 = 7;
+	ApplePie = 7;
+	BananaPie = 8;
+	TomatoEgg = 9;
+	MashedPotato = 10;
+	DishTypeSize2 = 11;
 }
 enum ToolTypeMessage
 {
@@ -101,6 +105,8 @@ message GameObjectMessage{
 	repeated BuffMessage Buff = 11;
 	DishStateMessage DishState = 12;
 	int32 Score = 13;
+	DishTypeMessage Task = 14;
+	string SpeakText = 15;
 }
 message MessageToClient {
 	map<int64, GameObjectMessage> GameObjectMessageList = 1;
