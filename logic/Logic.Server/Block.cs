@@ -20,48 +20,62 @@ namespace Logic.Server
             Layer = (int)MapLayer.BlockLayer;
             Movable = false;
             blockType = type_t;
-            if (blockType == BlockType.FoodPoint)
+            switch (blockType)
             {
-                dish = (DishType)Program.Random.Next(1, (int)DishType.Size1 - 1);
-                RefreshTime = 1000;
-                Console.WriteLine("食品刷新：地点（" + Position.x + "," + Position.y + "）,种类" + blockType);
-                lock (Program.MessageToClientLock)
-                {
-                    Program.MessageToClient.GameObjectMessageList.Add(
-                        this.ID,
-                        new GameObjectMessage
-                        {
-                            ObjType = ObjTypeMessage.Block,
-                            BlockType = BlockTypeMessage.FoodPoint,
-                            DishType = (DishTypeMessage)dish,
-                            Position = new XYPositionMessage { X = Position.x, Y = Position.y }
-                        });
-                }
-            }
-            else if (blockType == BlockType.TaskPoint)
-            {
-                Task = new List<DishType>();
-                new System.Threading.Timer(TaskProduce, null, 1000, Convert.ToInt32(ConfigurationManager.AppSettings["TaskRefreshTime"]));
-                lock (Program.MessageToClientLock)
-                {
-                    Program.MessageToClient.GameObjectMessageList.Add(
-                        this.ID,
-                        new GameObjectMessage
-                        {
-                            ObjType = ObjTypeMessage.Block,
-                            BlockType = BlockTypeMessage.TaskPoint,
-                            DishType = (DishTypeMessage)dish,
-                            Position = new XYPositionMessage { X = Position.x, Y = Position.y }
-                        });
-                }
+                case BlockType.FoodPoint:
+                    _dish = (DishType)Program.Random.Next(1, (int)DishType.Size1 - 1);
+                    RefreshTime = 4000;
+                    Console.WriteLine("食品刷新：地点（" + Position.x + "," + Position.y + "）, 种类 : " + Dish);
+                    lock (Program.MessageToClientLock)
+                    {
+                        Program.MessageToClient.GameObjectMessageList.Add(
+                            this.ID,
+                            new GameObjectMessage
+                            {
+                                ObjType = ObjTypeMessage.Block,
+                                BlockType = BlockTypeMessage.FoodPoint,
+                                DishType = (DishTypeMessage)Dish,
+                                Position = new XYPositionMessage { X = Position.x, Y = Position.y }
+                            });
+                    }
+                    break;
+                case BlockType.Cooker:
+                    _dish = DishType.Empty;
+                    lock (Program.MessageToClientLock)
+                    {
+                        Program.MessageToClient.GameObjectMessageList.Add(
+                            this.ID,
+                            new GameObjectMessage
+                            {
+                                ObjType = ObjTypeMessage.Block,
+                                BlockType = BlockTypeMessage.Cooker,
+                                DishType = (DishTypeMessage)Dish,
+                                Position = new XYPositionMessage { X = Position.x, Y = Position.y }
+                            });
+                    }
+                    break;
+                case BlockType.TaskPoint:
+                    //Task = new List<DishType>();
+                    //new System.Threading.Timer(TaskProduce, null, 1000, Convert.ToInt32(ConfigurationManager.AppSettings["TaskRefreshTime"]));
+                    //lock (Program.MessageToClientLock)
+                    //{
+                    //    Program.MessageToClient.GameObjectMessageList.Add(
+                    //        this.ID,
+                    //        new GameObjectMessage
+                    //        {
+                    //            ObjType = ObjTypeMessage.Block,
+                    //            BlockType = BlockTypeMessage.TaskPoint,
+                    //            DishType = (DishTypeMessage)Dish,
+                    //            Position = new XYPositionMessage { X = Position.x, Y = Position.y }
+                    //        });
+                    //}
+                    break;
             }
         }
         public override DishType GetDish(DishType t)
         {
-            DishType temp = dish;
-            dish = DishType.Empty;
-            lock (Program.MessageToClientLock)
-                Program.MessageToClient.GameObjectMessageList[this.ID].DishType = (DishTypeMessage)dish;
+            DishType temp = Dish;
+            Dish = DishType.Empty;
             RefreshTimer.Change(RefreshTime, 0);
             return temp;
         }
@@ -76,10 +90,8 @@ namespace Logic.Server
         }
         public void Refresh(object i)
         {
-            dish = (DishType)Program.Random.Next(1, (int)DishType.Size1 - 1);
-            lock (Program.MessageToClientLock)
-                Program.MessageToClient.GameObjectMessageList[this.ID].DishType = (DishTypeMessage)dish;
-            Console.WriteLine("食品刷新：地点（" + Position.x + "," + Position.y + "）,种类" + dish);
+            Dish = (DishType)Program.Random.Next(1, (int)DishType.Size1 - 1);
+            Console.WriteLine("食品刷新：地点（" + Position.x + "," + Position.y + "）, 种类 : " + Dish);
         }
 
         public override void UseCooker()
@@ -90,7 +102,7 @@ namespace Logic.Server
             foreach (var GameObject in WorldMap.Grid[(int)Position.x, (int)Position.y].GetLayer((int)MapLayer.ItemLayer))
             {
                 if (GameObject is Dish)
-                    dishTypeSet.Add(((Dish)GameObject).dish);
+                    dishTypeSet.Add(((Dish)GameObject).Dish);
             }
 
             foreach (var dishType in dishTypeSet)
@@ -107,7 +119,7 @@ namespace Logic.Server
             void Cook(object s)
             {
                 if (s is string)
-                    dish = GetResult((string)s);
+                    Dish = GetResult((string)s);
             }
         }
 

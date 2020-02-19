@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using Logic.Constant;
 
-//using UnityEngine;
 namespace Logic.Constant
 {
     public static class MapInfo
@@ -16,7 +15,7 @@ namespace Logic.Constant
         // 4 : 垃圾桶，共5个
         // 5 : 障碍，不可穿过，不透明
         // 6 : 桌子，不可穿过，可放置物品
-        public static uint[, ] map = new uint[, ]
+        public static uint[,] map = new uint[,]
         {
             { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 },
             { 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5 },
@@ -70,7 +69,7 @@ namespace Logic.Constant
             { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 }
         };
 
-        private static THUnity2D.Map _worldMap = null;
+        private static THUnity2D.Map? _worldMap;
         public static THUnity2D.Map WorldMap
         {
             get
@@ -78,8 +77,8 @@ namespace Logic.Constant
                 if (_worldMap == null)
                 {
                     _worldMap = new THUnity2D.Map(map.GetLength(0), map.GetLength(1));
-                    _worldMap.LayerCount = 4;
-                    //分4层，0层为墙，1层为人，2层为不碰撞的物品，3层为可以与墙壁碰撞但不与人碰撞的物品
+                    _worldMap.LayerCount = 5;
+                    //分5层，0层为墙，1层为人，2层为不碰撞的物品，3层为可以与墙壁碰撞但不与人碰撞的物品
                     _worldMap.SetLayerCollisionTrue((int)MapLayer.BlockLayer, (int)MapLayer.PlayerLayer);
                     _worldMap.SetLayerCollisionTrue((int)MapLayer.BlockLayer, (int)MapLayer.BlockLayer);
                     _worldMap.SetLayerCollisionTrue((int)MapLayer.PlayerLayer, (int)MapLayer.PlayerLayer);

@@ -29,12 +29,14 @@ namespace Logic.Server
                 return _stopMovingTimer;
             }
         }
+
         public Dish(double x_t, double y_t, DishType type_t) : base(x_t, y_t)
         {
+            Server.ServerDebug("Create Dish : " + type_t);
             Layer = (int)MapLayer.ItemLayer;
             Movable = true;
             Bouncable = true;
-            dish = type_t;
+            _dish = type_t;
             lock (Program.MessageToClientLock)
             {
                 Program.MessageToClient.GameObjectMessageList.Add(
@@ -42,9 +44,10 @@ namespace Logic.Server
                     new GameObjectMessage
                     {
                         ObjType = (ObjTypeMessage)ObjType.Dish,
-                        DishType = (DishTypeMessage)dish,
+                        DishType = (DishTypeMessage)Dish,
                         Position = new XYPositionMessage { X = Position.x, Y = Position.y }
                     });
+                Server.ServerDebug("Add Dish to Message list : " + type_t);
             }
             this.MoveComplete += new MoveCompleteHandler(
                 (thisGameObject) =>
@@ -53,15 +56,27 @@ namespace Logic.Server
                     {
                         Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.X = thisGameObject.Position.x;
                         Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.Y = thisGameObject.Position.y;
-                        Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Direction = (DirectionMessage)((Player)thisGameObject).facingDirection;
+                    }
+                    //Server.ServerDebug(this.Position.ToString());
+                });
+            this.OnParentDelete += new ParentDeleteHandler(
+                () =>
+                {
+                    lock (Program.MessageToClientLock)
+                    {
+                        Program.MessageToClient.GameObjectMessageList.Remove(ID);
                     }
                 });
         }
+
         public override DishType GetDish(DishType t)
         {
-            DishType temp = dish;
+            DishType temp = Dish;
             if (t == DishType.Empty) this.Parent = null;
-            else dish = t;
+            else
+            {
+                Dish = t;
+            }
             return temp;
         }
     }
