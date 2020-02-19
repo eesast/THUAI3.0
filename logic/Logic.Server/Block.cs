@@ -13,48 +13,32 @@ namespace Logic.Server
         public int RefreshTime;//食物刷新点的食物刷新速率，毫秒
 
 
-        public List<DishType> Task = null;//任务点的任务列表
-        public Block(double x_t, double y_t, BlockType type_t) : base(x_t, y_t)
+        public HashSet<DishType> Task = null;//任务点的任务列表
+        public Block(double x_t, double y_t, BlockType type_t) : base(x_t, y_t, ObjType.Block)
         {
-            type = ObjType.Block;
+            if (type_t == BlockType.Wall)
+                Layer = (int)MapLayer.WallLayer;
+            else
+                Layer = (int)MapLayer.BlockLayer;
+            Movable = false;
             blockType = type_t;
-            if (blockType == BlockType.Cooker || blockType == BlockType.Table || blockType == BlockType.RubbishBin) Layer = (int)MapLayer.BlockLayer;
-            else Layer = (int)MapLayer.ItemResistBlockLayer;
             Movable = false;
             
             switch (blockType)
             {
                 case BlockType.FoodPoint:
-                    _dish = (DishType)Program.Random.Next(1, (int)DishType.Size1 - 1);
+                    AddToMessage();
+                    Dish = (DishType)Program.Random.Next(1, (int)DishType.Size1 - 1);
+                    lock (Program.MessageToClientLock)
+                        Program.MessageToClient.GameObjectMessageList[ID].BlockType = BlockTypeMessage.FoodPoint;
                     RefreshTime = Convert.ToInt32(ConfigurationManager.AppSettings["FoodPointInitRefreshTime"]);
                     Console.WriteLine("食品刷新：地点（" + Position.x + "," + Position.y + "）, 种类 : " + Dish);
-                    lock (Program.MessageToClientLock)
-                    {
-                        Program.MessageToClient.GameObjectMessageList.Add(
-                            this.ID,
-                            new GameObjectMessage
-                            {
-                                ObjType = ObjTypeMessage.Block,
-                                BlockType = BlockTypeMessage.FoodPoint,
-                                DishType = (DishTypeMessage)Dish,
-                                Position = new XYPositionMessage { X = Position.x, Y = Position.y }
-                            });
-                    }
                     break;
                 case BlockType.Cooker:
-                    _dish = DishType.Empty;
+                    AddToMessage();
+                    Dish = DishType.Empty;
                     lock (Program.MessageToClientLock)
-                    {
-                        Program.MessageToClient.GameObjectMessageList.Add(
-                            this.ID,
-                            new GameObjectMessage
-                            {
-                                ObjType = ObjTypeMessage.Block,
-                                BlockType = BlockTypeMessage.Cooker,
-                                DishType = (DishTypeMessage)Dish,
-                                Position = new XYPositionMessage { X = Position.x, Y = Position.y }
-                            });
-                    }
+                        Program.MessageToClient.GameObjectMessageList[ID].BlockType = BlockTypeMessage.Cooker;
                     break;
                 case BlockType.TaskPoint:
                     Task = new List<DishType>();
@@ -104,20 +88,20 @@ namespace Logic.Server
             string Material = "";
 
             SortedSet<DishType> dishTypeSet = new SortedSet<DishType>();
-            foreach (var GameObject in WorldMap.Grid[(int)Position.x, (int)Position.y].GetLayer((int)MapLayer.ItemLayer))
+            foreach (Dish GameObject in WorldMap.Grid[(int)Position.x, (int)Position.y].GetType(typeof(Dish)))
             {
-                if (GameObject is Dish)
-                { dishTypeSet.Add(((Dish)GameObject).Dish);GameObject.Parent = null; }
+                dishTypeSet.Add(GameObject.Dish);
+                GameObject.Parent = null;
             }
             if (dishTypeSet.Count == 0) return;
             Cooking = true;
             foreach (var dishType in dishTypeSet)
             {
-                Material += dishType.ToString() + " ";
+                Material += dishType.ToString();
                 
             }
             string result = ConfigurationManager.AppSettings[Material];
-            CookingTimer = new System.Threading.Timer(Cook, result, Convert.ToInt32(ConfigurationManager.AppSettings[result + "Time"]), 0);
+            CookingTimer = new System.Threading.Timer(Cook, result, int.Parse(ConfigurationManager.AppSettings[result + "Time"]), 0);
             DishType GetResult(string s)
             {
                 for (int i = 0; i < (int)DishType.Size2; i++)
@@ -137,8 +121,8 @@ namespace Logic.Server
         {
             DishType temp = DishType.Banana;// (DishType)new Random().Next();
             Task.Add(temp);
-            //new System.Threading.Timer(remove, temp,
-                //Convert.ToInt32(ConfigurationManager.AppSettings["TaskTimeLimit"]), 0);
+            new System.Threading.Timer(remove, temp,
+                int.Parse(ConfigurationManager.AppSettings["TaskTimeLimit"]), 0);
 
             void remove(object task)
             {

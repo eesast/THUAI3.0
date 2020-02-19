@@ -48,6 +48,17 @@ namespace Logic.Server
             }
         }
 
+        protected int Score
+        {
+            get { return score; }
+            set
+            {
+                score = value;
+                lock (Program.MessageToClientLock)
+                    Program.MessageToClient.GameObjectMessageList[this.ID].Score = score;
+            }
+        }
+
         public Player(double x, double y) :
             base(x, y)
         {
@@ -221,10 +232,10 @@ namespace Logic.Server
             status = CommandType.Stop;
             Velocity = new Vector(0, 0);
         }
-        public override void Put(int distance, bool isThrowDish)
+        public override void Put(double distance, bool isThrowDish)
         {
             if (distance > MaxThrowDistance) distance = MaxThrowDistance;
-            int dueTime = 200 * distance;
+            int dueTime = (int)(200 * distance);
 
             if (dish != DishType.Empty && isThrowDish)
             {

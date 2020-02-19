@@ -78,15 +78,13 @@ namespace Logic.Constant
                 {
                     _worldMap = new THUnity2D.Map(map.GetLength(0), map.GetLength(1));
                     _worldMap.LayerCount = 6;
-                    //分6层，0层为不与飞行物碰撞的墙，1层为人，2层为不碰撞的物品，3层为陷阱，4层为飞行物，5层为会与飞行物碰撞的墙
+                    //分6层，0层为不可碰撞的方块，1层为人，2层为不碰撞的物品，3层为Trigger，4层为飞行员专用层，5层为墙
                     _worldMap.SetLayerCollisionTrue((int)MapLayer.BlockLayer, (int)MapLayer.PlayerLayer);
-                    _worldMap.SetLayerCollisionTrue((int)MapLayer.ItemResistBlockLayer, (int)MapLayer.PlayerLayer);
                     _worldMap.SetLayerCollisionTrue((int)MapLayer.PlayerLayer, (int)MapLayer.PlayerLayer);
                     _worldMap.SetLayerCollisionTrue((int)MapLayer.BlockLayer, (int)MapLayer.BlockLayer);
-                    _worldMap.SetLayerCollisionTrue((int)MapLayer.ItemResistBlockLayer, (int)MapLayer.BlockLayer);
-                    _worldMap.SetLayerCollisionTrue((int)MapLayer.ItemResistBlockLayer, (int)MapLayer.ItemResistBlockLayer);
-                    _worldMap.SetLayerCollisionTrue((int)MapLayer.ItemResistBlockLayer, (int)MapLayer.FlyingLayer);
                     _worldMap.SetLayerCollisionTrue((int)MapLayer.PlayerLayer, (int)MapLayer.PlayerLayer);
+                    _worldMap.SetLayerCollisionTrue((int)MapLayer.WallLayer, (int)MapLayer.FlyingLayer);
+                    _worldMap.SetLayerCollisionTrue((int)MapLayer.PlayerLayer, (int)MapLayer.WallLayer);
                     _worldMap.SetLayerTriggerTrue((int)MapLayer.PlayerLayer, (int)MapLayer.TriggerLayer);
                     _worldMap.FrameRate = Constant.FrameRate;
                 }
@@ -100,7 +98,7 @@ namespace Logic.Constant
             ItemLayer,
             TriggerLayer,
             FlyingLayer,
-            ItemResistBlockLayer
+            WallLayer
         }
 
         // Update is called once per frame

@@ -29,26 +29,16 @@ namespace Logic.Server
             }
         }
 
-        public Tool(double x_t, double y_t, ToolType type_t) : base(x_t, y_t)
+        public Tool(double x_t, double y_t, ToolType type_t) : base(x_t, y_t, ObjType.Tools)
         {
             Server.ServerDebug("Create Tool : " + type_t);
             Layer = (int)MapLayer.ItemLayer;
             Movable = true;
             Bouncable = true;
-            _tool = type_t;
 
-            lock (Program.MessageToClientLock)
-            {
-                Program.MessageToClient.GameObjectMessageList.Add(
-                    this.ID,
-                    new GameObjectMessage
-                    {
-                        ObjType = ObjTypeMessage.Tool,
-                        ToolType = (ToolTypeMessage)Tool,
-                        Position = new XYPositionMessage { X = Position.x, Y = Position.y }
-                    });
-                Server.ServerDebug("Add Tool to Message list : " + type_t);
-            }
+            AddToMessage();
+            Tool = type_t;
+
             this.MoveComplete += new MoveCompleteHandler(
                 (thisGameObject) =>
                 {
