@@ -30,25 +30,14 @@ namespace Logic.Server
             }
         }
 
-        public Dish(double x_t, double y_t, DishType type_t) : base(x_t, y_t)
+        public Dish(double x_t, double y_t, DishType type_t) : base(x_t, y_t, ObjType.Dish)
         {
             Server.ServerDebug("Create Dish : " + type_t);
             Layer = (int)MapLayer.ItemLayer;
             Movable = true;
             Bouncable = true;
-            _dish = type_t;
-            lock (Program.MessageToClientLock)
-            {
-                Program.MessageToClient.GameObjectMessageList.Add(
-                    this.ID,
-                    new GameObjectMessage
-                    {
-                        ObjType = (ObjTypeMessage)ObjType.Dish,
-                        DishType = (DishTypeMessage)Dish,
-                        Position = new XYPositionMessage { X = Position.x, Y = Position.y }
-                    });
-                Server.ServerDebug("Add Dish to Message list : " + type_t);
-            }
+            AddToMessage();
+            Dish = type_t;
             this.MoveComplete += new MoveCompleteHandler(
                 (thisGameObject) =>
                 {

@@ -48,6 +48,17 @@ namespace Logic.Server
             }
         }
 
+        protected int Score
+        {
+            get { return score; }
+            set
+            {
+                score = value;
+                lock (Program.MessageToClientLock)
+                    Program.MessageToClient.GameObjectMessageList[this.ID].Score = score;
+            }
+        }
+
         public Player(double x, double y) :
             base(x, y)
         {
@@ -187,10 +198,10 @@ namespace Logic.Server
             }
             Console.WriteLine("没东西捡");
         }
-        public override void Put(int distance, bool isThrowDish)
+        public override void Put(double distance, bool isThrowDish)
         {
             if (distance > MaxThrowDistance) distance = MaxThrowDistance;
-            int dueTime = 200 * distance;
+            int dueTime = (int)(200 * distance);
 
             if ((int)dish != (int)DishType.Empty && isThrowDish)
             {
@@ -224,7 +235,7 @@ namespace Logic.Server
                 {
                     foreach (Block block in WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetType(typeof(Block)))
                     {
-                        if ((int)block.type == (int)BlockType.Cooker)
+                        if ((int)block.blockType == (int)BlockType.Cooker)
                         {
                             block.UseCooker();
                         }
