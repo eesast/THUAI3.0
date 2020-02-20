@@ -5,6 +5,7 @@ using static Logic.Constant.MapInfo;
 using System.Configuration;
 using Logic.Constant;
 using Communication.Proto;
+using System.Collections.Concurrent;
 
 namespace Logic.Server
 {
@@ -12,8 +13,6 @@ namespace Logic.Server
     {
         public int RefreshTime;//食物刷新点的食物刷新速率，毫秒
 
-
-        public HashSet<DishType> Task = null;//任务点的任务列表
         public Block(double x_t, double y_t, BlockType type_t) : base(x_t, y_t, ObjType.Block)
         {
             if (type_t == BlockType.Wall)
@@ -41,8 +40,6 @@ namespace Logic.Server
                         Program.MessageToClient.GameObjectMessageList[ID].BlockType = BlockTypeMessage.Cooker;
                     break;
                 case BlockType.TaskPoint:
-                    Task = new List<DishType>();
-                    RefreshTimer.Change(1000, Convert.ToInt32(ConfigurationManager.AppSettings["TaskRefreshTime"]));
                     lock (Program.MessageToClientLock)
                     {
                         Program.MessageToClient.GameObjectMessageList.Add(
@@ -71,7 +68,6 @@ namespace Logic.Server
             get
             {
                 if (this.blockType == BlockType.FoodPoint) _refreshTimer = _refreshTimer ?? new System.Threading.Timer(Refresh);
-                else if(this.blockType == BlockType.TaskPoint) _refreshTimer = _refreshTimer ?? new System.Threading.Timer(TaskProduce);
                 return _refreshTimer;
             }
         }
@@ -101,6 +97,7 @@ namespace Logic.Server
                 
             }
             string result = ConfigurationManager.AppSettings[Material];
+            if (result == null) result = "DarkDish";
             CookingTimer = new System.Threading.Timer(Cook, result, int.Parse(ConfigurationManager.AppSettings[result + "Time"]), 0);
             DishType GetResult(string s)
             {
@@ -117,30 +114,62 @@ namespace Logic.Server
             }
         }
 
-        public void TaskProduce(object i)
-        {
-            DishType temp = DishType.Banana;// (DishType)new Random().Next();
-            Task.Add(temp);
-            new System.Threading.Timer(remove, temp,
-                int.Parse(ConfigurationManager.AppSettings["TaskTimeLimit"]), 0);
-
-            void remove(object task)
-            {
-                if (task is DishType)
-                    Task.Remove((DishType)task);
-            }
-        }
 
         public override int HandIn(DishType dish_t)
         {
-            if (Task.Contains(dish_t))
+            return TaskSystem.HandIn(dish_t);
+        }
+    }
+
+    public static class TaskSystem
+    {
+        public class Task
+        {
+            public DishType type = (DishType)new Random((int)Timer.Time.GameTime().TotalMilliseconds).Next((int)DishType.Size1 + 1, (int)DishType.Size2 - 2);
+            public bool Done = false;
+            public System.Threading.Timer timer = new System.Threading.Timer(DeQueue, null, Convert.ToInt32(ConfigurationManager.AppSettings["TaskTimeLimit"]), 0);
+            ~Task()
             {
-                Task.Remove(dish_t);
-                Console.WriteLine(Convert.ToInt32(ConfigurationManager.AppSettings[dish_t.ToString() + "Score"]));
-                return Convert.ToInt32(ConfigurationManager.AppSettings[dish_t.ToString() + "Score"]);//菜品名+Score，在App.config里加
-                //测试的时候能直接把食材交进去，比赛的只会产生菜品任务
+                timer.Dispose();
             }
-            return 0;
+        }
+        public static ConcurrentQueue<Task> TaskQueue = new ConcurrentQueue<Task>();
+        public static Task DeQueueTask;
+        public static void DeQueue(object i)
+        {
+            TaskQueue.TryDequeue(out DeQueueTask);
+        }
+
+        public static System.Threading.Timer RefreshTimer = new System.Threading.Timer(TaskProduce, null, 1000, Convert.ToInt32(ConfigurationManager.AppSettings["TaskRefreshTime"]));
+        public static void TaskProduce(object i)
+        {
+            TaskQueue.Enqueue(new Task());
+            foreach (Task task in TaskQueue)
+            {
+                Console.WriteLine(task.type.ToString() + " " + task.Done.ToString());
+            }
+            Console.WriteLine();
+                //需要广播产生的任务
+                //感觉只需要广播任务的产生，而任务被完成以及任务因过时而gg都不用广播，需要玩家自己把握？
+        }
+        public static int HandIn(DishType dish_t)
+        {
+            int i = 0;
+            foreach(Task task in TaskQueue)
+            {
+                if (task.Done == false && task.type == dish_t) 
+                {
+                    task.Done = true;
+
+                    i = Convert.ToInt32(ConfigurationManager.AppSettings[dish_t.ToString() + "Score"]);//菜品名+Score，在App.config里加
+                }
+            }
+            foreach (Task task in TaskQueue)
+            {
+                Console.WriteLine(task.type.ToString() + " " + task.Done.ToString());
+            }
+            Console.WriteLine();
+            return i;
         }
     }
 }

@@ -235,14 +235,14 @@ namespace Logic.Server
         public override void Put(double distance, bool isThrowDish)
         {
             if (distance > MaxThrowDistance) distance = MaxThrowDistance;
-            int dueTime = (int)(200 * distance);
+            int dueTime = (int)(1000 * distance / int.Parse(ConfigurationManager.AppSettings["ItemMoveSpeed"]));
 
             if (dish != DishType.Empty && isThrowDish)
             {
                 Dish dishToThrow = new Dish(Position.x, Position.y, dish);
                 dishToThrow.Layer = (int)MapLayer.FlyingLayer;
                 dishToThrow.Parent = WorldMap;
-                dishToThrow.Velocity = new Vector((double)(int)facingDirection * Math.PI / 4, 5);
+                dishToThrow.Velocity = new Vector((double)(int)facingDirection * Math.PI / 4, int.Parse(ConfigurationManager.AppSettings["ItemMoveSpeed"]));
                 dishToThrow.StopMovingTimer.Change(dueTime, 0);
                 dish = DishType.Empty;
             }
@@ -251,7 +251,7 @@ namespace Logic.Server
                 Tool toolToThrow = new Tool(Position.x, Position.y, tool);
                 toolToThrow.Parent = WorldMap;
                 toolToThrow.Layer = (int)MapLayer.FlyingLayer;
-                toolToThrow.Velocity = new Vector((double)(int)facingDirection * Math.PI / 4, 5);
+                toolToThrow.Velocity = new Vector((double)(int)facingDirection * Math.PI / 4, int.Parse(ConfigurationManager.AppSettings["ItemMoveSpeed"]);
                 toolToThrow.StopMovingTimer.Change(dueTime, 0);
                 tool = ToolType.Empty;
                 lock (Program.MessageToClientLock)
@@ -278,7 +278,7 @@ namespace Logic.Server
                         {
                             int temp = block.HandIn(dish);
                             if (temp > 0)
-                            { score += temp; Dish = DishType.Empty; }
+                            { score += temp; Dish = DishType.Banana; }
                         }
                         break;
                     }

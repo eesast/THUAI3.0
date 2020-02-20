@@ -4,6 +4,7 @@ using System.Text;
 using Communication.Proto;
 using Logic.Constant;
 using static Logic.Constant.MapInfo;
+using System.Configuration;
 
 namespace Logic.Server
 {
@@ -14,7 +15,7 @@ namespace Logic.Server
         {
             get
             {
-                _random = _random ?? new Random();
+                _random = _random ?? new Random((int)Timer.Time.GameTime().TotalMilliseconds);
                 return _random;
             }
         }
@@ -49,6 +50,7 @@ namespace Logic.Server
                     }
                 }
             }
+            
             //new Tool(1.5, 1.5, ToolType.SpeedBuff).Parent = WorldMap;
         }
 
