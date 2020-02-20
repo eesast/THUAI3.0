@@ -125,7 +125,7 @@ namespace Logic.Server
     {
         public class Task
         {
-            public DishType type = (DishType)new Random((int)Timer.Time.GameTime().TotalMilliseconds).Next((int)DishType.Size1 + 1, (int)DishType.Size2 - 2);
+            public DishType type = (DishType)new Random((int)Timer.Time.GameTime().TotalMilliseconds).Next(0, (int)DishType.Size2 - 2);
             public bool Done = false;
             public System.Threading.Timer timer = new System.Threading.Timer(DeQueue, null, Convert.ToInt32(ConfigurationManager.AppSettings["TaskTimeLimit"]), 0);
             ~Task()

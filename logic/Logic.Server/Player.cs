@@ -251,7 +251,7 @@ namespace Logic.Server
                 Tool toolToThrow = new Tool(Position.x, Position.y, tool);
                 toolToThrow.Parent = WorldMap;
                 toolToThrow.Layer = (int)MapLayer.FlyingLayer;
-                toolToThrow.Velocity = new Vector((double)(int)facingDirection * Math.PI / 4, int.Parse(ConfigurationManager.AppSettings["ItemMoveSpeed"]);
+                toolToThrow.Velocity = new Vector((double)(int)facingDirection * Math.PI / 4, int.Parse(ConfigurationManager.AppSettings["ItemMoveSpeed"]));
                 toolToThrow.StopMovingTimer.Change(dueTime, 0);
                 tool = ToolType.Empty;
                 lock (Program.MessageToClientLock)
@@ -278,7 +278,7 @@ namespace Logic.Server
                         {
                             int temp = block.HandIn(dish);
                             if (temp > 0)
-                            { score += temp; Dish = DishType.Banana; }
+                            { score += temp; Dish = DishType.Empty; }
                         }
                         break;
                     }
