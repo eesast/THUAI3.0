@@ -26,13 +26,13 @@ namespace Logic.Constant
         Size
     }
     public enum BlockType
-    {
-        Wall,
-        Table,
-        FoodPoint,
-        Cooker,
-        RubbishBin,
-        TaskPoint,
+    {//标1的物品扔出碰到会反弹，标0的会穿过去
+        Wall,//1
+        Table,//0
+        FoodPoint,//1
+        Cooker,//0
+        RubbishBin,//0
+        TaskPoint,//1
         Size
     }
     public enum DishType

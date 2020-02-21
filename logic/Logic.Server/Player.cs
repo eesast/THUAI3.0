@@ -148,7 +148,6 @@ namespace Logic.Server
         public override void Move(Direction direction, int durationMilliseconds)
         {
             this.facingDirection = direction;
-            //this.Velocity = new Vector(0, 0);
             this.Velocity = new Vector(((double)(int)direction) * Math.PI / 4, moveSpeed + GlueExtraMoveSpeed);
             this.status = CommandType.Move;
             lock (Program.MessageToClientLock)
@@ -157,31 +156,59 @@ namespace Logic.Server
         }
         public override void Pick()
         {
-            status = CommandType.Stop;
-            XYPosition[] toCheckPositions = { Position, Position + 2 * THUnity2D.Tools.EightCornerVector[facingDirection] };
-            foreach (var position in toCheckPositions)
+            XYPosition Check()
             {
-                if (WorldMap.Grid[(int)position.x, (int)position.y].ContainsType(typeof(Block)))
+                bool CheckItem(XYPosition xypos)
                 {
-                    foreach (Block block in WorldMap.Grid[(int)position.x, (int)position.y].GetType(typeof(Block)))
+                    if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].ContainsType(typeof(Block)))
+                        foreach (var gameObject in WorldMap.Grid[(int)xypos.x, (int)xypos.y].GetType(typeof(Block)))
+                        {
+                            if (((Block)gameObject).Dish != DishType.Empty)
+                                return true;
+                        }
+
+                    foreach (var item in WorldMap.Grid[(int)xypos.x, (int)xypos.y].GetLayer((int)MapLayer.ItemLayer))
+                    {
+                        if (item is Dish || item is Tool)
+                            return true;
+                    }
+                    return false;
+                }
+                XYPosition xyPosition1 = Position + 2 * EightCornerVector[facingDirection];
+
+                if (CheckItem(Position))
+                {
+                    return Position;
+                }
+                if (CheckItem(xyPosition1))
+                {
+                    return xyPosition1;
+                }
+                return new XYPosition(-1, -1);
+            }
+            void GetItem(XYPosition xypos)
+            {
+                if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].ContainsType(typeof(Block)))
+                {
+                    foreach (Block block in WorldMap.Grid[(int)xypos.x, (int)xypos.y].GetType(typeof(Block)))
                     {
                         if ((block.blockType == BlockType.FoodPoint || block.blockType == BlockType.Cooker)
                             && block.Dish != DishType.Empty)
                         {
-                            Dish = block.GetDish(dish);
-                            Server.ServerDebug("Player : " + ID + " Get Dish " + dish.ToString());
+                            Dish = block.GetDish(Dish);
+                            Server.ServerDebug("Player : " + ID + " Get Dish " + Dish.ToString());
                             return;
                         }
                         break;
                     }
                 }
 
-                foreach (var item in WorldMap.Grid[(int)position.x, (int)position.y].GetLayer((int)MapLayer.ItemLayer))
+                foreach (var item in WorldMap.Grid[(int)xypos.x, (int)xypos.y].GetLayer((int)MapLayer.ItemLayer))
                 {
                     if (item is Dish)
                     {
-                        Dish = ((Dish)item).GetDish(dish);
-                        Server.ServerDebug("Player : " + ID + " Get Dish " + dish.ToString());
+                        Dish = ((Dish)item).GetDish(Dish);
+                        Server.ServerDebug("Player : " + ID + " Get Dish " + Dish.ToString());
                         return;
                     }
                     else if (item is Tool)
@@ -196,28 +223,35 @@ namespace Logic.Server
                     }
                 }
             }
-            Console.WriteLine("没东西捡");
+            XYPosition xypos = Check();
+            if (xypos.x < 0) Console.WriteLine("没东西捡");
+            else
+            {
+                GetItem(xypos);
+            }
+            status = CommandType.Stop;
+            Velocity = new Vector(0, 0);
         }
         public override void Put(double distance, bool isThrowDish)
         {
             if (distance > MaxThrowDistance) distance = MaxThrowDistance;
-            int dueTime = (int)(200 * distance);
+            int dueTime = (int)(1000 * distance / int.Parse(ConfigurationManager.AppSettings["ItemMoveSpeed"]));
 
-            if ((int)dish != (int)DishType.Empty && isThrowDish)
+            if (dish != DishType.Empty && isThrowDish)
             {
                 Dish dishToThrow = new Dish(Position.x, Position.y, dish);
                 dishToThrow.Layer = (int)MapLayer.FlyingLayer;
                 dishToThrow.Parent = WorldMap;
-                dishToThrow.Velocity = new Vector((double)(int)facingDirection * Math.PI / 4, 5);
+                dishToThrow.Velocity = new Vector((double)(int)facingDirection * Math.PI / 4, int.Parse(ConfigurationManager.AppSettings["ItemMoveSpeed"]));
                 dishToThrow.StopMovingTimer.Change(dueTime, 0);
-                Dish = DishType.Empty;
+                dish = DishType.Empty;
             }
-            else if ((int)tool != (int)ToolType.Empty && !isThrowDish)
+            else if (tool != ToolType.Empty && !isThrowDish)
             {
                 Tool toolToThrow = new Tool(Position.x, Position.y, tool);
                 toolToThrow.Parent = WorldMap;
                 toolToThrow.Layer = (int)MapLayer.FlyingLayer;
-                toolToThrow.Velocity = new Vector((double)(int)facingDirection * Math.PI / 4, 5);
+                toolToThrow.Velocity = new Vector((double)(int)facingDirection * Math.PI / 4, int.Parse(ConfigurationManager.AppSettings["ItemMoveSpeed"]));
                 toolToThrow.StopMovingTimer.Change(dueTime, 0);
                 tool = ToolType.Empty;
                 lock (Program.MessageToClientLock)
@@ -225,19 +259,20 @@ namespace Logic.Server
             }
             else Console.WriteLine("没有可以扔的东西");
             status = CommandType.Stop;
+            Velocity = new Vector(0, 0);
         }
         public override void Use(int type, int parameter)
         {
             if (type == 0)//type为0表示使用厨具做菜和提交菜品
             {
-                XYPosition xyPosition1 = Position + 2 * THUnity2D.Tools.EightCornerVector[facingDirection];
+                XYPosition xyPosition1 = Position + 2 * EightCornerVector[facingDirection];
                 if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].ContainsType(typeof(Block)))
                 {
                     foreach (Block block in WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetType(typeof(Block)))
                     {
-                        if ((int)block.blockType == (int)BlockType.Cooker)
+                        if (block.blockType == BlockType.Cooker)
                         {
-                            block.UseCooker();
+                            if (block.Cooking == false) block.UseCooker();
                         }
                         else if (block.blockType == BlockType.TaskPoint)
                         {
@@ -254,6 +289,7 @@ namespace Logic.Server
                 UseTool(0);
             }
             status = CommandType.Stop;
+            Velocity = new Vector(0, 0);
         }
 
         public void Function(ToolType type)//在捡起装备时生效，仅对捡起即生效的装备有用
@@ -287,7 +323,7 @@ namespace Logic.Server
                     {
                         moveSpeed += double.Parse(ConfigurationManager.AppSettings["SpeedBuffExtraMoveSpeed"]);
                         SpeedBuffTimer.Change(int.Parse(ConfigurationManager.AppSettings["SpeedBuffDuration"]), 0);
-                        this.Velocity = new Vector(Velocity.angle, (moveSpeed + GlueExtraMoveSpeed) / moveSpeed * Velocity.length);
+                        Velocity = new Vector(Velocity.angle, (moveSpeed + GlueExtraMoveSpeed) / moveSpeed * Velocity.length);
                         tool = ToolType.Empty;
                     }
                     break;
@@ -315,6 +351,8 @@ namespace Logic.Server
                 case ToolType.WaveGlue:
                     {
                         XYPosition xyPosition1 = Position.GetMid() + 2 * EightCornerVector[facingDirection];
+                        if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].ContainsType(typeof(Block))) 
+                        { Console.WriteLine("物品使用失败（无效的陷阱放置地点）！"); break; }
                         new Trigger(xyPosition1.x, xyPosition1.y, TriggerType.WaveGlue, team).Parent = WorldMap;
                         tool = ToolType.Empty;
                     }
@@ -322,6 +360,8 @@ namespace Logic.Server
                 case ToolType.LandMine:
                     {
                         XYPosition xyPosition1 = Position.GetMid() + 2 * EightCornerVector[facingDirection];
+                        if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].ContainsType(typeof(Block)))
+                        { Console.WriteLine("物品使用失败（无效的陷阱放置地点）！"); break; }
                         new Trigger(xyPosition1.x, xyPosition1.y, TriggerType.Mine, team).Parent = WorldMap;
                         tool = ToolType.Empty;
                     }
@@ -329,6 +369,8 @@ namespace Logic.Server
                 case ToolType.Trap:
                     {
                         XYPosition xyPosition1 = Position.GetMid() + 2 * EightCornerVector[facingDirection];
+                        if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].ContainsType(typeof(Block)))
+                        { Console.WriteLine("物品使用失败（无效的陷阱放置地点）！"); break; }
                         new Trigger(xyPosition1.x, xyPosition1.y, TriggerType.Trap, -1).Parent = WorldMap;
                         tool = ToolType.Empty;
                     }
@@ -363,7 +405,6 @@ namespace Logic.Server
                 default:
                     return false;
             }
-            //trigger.Parent = null;
             return true;
         }
     }

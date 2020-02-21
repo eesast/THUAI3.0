@@ -9,6 +9,7 @@ using static Logic.Constant.Constant;
 using System.Collections.Generic;
 using Communication.Server;
 using Communication.Proto;
+using System.Configuration;
 using Timer;
 namespace Logic.Server
 {
@@ -25,7 +26,7 @@ namespace Logic.Server
             ServerCommunication.Initialize();
             ServerCommunication.MsgProcess += OnRecieve;
             ServerCommunication.GameStart();
-
+            
             //初始化playerList
             //向所有Client发送他们自己的ID
             for (int a = 0; a < Constants.AgentCount; a++)
@@ -66,6 +67,7 @@ namespace Logic.Server
         {
             Time.InitializeTime();
             Console.WriteLine("Server begin to run");
+            TaskSystem.RefreshTimer.Change(1000, Convert.ToInt32(ConfigurationManager.AppSettings["TaskRefreshTime"]));
 
             System.Threading.Timer timer = new System.Threading.Timer(
                 (o) =>

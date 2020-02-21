@@ -10,18 +10,15 @@ namespace Logic.Constant
     public class Character : GameObject
     {
         public int team = 0;
-        public double moveSpeed = 5;
         public double GlueExtraMoveSpeed = 0;
-        //public double moveSpeed = Convert.ToDouble(System.Configuration.ConfigurationManager.AppSettings["PlayerInitMoveSpeed"]);
+        public double moveSpeed = Convert.ToDouble(System.Configuration.ConfigurationManager.AppSettings["PlayerInitMoveSpeed"]);
         public Direction facingDirection;
-        public double MaxThrowDistance = 10;
-        //public int MaxThrowDistance = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["PlayerInitThrowDistance"]);
-        public int SightRange = 9;
-        //public int SightRange = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["PlayerInitSightRange"]);
+        public int MaxThrowDistance = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["PlayerInitThrowDistance"]);
+        public int SightRange = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["PlayerInitSightRange"]);
         public TALENT talent;
         protected int score = 0;
-        public DishType dish = DishType.Empty;
-        public ToolType tool = ToolType.Empty;
+        public DishType dish = DishType.Banana;
+        public ToolType tool = ToolType.Trap;
         //public Tuple<int, int> id = new Tuple<int, int>(-1, -1);  //first:Agent, second:Client
         public Character(double x, double y) : base(new XYPosition(x, y))
         {
