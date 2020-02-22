@@ -32,8 +32,11 @@ enum DishTypeMessage
 	Banana = 2;
 	Potato = 3;
 	Tomato = 4;
-	DarkDish = 5;
-	DishTypeSize = 6;
+	DishTypeSize1 = 5;
+//以下为菜品
+
+	DarkDish = 6;
+	DishTypeSize2 = 7;
 }
 enum ToolTypeMessage
 {
@@ -93,9 +96,11 @@ message GameObjectMessage{
 	BlockTypeMessage BlockType = 6;
 	DishTypeMessage DishType = 7;
 	ToolTypeMessage ToolType = 8;
-	bool isMoving = 9;
-	repeated BuffMessage Buff = 10;
-	DishStateMessage DishState = 11;
+	TriggerTypeMessage TriggerType = 9;
+	bool isMoving = 10;
+	repeated BuffMessage Buff = 11;
+	DishStateMessage DishState = 12;
+	int32 Score = 13;
 }
 message MessageToClient {
 	map<int64, GameObjectMessage> GameObjectMessageList = 1;

@@ -3,12 +3,23 @@ using System.Collections.Generic;
 using System.Text;
 using Communication.Proto;
 using Logic.Constant;
-using static Logic.Constant.Map;
+using static Logic.Constant.MapInfo;
+using System.Configuration;
 
 namespace Logic.Server
 {
     static class Program
     {
+        private static Random _random;
+        public static Random Random
+        {
+            get
+            {
+                _random = _random ?? new Random((int)Timer.Time.GameTime().TotalMilliseconds);
+                return _random;
+            }
+        }
+
         private static MessageToClient _messageToClient;
         public static MessageToClient MessageToClient
         {
@@ -19,36 +30,58 @@ namespace Logic.Server
             }
         }
         public static readonly object MessageToClientLock = new object();
-        // Start is called before the first frame update
+
+
         public static void InitializeMap()
         {
             for (uint x = 0; x < WorldMap.Width; x++)
+            {
                 for (uint y = 0; y < WorldMap.Height; y++)
                 {
-                    if (map[x, y] == 6)
+                    switch (map[x, y])
                     {
-                        new Block(x + 0.5, y + 0.5, BlockType.FoodPoint).Parent = WorldMap;
-                    }
-                    else if (map[x, y] == 5)
-                    {
-                        new Block(x + 0.5, y + 0.5, BlockType.Wall).Parent = WorldMap;
-                    }
-                    else if (map[x, y] == 0)
-                    {
-                    }
-                    else
-                    {
-                        new Block(x + 0.5, y + 0.5, BlockType.Wall).Parent = WorldMap;
+                        case 0: break;
+                        case 1: new Block(x + 0.5, y + 0.5, BlockType.TaskPoint).Parent = WorldMap; break;
+                        case 2: new Block(x + 0.5, y + 0.5, BlockType.FoodPoint).Parent = WorldMap; break;
+                        case 3: new Block(x + 0.5, y + 0.5, BlockType.Cooker).Parent = WorldMap; break;
+                        case 4: new Block(x + 0.5, y + 0.5, BlockType.RubbishBin).Parent = WorldMap; break;
+                        case 5: new Block(x + 0.5, y + 0.5, BlockType.Wall).Parent = WorldMap; break;
+                        case 6: new Block(x + 0.5, y + 0.5, BlockType.Table).Parent = WorldMap; break;
                     }
                 }
-
+            }
+            
+            //new Tool(1.5, 1.5, ToolType.SpeedBuff).Parent = WorldMap;
         }
 
         private static Server server;
         public static void Main(string[] args)
         {
+            Communication.Proto.Constants.Debug = new Constants.DebugFunc((str) => { });
+            THUnity2D.GameObject.Debug = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
+            THUnity2D.GameObject.DebugWithoutEndline = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
+            THUnity2D.GameObject.DebugWithoutID = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
+            THUnity2D.GameObject.DebugWithoutIDEndline = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
             InitializeMap();
-            server = new Server();
+
+            ushort serverPort = 0, playerCount = 0, agentCount = 0;
+            uint maxGameTimeSecond = 1000;
+            try
+            {
+                serverPort = ushort.Parse(args[0]);
+                playerCount = ushort.Parse(args[1]);
+                agentCount = ushort.Parse(args[2]);
+                maxGameTimeSecond = uint.Parse(args[3]);
+            }
+            catch (FormatException)
+            {
+                Server.ServerDebug("Format Error");
+            }
+            catch (IndexOutOfRangeException)
+            {
+                Server.ServerDebug("Arguments Number Error");
+            }
+            server = new Server(serverPort, playerCount, agentCount, maxGameTimeSecond);
         }
     }
 }

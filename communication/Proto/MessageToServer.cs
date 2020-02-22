@@ -25,17 +25,19 @@ namespace Communication.Proto {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "ChVNZXNzYWdlVG9TZXJ2ZXIucHJvdG8SD2dvb2dsZS5wcm90b2J1ZhoVTWVz",
-            "c2FnZVRvQ2xpZW50LnByb3RvIqcBCg9NZXNzYWdlVG9TZXJ2ZXISCgoCSUQY",
+            "c2FnZVRvQ2xpZW50LnByb3RvIuQBCg9NZXNzYWdlVG9TZXJ2ZXISCgoCSUQY",
             "ASABKAMSOAoLQ29tbWFuZFR5cGUYAiABKA4yIy5nb29nbGUucHJvdG9idWYu",
             "Q29tbWFuZFR5cGVNZXNzYWdlEjgKDU1vdmVEaXJlY3Rpb24YAyABKA4yIS5n",
             "b29nbGUucHJvdG9idWYuRGlyZWN0aW9uTWVzc2FnZRIUCgxNb3ZlRHVyYXRp",
-            "b24YBCABKAEqWQoSQ29tbWFuZFR5cGVNZXNzYWdlEggKBE1vdmUQABIICgRQ",
-            "aWNrEAESBwoDUHV0EAISBwoDVXNlEAMSCAoEU3RvcBAEEhMKD0NvbW1hbmRU",
-            "eXBlU2l6ZRAFQhaqAhNDb21tdW5pY2F0aW9uLlByb3RvYgZwcm90bzM="));
+            "b24YBCABKAUSFQoNVGhyb3dEaXN0YW5jZRgFIAEoARITCgtJc1Rocm93RGlz",
+            "aBgGIAEoCBIPCgdVc2VUeXBlGAcgASgFKlkKEkNvbW1hbmRUeXBlTWVzc2Fn",
+            "ZRIICgRNb3ZlEAASCAoEUGljaxABEgcKA1B1dBACEgcKA1VzZRADEggKBFN0",
+            "b3AQBBITCg9Db21tYW5kVHlwZVNpemUQBUIWqgITQ29tbXVuaWNhdGlvbi5Q",
+            "cm90b2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Communication.Proto.MessageToClientReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Communication.Proto.CommandTypeMessage), }, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.MessageToServer), global::Communication.Proto.MessageToServer.Parser, new[]{ "ID", "CommandType", "MoveDirection", "MoveDuration" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.MessageToServer), global::Communication.Proto.MessageToServer.Parser, new[]{ "ID", "CommandType", "MoveDirection", "MoveDuration", "ThrowDistance", "IsThrowDish", "UseType" }, null, null, null)
           }));
     }
     #endregion
@@ -83,6 +85,9 @@ namespace Communication.Proto {
       commandType_ = other.commandType_;
       moveDirection_ = other.moveDirection_;
       moveDuration_ = other.moveDuration_;
+      throwDistance_ = other.throwDistance_;
+      isThrowDish_ = other.isThrowDish_;
+      useType_ = other.useType_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -126,12 +131,45 @@ namespace Communication.Proto {
 
     /// <summary>Field number for the "MoveDuration" field.</summary>
     public const int MoveDurationFieldNumber = 4;
-    private double moveDuration_;
+    private int moveDuration_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public double MoveDuration {
+    public int MoveDuration {
       get { return moveDuration_; }
       set {
         moveDuration_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "ThrowDistance" field.</summary>
+    public const int ThrowDistanceFieldNumber = 5;
+    private double throwDistance_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public double ThrowDistance {
+      get { return throwDistance_; }
+      set {
+        throwDistance_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "IsThrowDish" field.</summary>
+    public const int IsThrowDishFieldNumber = 6;
+    private bool isThrowDish_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool IsThrowDish {
+      get { return isThrowDish_; }
+      set {
+        isThrowDish_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "UseType" field.</summary>
+    public const int UseTypeFieldNumber = 7;
+    private int useType_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int UseType {
+      get { return useType_; }
+      set {
+        useType_ = value;
       }
     }
 
@@ -151,7 +189,10 @@ namespace Communication.Proto {
       if (ID != other.ID) return false;
       if (CommandType != other.CommandType) return false;
       if (MoveDirection != other.MoveDirection) return false;
-      if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(MoveDuration, other.MoveDuration)) return false;
+      if (MoveDuration != other.MoveDuration) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(ThrowDistance, other.ThrowDistance)) return false;
+      if (IsThrowDish != other.IsThrowDish) return false;
+      if (UseType != other.UseType) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -161,7 +202,10 @@ namespace Communication.Proto {
       if (ID != 0L) hash ^= ID.GetHashCode();
       if (CommandType != 0) hash ^= CommandType.GetHashCode();
       if (MoveDirection != 0) hash ^= MoveDirection.GetHashCode();
-      if (MoveDuration != 0D) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(MoveDuration);
+      if (MoveDuration != 0) hash ^= MoveDuration.GetHashCode();
+      if (ThrowDistance != 0D) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(ThrowDistance);
+      if (IsThrowDish != false) hash ^= IsThrowDish.GetHashCode();
+      if (UseType != 0) hash ^= UseType.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -187,9 +231,21 @@ namespace Communication.Proto {
         output.WriteRawTag(24);
         output.WriteEnum((int) MoveDirection);
       }
-      if (MoveDuration != 0D) {
-        output.WriteRawTag(33);
-        output.WriteDouble(MoveDuration);
+      if (MoveDuration != 0) {
+        output.WriteRawTag(32);
+        output.WriteInt32(MoveDuration);
+      }
+      if (ThrowDistance != 0D) {
+        output.WriteRawTag(41);
+        output.WriteDouble(ThrowDistance);
+      }
+      if (IsThrowDish != false) {
+        output.WriteRawTag(48);
+        output.WriteBool(IsThrowDish);
+      }
+      if (UseType != 0) {
+        output.WriteRawTag(56);
+        output.WriteInt32(UseType);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -208,8 +264,17 @@ namespace Communication.Proto {
       if (MoveDirection != 0) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) MoveDirection);
       }
-      if (MoveDuration != 0D) {
+      if (MoveDuration != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(MoveDuration);
+      }
+      if (ThrowDistance != 0D) {
         size += 1 + 8;
+      }
+      if (IsThrowDish != false) {
+        size += 1 + 1;
+      }
+      if (UseType != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(UseType);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -231,8 +296,17 @@ namespace Communication.Proto {
       if (other.MoveDirection != 0) {
         MoveDirection = other.MoveDirection;
       }
-      if (other.MoveDuration != 0D) {
+      if (other.MoveDuration != 0) {
         MoveDuration = other.MoveDuration;
+      }
+      if (other.ThrowDistance != 0D) {
+        ThrowDistance = other.ThrowDistance;
+      }
+      if (other.IsThrowDish != false) {
+        IsThrowDish = other.IsThrowDish;
+      }
+      if (other.UseType != 0) {
+        UseType = other.UseType;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -257,8 +331,20 @@ namespace Communication.Proto {
             MoveDirection = (global::Communication.Proto.DirectionMessage) input.ReadEnum();
             break;
           }
-          case 33: {
-            MoveDuration = input.ReadDouble();
+          case 32: {
+            MoveDuration = input.ReadInt32();
+            break;
+          }
+          case 41: {
+            ThrowDistance = input.ReadDouble();
+            break;
+          }
+          case 48: {
+            IsThrowDish = input.ReadBool();
+            break;
+          }
+          case 56: {
+            UseType = input.ReadInt32();
             break;
           }
         }

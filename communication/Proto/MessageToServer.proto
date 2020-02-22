@@ -15,5 +15,8 @@ message MessageToServer {
 	int64 ID = 1;
 	CommandTypeMessage CommandType = 2;
 	DirectionMessage MoveDirection = 3;
-	double MoveDuration = 4;
+	int32 MoveDuration = 4;
+	double ThrowDistance = 5;
+	bool IsThrowDish = 6;
+	int32 UseType = 7;
 }

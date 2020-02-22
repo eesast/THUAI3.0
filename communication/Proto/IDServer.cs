@@ -82,7 +82,7 @@ namespace Communication.Proto
                     case PacketType.ProtoPacket: //接收到包
                         Message message = new Message();
                         message.MergeFrom(istream);
-                        Constants.Debug($"ServerSide: Data received {message.Content.GetType().FullName}");
+                        //Constants.Debug($"ServerSide: Data received {message.Content.GetType().FullName}");
                         id = -1;
                         foreach (int key in clientList.Keys)
                         {
@@ -178,7 +178,7 @@ namespace Communication.Proto
             if(clientList.Count>0)
             {
                 InternalSend(message, -1);
-                Constants.Debug($"ServerSide: Data sent {message.Content.GetType().FullName}");
+                //Constants.Debug($"ServerSide: Data sent {message.Content.GetType().FullName}");
             }
 
         }

@@ -7,25 +7,26 @@ using System.Threading;
 using Logic.Constant;
 using static Logic.Constant.Constant;
 using System.Collections.Generic;
-using static Logic.Constant.Map;
 using Communication.Server;
 using Communication.Proto;
+using System.Configuration;
 using Timer;
 namespace Logic.Server
 {
     class Server
     {
-        //private const int serverPort = 8888;
         protected Dictionary<Tuple<int, int>, Player> PlayerList = new Dictionary<Tuple<int, int>, Player>();
         public ICommunication ServerCommunication = new CommunicationImpl();
 
-        public Server()
+        public Server(ushort serverPort, ushort playerCount, ushort agentCount, uint MaxGameTimeSeconds)
         {
+            Communication.Proto.Constants.ServerPort = serverPort;
+            Communication.Proto.Constants.PlayerCount = playerCount;
+            Communication.Proto.Constants.AgentCount = agentCount;
             ServerCommunication.Initialize();
             ServerCommunication.MsgProcess += OnRecieve;
-            //ServerCommunication.Port = serverPort;
             ServerCommunication.GameStart();
-
+            
             //初始化playerList
             //向所有Client发送他们自己的ID
             for (int a = 0; a < Constants.AgentCount; a++)
@@ -34,7 +35,7 @@ namespace Logic.Server
                 {
                     Tuple<int, int> playerIDTuple = new Tuple<int, int>(a, c);
                     PlayerList.Add(playerIDTuple, new Player(2.5, 1.5));//new Random().Next(2, WORLD_MAP_WIDTH - 2), new Random().Next(2, WORLD_MAP_HEIGHT - 2)));
-
+                    PlayerList[playerIDTuple].team = a;
                     MessageToClient msg = new MessageToClient();
                     msg.GameObjectMessageList.Add(
                         PlayerList[playerIDTuple].ID,
@@ -66,8 +67,8 @@ namespace Logic.Server
         {
             Time.InitializeTime();
             Console.WriteLine("Server begin to run");
+            TaskSystem.RefreshTimer.Change(1000, Convert.ToInt32(ConfigurationManager.AppSettings["TaskRefreshTime"]));
 
-            //此定时器无法正常工作！！！？？？
             System.Threading.Timer timer = new System.Threading.Timer(
                 (o) =>
                 {
@@ -82,13 +83,61 @@ namespace Logic.Server
                 /*
                 这里应该放定时、刷新物品等代码。
                 */
-                Console.ReadKey();
+                char key = Console.ReadKey().KeyChar;
+                switch (key)
+                {
+                    case '`': GodMode(); break;
+                }
+
             }
 
             Console.WriteLine("Server stop running");
         }
 
-        public void OnRecieve(Object communication, EventArgs e)
+        protected void GodMode()
+        {
+            Console.WriteLine("\n======= Welcome to God Mode ========\n");
+            string[] words = Console.ReadLine().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            if (words.Length < 5)
+                return;
+            try
+            {
+                switch (words[0])
+                {
+                    case "Add":
+                        switch (words[1])
+                        {
+                            case "Dish":
+                                DishType dishtype = (DishType)int.Parse(words[2]);
+                                if (dishtype >= DishType.Size2 || dishtype == DishType.Size1 || dishtype == DishType.Empty)
+                                    return;
+                                new Dish(double.Parse(words[3]), double.Parse(words[4]), dishtype).Parent = MapInfo.WorldMap;
+                                break;
+                            case "Tool":
+                                ToolType tooltype = (ToolType)int.Parse(words[2]);
+                                if (tooltype >= ToolType.Size || tooltype == ToolType.Empty)
+                                    return;
+                                new Tool(double.Parse(words[3]), double.Parse(words[4]), tooltype).Parent = MapInfo.WorldMap;
+                                break;
+                            case "Trigger":
+                                TriggerType triggertype = (TriggerType)int.Parse(words[2]);
+                                if (triggertype >= TriggerType.Size)
+                                    return;
+                                new Trigger(double.Parse(words[3]), double.Parse(words[4]), triggertype, -1).Parent = MapInfo.WorldMap;
+                                break;
+                        }
+                        break;
+                    case "Remove":
+                        break;
+                }
+            }
+            catch (FormatException)
+            {
+                ServerDebug("Format Error");
+            }
+        }
+
+        protected void OnRecieve(Object communication, EventArgs e)
         {
             CommunicationImpl communicationImpl = communication as CommunicationImpl;
             MessageEventArgs messageEventArgs = e as MessageEventArgs;
@@ -111,5 +160,7 @@ namespace Logic.Server
                 });
             }
         }
+
+        public static Action<string> ServerDebug = (str) => { Console.WriteLine(str); };
     }
 }

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using static THUnity2D.Tools;
+using static Logic.Constant.MapInfo;
 using Logic.Constant;
+using Communication.Proto;
 
 namespace Logic.Server
 {
@@ -11,19 +13,63 @@ namespace Logic.Server
 
         public int distance;
         public Direction direction;
-        public TimeSpan LastActTime;
-
-        public Dish(double x_t, double y_t, DishType type_t) : base(x_t, y_t)
+        //public TimeSpan LastActTime;
+        protected System.Threading.Timer _stopMovingTimer = null;
+        public System.Threading.Timer StopMovingTimer
         {
-            Blockable = false;
-            Movable = false;
-            dish = type_t;
+            get
+            {
+                if (_stopMovingTimer == null)
+                    _stopMovingTimer = new System.Threading.Timer(
+                        (o) =>
+                        {
+                            Velocity = new THUnity2D.Vector(Velocity.angle, 0);
+                            Layer = (int)MapLayer.ItemLayer;
+                            foreach (Block block in WorldMap.Grid[(int)Position.x, (int)Position.y].GetType(typeof(Block)))
+                            {
+                                if (block.blockType == BlockType.RubbishBin) Parent = null;
+                            }
+                        });
+                return _stopMovingTimer;
+            }
         }
+
+        public Dish(double x_t, double y_t, DishType type_t) : base(x_t, y_t, ObjType.Dish)
+        {
+            Server.ServerDebug("Create Dish : " + type_t);
+            Layer = (int)MapLayer.ItemLayer;
+            Movable = true;
+            Bouncable = true;
+            AddToMessage();
+            Dish = type_t;
+            this.MoveComplete += new MoveCompleteHandler(
+                (thisGameObject) =>
+                {
+                    lock (Program.MessageToClientLock)
+                    {
+                        Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.X = thisGameObject.Position.x;
+                        Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.Y = thisGameObject.Position.y;
+                    }
+                    //Server.ServerDebug(this.Position.ToString());
+                });
+            this.OnParentDelete += new ParentDeleteHandler(
+                () =>
+                {
+                    lock (Program.MessageToClientLock)
+                    {
+                        Program.MessageToClient.GameObjectMessageList.Remove(ID);
+                    }
+                });
+        }
+
         public override DishType GetDish(DishType t)
         {
-            DishType temp = dish;
+            DishType temp = Dish;
             if (t == DishType.Empty) this.Parent = null;
-            else dish = t;
+            else
+            {
+                Dish = t;
+            }
             return temp;
         }
     }
