@@ -84,12 +84,6 @@ namespace Client
                             else
                                 Program.form.playerLabels[id_t].Text = gameObjectMessage.DishType.ToString();
                             break;
-                        case BlockTypeMessage.TaskPoint:
-                            if (gameObjectMessage.Task == DishTypeMessage.DishEmpty)
-                                Program.form.playerLabels[id_t].Text = "";
-                            else
-                                Program.form.playerLabels[id_t].Text = gameObjectMessage.Task.ToString();
-                            break;
                     }
                     break;
                 case ObjTypeMessage.Dish:
@@ -126,8 +120,8 @@ namespace Client
                         case BlockTypeMessage.Cooker:
                             Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.SandyBrown;
                             break;
-                        case BlockTypeMessage.TaskPoint:
-                            Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.LightSkyBlue;
+                        case BlockTypeMessage.RubbishBin:
+                            Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.DarkGreen;
                             break;
                     }
                     break;
@@ -233,6 +227,8 @@ namespace Client
                     case 'c': Move(Direction.RightDown); break;
                     case 'f': Pick(); break;
                     case 'u': Use(1, 0); break;
+
+                    case 'i': Use(0, 0); break;
                     case 'r':
                         char temp = Console.ReadKey().KeyChar;
                         if (temp >= '0' && temp <= '9')
@@ -244,7 +240,7 @@ namespace Client
                         char tmp = Console.ReadKey().KeyChar;
                         if (tmp >= '0' && tmp <= '9')
                         {
-                            Put(tmp - '0', true);
+                            Put(tmp - '0', false);
                         }
                         break;
                     case ':':
@@ -287,8 +283,8 @@ namespace Client
         }
         public override void Use(int type, int parameter)
         {
-
             messageToServer.CommandType = CommandTypeMessage.Use;
+            messageToServer.UseType = type;
             ClientCommunication.SendMessage(messageToServer);
         }
         public override void Pick()
@@ -337,7 +333,6 @@ namespace Client
         public void ChangeAllLabels(MessageToClient msg)
         {
             IDsToDelete = new HashSet<long>(Program.form.playerLabels.Keys);
-            //recordDic[true].Clear();
             foreach (var gameObject in msg.GameObjectMessageList)
             {
                 moveFormLabel(gameObject.Key, gameObject.Value, ref IDsToDelete);
@@ -359,6 +354,23 @@ namespace Client
                 Program.form.playerLabels.Remove(number);
             }
 
+            if(Program.form.ControlLabels["Task"].InvokeRequired)
+            {
+                Program.form.ControlLabels["Task"].Invoke(new Action<MessageToClient>(ChangeTaskLabel), msg);
+            }
+            else
+            {
+                ChangeTaskLabel(msg);
+            }
+        }
+
+        public void ChangeTaskLabel(MessageToClient msg)
+        {
+            Program.form.ControlLabels["Task"].Text = "Task : ";
+            foreach (var task in msg.Tasks)
+            {
+                Program.form.ControlLabels["Task"].Text += "\n" + task;
+            }
         }
     }
 

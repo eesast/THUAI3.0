@@ -452,7 +452,7 @@ namespace THUnity2D
                                         end[j]));
                              z = z + Step[j])
                         {
-                            //Debug(this, "Checking : (" + (i == 0 ? Search[i] : z) + "," + (i == 0 ? z : Search[i]) + ")");
+                            Debug(this, "Checking : (" + (i == 0 ? Search[i] : z) + "," + (i == 0 ? z : Search[i]) + ")");
                             CheckBlockAndAdjustPosition(i == 0 ? (int)Search[i] : (int)z, i == 0 ? (int)z : (int)Search[i]);
                         }
                         Search[i] = Search[i] + Step[i];
@@ -482,18 +482,6 @@ namespace THUnity2D
             }
             //解除锁的占用 End
 
-            //Collide
-            if (resultDistance < e.distance)
-            {
-                childrenGameObject.Collide(new CollisionEventArgs(collisionDirection, CollisionGameObjects));
-                if (CollisionGameObjects != null)
-                    foreach (var gameObject in CollisionGameObjects)
-                    {
-                        gameObject.Collide(new CollisionEventArgs((Direction)(((int)collisionDirection + 4) % 8), new HashSet<GameObject> { childrenGameObject }));
-                    }
-            }
-            //Collide End
-
             //Trigger
             HashSet<GameObject> triggerGameObjects = new HashSet<GameObject>();
             foreach (var item in triggerDistanceAndGameObjects)
@@ -509,23 +497,42 @@ namespace THUnity2D
             childrenGameObject.Trigger(triggerGameObjects);
             //Trigger End
 
-            //Check Bouncable
-            //检查是否可反弹
-            if (childrenGameObject.Bouncable && resultDistance < e.distance)
+            //Collide
+            if (resultDistance < e.distance)
             {
-                double bounceAngle;
-                switch (collisionDirection)
+                childrenGameObject.Collide(new CollisionEventArgs(collisionDirection, CollisionGameObjects));
+                if (CollisionGameObjects != null)
+                    foreach (var gameObject in CollisionGameObjects)
+                    {
+                        gameObject.Collide(new CollisionEventArgs((Direction)(((int)collisionDirection + 4) % 8), new HashSet<GameObject> { childrenGameObject }));
+                    }
+
+                //Check Bouncable
+                //检查是否可反弹
+                if (childrenGameObject.Bouncable)
                 {
-                    case Direction.Left:
-                    case Direction.Right: bounceAngle = Math.PI - e.angle; break;
-                    case Direction.Up:
-                    case Direction.Down: bounceAngle = -e.angle; break;
-                    default: bounceAngle = Math.PI + e.angle; break;
+                    double bounceAngle;
+                    switch (collisionDirection)
+                    {
+                        case Direction.Left:
+                        case Direction.Right: bounceAngle = Math.PI - e.angle; break;
+                        case Direction.Up:
+                        case Direction.Down: bounceAngle = -e.angle; break;
+                        default: bounceAngle = Math.PI + e.angle; break;
+                    }
+                    childrenGameObject.Move(new MoveEventArgs(bounceAngle, e.distance - resultDistance));
+                    childrenGameObject.Velocity = new Vector(bounceAngle, childrenGameObject.Velocity.length);
                 }
-                childrenGameObject.Move(new MoveEventArgs(bounceAngle, e.distance - resultDistance));
-                childrenGameObject.Velocity = new Vector(bounceAngle, childrenGameObject.Velocity.length);
+                else
+                {
+                    if (childrenGameObject.Velocity.length > 0)
+                        childrenGameObject.Velocity = new Vector(e.angle, 0);
+                }
+                //Check Bouncable End
+
             }
-            //Check Bouncable End
+            //Collide End
+
         }
 
         //Layer
@@ -666,7 +673,7 @@ namespace THUnity2D
             _gameObjectListByLayer[gameObject.Layer].TryRemove(gameObject, out temp);
             if (_gameObjectListByLayer[gameObject.Layer].Count <= 0)
             {
-                ConcurrentDictionary<GameObject, byte> tmp;
+                ConcurrentDictionary<GameObject, byte>? tmp;
                 _gameObjectListByLayer.TryRemove(gameObject.Layer, out tmp);
             }
         }

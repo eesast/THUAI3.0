@@ -20,6 +20,10 @@ namespace Logic.Server
                         {
                             Velocity = new THUnity2D.Vector(Velocity.angle, 0);
                             Layer = (int)MapLayer.ItemLayer;
+                            foreach (Block block in WorldMap.Grid[(int)Position.x, (int)Position.y].GetType(typeof(Block)))
+                            {
+                                if (block.blockType == BlockType.RubbishBin) Parent = null;
+                            }
                         });
                 return _stopMovingTimer;
             }

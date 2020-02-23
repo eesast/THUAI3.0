@@ -9,12 +9,13 @@ using static Logic.Constant.Constant;
 using System.Collections.Generic;
 using Communication.Server;
 using Communication.Proto;
+using System.Configuration;
 using Timer;
 namespace Logic.Server
 {
     class Server
     {
-        
+
         protected ICommunication ServerCommunication = new CommunicationImpl();
 
         public Server(ushort serverPort, ushort playerCount, ushort agentCount, uint MaxGameTimeSeconds)
@@ -66,6 +67,7 @@ namespace Logic.Server
         {
             Time.InitializeTime();
             Console.WriteLine("Server begin to run");
+            TaskSystem.RefreshTimer.Change(1000, (int)(Configs["TaskRefreshTime"]));
 
             System.Threading.Timer timer = new System.Threading.Timer(
                 (o) =>

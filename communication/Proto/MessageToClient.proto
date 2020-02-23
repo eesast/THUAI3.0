@@ -35,12 +35,15 @@ enum DishTypeMessage
 	DishTypeSize1 = 5;
 //以下为菜品
 
-	DarkDish = 6;
-	ApplePie = 7;
-	BananaPie = 8;
-	TomatoEgg = 9;
-	MashedPotato = 10;
-	DishTypeSize2 = 11;
+	ApplePie = 6;
+	BananaPie = 7;
+	TomatoEgg = 8;
+	MashedPotato = 9;
+	DishTypeSize2 = 10;
+
+	OverCookedDish = 11;
+	DarkDish = 12;
+	DishTypeSize3 = 13;
 }
 enum ToolTypeMessage
 {
@@ -65,9 +68,10 @@ enum ToolTypeMessage
 }
 enum TriggerTypeMessage
 {
-	TrapTrigger = 0;
-	Mine = 1;
-	TriggerTypeSize = 2;
+	TriggerWaveGlue = 0;
+	TrapTrigger = 1;
+	Mine = 2;
+	TriggerTypeSize = 3;
 }
 enum BuffMessage{
 	Frozen = 0;
@@ -105,9 +109,9 @@ message GameObjectMessage{
 	repeated BuffMessage Buff = 11;
 	DishStateMessage DishState = 12;
 	int32 Score = 13;
-	DishTypeMessage Task = 14;
-	string SpeakText = 15;
+	string SpeakText = 14;
 }
 message MessageToClient {
 	map<int64, GameObjectMessage> GameObjectMessageList = 1;
+	repeated DishTypeMessage Tasks = 2;
 }

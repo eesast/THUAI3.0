@@ -4,6 +4,9 @@ using System.Text;
 using Communication.Proto;
 using Logic.Constant;
 using static Logic.Constant.MapInfo;
+using System.Configuration;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Logic.Server
 {
@@ -14,7 +17,7 @@ namespace Logic.Server
         {
             get
             {
-                _random = _random ?? new Random();
+                _random = _random ?? new Random(DateTime.Now.Millisecond);
                 return _random;
             }
         }
@@ -49,6 +52,7 @@ namespace Logic.Server
                     }
                 }
             }
+            
             //new Tool(1.5, 1.5, ToolType.SpeedBuff).Parent = WorldMap;
         }
 

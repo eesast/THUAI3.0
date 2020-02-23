@@ -52,7 +52,7 @@ namespace Timer
                             double milliseconds = (en.Current.Key - DateTime.Now).TotalMilliseconds;
                             if (milliseconds <= 0)
                             {
-                                milliseconds = 1;
+                                milliseconds = 0.0001;
                             }
                             timer.Interval = milliseconds;
                             timer.Enabled = true;
@@ -95,7 +95,7 @@ namespace Timer
                     //Console.WriteLine(DateTime.Now);
                     double ms = (en.Current.Key - DateTime.Now).TotalMilliseconds;
                     if (ms <= 0)
-                        ms = 1;
+                        ms = 0.00011;
                     timer.Interval = ms;
                     timer.Enabled = true;
                     //Console.WriteLine("Exit Add");

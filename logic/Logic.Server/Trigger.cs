@@ -4,6 +4,7 @@ using System.Text;
 using Logic.Constant;
 using System.Configuration;
 using static Logic.Constant.MapInfo;
+using static Logic.Constant.Constant;
 using Communication.Proto;
 
 namespace Logic.Server
@@ -20,7 +21,7 @@ namespace Logic.Server
             triggerType = type_t;
             OwnerTeam = owner_t;
             if (triggerType == TriggerType.WaveGlue) DurationTimer = new System.Threading.Timer(
-                (i) => { Parent = null; }, null, Convert.ToInt32(ConfigurationManager.AppSettings["WaveGlueDuration"]), 0);
+                (i) => { Parent = null; }, null, (int)(Configs["WaveGlueDuration"]), 0);
             this.OnTrigger += new TriggerHandler(
                 (t) =>
                 {

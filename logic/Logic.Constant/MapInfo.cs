@@ -80,6 +80,7 @@ namespace Logic.Constant
                     _worldMap.LayerCount = 6;
                     //分6层，0层为不可碰撞的方块，1层为人，2层为不碰撞的物品，3层为Trigger，4层为飞行员专用层，5层为墙
                     _worldMap.SetLayerCollisionTrue((int)MapLayer.BlockLayer, (int)MapLayer.PlayerLayer);
+                    _worldMap.SetLayerCollisionTrue((int)MapLayer.PlayerLayer, (int)MapLayer.PlayerLayer);
                     _worldMap.SetLayerCollisionTrue((int)MapLayer.BlockLayer, (int)MapLayer.BlockLayer);
                     _worldMap.SetLayerCollisionTrue((int)MapLayer.PlayerLayer, (int)MapLayer.PlayerLayer);
                     _worldMap.SetLayerCollisionTrue((int)MapLayer.WallLayer, (int)MapLayer.FlyingLayer);
@@ -99,12 +100,5 @@ namespace Logic.Constant
             FlyingLayer,
             WallLayer
         }
-
-        // Update is called once per frame
-        public static void Update()
-        {
-
-        }
-
     }
 }
