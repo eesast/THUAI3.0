@@ -1,4 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS
 #include"CAPI.h"
 #include"constants.h"
 #include<iostream>
@@ -26,10 +25,12 @@ void* Ping(void* param)
 	}
 	return NULL;
 }
-int main()
+int main(int argc,char* argv[])
 {
+	char *agent_ip=(argv[1]);
+	int agent_port = atoi(argv[2]);
 	API.Initialize();
-	API.ConnectServer("192.168.2.154", 30000);
+	API.ConnectServer(agent_ip, agent_port);
 	pthread_t pt;
 	pthread_create(&pt, NULL, Ping, NULL);
 	pthread_detach(pt);

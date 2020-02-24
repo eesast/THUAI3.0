@@ -1,13 +1,8 @@
 ## Yours
-
-*.dll
-*.lib
-/include/*
-/include(linux)/*
-/lib/*
-/lib(linux)/*
-/proto/*
-*.lib
+linux_only/
+windows_only/
+proto/*.proto
+include/common
 !.gitkeep
 
 ## VsCode
