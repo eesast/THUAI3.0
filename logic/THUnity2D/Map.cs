@@ -313,24 +313,36 @@ namespace THUnity2D
                     int j = Convert.ToInt32(!Convert.ToBoolean(i));
                     toCheck[i] = gameObject.Position.GetProperty(i) + toCheckAdd[i];
                     startPoint[i] = previousPosition.GetProperty(i) + startPointAdd[i];
-                    if (IsInCloseOpenInterval(toCheck[i], startPoint[i], infinityBound[i]))
+                    if (IsInCloseOpenInterval(toCheck[i], startPoint[i], infinityBound[i])
+                        && delta[i] != 0)//如果平行四边形是一条线，就跳过
                     {
                         //Debug(this,"delta[" + i + "] : " + delta[i]);
                         double temp = previousPosition.GetProperty(j) - 0.5 + (toCheck[i] - startPoint[i]) * delta[j] / delta[i];
+                        //Debug(this, "temp : " + temp);
                         if (IsInOpenInterval(temp, gameObject.Position.GetProperty(j) - 0.5 - 1, gameObject.Position.GetProperty(j) + 0.5))
                         {
+                            //Debug(this, "!");
                             Distance[i] = (toCheck[i] - startPoint[i]) * resultDistance / delta[i];
                         }
                     }
-                    //Debug(this,"Distance[" + i + "] : " + Distance[i]);
+                    //Debug(this, "Distance[" + i + "] : " + Distance[i]);
                 }
                 double maxReachDistance = Math.Min(Distance[0], Distance[1]);
                 {
-                    double[] coefficient = { (toCheck[0] - startPoint[0]) / delta[0], (toCheck[1] - startPoint[1]) / delta[1] };
-                    if (double.IsNaN(coefficient[0]) && double.IsNaN(coefficient[1]))
-                        maxReachDistance = 0;
-                    else if (coefficient[0] == coefficient[1])
-                        maxReachDistance = coefficient[0] * resultDistance;
+                    //Debug(this, "toCheck[0]=" + toCheck[0]);
+                    //Debug(this, "startPoint[0]=" + startPoint[0]);
+                    //Debug(this, "delta[0]=" + delta[0]);
+                    //Debug(this, "toCheck[1]=" + toCheck[1]);
+                    //Debug(this, "startPoint[1]=" + startPoint[1]);
+                    //Debug(this, "delta[1]=" + delta[1]);
+                    if (Math.Abs((toCheck[0] - startPoint[0]) * delta[1] - (toCheck[1] - startPoint[1]) * delta[0]) < 1E-10)
+                    {
+                        if (Math.Abs(toCheck[0] - startPoint[0]) < 1E-10 && Math.Abs(toCheck[1] - startPoint[1]) < 1E-10
+                            && delta[0] != 0 && delta[1] != 0)
+                            maxReachDistance = 0;
+                        else if (Math.Abs(toCheck[0] - startPoint[0]) >= 1E-10 && Math.Abs(toCheck[1] - startPoint[1]) >= 1E-10)
+                            maxReachDistance = resultDistance * (toCheck[0] - startPoint[0]) / delta[0];
+                    }
                 }
                 Debug(this, "maxReachDistance : " + maxReachDistance);
                 return maxReachDistance;
@@ -346,7 +358,7 @@ namespace THUnity2D
                     return;
                 Monitor.Enter(_grid[x, y].publicLock);
                 lockList.AddLast(_grid[x, y].publicLock);
-                if (x != (int)childrenGameObject.Position.x || y != (int)childrenGameObject.Position.y)
+                if (x != (int)previousPosition.x || y != (int)previousPosition.y)
                     foreach (var layer in _layerCollisionMatrix[childrenGameObject.Layer][true])
                     {
                         if (!_grid[x, y].ContainsLayer(layer))
