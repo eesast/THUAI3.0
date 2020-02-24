@@ -1,0 +1,53 @@
+project (AI)
+cmake_minimum_required(VERSION 3.6.0)
+if(UNIX)
+	add_subdirectory(${PROJECT_SOURCE_DIR}/proto)
+
+	set(CMAKE_BUILD_TYPE Release)
+	add_compile_options(-std=c++11)
+
+
+	include_directories(${PROJECT_SOURCE_DIR}/include)
+	aux_source_directory(${PROJECT_SOURCE_DIR}/src DIR_SRC)
+
+	set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -o3 -Wall -Wextra")
+
+
+	if(UNIX)
+	include_directories(${PROJECT_SOURCE_DIR}/linux_only/include)
+	endif()
+
+	find_package(Protobuf REQUIRED)
+	include_directories(${Protobuf_INCLUDE_DIRS})
+	include_directories(${PROJECT_BINARY_DIR}/proto/build)
+
+	SET(COMPILE_FLAGS "-I/usr/local/include -pthread -ldl -lpthread -fno-strict-aliasing")
+	SET(LINK_FLAGS "-L/usr/local/lib -lprotobuf -pthread -ldl -lpthread")
+	SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${COMPILE_FLAGS}" )
+	SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${LINK_FLAGS}" )
+
+
+	add_executable(AI ${DIR_SRC})
+	target_link_libraries(AI  ${PROJECT_SOURCE_DIR}/linux_only/lib/libdl.so  ${PROJECT_SOURCE_DIR}/linux_only/lib/libhpsocket.a)
+	target_link_libraries(AI ${CMAKE_DL_LIBS})
+	target_link_libraries(AI protos)
+elseif(WIN32)
+	# SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/executables)
+	include_directories(${PROJECT_SOURCE_DIR}/windows_only/include)
+	include_directories(${PROJECT_SOURCE_DIR}/include)
+	message(${PROJECT_SOURCE_DIR})
+	include_directories(${PROJECT_SOURCE_DIR}/windows_only/proto_files)
+	set(CMAKE_BUILD_TYPE,"Release")
+	if(CMAKE_COMPILER_IS_GNUCXX)
+	  add_definitions(-Wall -Wextra)
+	endif(CMAKE_COMPILER_IS_GNUCXX)
+	SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
+	SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall ")
+	aux_source_directory(${PROJECT_SOURCE_DIR}/src DIR_SRC)
+	aux_source_directory(${PROJECT_SOURCE_DIR}/windows_only/proto_files DIR_SRC)
+	set(SRC_LIST ${DIR_SRC})
+	link_directories(${PROJECT_SOURCE_DIR}/windows_only/lib)
+	link_libraries(gmock gmock_main libprotobuf libprotobuf-lite libprotoc pthreadVSE2 HPSocket)
+	ADD_EXECUTABLE(AI ${SRC_LIST})
+
+endif()

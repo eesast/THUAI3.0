@@ -1,6 +1,9 @@
 ## Yours
-
-
+linux_only/
+windows_only/
+proto/*.proto
+include/common
+!.gitkeep
 
 ## VsCode
 .vscode/
