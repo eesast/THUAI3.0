@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Logic.Constant;
+﻿using Logic.Constant;
 using static Logic.Constant.MapInfo;
-using Communication.Proto;
 
 namespace Logic.Server
 {

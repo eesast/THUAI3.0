@@ -23,7 +23,7 @@ namespace Logic.Constant
         {
             get
             {
-                _configs = _configs ?? (JObject)JToken.ReadFrom(new JsonTextReader(File.OpenText("Config.json")));
+                _configs = _configs ?? (JObject)JToken.ReadFrom(new JsonTextReader(File.OpenText(@"Config\Config.json")));
                 return _configs;
             }
         }

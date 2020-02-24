@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using static THUnity2D.Tools;
+﻿using Logic.Constant;
 using static Logic.Constant.MapInfo;
-using Logic.Constant;
-using Communication.Proto;
+using static THUnity2D.Tools;
 
 namespace Logic.Server
 {

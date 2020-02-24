@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using THUnity2D;
+﻿using Communication.Proto;
 using Logic.Constant;
-using Communication.Proto;
+using THUnity2D;
 
 namespace Logic.Server
 {

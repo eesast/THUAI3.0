@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Threading;
 using System.Collections.Generic;
-using System.Text;
-using Logic.Constant;
+using System.Threading;
 //#pragma warning disable CS8622
 namespace Timer
 {

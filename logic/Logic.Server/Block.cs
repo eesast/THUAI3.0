@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using static Logic.Constant.MapInfo;
-using System.Configuration;
+﻿using Communication.Proto;
 using Logic.Constant;
-using static Logic.Constant.Constant;
-using Communication.Proto;
+using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using static Logic.Constant.Constant;
+using static Logic.Constant.MapInfo;
 
 namespace Logic.Server
 {
@@ -31,7 +29,7 @@ namespace Logic.Server
                     Dish = (DishType)Program.Random.Next(1, (int)DishType.Size1 - 1);
                     lock (Program.MessageToClientLock)
                         Program.MessageToClient.GameObjectMessageList[ID].BlockType = BlockTypeMessage.FoodPoint;
-                    RefreshTime = (int)(Configs["FoodPointInitRefreshTime"]);
+                    RefreshTime = (int)Configs["FoodPointInitRefreshTime"];
                     Console.WriteLine("食品刷新：地点（" + Position.x + "," + Position.y + "）, 种类 : " + Dish);
                     break;
                 case BlockType.Cooker:
@@ -48,8 +46,13 @@ namespace Logic.Server
             Dish = DishType.Empty;
             switch (blockType)
             {
-                case BlockType.FoodPoint: RefreshTimer.Change(RefreshTime, 0); break;
-                case BlockType.Cooker: cookingResult = "Empty"; Cooking = false; break;
+                case BlockType.FoodPoint:
+                    RefreshTimer.Change(RefreshTime, 0);
+                    break;
+                case BlockType.Cooker:
+                    cookingResult = "Empty";
+                    Cooking = false;
+                    break;
             }
             return temp;
         }
