@@ -49,7 +49,7 @@ namespace GameForm
                 label.Value.Size = new System.Drawing.Size(CONTROL_LABELS_WIDTH, CONTROL_LABELS_HEIGHT);
                 i++;
             }
-
+            ControlLabels["Task"].Size = new System.Drawing.Size(CONTROL_LABELS_WIDTH, 3 * CONTROL_LABELS_HEIGHT);
 
             this.ClientSize = new System.Drawing.Size(FORM_WIDTH + CONTROL_LABELS_WIDTH, FORM_HEIGHT);
 

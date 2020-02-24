@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Logic.Constant;
+﻿using Logic.Constant;
 using static Logic.Constant.MapInfo;
-using Communication.Proto;
 
 namespace Logic.Server
 {
@@ -39,25 +35,8 @@ namespace Logic.Server
             AddToMessage();
             Tool = type_t;
 
-            this.MoveComplete += new MoveCompleteHandler(
-                (thisGameObject) =>
-                {
-                    lock (Program.MessageToClientLock)
-                    {
-                        Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.X = thisGameObject.Position.x;
-                        Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.Y = thisGameObject.Position.y;
-                    }
-                    //Server.ServerDebug(this.Position.ToString());
-                });
-            this.OnParentDelete += new ParentDeleteHandler(
-                () =>
-                {
-                    lock (Program.MessageToClientLock)
-                    {
-                        Program.MessageToClient.GameObjectMessageList.Remove(ID);
-                        Server.ServerDebug("Delete Tool From Message List");
-                    }
-                });
+            this.MoveComplete += new MoveCompleteHandler(ChangePositionInMessage);
+            this.OnParentDelete += new ParentDeleteHandler(DeleteFromMessage);
 
         }
         public override ToolType GetTool(ToolType t)

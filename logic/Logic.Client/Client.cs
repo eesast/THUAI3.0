@@ -120,9 +120,6 @@ namespace Client
                         case BlockTypeMessage.Cooker:
                             Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.SandyBrown;
                             break;
-                        case BlockTypeMessage.TaskPoint:
-                            Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.DarkRed;
-                            break;
                         case BlockTypeMessage.RubbishBin:
                             Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.DarkGreen;
                             break;
@@ -227,7 +224,7 @@ namespace Client
                     case 'a': Move(Direction.Left); break;
                     case 'z': Move(Direction.LeftDown); break;
                     case 'x': Move(Direction.Down); break;
-                    case 'c': Move(Direction.RightDown); break; 
+                    case 'c': Move(Direction.RightDown); break;
                     case 'f': Pick(); break;
                     case 'u': Use(1, 0); break;
 
@@ -245,6 +242,9 @@ namespace Client
                         {
                             Put(tmp - '0', false);
                         }
+                        break;
+                    case ':':
+                        SpeakToFriend(Console.ReadLine());
                         break;
                 }
                 lastSendTime = DateTime.Now;
@@ -283,7 +283,6 @@ namespace Client
         }
         public override void Use(int type, int parameter)
         {
-
             messageToServer.CommandType = CommandTypeMessage.Use;
             messageToServer.UseType = type;
             ClientCommunication.SendMessage(messageToServer);
@@ -291,6 +290,14 @@ namespace Client
         public override void Pick()
         {
             messageToServer.CommandType = CommandTypeMessage.Pick;
+            ClientCommunication.SendMessage(messageToServer);
+        }
+        public void SpeakToFriend(string speakText)
+        {
+            messageToServer.CommandType = CommandTypeMessage.Speak;
+            if (speakText.Length > 16)//限制发送的字符串长度为16
+                speakText = speakText.Substring(0, 15);
+            messageToServer.SpeakText = speakText;
             ClientCommunication.SendMessage(messageToServer);
         }
 
@@ -326,7 +333,6 @@ namespace Client
         public void ChangeAllLabels(MessageToClient msg)
         {
             IDsToDelete = new HashSet<long>(Program.form.playerLabels.Keys);
-            //recordDic[true].Clear();
             foreach (var gameObject in msg.GameObjectMessageList)
             {
                 moveFormLabel(gameObject.Key, gameObject.Value, ref IDsToDelete);
@@ -348,6 +354,23 @@ namespace Client
                 Program.form.playerLabels.Remove(number);
             }
 
+            if(Program.form.ControlLabels["Task"].InvokeRequired)
+            {
+                Program.form.ControlLabels["Task"].Invoke(new Action<MessageToClient>(ChangeTaskLabel), msg);
+            }
+            else
+            {
+                ChangeTaskLabel(msg);
+            }
+        }
+
+        public void ChangeTaskLabel(MessageToClient msg)
+        {
+            Program.form.ControlLabels["Task"].Text = "Task : ";
+            foreach (var task in msg.Tasks)
+            {
+                Program.form.ControlLabels["Task"].Text += "\n" + task;
+            }
         }
     }
 
