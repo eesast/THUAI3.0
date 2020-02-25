@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Communication.Proto;
+﻿using Communication.Proto;
 using Logic.Constant;
+using System;
+using System.Collections.Generic;
 using static Logic.Constant.MapInfo;
-using System.Configuration;
 
 namespace Logic.Server
 {
@@ -15,7 +13,7 @@ namespace Logic.Server
         {
             get
             {
-                _random = _random ?? new Random((int)Timer.Time.GameTime().TotalMilliseconds);
+                _random = _random ?? new Random(DateTime.Now.Millisecond);
                 return _random;
             }
         }
@@ -54,6 +52,7 @@ namespace Logic.Server
             //new Tool(1.5, 1.5, ToolType.SpeedBuff).Parent = WorldMap;
         }
 
+        public static Dictionary<Tuple<int, int>, Player> PlayerList = new Dictionary<Tuple<int, int>, Player>();
         private static Server server;
         public static void Main(string[] args)
         {

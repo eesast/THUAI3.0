@@ -88,6 +88,7 @@ EnHandleResult CListenerImpl::OnClose(ITcpClient* pSender, CONNID dwConnID, EnSo
 		{
 			printf("ClientSide: Connecting to server %s:%d\n", pthis->ip.c_str(), pthis->port);
 			pSender->Start((LPCTSTR)(pthis->ip.c_str()), pthis->port, false);
+			Sleep(1000);
 		}
 	return HR_OK; 
 }

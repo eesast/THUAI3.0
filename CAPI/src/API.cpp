@@ -15,7 +15,6 @@ void THUAI3::PauseCommunication()
 
 Player THUAI3::GetInfo()
 {
-
 	return API.GetInfo();
 }
 
