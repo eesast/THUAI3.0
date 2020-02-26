@@ -16,9 +16,9 @@ namespace Logic.Constant
         public int MaxThrowDistance = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["PlayerInitThrowDistance"]);
         public int SightRange = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["PlayerInitSightRange"]);
         public TALENT talent;
-        protected int score = 0;
+        protected int _score = 0;
         public DishType dish = DishType.Banana;
-        public ToolType tool = ToolType.Trap;
+        public ToolType tool = ToolType.Fertilizer;
         //public Tuple<int, int> id = new Tuple<int, int>(-1, -1);  //first:Agent, second:Client
         public Character(double x, double y) : base(new XYPosition(x, y))
         {

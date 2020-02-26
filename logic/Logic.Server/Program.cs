@@ -15,7 +15,7 @@ namespace Logic.Server
         {
             get
             {
-                _random = _random ?? new Random((int)Timer.Time.GameTime().TotalMilliseconds);
+                _random = _random ?? new Random((int)Timer.Time.initTime.Ticks);
                 return _random;
             }
         }
@@ -68,7 +68,7 @@ namespace Logic.Server
             uint maxGameTimeSecond = 1000;
             try
             {
-                serverPort = ushort.Parse(args[0]);
+                serverPort = 8888;// ushort.Parse(args[0]);
                 playerCount = ushort.Parse(args[1]);
                 agentCount = ushort.Parse(args[2]);
                 maxGameTimeSecond = uint.Parse(args[3]);

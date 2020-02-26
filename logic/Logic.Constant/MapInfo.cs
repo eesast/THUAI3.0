@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Logic.Constant;
+using THUnity2D;
 
 namespace Logic.Constant
 {
@@ -101,6 +101,7 @@ namespace Logic.Constant
             WallLayer
         }
 
+        
         // Update is called once per frame
         public static void Update()
         {

@@ -50,12 +50,12 @@ namespace Logic.Server
 
         protected int Score
         {
-            get { return score; }
+            get { return base._score; }
             set
             {
-                score = value;
+                base._score = value;
                 lock (Program.MessageToClientLock)
-                    Program.MessageToClient.GameObjectMessageList[this.ID].Score = score;
+                    Program.MessageToClient.GameObjectMessageList[this.ID].Score = base._score;
             }
         }
 
@@ -245,6 +245,8 @@ namespace Logic.Server
                 dishToThrow.Velocity = new Vector((double)(int)facingDirection * Math.PI / 4, int.Parse(ConfigurationManager.AppSettings["ItemMoveSpeed"]));
                 dishToThrow.StopMovingTimer.Change(dueTime, 0);
                 dish = DishType.Empty;
+                lock (Program.MessageToClientLock)
+                    Program.MessageToClient.GameObjectMessageList[this.ID].DishType = (DishTypeMessage)dish;
             }
             else if (tool != ToolType.Empty && !isThrowDish)
             {
@@ -278,7 +280,10 @@ namespace Logic.Server
                         {
                             int temp = block.HandIn(dish);
                             if (temp > 0)
-                            { score += temp; Dish = DishType.Empty; }
+                            { 
+                                Score += temp;
+                                Dish = DishType.Empty;
+                            }
                         }
                         break;
                     }
@@ -317,8 +322,8 @@ namespace Logic.Server
                 case ToolType.TigerShoes:
                 case ToolType.TeleScope:
                 case ToolType.BreastPlate:
-                case ToolType.Condiment:
                 case ToolType.Empty: Console.WriteLine("物品使用失败（为空或无需使用）！"); break;
+                case ToolType.Condiment:
                 case ToolType.SpeedBuff:
                     {
                         moveSpeed += double.Parse(ConfigurationManager.AppSettings["SpeedBuffExtraMoveSpeed"]);
@@ -376,6 +381,8 @@ namespace Logic.Server
                     }
                     break;
             }
+            lock (Program.MessageToClientLock)
+                Program.MessageToClient.GameObjectMessageList[this.ID].ToolType = (ToolTypeMessage)tool;
         }
         public bool TouchTrigger(Trigger trigger)
         {
@@ -393,7 +400,7 @@ namespace Logic.Server
                     break;
                 case TriggerType.Mine:
                     {
-                        score += int.Parse(ConfigurationManager.AppSettings["MineScore"]);
+                        Score += int.Parse(ConfigurationManager.AppSettings["MineScore"]);
                     }
                     break;
                 case TriggerType.Trap:

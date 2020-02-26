@@ -6,11 +6,13 @@ using System.Text;
 using System.Threading;
 using Logic.Constant;
 using static Logic.Constant.Constant;
+using static Logic.Constant.MapInfo;
 using System.Collections.Generic;
 using Communication.Server;
 using Communication.Proto;
 using System.Configuration;
 using Timer;
+using THUnity2D;
 namespace Logic.Server
 {
     class Server
@@ -67,7 +69,18 @@ namespace Logic.Server
         {
             Time.InitializeTime();
             Console.WriteLine("Server begin to run");
-            TaskSystem.RefreshTimer.Change(1000, Convert.ToInt32(ConfigurationManager.AppSettings["TaskRefreshTime"]));
+            TaskSystem.RefreshTimer.Change(0, Convert.ToInt32(ConfigurationManager.AppSettings["TaskRefreshTime"]));
+            void ToolRefresh(object i)
+            {
+                XYPosition tempPosition = new XYPosition(Program.Random.Next(0, map.GetLength(0)), Program.Random.Next(0, map.GetLength(1)));
+                while (WorldMap.Grid[(int)tempPosition.x, (int)tempPosition.y].ContainsType(typeof(Block)))
+                {
+                    tempPosition = new XYPosition(Program.Random.Next(0, map.GetLength(0)), Program.Random.Next(0, map.GetLength(1)));
+                }
+                new Tool(tempPosition.x + 0.5, tempPosition.y + 0.5, (ToolType)Program.Random.Next(0, (int)ToolType.Size - 1)).Parent = WorldMap;
+            }
+            System.Threading.Timer ToolRefreshTimer=new System.Threading.Timer(ToolRefresh,null,
+                0, Convert.ToInt32(ConfigurationManager.AppSettings["ToolRefreshTime"]));
 
             System.Threading.Timer timer = new System.Threading.Timer(
                 (o) =>

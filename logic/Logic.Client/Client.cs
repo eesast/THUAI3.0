@@ -91,12 +91,14 @@ namespace Client
                         new System.Drawing.Point(
                             (int)((gameObjectMessage.Position.X - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL),
                             Convert.ToInt32((WorldMap.Height - gameObjectMessage.Position.Y - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL));
+                    Program.form.playerLabels[id_t].Text = gameObjectMessage.DishType.ToString();
                     break;
                 case ObjTypeMessage.Tool:
                     Program.form.playerLabels[id_t].Location =
                         new System.Drawing.Point(
                             (int)((gameObjectMessage.Position.X - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL),
                             Convert.ToInt32((WorldMap.Height - gameObjectMessage.Position.Y - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL));
+                    Program.form.playerLabels[id_t].Text = gameObjectMessage.ToolType.ToString();
                     break;
                 case ObjTypeMessage.Trigger:
                     break;

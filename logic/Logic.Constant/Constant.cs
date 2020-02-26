@@ -6,6 +6,7 @@ using Communication.Server;
 using THUnity2D;
 using static THUnity2D.Tools;
 using System.Configuration;
+using System.Collections.Concurrent;
 namespace Logic.Constant
 {
     public static class Constant
@@ -15,6 +16,22 @@ namespace Logic.Constant
         public const double TimeInterval = 1 / FrameRate;
         public const double MoveDistancePerFrame = MoveSpeed / FrameRate;
         public const char messageSpiltSeperation = ',';
+        private static ConcurrentDictionary<string, DishType> _dishName = null;
+        public static ConcurrentDictionary<string, DishType> DishName
+        {
+            get 
+            {
+                if (_dishName == null)
+                {
+                    _dishName = new ConcurrentDictionary<string, DishType>();
+                    for (int i = 0; i < (int)DishType.Size2; i++)
+                    {
+                        _dishName.TryAdd(((DishType)i).ToString(), (DishType)i);
+                    }
+                }
+                return _dishName; 
+            }
+        }
     }
     public enum ObjType
     {

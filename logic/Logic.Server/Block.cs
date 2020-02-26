@@ -15,7 +15,7 @@ namespace Logic.Server
 
         public Block(double x_t, double y_t, BlockType type_t) : base(x_t, y_t, ObjType.Block)
         {
-            if (type_t == BlockType.Wall)
+            if (type_t == BlockType.Wall || type_t == BlockType.FoodPoint || type_t == BlockType.TaskPoint)
                 Layer = (int)MapLayer.WallLayer;
             else
                 Layer = (int)MapLayer.BlockLayer;
@@ -101,11 +101,9 @@ namespace Logic.Server
             CookingTimer = new System.Threading.Timer(Cook, result, int.Parse(ConfigurationManager.AppSettings[result + "Time"]), 0);
             DishType GetResult(string s)
             {
-                for (int i = 0; i < (int)DishType.Size2; i++)
-                {
-                    if ((Convert.ToString((DishType)i)) == s) return (DishType)i;
-                }
-                return DishType.DarkDish;
+                DishType i;
+                Constant.Constant.DishName.TryGetValue(s, out i);
+                return i;
             }
             void Cook(object s)
             {
@@ -125,7 +123,7 @@ namespace Logic.Server
     {
         public class Task
         {
-            public DishType type = (DishType)new Random((int)Timer.Time.GameTime().TotalMilliseconds).Next(0, (int)DishType.Size2 - 2);
+            public DishType type = (DishType)Program.Random.Next(1, (int)DishType.Size2 - 2);
             public bool Done = false;
             public System.Threading.Timer timer = new System.Threading.Timer(DeQueue, null, Convert.ToInt32(ConfigurationManager.AppSettings["TaskTimeLimit"]), 0);
             ~Task()
@@ -162,6 +160,7 @@ namespace Logic.Server
                     task.Done = true;
 
                     i = Convert.ToInt32(ConfigurationManager.AppSettings[dish_t.ToString() + "Score"]);//菜品名+Score，在App.config里加
+                    break;
                 }
             }
             foreach (Task task in TaskQueue)
