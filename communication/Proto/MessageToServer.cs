@@ -25,19 +25,19 @@ namespace Communication.Proto {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "ChVNZXNzYWdlVG9TZXJ2ZXIucHJvdG8SD2dvb2dsZS5wcm90b2J1ZhoVTWVz",
-            "c2FnZVRvQ2xpZW50LnByb3RvIuQBCg9NZXNzYWdlVG9TZXJ2ZXISCgoCSUQY",
+            "c2FnZVRvQ2xpZW50LnByb3RvIvcBCg9NZXNzYWdlVG9TZXJ2ZXISCgoCSUQY",
             "ASABKAMSOAoLQ29tbWFuZFR5cGUYAiABKA4yIy5nb29nbGUucHJvdG9idWYu",
             "Q29tbWFuZFR5cGVNZXNzYWdlEjgKDU1vdmVEaXJlY3Rpb24YAyABKA4yIS5n",
             "b29nbGUucHJvdG9idWYuRGlyZWN0aW9uTWVzc2FnZRIUCgxNb3ZlRHVyYXRp",
             "b24YBCABKAUSFQoNVGhyb3dEaXN0YW5jZRgFIAEoARITCgtJc1Rocm93RGlz",
-            "aBgGIAEoCBIPCgdVc2VUeXBlGAcgASgFKlkKEkNvbW1hbmRUeXBlTWVzc2Fn",
-            "ZRIICgRNb3ZlEAASCAoEUGljaxABEgcKA1B1dBACEgcKA1VzZRADEggKBFN0",
-            "b3AQBBITCg9Db21tYW5kVHlwZVNpemUQBUIWqgITQ29tbXVuaWNhdGlvbi5Q",
-            "cm90b2IGcHJvdG8z"));
+            "aBgGIAEoCBIPCgdVc2VUeXBlGAcgASgFEhEKCVNwZWFrVGV4dBgIIAEoCSpk",
+            "ChJDb21tYW5kVHlwZU1lc3NhZ2USCAoETW92ZRAAEggKBFBpY2sQARIHCgNQ",
+            "dXQQAhIHCgNVc2UQAxIICgRTdG9wEAQSCQoFU3BlYWsQBRITCg9Db21tYW5k",
+            "VHlwZVNpemUQBkIWqgITQ29tbXVuaWNhdGlvbi5Qcm90b2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Communication.Proto.MessageToClientReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Communication.Proto.CommandTypeMessage), }, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.MessageToServer), global::Communication.Proto.MessageToServer.Parser, new[]{ "ID", "CommandType", "MoveDirection", "MoveDuration", "ThrowDistance", "IsThrowDish", "UseType" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.MessageToServer), global::Communication.Proto.MessageToServer.Parser, new[]{ "ID", "CommandType", "MoveDirection", "MoveDuration", "ThrowDistance", "IsThrowDish", "UseType", "SpeakText" }, null, null, null)
           }));
     }
     #endregion
@@ -50,7 +50,8 @@ namespace Communication.Proto {
     [pbr::OriginalName("Put")] Put = 2,
     [pbr::OriginalName("Use")] Use = 3,
     [pbr::OriginalName("Stop")] Stop = 4,
-    [pbr::OriginalName("CommandTypeSize")] CommandTypeSize = 5,
+    [pbr::OriginalName("Speak")] Speak = 5,
+    [pbr::OriginalName("CommandTypeSize")] CommandTypeSize = 6,
   }
 
   #endregion
@@ -88,6 +89,7 @@ namespace Communication.Proto {
       throwDistance_ = other.throwDistance_;
       isThrowDish_ = other.isThrowDish_;
       useType_ = other.useType_;
+      speakText_ = other.speakText_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -173,6 +175,17 @@ namespace Communication.Proto {
       }
     }
 
+    /// <summary>Field number for the "SpeakText" field.</summary>
+    public const int SpeakTextFieldNumber = 8;
+    private string speakText_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string SpeakText {
+      get { return speakText_; }
+      set {
+        speakText_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as MessageToServer);
@@ -193,6 +206,7 @@ namespace Communication.Proto {
       if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(ThrowDistance, other.ThrowDistance)) return false;
       if (IsThrowDish != other.IsThrowDish) return false;
       if (UseType != other.UseType) return false;
+      if (SpeakText != other.SpeakText) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -206,6 +220,7 @@ namespace Communication.Proto {
       if (ThrowDistance != 0D) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(ThrowDistance);
       if (IsThrowDish != false) hash ^= IsThrowDish.GetHashCode();
       if (UseType != 0) hash ^= UseType.GetHashCode();
+      if (SpeakText.Length != 0) hash ^= SpeakText.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -247,6 +262,10 @@ namespace Communication.Proto {
         output.WriteRawTag(56);
         output.WriteInt32(UseType);
       }
+      if (SpeakText.Length != 0) {
+        output.WriteRawTag(66);
+        output.WriteString(SpeakText);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -275,6 +294,9 @@ namespace Communication.Proto {
       }
       if (UseType != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(UseType);
+      }
+      if (SpeakText.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(SpeakText);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -307,6 +329,9 @@ namespace Communication.Proto {
       }
       if (other.UseType != 0) {
         UseType = other.UseType;
+      }
+      if (other.SpeakText.Length != 0) {
+        SpeakText = other.SpeakText;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -345,6 +370,10 @@ namespace Communication.Proto {
           }
           case 56: {
             UseType = input.ReadInt32();
+            break;
+          }
+          case 66: {
+            SpeakText = input.ReadString();
             break;
           }
         }

@@ -100,13 +100,5 @@ namespace Logic.Constant
             FlyingLayer,
             WallLayer
         }
-
-        
-        // Update is called once per frame
-        public static void Update()
-        {
-
-        }
-
     }
 }

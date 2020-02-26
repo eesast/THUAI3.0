@@ -2,8 +2,6 @@
 #define OS_RELATED_H
 
 
-
-
 #ifdef WIN32
 
 
@@ -17,10 +15,7 @@
 #include <unistd.h>
 #include<sys/timeb.h>
 
-void Sleep(int x)
-{
-	usleep(x);
-}
+void Sleep(int x);
 
 #endif 
 

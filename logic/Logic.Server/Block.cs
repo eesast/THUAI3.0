@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using static Logic.Constant.MapInfo;
-using System.Configuration;
+﻿using Communication.Proto;
 using Logic.Constant;
-using Communication.Proto;
+using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using static Logic.Constant.Constant;
+using static Logic.Constant.MapInfo;
 
 namespace Logic.Server
 {
@@ -22,7 +21,7 @@ namespace Logic.Server
             Movable = false;
             blockType = type_t;
             Movable = false;
-            
+
             switch (blockType)
             {
                 case BlockType.FoodPoint:
@@ -30,7 +29,7 @@ namespace Logic.Server
                     Dish = (DishType)Program.Random.Next(1, (int)DishType.Size1 - 1);
                     lock (Program.MessageToClientLock)
                         Program.MessageToClient.GameObjectMessageList[ID].BlockType = BlockTypeMessage.FoodPoint;
-                    RefreshTime = Convert.ToInt32(ConfigurationManager.AppSettings["FoodPointInitRefreshTime"]);
+                    RefreshTime = (int)Configs["FoodPointInitRefreshTime"];
                     Console.WriteLine("食品刷新：地点（" + Position.x + "," + Position.y + "）, 种类 : " + Dish);
                     break;
                 case BlockType.Cooker:
@@ -39,29 +38,26 @@ namespace Logic.Server
                     lock (Program.MessageToClientLock)
                         Program.MessageToClient.GameObjectMessageList[ID].BlockType = BlockTypeMessage.Cooker;
                     break;
-                case BlockType.TaskPoint:
-                    lock (Program.MessageToClientLock)
-                    {
-                        Program.MessageToClient.GameObjectMessageList.Add(
-                            this.ID,
-                            new GameObjectMessage
-                            {
-                                ObjType = ObjTypeMessage.Block,
-                                BlockType = BlockTypeMessage.TaskPoint,
-                                DishType = (DishTypeMessage)Dish,
-                                Position = new XYPositionMessage { X = Position.x, Y = Position.y }
-                            });
-                    }
-                    break;
             }
         }
         public override DishType GetDish(DishType t)
         {
             DishType temp = Dish;
             Dish = DishType.Empty;
-            if (this.blockType == BlockType.FoodPoint) RefreshTimer.Change(RefreshTime, 0);
+            switch (blockType)
+            {
+                case BlockType.FoodPoint:
+                    RefreshTimer.Change(RefreshTime, 0);
+                    break;
+                case BlockType.Cooker:
+                    cookingResult = "Empty";
+                    Cooking = false;
+                    break;
+            }
             return temp;
         }
+
+        //Refresh
         protected System.Threading.Timer _refreshTimer;
         public System.Threading.Timer RefreshTimer
         {
@@ -71,14 +67,34 @@ namespace Logic.Server
                 return _refreshTimer;
             }
         }
-        public System.Threading.Timer CookingTimer;
-        public bool Cooking = false;
         public void Refresh(object i)
         {
             Dish = (DishType)Program.Random.Next(1, (int)DishType.Size1 - 1);
             Console.WriteLine("食品刷新：地点（" + Position.x + "," + Position.y + "）, 种类 : " + Dish);
         }
+        //Refresh End
 
+        //Cook
+        protected System.Threading.Timer _cookingTimer;
+        protected System.Threading.Timer CookingTimer
+        {
+            get
+            {
+                _cookingTimer = _cookingTimer ?? new System.Threading.Timer(Cook);
+                return _cookingTimer;
+            }
+        }
+        protected void Cook(object o)
+        {
+            Dish = (DishType)Enum.Parse(typeof(DishType), cookingResult);
+            if (Dish > DishType.Empty && Dish < DishType.Size2 && Dish != DishType.Size1)
+            {
+                cookingResult = "OverCookedDish";
+                CookingTimer.Change(5000, 0);
+            }
+        }
+        protected string cookingResult;
+        public bool Cooking = false;
         public override void UseCooker()
         {
             string Material = "";
@@ -91,27 +107,16 @@ namespace Logic.Server
             }
             if (dishTypeSet.Count == 0) return;
             Cooking = true;
+            Dish = DishType.DarkDish;//未煮熟之前都是黑暗料理
             foreach (var dishType in dishTypeSet)
             {
                 Material += dishType.ToString();
-                
             }
-            string result = ConfigurationManager.AppSettings[Material];
-            if (result == null) result = "DarkDish";
-            CookingTimer = new System.Threading.Timer(Cook, result, int.Parse(ConfigurationManager.AppSettings[result + "Time"]), 0);
-            DishType GetResult(string s)
-            {
-                DishType i;
-                Constant.Constant.DishName.TryGetValue(s, out i);
-                return i;
-            }
-            void Cook(object s)
-            {
-                if (s is string)
-                { Dish = GetResult((string)s); Cooking = false; }
-            }
+            cookingResult = (string)Configs["CookingTable"][Material];
+            if (cookingResult == null) cookingResult = "DarkDish";
+            CookingTimer.Change((int)Configs[cookingResult]["CookTime"], 0);
         }
-
+        //Cook End
 
         public override int HandIn(DishType dish_t)
         {
@@ -121,54 +126,79 @@ namespace Logic.Server
 
     public static class TaskSystem
     {
-        public class Task
+        public static ConcurrentDictionary<DishType, uint> TaskQueue = new ConcurrentDictionary<DishType, uint>();
+        private static Timer.MultiTaskTimer _removeTaskTimer;
+        public static Timer.MultiTaskTimer RemoveTaskTimer
         {
-            public DishType type = (DishType)Program.Random.Next(1, (int)DishType.Size2 - 2);
-            public bool Done = false;
-            public System.Threading.Timer timer = new System.Threading.Timer(DeQueue, null, Convert.ToInt32(ConfigurationManager.AppSettings["TaskTimeLimit"]), 0);
-            ~Task()
+            get
             {
-                timer.Dispose();
+                _removeTaskTimer = _removeTaskTimer ?? new Timer.MultiTaskTimer();
+                return _removeTaskTimer;
             }
         }
-        public static ConcurrentQueue<Task> TaskQueue = new ConcurrentQueue<Task>();
-        public static Task DeQueueTask;
-        public static void DeQueue(object i)
+        private static void AddTask(DishType task)
         {
-            TaskQueue.TryDequeue(out DeQueueTask);
+            if (!TaskQueue.ContainsKey(task))
+                TaskQueue.TryAdd(task, 0);
+            TaskQueue[task]++;
+            Program.MessageToClient.Tasks.Add((DishTypeMessage)task);
+            Console.WriteLine("Add task : " + task);
+            //PrintAllTask();
         }
-
-        public static System.Threading.Timer RefreshTimer = new System.Threading.Timer(TaskProduce, null, 1000, Convert.ToInt32(ConfigurationManager.AppSettings["TaskRefreshTime"]));
+        private static void RemoveTask(DishType task)
+        {
+            TaskQueue[task]--;
+            if (TaskQueue[task] <= 0)
+            {
+                uint i = 0;
+                TaskQueue.TryRemove(task, out i);
+            }
+            Program.MessageToClient.Tasks.Remove((DishTypeMessage)task);
+            Console.WriteLine("Remove task : " + task);
+            //PrintAllTask();
+        }
+        public static System.Threading.Timer _refreshTimer;
+        public static System.Threading.Timer RefreshTimer
+        {
+            get
+            {
+                _refreshTimer = _refreshTimer ?? new System.Threading.Timer(TaskProduce);
+                return _refreshTimer;
+            }
+        }
         public static void TaskProduce(object i)
         {
-            TaskQueue.Enqueue(new Task());
-            foreach (Task task in TaskQueue)
+            DishType temp;
+            for (; ; )
             {
-                Console.WriteLine(task.type.ToString() + " " + task.Done.ToString());
+                temp = (DishType)Program.Random.Next(1, (int)DishType.Size2);
+                if (temp == DishType.Size1)
+                    continue;
+                break;
             }
-            Console.WriteLine();
-                //需要广播产生的任务
-                //感觉只需要广播任务的产生，而任务被完成以及任务因过时而gg都不用广播，需要玩家自己把握？
+            AddTask(temp);
+            RemoveTaskTimer.Add((o, e) => { RemoveTask(temp); }, (uint)Configs[temp.ToString()]["TaskTime"]);
+            //需要广播产生的任务
+            //感觉只需要广播任务的产生，而任务被完成以及任务因过时而gg都不用广播，需要玩家自己把握？
         }
         public static int HandIn(DishType dish_t)
         {
-            int i = 0;
-            foreach(Task task in TaskQueue)
+            int score = 0;
+            if (TaskQueue.ContainsKey(dish_t))
             {
-                if (task.Done == false && task.type == dish_t) 
-                {
-                    task.Done = true;
-
-                    i = Convert.ToInt32(ConfigurationManager.AppSettings[dish_t.ToString() + "Score"]);//菜品名+Score，在App.config里加
-                    break;
-                }
+                score = (int)Configs[dish_t.ToString()]["Score"];//菜品名+Score，在App.config里加
+                RemoveTask(dish_t);
             }
-            foreach (Task task in TaskQueue)
+            //PrintAllTask();
+            return score;
+        }
+        public static void PrintAllTask()
+        {
+            Console.WriteLine("Tasks : ");
+            foreach (var task in TaskQueue)
             {
-                Console.WriteLine(task.type.ToString() + " " + task.Done.ToString());
+                Console.WriteLine("\t" + task);
             }
-            Console.WriteLine();
-            return i;
         }
     }
 }

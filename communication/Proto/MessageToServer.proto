@@ -9,7 +9,8 @@ enum CommandTypeMessage{
 	Put = 2;
 	Use = 3;
 	Stop = 4;
-	CommandTypeSize = 5;
+	Speak = 5;
+	CommandTypeSize = 6;
 }
 message MessageToServer {
 	int64 ID = 1;
@@ -19,4 +20,5 @@ message MessageToServer {
 	double ThrowDistance = 5;
 	bool IsThrowDish = 6;
 	int32 UseType = 7;
+	string SpeakText = 8;
 }

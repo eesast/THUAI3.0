@@ -50,7 +50,7 @@ namespace GameForm
                     switch (map[x, y])
                     {
                         case 0: break;
-                        case 1: this.mapLabels[x, y].BackColor = System.Drawing.Color.LightSkyBlue; break;
+                        case 1: this.mapLabels[x, y].BackColor = System.Drawing.Color.DarkRed; break;
                         case 2: this.mapLabels[x, y].BackColor = System.Drawing.Color.Purple; break;
                         case 3: this.mapLabels[x, y].BackColor = System.Drawing.Color.SandyBrown; break;
                         case 4: this.mapLabels[x, y].BackColor = System.Drawing.Color.Green; break;
@@ -72,6 +72,7 @@ namespace GameForm
             ControlLabels.Add("Score", new System.Windows.Forms.Label());
             ControlLabels.Add("Dish", new System.Windows.Forms.Label());
             ControlLabels.Add("Tool", new System.Windows.Forms.Label());
+            ControlLabels.Add("Task", new System.Windows.Forms.Label());
             int i = 0;
             foreach (var label in ControlLabels)
             {

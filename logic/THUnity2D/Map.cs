@@ -313,24 +313,36 @@ namespace THUnity2D
                     int j = Convert.ToInt32(!Convert.ToBoolean(i));
                     toCheck[i] = gameObject.Position.GetProperty(i) + toCheckAdd[i];
                     startPoint[i] = previousPosition.GetProperty(i) + startPointAdd[i];
-                    if (IsInCloseOpenInterval(toCheck[i], startPoint[i], infinityBound[i]))
+                    if (IsInCloseOpenInterval(toCheck[i], startPoint[i], infinityBound[i])
+                        && delta[i] != 0)//如果平行四边形是一条线，就跳过
                     {
                         //Debug(this,"delta[" + i + "] : " + delta[i]);
                         double temp = previousPosition.GetProperty(j) - 0.5 + (toCheck[i] - startPoint[i]) * delta[j] / delta[i];
+                        //Debug(this, "temp : " + temp);
                         if (IsInOpenInterval(temp, gameObject.Position.GetProperty(j) - 0.5 - 1, gameObject.Position.GetProperty(j) + 0.5))
                         {
+                            //Debug(this, "!");
                             Distance[i] = (toCheck[i] - startPoint[i]) * resultDistance / delta[i];
                         }
                     }
-                    //Debug(this,"Distance[" + i + "] : " + Distance[i]);
+                    //Debug(this, "Distance[" + i + "] : " + Distance[i]);
                 }
                 double maxReachDistance = Math.Min(Distance[0], Distance[1]);
                 {
-                    double[] coefficient = { (toCheck[0] - startPoint[0]) / delta[0], (toCheck[1] - startPoint[1]) / delta[1] };
-                    if (double.IsNaN(coefficient[0]) && double.IsNaN(coefficient[1]))
-                        maxReachDistance = 0;
-                    else if (coefficient[0] == coefficient[1])
-                        maxReachDistance = coefficient[0] * resultDistance;
+                    //Debug(this, "toCheck[0]=" + toCheck[0]);
+                    //Debug(this, "startPoint[0]=" + startPoint[0]);
+                    //Debug(this, "delta[0]=" + delta[0]);
+                    //Debug(this, "toCheck[1]=" + toCheck[1]);
+                    //Debug(this, "startPoint[1]=" + startPoint[1]);
+                    //Debug(this, "delta[1]=" + delta[1]);
+                    if (Math.Abs((toCheck[0] - startPoint[0]) * delta[1] - (toCheck[1] - startPoint[1]) * delta[0]) < 1E-10)
+                    {
+                        if (Math.Abs(toCheck[0] - startPoint[0]) < 1E-10 && Math.Abs(toCheck[1] - startPoint[1]) < 1E-10
+                            && delta[0] != 0 && delta[1] != 0)
+                            maxReachDistance = 0;
+                        else if (Math.Abs(toCheck[0] - startPoint[0]) >= 1E-10 && Math.Abs(toCheck[1] - startPoint[1]) >= 1E-10)
+                            maxReachDistance = resultDistance * (toCheck[0] - startPoint[0]) / delta[0];
+                    }
                 }
                 Debug(this, "maxReachDistance : " + maxReachDistance);
                 return maxReachDistance;
@@ -346,7 +358,7 @@ namespace THUnity2D
                     return;
                 Monitor.Enter(_grid[x, y].publicLock);
                 lockList.AddLast(_grid[x, y].publicLock);
-                if (x != (int)childrenGameObject.Position.x || y != (int)childrenGameObject.Position.y)
+                if (x != (int)previousPosition.x || y != (int)previousPosition.y)
                     foreach (var layer in _layerCollisionMatrix[childrenGameObject.Layer][true])
                     {
                         if (!_grid[x, y].ContainsLayer(layer))
@@ -452,7 +464,7 @@ namespace THUnity2D
                                         end[j]));
                              z = z + Step[j])
                         {
-                            //Debug(this, "Checking : (" + (i == 0 ? Search[i] : z) + "," + (i == 0 ? z : Search[i]) + ")");
+                            Debug(this, "Checking : (" + (i == 0 ? Search[i] : z) + "," + (i == 0 ? z : Search[i]) + ")");
                             CheckBlockAndAdjustPosition(i == 0 ? (int)Search[i] : (int)z, i == 0 ? (int)z : (int)Search[i]);
                         }
                         Search[i] = Search[i] + Step[i];
@@ -482,18 +494,6 @@ namespace THUnity2D
             }
             //解除锁的占用 End
 
-            //Collide
-            if (resultDistance < e.distance)
-            {
-                childrenGameObject.Collide(new CollisionEventArgs(collisionDirection, CollisionGameObjects));
-                if (CollisionGameObjects != null)
-                    foreach (var gameObject in CollisionGameObjects)
-                    {
-                        gameObject.Collide(new CollisionEventArgs((Direction)(((int)collisionDirection + 4) % 8), new HashSet<GameObject> { childrenGameObject }));
-                    }
-            }
-            //Collide End
-
             //Trigger
             HashSet<GameObject> triggerGameObjects = new HashSet<GameObject>();
             foreach (var item in triggerDistanceAndGameObjects)
@@ -509,23 +509,42 @@ namespace THUnity2D
             childrenGameObject.Trigger(triggerGameObjects);
             //Trigger End
 
-            //Check Bouncable
-            //检查是否可反弹
-            if (childrenGameObject.Bouncable && resultDistance < e.distance)
+            //Collide
+            if (resultDistance < e.distance)
             {
-                double bounceAngle;
-                switch (collisionDirection)
+                childrenGameObject.Collide(new CollisionEventArgs(collisionDirection, CollisionGameObjects));
+                if (CollisionGameObjects != null)
+                    foreach (var gameObject in CollisionGameObjects)
+                    {
+                        gameObject.Collide(new CollisionEventArgs((Direction)(((int)collisionDirection + 4) % 8), new HashSet<GameObject> { childrenGameObject }));
+                    }
+
+                //Check Bouncable
+                //检查是否可反弹
+                if (childrenGameObject.Bouncable)
                 {
-                    case Direction.Left:
-                    case Direction.Right: bounceAngle = Math.PI - e.angle; break;
-                    case Direction.Up:
-                    case Direction.Down: bounceAngle = -e.angle; break;
-                    default: bounceAngle = Math.PI + e.angle; break;
+                    double bounceAngle;
+                    switch (collisionDirection)
+                    {
+                        case Direction.Left:
+                        case Direction.Right: bounceAngle = Math.PI - e.angle; break;
+                        case Direction.Up:
+                        case Direction.Down: bounceAngle = -e.angle; break;
+                        default: bounceAngle = Math.PI + e.angle; break;
+                    }
+                    childrenGameObject.Move(new MoveEventArgs(bounceAngle, e.distance - resultDistance));
+                    childrenGameObject.Velocity = new Vector(bounceAngle, childrenGameObject.Velocity.length);
                 }
-                childrenGameObject.Move(new MoveEventArgs(bounceAngle, e.distance - resultDistance));
-                childrenGameObject.Velocity = new Vector(bounceAngle, childrenGameObject.Velocity.length);
+                else
+                {
+                    if (childrenGameObject.Velocity.length > 0)
+                        childrenGameObject.Velocity = new Vector(e.angle, 0);
+                }
+                //Check Bouncable End
+
             }
-            //Check Bouncable End
+            //Collide End
+
         }
 
         //Layer
@@ -666,7 +685,7 @@ namespace THUnity2D
             _gameObjectListByLayer[gameObject.Layer].TryRemove(gameObject, out temp);
             if (_gameObjectListByLayer[gameObject.Layer].Count <= 0)
             {
-                ConcurrentDictionary<GameObject, byte> tmp;
+                ConcurrentDictionary<GameObject, byte>? tmp;
                 _gameObjectListByLayer.TryRemove(gameObject.Layer, out tmp);
             }
         }
