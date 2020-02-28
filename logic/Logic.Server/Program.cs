@@ -56,7 +56,7 @@ namespace Logic.Server
         private static Server server;
         public static void Main(string[] args)
         {
-            Communication.Proto.Constants.Debug = new Constants.DebugFunc((str) => { });
+            //Communication.Proto.Constants.Debug = new Constants.DebugFunc((str) => { });
             THUnity2D.GameObject.Debug = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
             THUnity2D.GameObject.DebugWithoutEndline = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
             THUnity2D.GameObject.DebugWithoutID = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
