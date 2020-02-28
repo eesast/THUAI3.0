@@ -109,7 +109,7 @@
     "CookingTable": {
         "Flour": "Bread",
         "BeefBread": "BasicHamburger",
-        "BeefBreadRomaine": "GoodHamburger",
+        "BeefRomaineBread": "GoodHamburger",
         "AppleFlour": "ApplePie",
         "BananaFlour": "BananaPie",
         "TamatoEgg": "TomatoEgg",
