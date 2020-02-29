@@ -194,9 +194,7 @@ namespace Logic.Server
                     else if (item is Tool)
                     {
                         DeFunction(tool);
-                        tool = ((Tool)item).GetTool(tool);
-                        lock (Program.MessageToClientLock)
-                            Program.MessageToClient.GameObjectMessageList[this.ID].ToolType = (ToolTypeMessage)tool;
+                        Tool = ((Tool)item).GetTool(tool);
                         Server.ServerDebug("Player : " + ID + " Get Tool " + tool.ToString());
                         Function(tool);
                         return;
@@ -224,8 +222,8 @@ namespace Logic.Server
             else if (tool != ToolType.Empty && !isThrowDish)
             {
                 Tool toolToThrow = new Tool(Position.x, Position.y, tool);
-                toolToThrow.Parent = WorldMap;
                 toolToThrow.Layer = (int)MapLayer.FlyingLayer;
+                toolToThrow.Parent = WorldMap;
                 toolToThrow.Velocity = new Vector((double)(int)facingDirection * Math.PI / 4, (int)Configs["ItemMoveSpeed"]);
                 toolToThrow.StopMovingTimer.Change(dueTime, 0);
                 Tool = ToolType.Empty;

@@ -31,36 +31,88 @@
         "TaskTime": 60000
     },
     "Tomato": {
+        "Score": 20,
+        "TaskTime": 60000
+    },
+    "Egg": {
         "Score": 10,
         "TaskTime": 60000
     },
-    "BananaPie": {
+    "Flour": {
         "Score": 10,
-        "TaskTime": 60000,
+        "TaskTime": 60000
+    },
+    "Chicken": {
+        "Score": 20,
+        "TaskTime": 50000
+    },
+    "Pork": {
+        "Score": 20,
+        "TackTime": 50000
+    },
+    "Beef": {
+        "Score": 20,
+        "TaskTime": 50000
+    },
+    "Honey": {
+        "Score": 20,
+        "TaskTime": 50000
+    },
+    "Butter": {
+        "Score": 10,
+        "TaskTime": 50000
+    },
+    "Romaine": {
+        "Score": 10,
+        "TaskTime": 60000
+    },
+    "Bread": {
+        "Score": 40,
+        "TaskTime": 40000,
+        "CookTime": 5000
+    },
+    "BasicHamburger": {
+        "Score": 50,
+        "TaskTime": 40000,
+        "CookTime": 5000
+    },
+    "GoodHamburger": {
+        "Score": 80,
+        "TaskTime": 30000,
+        "CookTime": 6000
+    },
+    "BananaPie": {
+        "Score": 40,
+        "TaskTime": 40000,
         "CookTime": 5000
     },
     "ApplePie": {
-        "Score": 10,
-        "TaskTime": 60000,
+        "Score": 40,
+        "TaskTime": 40000,
         "CookTime": 5000
     },
     "TomatoEgg": {
-        "Score": 10,
-        "TaskTime": 60000,
+        "Score": 40,
+        "TaskTime": 40000,
         "CookTime": 5000
     },
     "MashedPotato": {
-        "Score": 10,
-        "TaskTime": 60000,
+        "Score": 40,
+        "TaskTime": 40000,
         "CookTime": 5000
     },
     "DarkDish": {
-        "Score": 10,
+        "Score": -10,
         "TaskTime": 60000,
         "CookTime": 5000
     },
     "CookingTable": {
-        "ApplePotato": "ApplePie",
-        "AppleBanana": "DarkDish"
+        "Flour": "Bread",
+        "BeefBread": "BasicHamburger",
+        "BeefRomaineBread": "GoodHamburger",
+        "AppleFlour": "ApplePie",
+        "BananaFlour": "BananaPie",
+        "TamatoEgg": "TomatoEgg",
+        "PotatoButter": "MashedPotato"
     }
 }
