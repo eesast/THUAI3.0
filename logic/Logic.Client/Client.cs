@@ -228,7 +228,21 @@ namespace Client
                     case 'x': Move(Direction.Down); break;
                     case 'c': Move(Direction.RightDown); break;
                     case 'f': Pick(); break;
-                    case 'u': Use(1, 0); break;
+                    case 'u': 
+                        {
+                            int parameter = 0;
+                            if (tool == ToolType.SpaceGate)
+                            {
+                                int i = 0, j = 0;
+                                i = int.Parse(Console.ReadLine());
+                                if (i > (int)Configs["SpaceGateMaxDistance"]) i = (int)Configs["SpaceGateMaxDistance"];
+                                j = int.Parse(Console.ReadLine());
+                                if (j > (int)Configs["SpaceGateMaxDistance"]) j = (int)Configs["SpaceGateMaxDistance"];
+                                parameter = 100 * i + j;
+                            }
+                            Use(1, parameter); 
+                        } 
+                        break;
 
                     case 'i': Use(0, 0); break;
                     case 'r':
@@ -283,10 +297,11 @@ namespace Client
             messageToServer.CommandType = CommandTypeMessage.Put;
             ClientCommunication.SendMessage(messageToServer);
         }
-        public override void Use(int type, int parameter)
+        public override void Use(int type, int parameter = 0)
         {
             messageToServer.CommandType = CommandTypeMessage.Use;
             messageToServer.UseType = type;
+            messageToServer.MoveDuration = parameter;
             ClientCommunication.SendMessage(messageToServer);
         }
         public override void Pick()

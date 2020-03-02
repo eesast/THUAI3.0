@@ -20,7 +20,7 @@ namespace Logic.Constant
         public TALENT talent;
         protected int _score = 0;
         public DishType dish = DishType.Banana;
-        public ToolType tool = ToolType.Trap;
+        public ToolType tool = ToolType.SpaceGate;
         public Character(double x, double y) : base(new XYPosition(x, y))
         {
             Layer = (int)MapLayer.PlayerLayer;

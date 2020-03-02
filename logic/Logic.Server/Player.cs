@@ -73,6 +73,15 @@ namespace Logic.Server
             StunTimer = new System.Threading.Timer((i) => { _isStun = false; });
             SpeedBuffTimer = new System.Threading.Timer((i) => { moveSpeed -= (double)Configs["SpeedBuffExtraMoveSpeed"]; });
             StrengthBuffTimer = new System.Threading.Timer((i) => { MaxThrowDistance -= (int)Configs["StrenthBuffExtraThrowDistance"]; });
+            this.PositionChangeComplete += new PositionChangeCompleteHandler(ChangePositionInMessage);
+            void ChangePositionInMessage(GameObject thisGameObject)
+            {
+                lock (Program.MessageToClientLock)
+                {
+                    Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.X = thisGameObject.Position.x;
+                    Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.Y = thisGameObject.Position.y;
+                }
+            }
 
             lock (Program.MessageToClientLock)
             {
@@ -138,7 +147,7 @@ namespace Logic.Server
                     Put(msg.ThrowDistance, msg.IsThrowDish);
                     break;
                 case CommandTypeMessage.Use:
-                    Use(msg.UseType, 0);
+                    Use(msg.UseType, msg.MoveDuration);
                     break;
                 case CommandTypeMessage.Speak:
                     SpeakToFriend(msg.SpeakText);
@@ -250,7 +259,8 @@ namespace Logic.Server
                         else if (block.blockType == BlockType.TaskPoint)
                         {
                             int temp = block.HandIn(Dish);
-                            { Score += temp; Dish = DishType.Empty; }
+                            if(temp>0){ Score += temp; Dish = DishType.Empty; }
+                            else Console.WriteLine("提交任务失败！");
                         }
                         break;
                     }
@@ -291,6 +301,27 @@ namespace Logic.Server
                 case ToolType.BreastPlate:
                 case ToolType.Empty: Console.WriteLine("物品使用失败（为空或无需使用）！"); break;
                 case ToolType.Condiment:
+                    {
+                        XYPosition xyPosition1 = Position + 2 * EightCornerVector[facingDirection];
+                        if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].ContainsType(typeof(Block)))
+                        {
+                            foreach (Block block in WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetType(typeof(Block)))
+                            {
+                                if (block.blockType == BlockType.TaskPoint)
+                                {
+                                    int temp = block.HandIn(Dish);
+                                    if (temp > 0)
+                                    { 
+                                        Score += (int)(temp*(1+ (double)(Configs["CondimentScoreParameter"]))); 
+                                        Dish = DishType.Empty; Tool = ToolType.Empty; 
+                                    }
+                                    else Console.WriteLine("物品使用失败（提交任务失败）！");
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    break;
                 case ToolType.SpeedBuff:
                     {
                         moveSpeed += (double)(Configs["SpeedBuffExtraMoveSpeed"]);
@@ -346,6 +377,15 @@ namespace Logic.Server
                         { Console.WriteLine("物品使用失败（无效的陷阱放置地点）！"); break; }
                         new Trigger(xyPosition1.x, xyPosition1.y, TriggerType.Trap, -1).Parent = WorldMap;
                         tool = ToolType.Empty;
+                    }
+                    break;
+                case ToolType.SpaceGate:
+                    {
+                        XYPosition previous = Position;
+                        XYPosition aim = Position + new XYPosition((double)(parameter / 100), (double)(parameter % 100));
+                        Position = aim;
+                        if (Math.Abs(Position.x - aim.x) > 0.001 || Math.Abs(Position.y - aim.y) > 0.001)
+                            Position = previous;
                     }
                     break;
             }
