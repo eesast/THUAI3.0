@@ -3,23 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29418.71
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logic.Constant", "Logic.Constant\Logic.Constant.csproj", "{17BFA843-70B5-4385-A12C-B1DFB3DAFFD2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logic.Constant", "Logic.Constant/Logic.Constant.csproj", "{17BFA843-70B5-4385-A12C-B1DFB3DAFFD2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logic.Server", "Logic.Server\Logic.Server.csproj", "{C35FF9F8-00C1-4874-975B-A19DEE0F59E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logic.Server", "Logic.Server/Logic.Server.csproj", "{C35FF9F8-00C1-4874-975B-A19DEE0F59E0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logic.Client", "Logic.Client\Logic.Client.csproj", "{CB373801-F206-48FB-B553-8D540ED457A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logic.Client", "Logic.Client/Logic.Client.csproj", "{CB373801-F206-48FB-B553-8D540ED457A9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Communication.Agent", "..\communication\Agent\Communication.Agent.csproj", "{7593ECD9-4FF2-4CC4-9D41-7AF7C24469D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Communication.Agent", "../communication/Agent/Communication.Agent.csproj", "{7593ECD9-4FF2-4CC4-9D41-7AF7C24469D0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Communication.CAPI", "..\communication\Client\Communication.CAPI.csproj", "{681E7825-C5E5-406B-8DB3-0CAAE72F5FF6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Communication.CAPI", "../communication/Client/Communication.CAPI.csproj", "{681E7825-C5E5-406B-8DB3-0CAAE72F5FF6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Communication.Proto", "..\communication\Proto\Communication.Proto.csproj", "{4CE5C966-9EDB-4D05-B93A-8E4DD7EB381E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Communication.Proto", "../communication/Proto/Communication.Proto.csproj", "{4CE5C966-9EDB-4D05-B93A-8E4DD7EB381E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Communication.Server", "..\communication\Server\Communication.Server.csproj", "{E9B8BAA7-2F58-4675-946B-03F5F0634B44}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Communication.Server", "../communication/Server/Communication.Server.csproj", "{E9B8BAA7-2F58-4675-946B-03F5F0634B44}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logic.ClientConsole", "Logic.ClientConsole\Logic.ClientConsole.csproj", "{DAC1B83E-712F-4A74-B1EA-BA61FF27EAC1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logic.ClientConsole", "Logic.ClientConsole/Logic.ClientConsole.csproj", "{DAC1B83E-712F-4A74-B1EA-BA61FF27EAC1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "THUnity2D", "THUnity2D\THUnity2D.csproj", "{A29B4E05-60D0-46D5-864F-9D80E5CFE222}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "THUnity2D", "THUnity2D/THUnity2D.csproj", "{A29B4E05-60D0-46D5-864F-9D80E5CFE222}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
