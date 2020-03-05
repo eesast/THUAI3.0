@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Communication.Proto;
 using Logic.Constant;
-using System.Configuration;
+using static Logic.Constant.Constant;
 using static Logic.Constant.MapInfo;
-using Communication.Proto;
 
 namespace Logic.Server
 {
@@ -20,7 +17,7 @@ namespace Logic.Server
             triggerType = type_t;
             OwnerTeam = owner_t;
             if (triggerType == TriggerType.WaveGlue) DurationTimer = new System.Threading.Timer(
-                (i) => { Parent = null; }, null, Convert.ToInt32(ConfigurationManager.AppSettings["WaveGlueDuration"]), 0);
+                (i) => { Parent = null; }, null, (int)(Configs["WaveGlueDuration"]), 0);
             this.OnTrigger += new TriggerHandler(
                 (t) =>
                 {
@@ -30,14 +27,7 @@ namespace Logic.Server
             AddToMessage();
             lock (Program.MessageToClientLock)
                 Program.MessageToClient.GameObjectMessageList[ID].TriggerType = (TriggerTypeMessage)triggerType;
-            this.OnParentDelete += new ParentDeleteHandler(
-                () =>
-                {
-                    lock (Program.MessageToClientLock)
-                    {
-                        Program.MessageToClient.GameObjectMessageList.Remove(ID);
-                    }
-                });
+            this.OnParentDelete += new ParentDeleteHandler(DeleteFromMessage);
 
         }
     }

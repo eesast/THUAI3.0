@@ -217,7 +217,7 @@ namespace THUnity2D
             {
                 lock (_velocityLock)
                 {
-                    if (Math.Abs(value.length) < MinSpeed)
+                    if (value.length < MinSpeed)
                     {
                         this._velocity = new Vector(value.angle, 0);
                         MovingTimer.Change(-1, -1);
@@ -372,7 +372,7 @@ namespace THUnity2D
         public event MoveCompleteHandler? MoveComplete;
         public delegate void MoveStartHandler(GameObject sender);
         public event MoveStartHandler? MoveStart;
-        protected DateTime lastMoveTime = DateTime.Now;
+        protected DateTime lastMoveTime = DateTime.MinValue;
         public virtual void Move(MoveEventArgs e)
         {
             if (e.distance == 0)

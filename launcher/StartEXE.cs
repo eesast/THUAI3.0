@@ -8,7 +8,7 @@ namespace StartEXE2
         static void Main(string[] args)
         {
 			System.Diagnostics.Process process1 = new System.Diagnostics.Process();
-			process1.StartInfo.FileName = ".\\..\\..\\..\\OfflineReg.exe";
+			process1.StartInfo.FileName = "./../../../OfflineReg.exe";
 			//传递进exe的参数
 			//aeguments = ""
 			//process.StartInfo.Arguments = argument;
