@@ -73,7 +73,7 @@ namespace Communication.Server
             {
                 HttpAsync($"http://localhost:28888/v1/rooms/{roomID}", this.token, "PUT", new JObject
                 {
-                    ["status"] = status.ToString().ToLower()
+                    ["status"] = (int)status
                 });
             }
             else
