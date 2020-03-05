@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Communication.Proto;
+﻿using Communication.Proto;
 using Logic.Constant;
+using System;
+using System.Collections.Generic;
 using static Logic.Constant.MapInfo;
 
 namespace Logic.Server
@@ -14,7 +13,7 @@ namespace Logic.Server
         {
             get
             {
-                _random = _random ?? new Random();
+                _random = _random ?? new Random(DateTime.Now.Millisecond);
                 return _random;
             }
         }
@@ -49,13 +48,15 @@ namespace Logic.Server
                     }
                 }
             }
+            
             //new Tool(1.5, 1.5, ToolType.SpeedBuff).Parent = WorldMap;
         }
 
+        public static Dictionary<Tuple<int, int>, Player> PlayerList = new Dictionary<Tuple<int, int>, Player>();
         private static Server server;
         public static void Main(string[] args)
         {
-            Communication.Proto.Constants.Debug = new Constants.DebugFunc((str) => { });
+            //Communication.Proto.Constants.Debug = new Constants.DebugFunc((str) => { });
             THUnity2D.GameObject.Debug = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
             THUnity2D.GameObject.DebugWithoutEndline = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
             THUnity2D.GameObject.DebugWithoutID = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using THUnity2D;
+﻿using Communication.Proto;
 using Logic.Constant;
-using Communication.Proto;
+using THUnity2D;
 
 namespace Logic.Server
 {
@@ -47,7 +44,7 @@ namespace Logic.Server
         public virtual ToolType GetTool(ToolType t) { return ToolType.Empty; }
         public virtual void UseCooker() { }
         public virtual int HandIn(DishType dish_t) { return 0; }
-        public void AddToMessage()
+        protected void AddToMessage()
         {
             lock (Program.MessageToClientLock)
             {
@@ -59,6 +56,23 @@ namespace Logic.Server
                         Position = new XYPositionMessage { X = Position.x, Y = Position.y }
                     });
             }
+        }
+        protected void DeleteFromMessage()
+        {
+            lock (Program.MessageToClientLock)
+            {
+                Program.MessageToClient.GameObjectMessageList.Remove(ID);
+                Server.ServerDebug("Delete " + objType + " From Message List");
+            }
+        }
+        protected void ChangePositionInMessage(GameObject thisGameObject)
+        {
+            lock (Program.MessageToClientLock)
+            {
+                Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.X = thisGameObject.Position.x;
+                Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.Y = thisGameObject.Position.y;
+            }
+            //Server.ServerDebug(this.Position.ToString());
         }
     }
 }

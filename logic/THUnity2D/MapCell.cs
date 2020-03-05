@@ -74,7 +74,7 @@ namespace THUnity2D
                 _types[gameObject.GetType()].TryRemove(gameObject, out temp);
                 if (_types[gameObject.GetType()].Count <= 0)
                 {
-                    ConcurrentDictionary<GameObject, byte> tmp;
+                    ConcurrentDictionary<GameObject, byte>? tmp;
                     _types.TryRemove(gameObject.GetType(), out tmp);
                 }
             }

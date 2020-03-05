@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Threading;
 using System.Collections.Generic;
-using System.Text;
-using Logic.Constant;
+using System.Threading;
 //#pragma warning disable CS8622
 namespace Timer
 {
@@ -19,6 +17,101 @@ namespace Timer
             return DateTime.Now - initTime;
         }
     }
+    public class MultiTaskTimer
+    {
+        private readonly object privateLock = new object();
+        private readonly SortedDictionary<DateTime, System.Timers.ElapsedEventHandler> dict = new SortedDictionary<DateTime, System.Timers.ElapsedEventHandler>();
+        private readonly System.Timers.Timer timer = new System.Timers.Timer();
+        private System.Timers.ElapsedEventHandler _control;
+        private System.Timers.ElapsedEventHandler Control
+        {
+            get
+            {
+                _control = _control ?? new System.Timers.ElapsedEventHandler(
+                    (o, e) =>
+                    {
+                        lock (privateLock)
+                        {
+                            //Console.WriteLine("Entering Control");
+                            SortedDictionary<DateTime, System.Timers.ElapsedEventHandler>.Enumerator en = dict.GetEnumerator();
+                            en.MoveNext();
+                            dict.Remove(en.Current.Key);
+                            timer.Elapsed -= en.Current.Value;
+                            timer.Elapsed -= Control;
+                            if (dict.Count == 0)
+                            {
+                                //Console.WriteLine("function Control : Count == 0");
+                                return;
+                            }
+                            en = dict.GetEnumerator();
+                            en.MoveNext();
+                            timer.Elapsed += en.Current.Value;
+                            timer.Elapsed += Control;
+                            double milliseconds = (en.Current.Key - DateTime.Now).TotalMilliseconds;
+                            if (milliseconds <= 0)
+                            {
+                                milliseconds = 0.0001;
+                            }
+                            timer.Interval = milliseconds;
+                            timer.Enabled = true;
+                            //Console.WriteLine("Exit Control");
+                        }
+                    });
+                return _control;
+            }
+        }
+        public MultiTaskTimer()
+        {
+            timer.AutoReset = false;
+        }
+        public void Add(System.Timers.ElapsedEventHandler function, uint milliseconds)
+        {
+            lock (privateLock)
+            {
+                //Console.WriteLine("Entering Add");
+                if (dict.Count == 0)
+                {
+                    //Console.WriteLine("function Add : Count == 0");
+                    dict.Add(DateTime.Now + TimeSpan.FromMilliseconds(milliseconds), function);
+                    timer.Elapsed += function;
+                    timer.Elapsed += Control;
+                    timer.Interval = milliseconds;
+                    timer.Enabled = true;
+                    //Console.WriteLine("Exit Add");
+                    return;
+                }
+                timer.Enabled = false;
+                //Console.WriteLine("function Add : Count != 0");
+                DateTime dateTime = DateTime.Now + TimeSpan.FromMilliseconds(milliseconds);
+
+                SortedDictionary<DateTime, System.Timers.ElapsedEventHandler>.Enumerator en = dict.GetEnumerator();
+                en.MoveNext();
+                if (dateTime >= en.Current.Key)
+                {
+                    dict.Add(dateTime, function);
+                    //Console.WriteLine(en.Current.Key);
+                    //Console.WriteLine(DateTime.Now);
+                    double ms = (en.Current.Key - DateTime.Now).TotalMilliseconds;
+                    if (ms <= 0)
+                        ms = 0.00011;
+                    timer.Interval = ms;
+                    timer.Enabled = true;
+                    //Console.WriteLine("Exit Add");
+                    return;
+                }
+                //Console.WriteLine("Add to first");
+                timer.Elapsed -= en.Current.Value;
+                timer.Elapsed -= Control;
+                dict.Add(dateTime, function);
+                timer.Elapsed += function;
+                timer.Elapsed += Control;
+                timer.Interval = milliseconds;
+                timer.Enabled = true;
+                //Console.WriteLine("Exit Add");
+            }
+        }
+    }
+
     public class Timers
     {
         int count;//总共要执行的回调数

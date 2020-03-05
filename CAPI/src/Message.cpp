@@ -1,4 +1,3 @@
-#pragma once
 #include"Message.h"
 #include<string>
 #include<cstdio>
@@ -182,7 +181,7 @@ byte* WriteInt32(INT64 x, byte* bytes)
 
 byte* WriteMessageInt32(INT64 x, byte* bytes)
 {
-	assert(x > -1);
+	assert(x > -3);
 	if (x == -1)
 	{
 		for (int i = 0; i < 9; i++)

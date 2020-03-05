@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using static THUnity2D.Tools;
+﻿using Logic.Constant;
 using static Logic.Constant.MapInfo;
-using Logic.Constant;
-using Communication.Proto;
+using static THUnity2D.Tools;
 
 namespace Logic.Server
 {
@@ -25,6 +21,10 @@ namespace Logic.Server
                         {
                             Velocity = new THUnity2D.Vector(Velocity.angle, 0);
                             Layer = (int)MapLayer.ItemLayer;
+                            foreach (Block block in WorldMap.Grid[(int)Position.x, (int)Position.y].GetType(typeof(Block)))
+                            {
+                                if (block.blockType == BlockType.RubbishBin) Parent = null;
+                            }
                         });
                 return _stopMovingTimer;
             }
@@ -38,24 +38,8 @@ namespace Logic.Server
             Bouncable = true;
             AddToMessage();
             Dish = type_t;
-            this.MoveComplete += new MoveCompleteHandler(
-                (thisGameObject) =>
-                {
-                    lock (Program.MessageToClientLock)
-                    {
-                        Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.X = thisGameObject.Position.x;
-                        Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.Y = thisGameObject.Position.y;
-                    }
-                    //Server.ServerDebug(this.Position.ToString());
-                });
-            this.OnParentDelete += new ParentDeleteHandler(
-                () =>
-                {
-                    lock (Program.MessageToClientLock)
-                    {
-                        Program.MessageToClient.GameObjectMessageList.Remove(ID);
-                    }
-                });
+            this.MoveComplete += new MoveCompleteHandler(ChangePositionInMessage);
+            this.OnParentDelete += new ParentDeleteHandler(DeleteFromMessage);
         }
 
         public override DishType GetDish(DishType t)
