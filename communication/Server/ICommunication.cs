@@ -17,7 +17,7 @@ namespace Communication.Server
     {
         int PlayerCount { get;}
 
-
+        bool IsOffline { get; set; }
         /// <summary>
         /// Token for the client api
         /// </summary>

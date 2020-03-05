@@ -41,44 +41,43 @@ namespace Communication.Server
             }
         }
 
-        private void HttpAsync(string uri, string token, string method, JObject data)
+        private async Task HttpAsync(string uri, string token, string method, JObject data)
         {
-            Task.Run(() =>
+            try
             {
-                try
+                var request = WebRequest.CreateHttp(uri);
+                request.Method = method;
+                request.Headers.Add("Authorization", $"bearer {token}");
+                if (data != null)
                 {
-                    var request = WebRequest.CreateHttp(uri);
-                    request.Method = method;
-                    request.Headers.Add("Authorization", $"bearer {token}");
-                    if (data != null)
-                    {
-                        request.ContentType = "application/json";
-                        var raw = Encoding.UTF8.GetBytes(data.ToString());
-                        request.GetRequestStream().Write(raw, 0, raw.Length);
-                    }
-                    var response = request.GetResponse() as HttpWebResponse;
-                    if ((int)response.StatusCode / 100 != 2)
-                        Constants.Debug(response.StatusDescription);
+                    request.ContentType = "application/json";
+                    var raw = Encoding.UTF8.GetBytes(data.ToString());
+                    request.GetRequestStream().Write(raw, 0, raw.Length);
                 }
-                catch (Exception e)
-                {
-                    Constants.Debug(e.ToString());
-                }
-            });
+                
+                var response = await request.GetResponseAsync() as HttpWebResponse;
+                if ((int)response.StatusCode / 100 != 2)
+                    Constants.Debug(response.StatusDescription);
+            }
+            catch (Exception e)
+            {
+                Constants.Debug(e.ToString());
+            }
         }
 
-        private void NoticeServer(string token, DockerGameStatus status)
+        private async Task NoticeServer(string token, DockerGameStatus status)
         {
+            if (IsOffline) return;
             if (token == null)
             {
-                HttpAsync($"http://localhost:28888/v1/rooms/{roomID}", this.token, "PUT", new JObject
+                await HttpAsync($"http://localhost:28888/v1/rooms/{roomID}", this.token, "PUT", new JObject
                 {
                     ["status"] = (int)status
                 });
             }
             else
             {
-                HttpAsync($"http://localhost:28888/v1/rooms/{roomID}/join", token, "GET", null);
+                await HttpAsync($"http://localhost:28888/v1/rooms/{roomID}/join", token, "GET", null);
             }
         }
 
@@ -86,7 +85,7 @@ namespace Communication.Server
         {
             set
             {
-                NoticeServer(null, value);
+                Task.Run(() => NoticeServer(null, value));
             }
         }
 
@@ -97,6 +96,7 @@ namespace Communication.Server
             get => server.Port;
             set => server.Port = value;
         }
+        public bool IsOffline { get; set; }
 
         public event MessageHandler MsgProcess;
 
@@ -116,7 +116,13 @@ namespace Communication.Server
             {
                 if (message.Content is PlayerToken token)
                 {
-                    NoticeServer(token.Token, default);
+                    NoticeServer(token.Token, default).Wait();
+                    Constants.Debug($"Agent Connected: {server.Count}/{Constants.AgentCount}");
+                    if (server.Count == Constants.AgentCount)
+                    {
+                        full.Set();
+                        server.Pause();
+                    }
                     return;
                 }
                 ServerMessage msg = new ServerMessage();
@@ -128,15 +134,6 @@ namespace Communication.Server
                 OnNewMessage(e);
             };
 
-            server.OnAccept += delegate () //判断是否满人
-            {
-                Constants.Debug($"Agent Connected: {server.Count}/{Constants.AgentCount}");
-                if (server.Count == Constants.AgentCount)
-                {
-                    full.Set();
-                    server.Pause();
-                }
-            };
             server.InternalQuit += delegate ()
             {
                 server.Resume();
