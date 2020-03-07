@@ -230,21 +230,15 @@ namespace Client
                     case 'f': Pick(); break;
                     case 'u': 
                         {
-                            int parameter = 0;
                             if (tool == ToolType.SpaceGate)
                             {
-                                int i = 0, j = 0;
-                                i = int.Parse(Console.ReadLine());
-                                if (i > (int)Configs["SpaceGateMaxDistance"]) i = (int)Configs["SpaceGateMaxDistance"];
-                                j = int.Parse(Console.ReadLine());
-                                if (j > (int)Configs["SpaceGateMaxDistance"]) j = (int)Configs["SpaceGateMaxDistance"];
-                                parameter = 100 * i + j;
+                                Use(1, Console.ReadLine(), Console.ReadLine());
                             }
-                            Use(1, parameter); 
+                            
                         } 
                         break;
 
-                    case 'i': Use(0, 0); break;
+                    case 'i': Use(0, "0"); break;
                     case 'r':
                         char temp = Console.ReadKey().KeyChar;
                         if (temp >= '0' && temp <= '9')
@@ -297,11 +291,11 @@ namespace Client
             messageToServer.CommandType = CommandTypeMessage.Put;
             ClientCommunication.SendMessage(messageToServer);
         }
-        public override void Use(int type, int parameter = 0)
+        public override void Use(int type, string parameter_1 = "",string parameter_2="")
         {
             messageToServer.CommandType = CommandTypeMessage.Use;
             messageToServer.UseType = type;
-            messageToServer.MoveDuration = parameter;
+            messageToServer.Parameter = parameter_1 + "," + parameter_2;
             ClientCommunication.SendMessage(messageToServer);
         }
         public override void Pick()
@@ -386,7 +380,7 @@ namespace Client
             Program.form.ControlLabels["Task"].Text = "Task : ";
             foreach (var task in msg.Tasks)
             {
-                Program.form.ControlLabels["Task"].Text += "\n" + task;
+                Program.form.ControlLabels["Task"].Text += "\n" + (DishType)task;
             }
         }
     }

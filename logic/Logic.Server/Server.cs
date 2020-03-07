@@ -73,7 +73,7 @@ namespace Logic.Server
                 }
                 new Tool(tempPosition.x + 0.5, tempPosition.y + 0.5, (ToolType)Program.Random.Next(0, (int)ToolType.Size - 1)).Parent = WorldMap;
             }
-            System.Threading.Timer ToolRefreshTimer=new System.Threading.Timer(ToolRefresh,null,
+            System.Threading.Timer ToolRefreshTimer = new System.Threading.Timer(ToolRefresh, null,
                 0, (int)Configs["ToolRefreshTime"]);
 
             System.Threading.Timer timer = new System.Threading.Timer(
