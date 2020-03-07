@@ -440,7 +440,8 @@ namespace Logic.Server
                         XYPosition aim = Position + new XYPosition(dx, dy);
                         Position = aim;
                         if (Math.Abs(Position.x - aim.x) > 0.001 || Math.Abs(Position.y - aim.y) > 0.001)
-                            Position = previous;
+                            {Position = previous;}
+                        tool = ToolType.Empty;
                     }
                     break;
             }

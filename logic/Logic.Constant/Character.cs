@@ -24,7 +24,7 @@ namespace Logic.Constant
         
         protected int _score = 0;
 
-        public DishType dish = DishType.Banana;
+        public DishType dish = DishType.Hawthorn;
         public ToolType tool = ToolType.SpaceGate;
         public Character(double x, double y) : base(new XYPosition(x, y))
         {

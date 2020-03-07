@@ -90,7 +90,7 @@ namespace Logic.Server
             Dish = (DishType)Enum.Parse(typeof(DishType), cookingResult);
             if (Dish > DishType.Empty && Dish < DishType.Size2 && Dish != DishType.Size1)
             {
-                if((int)Dish<(int)DishType.XiangGuo) CookingTimer.Change((int)(0.5*(double)Configs[cookingResult]["CookTime"]), 0);
+                if(Dish<DishType.XiangGuo) CookingTimer.Change((int)(0.5*(double)Configs[cookingResult]["CookTime"]), 0);
                 else CookingTimer.Change((int)(0.5 * (double)Configs["XiangGuo"]["CookTime"]), 0);
                 cookingResult = "OverCookedDish";
             }
@@ -105,7 +105,7 @@ namespace Logic.Server
             get
             {
                 _protectTimer = _protectTimer ?? new System.Threading.Timer((i)=> { ProtectedTeam = -1; });
-                return _cookingTimer;
+                return _protectTimer;
             }
         }
 
@@ -234,8 +234,11 @@ namespace Logic.Server
             int score = 0;
             if (TaskQueue.ContainsKey(dish_t))
             {
-                score = (int)Configs[dish_t.ToString()]["Score"];//菜品名+Score，在App.config里加
-                RemoveTask(dish_t);
+                if (dish_t < DishType.XiangGuo)
+                {
+                    score = (int)Configs[dish_t.ToString()]["Score"];//菜品名+Score，在App.config里加
+                    RemoveTask(dish_t);
+                }
             }
             //PrintAllTask();
             return score;
