@@ -91,12 +91,14 @@ namespace Client
                         new System.Drawing.Point(
                             (int)((gameObjectMessage.Position.X - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL),
                             Convert.ToInt32((WorldMap.Height - gameObjectMessage.Position.Y - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL));
+                    Program.form.playerLabels[id_t].Text = gameObjectMessage.DishType.ToString();
                     break;
                 case ObjTypeMessage.Tool:
                     Program.form.playerLabels[id_t].Location =
                         new System.Drawing.Point(
                             (int)((gameObjectMessage.Position.X - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL),
                             Convert.ToInt32((WorldMap.Height - gameObjectMessage.Position.Y - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL));
+                    Program.form.playerLabels[id_t].Text = gameObjectMessage.ToolType.ToString();
                     break;
                 case ObjTypeMessage.Trigger:
                     break;
@@ -226,9 +228,17 @@ namespace Client
                     case 'x': Move(Direction.Down); break;
                     case 'c': Move(Direction.RightDown); break;
                     case 'f': Pick(); break;
-                    case 'u': Use(1, 0); break;
+                    case 'u': 
+                        {
+                            if (tool == ToolType.SpaceGate)
+                            {
+                                Use(1, Console.ReadLine(), Console.ReadLine());
+                            }
+                            
+                        } 
+                        break;
 
-                    case 'i': Use(0, 0); break;
+                    case 'i': Use(0, "0"); break;
                     case 'r':
                         char temp = Console.ReadKey().KeyChar;
                         if (temp >= '0' && temp <= '9')
@@ -281,10 +291,11 @@ namespace Client
             messageToServer.CommandType = CommandTypeMessage.Put;
             ClientCommunication.SendMessage(messageToServer);
         }
-        public override void Use(int type, int parameter)
+        public override void Use(int type, string parameter_1 = "",string parameter_2="")
         {
             messageToServer.CommandType = CommandTypeMessage.Use;
             messageToServer.UseType = type;
+            messageToServer.Parameter = parameter_1 + "," + parameter_2;
             ClientCommunication.SendMessage(messageToServer);
         }
         public override void Pick()
@@ -369,7 +380,7 @@ namespace Client
             Program.form.ControlLabels["Task"].Text = "Task : ";
             foreach (var task in msg.Tasks)
             {
-                Program.form.ControlLabels["Task"].Text += "\n" + task;
+                Program.form.ControlLabels["Task"].Text += "\n" + (DishType)task;
             }
         }
     }

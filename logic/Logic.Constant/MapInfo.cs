@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Logic.Constant;
+using THUnity2D;
 
 namespace Logic.Constant
 {
