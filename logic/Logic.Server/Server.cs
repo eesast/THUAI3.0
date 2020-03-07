@@ -157,8 +157,10 @@ namespace Logic.Server
         //向所有Client发送消息，按照帧率定时发送，严禁在其他地方调用此函数
         protected void SendMessageToAllClient()
         {
+            Server.ServerDebug("SendMessageToAll !!!");
             lock (Program.MessageToClientLock)
             {
+                Server.ServerDebug("Enter Lock !!!");
                 ServerCommunication.SendMessage(new ServerMessage
                 {
                     Agent = -2,

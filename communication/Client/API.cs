@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using Communication.Proto;
 using Google.Protobuf;
@@ -6,7 +6,7 @@ using System.IO;
 
 namespace Communication.CAPI
 {
-    public class API : ICAPI
+    public sealed class API : ICAPI, IDisposable
     {
         private IDClient client;
         private string buffer;
@@ -122,6 +122,12 @@ namespace Communication.CAPI
                     }
                 }
             });
+        }
+
+        public void Dispose()
+        {
+            client.Quit();
+            client.Dispose();
         }
     }
 }
