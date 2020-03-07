@@ -8,7 +8,7 @@ namespace Communication.Proto
         public delegate void DebugFunc(string DebugMessage);
         public static ushort PlayerCount = 1;
         public static ushort AgentCount = 1;
-        public static ushort ServerPort = 8888;
+        public static ushort ServerPort = 10086;
         public static readonly ushort AgentPort = 8887;
         public static readonly int MaxMessage = 3;
         public static readonly double TimeLimit = 1000;   // 在TimeLimt内agent只会转发MaxMessage条消息
