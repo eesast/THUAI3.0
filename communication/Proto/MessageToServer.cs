@@ -90,6 +90,7 @@ namespace Communication.Proto {
       isThrowDish_ = other.isThrowDish_;
       useType_ = other.useType_;
       speakText_ = other.speakText_;
+      parameter_= other.parameter_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -186,6 +187,19 @@ namespace Communication.Proto {
       }
     }
 
+    /// <summary>Field number for the "SpeakText" field.</summary>
+    public const int ParameterFieldNumber = 9;
+    private string parameter_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string Parameter
+    {
+        get { return parameter_; }
+        set
+        {
+           parameter_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+        }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as MessageToServer);
@@ -207,6 +221,7 @@ namespace Communication.Proto {
       if (IsThrowDish != other.IsThrowDish) return false;
       if (UseType != other.UseType) return false;
       if (SpeakText != other.SpeakText) return false;
+      if (Parameter != other.Parameter) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -221,6 +236,7 @@ namespace Communication.Proto {
       if (IsThrowDish != false) hash ^= IsThrowDish.GetHashCode();
       if (UseType != 0) hash ^= UseType.GetHashCode();
       if (SpeakText.Length != 0) hash ^= SpeakText.GetHashCode();
+      if (Parameter.Length != 0) hash ^= Parameter.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -266,6 +282,10 @@ namespace Communication.Proto {
         output.WriteRawTag(66);
         output.WriteString(SpeakText);
       }
+      if (Parameter.Length != 0){
+          output.WriteRawTag(76);
+          output.WriteString(Parameter);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -297,6 +317,9 @@ namespace Communication.Proto {
       }
       if (SpeakText.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(SpeakText);
+      }
+      if (Parameter.Length != 0) {
+          size += 1 + pb::CodedOutputStream.ComputeStringSize(Parameter);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -332,6 +355,9 @@ namespace Communication.Proto {
       }
       if (other.SpeakText.Length != 0) {
         SpeakText = other.SpeakText;
+      }
+      if (other.Parameter.Length != 0) {
+          Parameter = other.Parameter;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -376,6 +402,10 @@ namespace Communication.Proto {
             SpeakText = input.ReadString();
             break;
           }
+          case 76: {
+            Parameter = input.ReadString();
+            break;
+         }
         }
       }
     }

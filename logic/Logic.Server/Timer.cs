@@ -6,7 +6,7 @@ namespace Timer
 {
     public static class Time
     {
-        private static DateTime initTime = new DateTime();
+        public static DateTime initTime = new DateTime();
         public static bool run = true;
         public static void InitializeTime()
         {

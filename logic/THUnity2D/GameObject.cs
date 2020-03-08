@@ -128,13 +128,9 @@ namespace THUnity2D
             lock (privateLock)
             {
                 _position = e.position;
-                if (OnPositionChanged != null)
-                {
-                    OnPositionChanged(this, e);
-                }
+                OnPositionChanged?.Invoke(this, e);
             }
-            if (PositionChangeComplete != null)
-                PositionChangeComplete(this);
+            PositionChangeComplete?.Invoke(this);
         }
         //Position end
 
