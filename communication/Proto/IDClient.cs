@@ -71,6 +71,7 @@ namespace Communication.Proto
                 if (!Closed) //断线重连
                     while (!client.IsStarted)
                     {
+                        Thread.Sleep(1000);
                         Constants.Debug($"ClientSide: Connecting to server {endPoint}");
                         client.Connect(endPoint.Address.ToString(), (ushort)endPoint.Port, false);
                     }
