@@ -93,13 +93,13 @@ namespace Logic.Constant
         Cake,//蛋糕
         BingTangHuLu,//冰糖葫芦
         FruitSalad,//水果色拉
-        XiangGuo,
-        XiangGuo_3,
-        XiangGuo_4,
-        XiangGuo_5,
-        XiangGuo_6,
-        XiangGuo_7,
-        XiangGuo_8,//香锅
+        SpicedPot,
+        SpicedPot_3,
+        SpicedPot_4,
+        SpicedPot_5,
+        SpicedPot_6,
+        SpicedPot_7,
+        SpicedPot_8,//香锅
         Size2,
         //以下为垃圾
         OverCookedDish,

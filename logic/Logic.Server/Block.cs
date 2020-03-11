@@ -90,8 +90,8 @@ namespace Logic.Server
             Dish = (DishType)Enum.Parse(typeof(DishType), cookingResult);
             if (Dish > DishType.Empty && Dish < DishType.Size2 && Dish != DishType.Size1)
             {
-                if(Dish<DishType.XiangGuo) CookingTimer.Change((int)(0.5*(double)Configs[cookingResult]["CookTime"]), 0);
-                else CookingTimer.Change((int)(0.5 * (double)Configs["XiangGuo"]["CookTime"]), 0);
+                if(Dish<DishType.SpicedPot) CookingTimer.Change((int)(0.5*(double)Configs[cookingResult]["CookTime"]), 0);
+                else CookingTimer.Change((int)(0.5 * (double)Configs["SpicedPot"]["CookTime"]), 0);
                 cookingResult = "OverCookedDish";
             }
         }
@@ -158,9 +158,9 @@ namespace Logic.Server
                 Cooking = true;
                 ProtectedTeam = TeamNumber;
                 Dish = DishType.DarkDish;
-                cookingResult = "XiangGuo_" + (score / 20).ToString();
-                CookingTimer.Change((int)Configs["XiangGuo"]["CookTime"], 0);
-                ProtectTimer.Change((int)(1.25 * (double)Configs["XiangGuo"]["CookTime"]), 0);
+                cookingResult = "SpicedPot_" + (score / 20).ToString();
+                CookingTimer.Change((int)Configs["SpicedPot"]["CookTime"], 0);
+                ProtectTimer.Change((int)(1.25 * (double)Configs["SpicedPot"]["CookTime"]), 0);
             }
         }
         //Cook End
@@ -218,8 +218,8 @@ namespace Logic.Server
             DishType temp=DishType.Empty;
             for (; ; )
             {
-                if (Timer.Time.GameTime() < TimeSpan.FromMinutes(10)) temp = (DishType)Program.Random.Next((int)DishType.TomatoFriedEgg, (int)DishType.XiangGuo);
-                else temp = (DishType)Program.Random.Next((int)DishType.TomatoFriedEgg, (int)DishType.XiangGuo + 1);
+                if (Timer.Time.GameTime() < TimeSpan.FromMinutes(10)) temp = (DishType)Program.Random.Next((int)DishType.TomatoFriedEgg, (int)DishType.SpicedPot);
+                else temp = (DishType)Program.Random.Next((int)DishType.TomatoFriedEgg, (int)DishType.SpicedPot + 1);
                 if (temp == DishType.Size1)
                     continue;
                 break;
@@ -232,17 +232,17 @@ namespace Logic.Server
         public static int HandIn(DishType dish_t)
         {
             int score = 0;
-            if (dish_t < DishType.XiangGuo && TaskQueue.ContainsKey(dish_t))
+            if (dish_t < DishType.SpicedPot && TaskQueue.ContainsKey(dish_t))
             {
                 score = (int)Configs[dish_t.ToString()]["Score"];//菜品名+Score，在App.config里加
                 RemoveTask(dish_t);
             }
-            else if(dish_t>=DishType.XiangGuo&& dish_t<=DishType.XiangGuo_8 && TaskQueue.ContainsKey(DishType.XiangGuo))
+            else if(dish_t>=DishType.SpicedPot&& dish_t<=DishType.SpicedPot_8 && TaskQueue.ContainsKey(DishType.SpicedPot))
             {
                 string[] i = (Convert.ToString(dish_t)).Split('_');
                 double temp = Convert.ToDouble(i[1]);
                 score = (int)((1 + temp / 8) * temp * 20);
-                RemoveTask(DishType.XiangGuo);
+                RemoveTask(DishType.SpicedPot);
             }
             //PrintAllTask();
             return score;
