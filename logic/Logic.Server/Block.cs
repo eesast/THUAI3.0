@@ -218,8 +218,8 @@ namespace Logic.Server
             DishType temp=DishType.Empty;
             for (; ; )
             {
-                if(Timer.Time.GameTime()<TimeSpan.FromMinutes(10))temp = (DishType)Program.Random.Next((int)DishType.TomatoFriedEgg, (int)DishType.XiangGuo);
-                else temp = (DishType)Program.Random.Next((int)DishType.TomatoFriedEgg, (int)DishType.XiangGuo_3);
+                if (Timer.Time.GameTime() < TimeSpan.FromMinutes(10)) temp = (DishType)Program.Random.Next((int)DishType.TomatoFriedEgg, (int)DishType.XiangGuo);
+                else temp = (DishType)Program.Random.Next((int)DishType.TomatoFriedEgg, (int)DishType.XiangGuo + 1);
                 if (temp == DishType.Size1)
                     continue;
                 break;
@@ -232,13 +232,17 @@ namespace Logic.Server
         public static int HandIn(DishType dish_t)
         {
             int score = 0;
-            if (TaskQueue.ContainsKey(dish_t))
+            if (dish_t < DishType.XiangGuo && TaskQueue.ContainsKey(dish_t))
             {
-                if (dish_t < DishType.XiangGuo)
-                {
-                    score = (int)Configs[dish_t.ToString()]["Score"];//菜品名+Score，在App.config里加
-                    RemoveTask(dish_t);
-                }
+                score = (int)Configs[dish_t.ToString()]["Score"];//菜品名+Score，在App.config里加
+                RemoveTask(dish_t);
+            }
+            else if(dish_t>=DishType.XiangGuo&& dish_t<=DishType.XiangGuo_8 && TaskQueue.ContainsKey(DishType.XiangGuo))
+            {
+                string[] i = (Convert.ToString(dish_t)).Split('_');
+                double temp = Convert.ToDouble(i[1]);
+                score = (int)((1 + temp / 8) * temp * 20);
+                RemoveTask(DishType.XiangGuo);
             }
             //PrintAllTask();
             return score;

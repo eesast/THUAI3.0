@@ -262,7 +262,7 @@ namespace Logic.Server
             status = CommandType.Stop;
             Velocity = new Vector(0, 0);
         }
-        public override void Use(int type, string parameter_1, string parameter_2 = null)
+        public override void Use(int type, int parameter_1, int parameter_2 = 0)
         {
             if (type == 0)//type为0表示使用厨具做菜和提交菜品
             {
@@ -309,7 +309,7 @@ namespace Logic.Server
             Talent = t;
         }
 
-        public void UseTool(string parameter)
+        public void UseTool(int parameter)
         {
             switch (tool)
             {
@@ -420,10 +420,9 @@ namespace Logic.Server
                     break;
                 case ToolType.SpaceGate:
                     {
-
-                        string[] i = parameter.Split(',');
-                        Console.WriteLine(i[0] + " " + i[1]);
-                        int dx = int.Parse(i[0]), dy = int.Parse(i[1]);
+                        int dx = (parameter / 100) % 100, dy = parameter % 100;
+                        if(parameter>=100000) { parameter -= 100000;dx = -dx; }
+                        if(parameter>=10000) { dy = -dy; }
                         if(Talent==TALENT.Technician)
                         {
                             if (Math.Abs(dx) > (int)Configs["TechnicianSpaceGateMaxDistance"]) dx = (int)Configs["TechnicianSpaceGateMaxDistance"] * (dx / Math.Abs(dx));
@@ -459,13 +458,18 @@ namespace Logic.Server
                     break;
                 case TriggerType.Mine:
                     {
-                        Score += trigger.parameter;
+                        if (Tool != ToolType.BreastPlate) Score += trigger.parameter;
+                        else Tool = ToolType.Empty;
                     }
                     break;
                 case TriggerType.Trap:
                     {
-                        IsStun = trigger.parameter;
-                        Velocity = new Vector(Velocity.angle, 0);
+                        if (Tool != ToolType.BreastPlate)
+                        {
+                            IsStun = trigger.parameter;
+                            Velocity = new Vector(Velocity.angle, 0);
+                        }
+                        else Tool = ToolType.Empty;
                     }
                     break;
                 default:

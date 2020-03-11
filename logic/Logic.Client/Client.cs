@@ -232,13 +232,13 @@ namespace Client
                         {
                             if (tool == ToolType.SpaceGate)
                             {
-                                Use(1, Console.ReadLine(), Console.ReadLine());
+                                Use(1, int.Parse(Console.ReadLine()), int.Parse(Console.ReadLine()));
                             }
                             
                         } 
                         break;
 
-                    case 'i': Use(0, "0"); break;
+                    case 'i': Use(0, 0); break;
                     case 'r':
                         char temp = Console.ReadKey().KeyChar;
                         if (temp >= '0' && temp <= '9')
@@ -291,11 +291,15 @@ namespace Client
             messageToServer.CommandType = CommandTypeMessage.Put;
             ClientCommunication.SendMessage(messageToServer);
         }
-        public override void Use(int type, string parameter_1 = "",string parameter_2="")
+        public override void Use(int type, int parameter_1 = 0, int parameter_2 = 0)
         {
+            if (parameter_1 >= 100) parameter_1 = 99;
+            if (parameter_2 >= 100) parameter_2 = 99;
             messageToServer.CommandType = CommandTypeMessage.Use;
             messageToServer.UseType = type;
-            messageToServer.Parameter = parameter_1 + "," + parameter_2;
+            messageToServer.Parameter = Math.Abs(parameter_1) * 100 + Math.Abs(parameter_2);
+            if (parameter_1 < 0) messageToServer.Parameter += 100000;
+            if (parameter_2 < 0) messageToServer.Parameter += 10000;
             ClientCommunication.SendMessage(messageToServer);
         }
         public override void Pick()
