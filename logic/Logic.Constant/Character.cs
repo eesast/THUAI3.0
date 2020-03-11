@@ -37,7 +37,7 @@ namespace Logic.Constant
         { }
         public virtual void Pick()
         { }
-        public virtual void Use(int type, string parameter_1,string parameter_2)
+        public virtual void Use(int type, int parameter_1,int parameter_2)
         { }
     }
 }
