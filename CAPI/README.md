@@ -18,21 +18,33 @@ THUAI3.0 原电子系第21届队式程序设计大赛
 ## 开发组成员
 常灿，王冲
 
-## 说明
+## 文件结构
 
-- Windows使用时，需要将dll目录中文件放入C:\Windows\SysWOW64目录中。通过win_make.bat 生成项目，需要在VS中将项目平台修改为WIN32 Release，项目属性——C/C++——Code Generation中runtime library设为Multi-threaded, 项目属性——linker——command line中若出现/machine:x64字样，将x64改成x86.
+- include文件存放公共头文件，其中CAPI.h定义了通信接口，API.h 定义了选手接口，Constant.h为常量表，部分通过python生成，Structures.h定义了所有数据结构
 
-- Linux下在build文件夹中通过命令cmake .. && make生成可执行文件AI(*需事先安装protobuf*), 已在docker中测试过基本通信功能。
+- windows_only和linux_only分别windows和linux平台下的包含文件和库文件 （目前linux上大部分依赖在构建docker时直接下载）
 
-- API.h文档中定义了所有的玩家接口。Player.cpp中的player函数为唯一的选手可编辑函数。
+- proto存放protobuf文件，cmake时生成相应.h和.cc文件
 
-- 命令行读入2个参数Agent_ip和Agent_port
+- src存放源文件
 
-- 文件结构树形图
-  ![1582509497220.png](https://i.loli.net/2020/02/24/OybS8fptQXLWgV3.png)
+  
 
-  ![2222]( https://i.loli.net/2020/02/24/w2hGtpYrF3TgBS7.png)
+## Windows上生成分发
 
-  其中，windows的依赖包括protobuf, hpsocket 和pthread (用于跨平台，模拟Linux的pthread) ；Linux的依赖包括hpsocket和其他平台相关依赖。
+- 目前仅支持使用VS2019  (VS2017缺少相应工具集)
 
-  打包下载: https://cloud.tsinghua.edu.cn/d/b4f6d32dfbeb4dfa8fe7/
+- 项目生成：通过win_make.bat创建build目录并在其下生成解决方案AI.sln
+
+- 项目构建：平台使用win32 Release，项目属性——C/C++——Code Generation中runtime library设为Multi-threaded, 项目属性——linker——command line中若出现/machine:x64字样，将x64改成x86。右键项目名选择构建即可生成AI.exe文件
+
+- 运行程序: 需事先将windows_only中dll目录下文件放入C:/Windows/SysWOW64目录下或build/release目录下。命令行读入2个参数Agent_ip和Agent_port
+
+- 项目分发：命令行运行``` python modify.py ```将项目引用的相应绝对路径改为相对路径。**此时解决方案部分路径并未成功加载，原因暂时未知**，需在项目包含目录中添加 ```..\windows_only\include;..\include;..\windows_only\proto_files;%(AdditionalIncludeDirectories) ```
+  在库目录中添加```../windows_only/lib;../windows_only/lib/$(Configuration);%(AdditionalLibraryDirectories)```
+
+  将附加库改为```gmock.lib;gmock_main.lib;libprotobuf.lib;libprotobuf-lite.lib;libprotoc.lib;pthreadVSE2.lib;HPSocket.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib```
+
+## Linux上构建
+
+- Linux平台目前提供了2个docker镜像。编译镜像环境包括编译工具，protobuf和hpsocket。运行run.sh后将选手程序送进第一个容器编译，将编译信息和可执行文件返回给主机，若编译成功则在第二个容器中运行。
