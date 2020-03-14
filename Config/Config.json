@@ -2,65 +2,272 @@
     "PlayerInitMoveSpeed": 5,
     "PlayerInitThrowDistance": 10,
     "PlayerInitSightRange": 9,
+
     "ItemMoveSpeed": 10,
-    "RunnerTalentExtraMoveSpeed": 2,
-    "StrenthTalentExtraThrowDistance": 5,
+
     "TigerShoeExtraMoveSpeed": 2,
+    "TechnicianTigerShoeExtraMoveSpeed": 3,
+
     "SpeedBuffExtraMoveSpeed": 5,
     "SpeedBuffDuration": 20000,
-    "StrenthBuffExtraThrowDistance": 10,
+    "TechnicianSpeedBuffDuration": 30000,
+
+    "StrenthBuffExtraThrowDistance": 5,
     "StrenthBuffDuration": 40000,
+    "TechnicianStrenthBuffDuration": 60000,
+
     "TeleScopeExtraSightRange": 4,
+    "TechnicianTeleScopeExtraSightRange": 6,
+
+    "CondimentScoreParameter": 0.3,
+    "CookCondimentScoreParameter": 0.5,
+
+    "SpaceGateMaxDistance": 10,
+    "TechnicianSpaceGateMaxDistance": 15,
+
     "WaveGlueExtraMoveSpeed": -3,
     "WaveGlueDuration": 30000,
+
     "MineScore": -50,
+    "TechnicianMineScore": -100,
+
     "TrapStunDuration": 5000,
+    "TechnicianTrapStunDuration": 8000,
+
     "TaskTimeLimit": 60000,
     "TaskRefreshTime": 8000,
+
+    "ToolRefreshTime": 10000,
+
     "FoodPointInitRefreshTime": 10000,
-    "Apple": {
-        "Score": 10,
-        "TaskTime": 60000
+
+    "LuckTalentRefreshTime": 30000,
+
+    "RunnerTalentExtraMoveSpeed": 3,
+
+    "StrenthTalentExtraThrowDistance": 5,
+
+
+
+    "Wheat": {
+        "Score": 0
     },
-    "Banana": {
-        "Score": 10,
-        "TaskTime": 60000
+
+    "Rice": {
+        "Score": 0
     },
-    "Potato": {
-        "Score": 10,
-        "TaskTime": 60000
-    },
+
     "Tomato": {
-        "Score": 10,
-        "TaskTime": 60000
+        "Score": 0
     },
-    "BananaPie": {
-        "Score": 10,
+
+    "Egg": {
+        "Score": 0
+    },
+
+    "Milk": {
+        "Score": 0
+    },
+
+    "Apple": {
+        "Score": 0
+    },
+
+    "Banana": {
+        "Score": 0
+    },
+
+    "DarkPlum": {
+        "Score": 0
+    },
+
+    "Hawthorn": {
+        "Score": 0
+    },
+
+    "Strawberry": {
+        "Score": 0
+    },
+
+    "Beef": {
+        "Score": 20
+    },
+
+    "Pork": {
+        "Score": 20
+    },
+
+    "ChickenMeat": {
+        "Score": 20
+    },
+
+    "Potato": {
+        "Score": 20
+    },
+
+    "Lettuce": {
+        "Score": 20
+    },
+
+    "Agaric": {
+        "Score": 20
+    },
+
+    "NeedleMushroom": {
+        "Score": 20
+    },
+
+    "Cabbage": {
+        "Score": 20
+    },
+
+    "Flour": {
+        "Score": 0,
+        "CookTime": 10000
+    },
+
+    "Noodle": {
+        "Score": 0,
+        "CookTime": 10000
+    },
+
+    "Bread": {
+        "Score": 0,
+        "CookTime": 10000
+    },
+
+    "CookedRice": {
+        "Score": 0,
+        "CookTime": 10000
+    },
+
+    "Ketchup": {
+        "Score": 0,
+        "CookTime": 10000
+    },
+
+    "Cream": {
+        "Score": 0,
+        "CookTime": 10000
+    },
+
+    "TomatoFriedEgg": {
+        "Score": 50,
         "TaskTime": 60000,
-        "CookTime": 5000
+        "CookTime": 10000
     },
-    "ApplePie": {
-        "Score": 10,
+
+    "TomatoFriedEggNoodle": {
+        "Score": 0,
+        "TaskTime": 90000,
+        "CookTime": 15000
+    },
+
+    "BeefNoodle": {
+        "Score": 80,
+        "TaskTime": 90000,
+        "CookTime": 20000
+    },
+
+    "OverRice": {
+        "Score": 90,
+        "TaskTime": 90000,
+        "CookTime": 20000
+    },
+
+    "HuangMenJi": {
+        "Score": 100,
+        "TaskTime": 90000,
+        "CookTime": 20000
+    },
+
+    "Barbecue": {
+        "Score": 55,
+        "TaskTime": 90000,
+        "CookTime": 20000
+    },
+
+    "FrenchFries": {
+        "Score": 60,
+        "TaskTime": 90000,
+        "CookTime": 15000
+    },
+
+    "PlumJuice": {
+        "Score": 50,
+        "TaskTime": 90000,
+        "CookTime": 10000
+    },
+
+    "Hamburger": {
+        "Score": 110,
+        "TaskTime": 100000,
+        "CookTime": 20000
+    },
+
+    "StrawberryIcecream": {
+        "Score": 60,
+        "TaskTime": 90000,
+        "CookTime": 10000
+    },
+
+    "PopcornChicken": {
+        "Score": 60,
+        "TaskTime": 90000,
+        "CookTime": 15000
+    },
+
+    "AgaricFriedEgg": {
+        "Score": 50,
+        "TaskTime": 90000,
+        "CookTime": 15000
+    },
+
+    "Cake": {
+        "Score": 160,
+        "TaskTime": 120000,
+        "CookTime": 30000
+    },
+
+    "BingTangHuLu": {
+        "Score": 20,
         "TaskTime": 60000,
-        "CookTime": 5000
+        "CookTime": 10000
     },
-    "TomatoEgg": {
-        "Score": 10,
-        "TaskTime": 60000,
-        "CookTime": 5000
+
+    "FruitSalad": {
+        "Score": 100,
+        "TaskTime": 120000,
+        "CookTime": 20000
     },
-    "MashedPotato": {
-        "Score": 10,
-        "TaskTime": 60000,
-        "CookTime": 5000
+
+    "SpicedPot": {
+        "Score": 0,
+        "TaskTime": 300000,
+        "CookTime": 60000
     },
-    "DarkDish": {
-        "Score": 10,
-        "TaskTime": 60000,
-        "CookTime": 5000
-    },
+
     "CookingTable": {
-        "ApplePotato": "ApplePie",
-        "AppleBanana": "DarkDish"
+        "Wheat": "Flour",
+        "Flour": "Noodle",
+        "EggFlour": "Bread",
+        "Rice": "CookedRice",
+        "Tomato": "Ketchup",
+        "Milk": "Cream",
+        "TomatoEgg": "TomatoFriedEgg",
+        "NoodleTomatoFriedEgg": "TomatoFriedEggNoodle",
+        "BeefNoodle": "BeefNoodle",
+        "PorkCabbageRice": "OverRice",
+        "ChickenMeatPotatoRice": "HuangMenJi",
+        "LettucePork": "Barbecue",
+        "PotatoKetchup": "FrenchFries",
+        "DarkPlumHawthorn": "PlumJuice",
+        "BeefLettuceBread": "Hamburger",
+        "StrawberryCream": "StrawberryIcecream",
+        "ChickenMeatKetchup": "PopcornChicken",
+        "EggAgaric": "AgaricFriedEgg",
+        "EggStrawberryFlourCream": "Cake",
+        "Hawthorn": "BingTangHuLu",
+        "TomatoAppleBananaStrawberry": "FruitSalad"
     }
 }

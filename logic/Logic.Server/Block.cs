@@ -14,7 +14,7 @@ namespace Logic.Server
 
         public Block(double x_t, double y_t, BlockType type_t) : base(x_t, y_t, ObjType.Block)
         {
-            if (type_t == BlockType.Wall)
+            if (type_t == BlockType.Wall || type_t == BlockType.FoodPoint || type_t == BlockType.TaskPoint)
                 Layer = (int)MapLayer.WallLayer;
             else
                 Layer = (int)MapLayer.BlockLayer;
@@ -52,6 +52,7 @@ namespace Logic.Server
                 case BlockType.Cooker:
                     cookingResult = "Empty";
                     Cooking = false;
+                    ProtectTimer.Change(0, 0);
                     break;
             }
             return temp;
@@ -89,32 +90,78 @@ namespace Logic.Server
             Dish = (DishType)Enum.Parse(typeof(DishType), cookingResult);
             if (Dish > DishType.Empty && Dish < DishType.Size2 && Dish != DishType.Size1)
             {
+                if(Dish<DishType.SpicedPot) CookingTimer.Change((int)(0.5*(double)Configs[cookingResult]["CookTime"]), 0);
+                else CookingTimer.Change((int)(0.5 * (double)Configs["SpicedPot"]["CookTime"]), 0);
                 cookingResult = "OverCookedDish";
-                CookingTimer.Change(5000, 0);
             }
         }
         protected string cookingResult;
         public bool Cooking = false;
-        public override void UseCooker()
+
+        public int ProtectedTeam = -1;
+        protected System.Threading.Timer _protectTimer;
+        public System.Threading.Timer ProtectTimer
+        {
+            get
+            {
+                _protectTimer = _protectTimer ?? new System.Threading.Timer((i)=> { ProtectedTeam = -1; });
+                return _protectTimer;
+            }
+        }
+
+        public override void UseCooker(int TeamNumber,TALENT t)
         {
             string Material = "";
 
             SortedSet<DishType> dishTypeSet = new SortedSet<DishType>();
+            bool XiangGuo = false;
+            if(WorldMap.Grid[(int)Position.x, (int)Position.y].ContainsType(typeof(Tool)))
+            {
+                foreach (Tool GameObject in WorldMap.Grid[(int)Position.x, (int)Position.y].GetType(typeof(Tool)))
+                {
+                    if (GameObject.Tool == ToolType.Condiment)
+                    {
+                        GameObject.Parent = null;
+                        XiangGuo = true;
+                        break;
+                    }
+                }
+            }
             foreach (Dish GameObject in WorldMap.Grid[(int)Position.x, (int)Position.y].GetType(typeof(Dish)))
             {
                 dishTypeSet.Add(GameObject.Dish);
                 GameObject.Parent = null;
             }
             if (dishTypeSet.Count == 0) return;
-            Cooking = true;
-            Dish = DishType.DarkDish;//未煮熟之前都是黑暗料理
-            foreach (var dishType in dishTypeSet)
+            if (!XiangGuo)
             {
-                Material += dishType.ToString();
+                Cooking = true;
+                ProtectedTeam = TeamNumber;
+                Dish = DishType.DarkDish;//未煮熟之前都是黑暗料理
+                foreach (var dishType in dishTypeSet)
+                {
+                    Material += dishType.ToString();
+                }
+                cookingResult = (string)Configs["CookingTable"][Material];
+                if (cookingResult == null) cookingResult = "DarkDish";
+                CookingTimer.Change((int)Configs[cookingResult]["CookTime"], 0);
+                ProtectTimer.Change((int)(1.25 * (double)Configs[cookingResult]["CookTime"]), 0);
             }
-            cookingResult = (string)Configs["CookingTable"][Material];
-            if (cookingResult == null) cookingResult = "DarkDish";
-            CookingTimer.Change((int)Configs[cookingResult]["CookTime"], 0);
+            else
+            {
+                int score = 0;
+                foreach (var dishType in dishTypeSet)
+                {
+                    score += (int)Configs[dishType.ToString()]["Score"];
+                }
+                if (score < 60) return;
+                Cooking = true;
+                ProtectedTeam = TeamNumber;
+                Dish = DishType.DarkDish;
+                cookingResult = "SpicedPot_" + (score / 20).ToString();
+                CookingTimer.Change((int)Configs["SpicedPot"]["CookTime"], 0);
+                ProtectTimer.Change((int)(1.25 * (double)Configs["SpicedPot"]["CookTime"]), 0);
+            }
         }
         //Cook End
 
@@ -168,10 +215,11 @@ namespace Logic.Server
         }
         public static void TaskProduce(object i)
         {
-            DishType temp;
+            DishType temp=DishType.Empty;
             for (; ; )
             {
-                temp = (DishType)Program.Random.Next(1, (int)DishType.Size2);
+                if (Timer.Time.GameTime() < TimeSpan.FromMinutes(10)) temp = (DishType)Program.Random.Next((int)DishType.TomatoFriedEgg, (int)DishType.SpicedPot);
+                else temp = (DishType)Program.Random.Next((int)DishType.TomatoFriedEgg, (int)DishType.SpicedPot + 1);
                 if (temp == DishType.Size1)
                     continue;
                 break;
@@ -184,10 +232,17 @@ namespace Logic.Server
         public static int HandIn(DishType dish_t)
         {
             int score = 0;
-            if (TaskQueue.ContainsKey(dish_t))
+            if (dish_t < DishType.SpicedPot && TaskQueue.ContainsKey(dish_t))
             {
                 score = (int)Configs[dish_t.ToString()]["Score"];//菜品名+Score，在App.config里加
                 RemoveTask(dish_t);
+            }
+            else if(dish_t>=DishType.SpicedPot&& dish_t<=DishType.SpicedPot_8 && TaskQueue.ContainsKey(DishType.SpicedPot))
+            {
+                string[] i = (Convert.ToString(dish_t)).Split('_');
+                double temp = Convert.ToDouble(i[1]);
+                score = (int)((1 + temp / 8) * temp * 20);
+                RemoveTask(DishType.SpicedPot);
             }
             //PrintAllTask();
             return score;

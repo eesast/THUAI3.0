@@ -23,7 +23,7 @@ namespace Logic.Constant
         {
             get
             {
-                _configs = _configs ?? (JObject)JToken.ReadFrom(new JsonTextReader(File.OpenText(@"Config\Config.json")));
+                _configs = _configs ?? (JObject)JToken.ReadFrom(new JsonTextReader(File.OpenText(@"Config/Config.json")));
                 return _configs;
             }
         }
@@ -48,27 +48,65 @@ namespace Logic.Constant
         Size
     }
     public enum DishType
-    {
+    {//不确定英文怎么说的直接用了拼音
         Empty = 0,//空
-                  //以下为食材
-        Apple,
-        Banana,
-        Potato,
-        Tomato,
+        //以下为食材
+        Wheat,//麦子
+        Rice,//水稻
+        Tomato,//番茄
+        Egg,//鸡蛋
+        Milk,//牛奶
+        Apple,//苹果
+        Banana,//香蕉
+        DarkPlum,//乌梅
+        Hawthorn,//山楂
+        Strawberry,//草莓
+        Beef,//牛肉
+        Pork,//猪肉
+        ChickenMeat,//鸡肉
+        Potato,//土豆
+        Lettuce,//生菜
+        Agaric,//木耳
+        NeedleMushroom,//金针菇
+        Cabbage,//包菜
         Size1,
+        //以下为中间产物
+        Flour,//面粉
+        Noodle,//面条
+        Bread,//面包片
+        CookedRice,//米饭
+        Ketchup,//番茄酱
+        Cream,//奶油
         //以下为菜品
-
-        ApplePie,
-        BananaPie,
-        TomatoEgg,
-        MashedPotato,
+        TomatoFriedEgg,//番茄炒蛋
+        TomatoFriedEggNoodle,//西红柿鸡蛋面
+        BeefNoodle,//清青牛拉
+        OverRice,//盖浇饭
+        HuangMenJi,//黄焖鸡米饭
+        Barbecue,//烤肉
+        FrenchFries,//薯条
+        PlumJuice,//酸梅汤
+        Hamburger,//汉堡
+        StrawberryIcecream,//草莓圣代
+        PopcornChicken,//鸡米花
+        AgaricFriedEgg,//木耳炒蛋
+        Cake,//蛋糕
+        BingTangHuLu,//冰糖葫芦
+        FruitSalad,//水果色拉
+        SpicedPot,
+        SpicedPot_3,
+        SpicedPot_4,
+        SpicedPot_5,
+        SpicedPot_6,
+        SpicedPot_7,
+        SpicedPot_8,//香锅
         Size2,
         //以下为垃圾
-
         OverCookedDish,
-        DarkDish,
+        DarkDish,//黑暗料理
         Size3
     }
+ 
     public enum ToolType
     {
         Empty = 0,
@@ -80,15 +118,15 @@ namespace Logic.Constant
         Fertilizer,//肥料
         BreastPlate,//护心镜
         SpaceGate,//传送门
-        Eye,//眼
+        //Eye,//眼
 
         WaveGlue,//胶水
         LandMine,//地雷
         Trap,//陷阱
-        FlashBomb,//闪光弹
-        Hammer,//锤子
-        Brick,//砖头
-        Stealer,//分数偷取
+        //FlashBomb,//闪光弹
+        //Hammer,//锤子
+        //Brick,//砖头
+        //Stealer,//分数偷取
 
         Size
     }
@@ -113,12 +151,11 @@ namespace Logic.Constant
     public enum TALENT
     {
         None,
-        Run,
-        Strenth,
+        Runner,
+        StrongMan,
         Cook,
-        Technology,
-        Luck,
-        Bag,
-        Drunk
+        Technician,
+        LuckyBoy,
+        //DrunkMan
     }
 }

@@ -1,4 +1,4 @@
-﻿using HPSocketCS;
+using HPSocketCS;
 using System;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
@@ -119,7 +119,7 @@ namespace Communication.Proto
         public void Start()
         {
             server.Start();
-            Console.WriteLine("Server has started");
+            Console.WriteLine($"Server has started on 0.0.0.0:{server.Port}");
             isListening = true;
             Console.WriteLine("Server is listening");
         }

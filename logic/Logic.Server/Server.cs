@@ -1,10 +1,12 @@
-﻿using Communication.Proto;
+﻿﻿using Communication.Proto;
 using Communication.Server;
 using Logic.Constant;
 using System;
 using System.Threading;
 using Timer;
+using THUnity2D;
 using static Logic.Constant.Constant;
+using static Logic.Constant.MapInfo;
 namespace Logic.Server
 {
     class Server
@@ -62,6 +64,17 @@ namespace Logic.Server
             Time.InitializeTime();
             Console.WriteLine("Server begin to run");
             TaskSystem.RefreshTimer.Change(1000, (int)(Configs["TaskRefreshTime"]));
+            void ToolRefresh(object i)
+            {
+                XYPosition tempPosition = new XYPosition(Program.Random.Next(0, map.GetLength(0)), Program.Random.Next(0, map.GetLength(1)));
+                while (WorldMap.Grid[(int)tempPosition.x, (int)tempPosition.y].ContainsType(typeof(Block)))
+                {
+                    tempPosition = new XYPosition(Program.Random.Next(0, map.GetLength(0)), Program.Random.Next(0, map.GetLength(1)));
+                }
+                new Tool(tempPosition.x + 0.5, tempPosition.y + 0.5, (ToolType)Program.Random.Next(0, (int)ToolType.Size - 1)).Parent = WorldMap;
+            }
+            System.Threading.Timer ToolRefreshTimer = new System.Threading.Timer(ToolRefresh, null,
+                0, (int)Configs["ToolRefreshTime"]);
 
             System.Threading.Timer timer = new System.Threading.Timer(
                 (o) =>
@@ -144,8 +157,10 @@ namespace Logic.Server
         //向所有Client发送消息，按照帧率定时发送，严禁在其他地方调用此函数
         protected void SendMessageToAllClient()
         {
+            Server.ServerDebug("SendMessageToAll !!!");
             lock (Program.MessageToClientLock)
             {
+                Server.ServerDebug("Enter Lock !!!");
                 ServerCommunication.SendMessage(new ServerMessage
                 {
                     Agent = -2,
