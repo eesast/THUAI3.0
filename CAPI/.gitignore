@@ -5,6 +5,14 @@ proto/*.proto
 include/common
 !.gitkeep
 
+# Cmake Generate
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.cmake
+CMakeCache.txt
+CmakeFiles/
+
 ## VsCode
 .vscode/
 

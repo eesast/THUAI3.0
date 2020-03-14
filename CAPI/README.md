@@ -35,4 +35,4 @@ THUAI3.0 原电子系第21届队式程序设计大赛
 
   其中，windows的依赖包括protobuf, hpsocket 和pthread (用于跨平台，模拟Linux的pthread) ；Linux的依赖包括hpsocket和其他平台相关依赖。
 
-  打包下载: https://cloud.tsinghua.edu.cn/d/b4f6d32dfbeb4dfa8fe7/
+  打包下载: 

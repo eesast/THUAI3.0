@@ -1,0 +1,15 @@
+# ninja log v5
+14	168	605723048	build.ninja	f2104b1c55ddc951
+23	698	605723048	CMakeFiles/AI.dir/src/OS_related.cpp.obj	72f1134a1597ede7
+28	1515	605723050	CMakeFiles/AI.dir/src/debug.cpp.obj	48ee411c3e0e9477
+44	3157	605723051	CMakeFiles/AI.dir/windows_only/proto_files/AgentId.pb.cc.obj	d6317ac78dfeac97
+5	3354	605723052	CMakeFiles/AI.dir/windows_only/proto_files/PingPacket.pb.cc.obj	af0d1d1a88e28607
+699	4015	605723052	CMakeFiles/AI.dir/windows_only/proto_files/ChatMessage.pb.cc.obj	688c95cbd2c5f3b0
+38	4022	605723052	CMakeFiles/AI.dir/src/player.cpp.obj	cbe5206f2fb3fffc
+9	4264	605723053	CMakeFiles/AI.dir/windows_only/proto_files/MessageToServer.pb.cc.obj	25452da7941e4d89
+0	4772	605723053	CMakeFiles/AI.dir/windows_only/proto_files/MessageToClient.pb.cc.obj	9f9d68a4bdc09256
+33	5355	605723054	CMakeFiles/AI.dir/src/API.cpp.obj	b0a83574de7d8b6f
+18	5479	605723054	CMakeFiles/AI.dir/src/Message.cpp.obj	e674c10de3a997ac
+14	5714	605723054	CMakeFiles/AI.dir/src/CAPI.cpp.obj	388188453d6dd8f0
+1516	5998	605723054	CMakeFiles/AI.dir/src/main.cpp.obj	34152bbed0fc0beb
+5999	6806	605723055	AI.exe	80af8f93a2bb3cec

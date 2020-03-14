@@ -1,15 +1,18 @@
 #ifndef API_H
 #define API_H
 
-#include"constants.h"
+#include"Constant.h"
+#include"structures.h"
+#include <string>
 namespace THUAI3
 {
-	//void Move(Direction direction_t, int duration);
-	void Put(int distance, int ThrowDish);
+	void Move(Direction direction_t, int duration=1000);
+	void Put(double distance, bool isThrowDish);
 	void Pick();
 	void Use(int type, int parameter);
-	int GetPing();     // ¾«È·µ½ºÁÃëµÄÑÓÊ±
-	void PauseCommunication();   // ÔÝÍ£Êý¾Ý¸üÐÂ
+	void SpeakToFriend(std::string speakText);
+	int GetPing();     // ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±
+	void PauseCommunication();   // ï¿½ï¿½Í£ï¿½ï¿½ï¿½Ý¸ï¿½ï¿½ï¿½
 	void ResumeCommunication();
 	Player GetInfo();            
 } 

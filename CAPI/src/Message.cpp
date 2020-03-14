@@ -1,4 +1,5 @@
 #include"Message.h"
+#include"Constant.h"
 #include<string>
 #include<cstdio>
 #include<cstring>
@@ -33,7 +34,7 @@ hash_t hash2(string str)
 
 string get_type(string s)
 {
-	/* »ñÈ¡ÕæÊµtypeÃû³Æ*/
+	/* ï¿½ï¿½È¡ï¿½ï¿½Êµtypeï¿½ï¿½ï¿½ï¿½*/
 	int i = 0;
 	while (i < s.length() && isdigit(s[i]))i++;
 	return s.substr(i);
@@ -82,7 +83,7 @@ Message* Message::New() const
 
 int Message::GetCachedSize() const
 {
-	// ÉÐÎ´¼ÓÈëÀàÐÍÃû×Ö·û´®³¤.ÔÝÊ±ÓÃ²»µ½¸Ãº¯Êý
+	// ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½.ï¿½ï¿½Ê±ï¿½Ã²ï¿½ï¿½ï¿½ï¿½Ãºï¿½ï¿½ï¿½
 	return 4 + content->GetCachedSize();
 }
 
@@ -233,5 +234,8 @@ byte* WriteString(string str, byte* bytes)
 	return &p[len];
 }
 
+
+const double Player::InitMoveSpeed = 5.0;
+const int Player::InitSightRange = 9;
 
 

@@ -5,6 +5,6 @@ using namespace THUAI3;
 
 void play()
 {
-	/*   选手代码  */
+	/*   选锟街达拷锟斤拷  */
 	
 }

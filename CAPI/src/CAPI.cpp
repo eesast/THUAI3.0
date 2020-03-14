@@ -1,4 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
+#ifndef NOMINMAX                      
+#define NOMINMAX
+#endif
 #include<cstdio>
 #include<HPSocket.h>
 #include<HPSocket-SSL.h>
@@ -83,7 +86,7 @@ EnHandleResult CListenerImpl::OnSend(ITcpClient* pSender, CONNID dwConnID, const
 }
 EnHandleResult CListenerImpl::OnClose(ITcpClient* pSender, CONNID dwConnID, EnSocketOperation enOperation, int iErrorCode)
 {
-	if (!pthis->Closed) //¶ÏÏßÖØÁ¬
+	if (!pthis->Closed) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		while (!pSender->IsConnected())
 		{
 			printf("ClientSide: Connecting to server %s:%d\n", pthis->ip.c_str(), pthis->port);
@@ -106,7 +109,7 @@ void CAPI::OnReceive(IMessage* message)
 	}
 	else if (typehash == hash2(get_type(typeid(Protobuf::AgentId).name())))
 	{
-		AgentId = ((Protobuf::AgentId*)message)->agent(); //AgentId°üÍ¨ÖªPlayer¶ÔÓ¦µÄAgent
+		AgentId = ((Protobuf::AgentId*)message)->agent(); //AgentIdï¿½ï¿½Í¨ÖªPlayerï¿½ï¿½Ó¦ï¿½ï¿½Agent
 	}
 	else if (typehash == hash2(get_type(typeid(Protobuf::ChatMessage).name())))
 	{
@@ -143,9 +146,17 @@ void CAPI::SendChatMessage(string message)
 	Send(mes);
 }
 
+void CAPI::SendCommandMessage(MessageToServer* message)
+{
+	Message* mes2 = new Message(PlayerId, message);
+	Message* mes3 = new Message(-1, mes2);
+	Message* mes = new Message(-1, mes3);
+	Send(mes);
+}
+
 void CAPI::UpdateInfo(Protobuf::MessageToClient* message)
 {
-
+	
 }
 
 Player CAPI::GetInfo()
@@ -190,7 +201,7 @@ bool CAPI::IsConnected()
 	return pclient->IsConnected();
 }
 
-void CAPI::Send(Message* mes) //·¢ËÍMessage
+void CAPI::Send(Message* mes) //ï¿½ï¿½ï¿½ï¿½Message
 {
 	byte bytes[maxl];
 	byte* p = bytes;

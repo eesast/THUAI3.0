@@ -1,0 +1,73 @@
+[
+{
+  "directory": "D:/MyData/Programming/C#Workspace/THUAI3.0/CAPI/build",
+  "command": "C:\\PROGRA~2\\MICROS~2\\2019\\PROFES~1\\VC\\Tools\\MSVC\\1423~1.281\\bin\\Hostx86\\x86\\cl.exe  /nologo /TP  -I..\\windows_only\\include -I..\\include -I..\\windows_only\\proto_files  /DWIN32 /D_WINDOWS /W3 /GR /EHsc  -O3 -Wall    /FoCMakeFiles\\AI.dir\\src\\API.cpp.obj /FdTARGET_COMPILE_PDB /FS -c \"D:\\MyData\\Programming\\C#Workspace\\THUAI3.0\\CAPI\\src\\API.cpp\"",
+  "file": "D:/MyData/Programming/C#Workspace/THUAI3.0/CAPI/src/API.cpp"
+},
+
+{
+  "directory": "D:/MyData/Programming/C#Workspace/THUAI3.0/CAPI/build",
+  "command": "C:\\PROGRA~2\\MICROS~2\\2019\\PROFES~1\\VC\\Tools\\MSVC\\1423~1.281\\bin\\Hostx86\\x86\\cl.exe  /nologo /TP  -I..\\windows_only\\include -I..\\include -I..\\windows_only\\proto_files  /DWIN32 /D_WINDOWS /W3 /GR /EHsc  -O3 -Wall    /FoCMakeFiles\\AI.dir\\src\\CAPI.cpp.obj /FdTARGET_COMPILE_PDB /FS -c \"D:\\MyData\\Programming\\C#Workspace\\THUAI3.0\\CAPI\\src\\CAPI.cpp\"",
+  "file": "D:/MyData/Programming/C#Workspace/THUAI3.0/CAPI/src/CAPI.cpp"
+},
+
+{
+  "directory": "D:/MyData/Programming/C#Workspace/THUAI3.0/CAPI/build",
+  "command": "C:\\PROGRA~2\\MICROS~2\\2019\\PROFES~1\\VC\\Tools\\MSVC\\1423~1.281\\bin\\Hostx86\\x86\\cl.exe  /nologo /TP  -I..\\windows_only\\include -I..\\include -I..\\windows_only\\proto_files  /DWIN32 /D_WINDOWS /W3 /GR /EHsc  -O3 -Wall    /FoCMakeFiles\\AI.dir\\src\\Message.cpp.obj /FdTARGET_COMPILE_PDB /FS -c \"D:\\MyData\\Programming\\C#Workspace\\THUAI3.0\\CAPI\\src\\Message.cpp\"",
+  "file": "D:/MyData/Programming/C#Workspace/THUAI3.0/CAPI/src/Message.cpp"
+},
+
+{
+  "directory": "D:/MyData/Programming/C#Workspace/THUAI3.0/CAPI/build",
+  "command": "C:\\PROGRA~2\\MICROS~2\\2019\\PROFES~1\\VC\\Tools\\MSVC\\1423~1.281\\bin\\Hostx86\\x86\\cl.exe  /nologo /TP  -I..\\windows_only\\include -I..\\include -I..\\windows_only\\proto_files  /DWIN32 /D_WINDOWS /W3 /GR /EHsc  -O3 -Wall    /FoCMakeFiles\\AI.dir\\src\\OS_related.cpp.obj /FdTARGET_COMPILE_PDB /FS -c \"D:\\MyData\\Programming\\C#Workspace\\THUAI3.0\\CAPI\\src\\OS_related.cpp\"",
+  "file": "D:/MyData/Programming/C#Workspace/THUAI3.0/CAPI/src/OS_related.cpp"
+},
+
+{
+  "directory": "D:/MyData/Programming/C#Workspace/THUAI3.0/CAPI/build",
+  "command": "C:\\PROGRA~2\\MICROS~2\\2019\\PROFES~1\\VC\\Tools\\MSVC\\1423~1.281\\bin\\Hostx86\\x86\\cl.exe  /nologo /TP  -I..\\windows_only\\include -I..\\include -I..\\windows_only\\proto_files  /DWIN32 /D_WINDOWS /W3 /GR /EHsc  -O3 -Wall    /FoCMakeFiles\\AI.dir\\src\\debug.cpp.obj /FdTARGET_COMPILE_PDB /FS -c \"D:\\MyData\\Programming\\C#Workspace\\THUAI3.0\\CAPI\\src\\debug.cpp\"",
+  "file": "D:/MyData/Programming/C#Workspace/THUAI3.0/CAPI/src/debug.cpp"
+},
+
+{
+  "directory": "D:/MyData/Programming/C#Workspace/THUAI3.0/CAPI/build",
+  "command": "C:\\PROGRA~2\\MICROS~2\\2019\\PROFES~1\\VC\\Tools\\MSVC\\1423~1.281\\bin\\Hostx86\\x86\\cl.exe  /nologo /TP  -I..\\windows_only\\include -I..\\include -I..\\windows_only\\proto_files  /DWIN32 /D_WINDOWS /W3 /GR /EHsc  -O3 -Wall    /FoCMakeFiles\\AI.dir\\src\\main.cpp.obj /FdTARGET_COMPILE_PDB /FS -c \"D:\\MyData\\Programming\\C#Workspace\\THUAI3.0\\CAPI\\src\\main.cpp\"",
+  "file": "D:/MyData/Programming/C#Workspace/THUAI3.0/CAPI/src/main.cpp"
+},
+
+{
+  "directory": "D:/MyData/Programming/C#Workspace/THUAI3.0/CAPI/build",
+  "command": "C:\\PROGRA~2\\MICROS~2\\2019\\PROFES~1\\VC\\Tools\\MSVC\\1423~1.281\\bin\\Hostx86\\x86\\cl.exe  /nologo /TP  -I..\\windows_only\\include -I..\\include -I..\\windows_only\\proto_files  /DWIN32 /D_WINDOWS /W3 /GR /EHsc  -O3 -Wall    /FoCMakeFiles\\AI.dir\\src\\player.cpp.obj /FdTARGET_COMPILE_PDB /FS -c \"D:\\MyData\\Programming\\C#Workspace\\THUAI3.0\\CAPI\\src\\player.cpp\"",
+  "file": "D:/MyData/Programming/C#Workspace/THUAI3.0/CAPI/src/player.cpp"
+},
+
+{
+  "directory": "D:/MyData/Programming/C#Workspace/THUAI3.0/CAPI/build",
+  "command": "C:\\PROGRA~2\\MICROS~2\\2019\\PROFES~1\\VC\\Tools\\MSVC\\1423~1.281\\bin\\Hostx86\\x86\\cl.exe  /nologo /TP  -I..\\windows_only\\include -I..\\include -I..\\windows_only\\proto_files  /DWIN32 /D_WINDOWS /W3 /GR /EHsc  -O3 -Wall    /FoCMakeFiles\\AI.dir\\windows_only\\proto_files\\AgentId.pb.cc.obj /FdTARGET_COMPILE_PDB /FS -c \"D:\\MyData\\Programming\\C#Workspace\\THUAI3.0\\CAPI\\windows_only\\proto_files\\AgentId.pb.cc\"",
+  "file": "D:/MyData/Programming/C#Workspace/THUAI3.0/CAPI/windows_only/proto_files/AgentId.pb.cc"
+},
+
+{
+  "directory": "D:/MyData/Programming/C#Workspace/THUAI3.0/CAPI/build",
+  "command": "C:\\PROGRA~2\\MICROS~2\\2019\\PROFES~1\\VC\\Tools\\MSVC\\1423~1.281\\bin\\Hostx86\\x86\\cl.exe  /nologo /TP  -I..\\windows_only\\include -I..\\include -I..\\windows_only\\proto_files  /DWIN32 /D_WINDOWS /W3 /GR /EHsc  -O3 -Wall    /FoCMakeFiles\\AI.dir\\windows_only\\proto_files\\ChatMessage.pb.cc.obj /FdTARGET_COMPILE_PDB /FS -c \"D:\\MyData\\Programming\\C#Workspace\\THUAI3.0\\CAPI\\windows_only\\proto_files\\ChatMessage.pb.cc\"",
+  "file": "D:/MyData/Programming/C#Workspace/THUAI3.0/CAPI/windows_only/proto_files/ChatMessage.pb.cc"
+},
+
+{
+  "directory": "D:/MyData/Programming/C#Workspace/THUAI3.0/CAPI/build",
+  "command": "C:\\PROGRA~2\\MICROS~2\\2019\\PROFES~1\\VC\\Tools\\MSVC\\1423~1.281\\bin\\Hostx86\\x86\\cl.exe  /nologo /TP  -I..\\windows_only\\include -I..\\include -I..\\windows_only\\proto_files  /DWIN32 /D_WINDOWS /W3 /GR /EHsc  -O3 -Wall    /FoCMakeFiles\\AI.dir\\windows_only\\proto_files\\MessageToClient.pb.cc.obj /FdTARGET_COMPILE_PDB /FS -c \"D:\\MyData\\Programming\\C#Workspace\\THUAI3.0\\CAPI\\windows_only\\proto_files\\MessageToClient.pb.cc\"",
+  "file": "D:/MyData/Programming/C#Workspace/THUAI3.0/CAPI/windows_only/proto_files/MessageToClient.pb.cc"
+},
+
+{
+  "directory": "D:/MyData/Programming/C#Workspace/THUAI3.0/CAPI/build",
+  "command": "C:\\PROGRA~2\\MICROS~2\\2019\\PROFES~1\\VC\\Tools\\MSVC\\1423~1.281\\bin\\Hostx86\\x86\\cl.exe  /nologo /TP  -I..\\windows_only\\include -I..\\include -I..\\windows_only\\proto_files  /DWIN32 /D_WINDOWS /W3 /GR /EHsc  -O3 -Wall    /FoCMakeFiles\\AI.dir\\windows_only\\proto_files\\MessageToServer.pb.cc.obj /FdTARGET_COMPILE_PDB /FS -c \"D:\\MyData\\Programming\\C#Workspace\\THUAI3.0\\CAPI\\windows_only\\proto_files\\MessageToServer.pb.cc\"",
+  "file": "D:/MyData/Programming/C#Workspace/THUAI3.0/CAPI/windows_only/proto_files/MessageToServer.pb.cc"
+},
+
+{
+  "directory": "D:/MyData/Programming/C#Workspace/THUAI3.0/CAPI/build",
+  "command": "C:\\PROGRA~2\\MICROS~2\\2019\\PROFES~1\\VC\\Tools\\MSVC\\1423~1.281\\bin\\Hostx86\\x86\\cl.exe  /nologo /TP  -I..\\windows_only\\include -I..\\include -I..\\windows_only\\proto_files  /DWIN32 /D_WINDOWS /W3 /GR /EHsc  -O3 -Wall    /FoCMakeFiles\\AI.dir\\windows_only\\proto_files\\PingPacket.pb.cc.obj /FdTARGET_COMPILE_PDB /FS -c \"D:\\MyData\\Programming\\C#Workspace\\THUAI3.0\\CAPI\\windows_only\\proto_files\\PingPacket.pb.cc\"",
+  "file": "D:/MyData/Programming/C#Workspace/THUAI3.0/CAPI/windows_only/proto_files/PingPacket.pb.cc"
+}
+]

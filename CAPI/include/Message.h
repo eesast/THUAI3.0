@@ -47,10 +47,10 @@ namespace PacketType
 {
 	enum PacketType
 	{
-		ProtoPacket = 0, //ÄÚÈİ°ü(S2C,C2S)
-		IdRequest = 1, //ClientÇëÇóID(C2S)
-		IdAllocate = 2, //ClientÇëÇó·ÖÅäID(C2S)£¬Server¸øClient·ÖÅäID(S2C)
-		Disconnected = 3 //ServerÖ÷¶¯¶Ï¿ª(S2C)
+		ProtoPacket = 0, //ï¿½ï¿½ï¿½İ°ï¿½(S2C,C2S)
+		IdRequest = 1, //Clientï¿½ï¿½ï¿½ï¿½ID(C2S)
+		IdAllocate = 2, //Clientï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ID(C2S)ï¿½ï¿½Serverï¿½ï¿½Clientï¿½ï¿½ï¿½ï¿½ID(S2C)
+		Disconnected = 3 //Serverï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½(S2C)
 	};
 }
 
@@ -59,7 +59,7 @@ string ReadString(const byte* bytes);
 class Message :public IMessage
 {
 public:
-	int Address; //·¢ËÍÕß/½ÓÊÕÕß£¬Òò»·¾³¶ø¶¨
+	int Address; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ï¿½ß£ï¿½ï¿½ò»·¾ï¿½ï¿½ï¿½ï¿½ï¿½
 	IMessage* content;
 	Message();
 	Message(int addr, IMessage* p);
@@ -68,7 +68,7 @@ public:
 	const byte* ParseFromArray(const byte* bytes, int size);
 	byte* SerializeToArray(byte* bytes, int size);
 protected:
-	// Î´ÊµÏÖ
+	// Î´Êµï¿½ï¿½
 	virtual google::protobuf::Metadata GetMetadata() const ;
 };
 
