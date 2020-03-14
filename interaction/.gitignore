@@ -20,6 +20,15 @@
 # Never ignore Asset meta data
 !/[Aa]ssets/**/*.meta
 
+# Never ignore Scripts
+!/[Aa]ssets/[Ss]cripts/
+
+# Never ignore Scenes
+!/[Aa]ssets/[Ss]cenes/
+
+# Ignore other Assets
+/[Aa]ssets/
+
 # Uncomment this line if you wish to ignore the asset store tools plugin
 # /[Aa]ssets/AssetStoreTools*
 
