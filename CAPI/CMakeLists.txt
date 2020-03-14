@@ -5,30 +5,24 @@ if(UNIX)
 
 	set(CMAKE_BUILD_TYPE Release)
 	add_compile_options(-std=c++11)
-
-
-	include_directories(${PROJECT_SOURCE_DIR}/include)
+	
 	aux_source_directory(${PROJECT_SOURCE_DIR}/src DIR_SRC)
 
 	set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -o3 -Wall -Wextra")
-
-
-	if(UNIX)
+	include_directories(${PROJECT_SOURCE_DIR}/include)
 	include_directories(${PROJECT_SOURCE_DIR}/linux_only/include)
-	endif()
 
 	find_package(Protobuf REQUIRED)
 	include_directories(${Protobuf_INCLUDE_DIRS})
-	include_directories(${PROJECT_BINARY_DIR}/proto/build)
+	include_directories(${PROJECT_BINARY_DIR}/proto)
 
 	SET(COMPILE_FLAGS "-I/usr/local/include -pthread -ldl -lpthread -fno-strict-aliasing")
 	SET(LINK_FLAGS "-L/usr/local/lib -lprotobuf -pthread -ldl -lpthread")
 	SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${COMPILE_FLAGS}" )
 	SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${LINK_FLAGS}" )
 
-
 	add_executable(AI ${DIR_SRC})
-	target_link_libraries(AI  ${PROJECT_SOURCE_DIR}/linux_only/lib/libdl.so  ${PROJECT_SOURCE_DIR}/linux_only/lib/libhpsocket.a)
+	target_link_libraries(AI ${PROJECT_SOURCE_DIR}/linux_only/lib/libdl.so  ${PROJECT_SOURCE_DIR}/linux_only/lib/libhpsocket.a)
 	target_link_libraries(AI ${CMAKE_DL_LIBS})
 	target_link_libraries(AI protos)
 elseif(WIN32)

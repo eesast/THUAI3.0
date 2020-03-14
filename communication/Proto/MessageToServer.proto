@@ -21,4 +21,5 @@ message MessageToServer {
 	bool IsThrowDish = 6;
 	int32 UseType = 7;
 	string SpeakText = 8;
+	string Parameter = 9;
 }

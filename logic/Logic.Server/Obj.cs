@@ -42,7 +42,7 @@ namespace Logic.Server
         }
         public virtual DishType GetDish(DishType t) { return DishType.Empty; }
         public virtual ToolType GetTool(ToolType t) { return ToolType.Empty; }
-        public virtual void UseCooker() { }
+        public virtual void UseCooker(int TeamNumber,TALENT t) { }
         public virtual int HandIn(DishType dish_t) { return 0; }
         protected void AddToMessage()
         {
