@@ -20,15 +20,15 @@ namespace Logic.Constant
         public int StrenthBuffThrowDistance = 0;
         public int MaxThrowDistance = (int)Configs["PlayerInitThrowDistance"];
         public int SightRange = (int)(Configs["PlayerInitSightRange"]);
-        protected TALENT _talent = TALENT.None;
+        protected Talent _talent = Talent.None;
         
         protected int _score = 0;
 
-        public DishType dish = DishType.Hawthorn;
-        public ToolType tool = ToolType.SpaceGate;
+        public DishType dish = DishType.Empty;
+        public ToolType tool = ToolType.Empty;
         public Character(double x, double y) : base(new XYPosition(x, y))
         {
-            Layer = (int)MapLayer.PlayerLayer;
+            Layer = PlayerLayer;
             Movable = true;
         }
         public virtual void Move(Direction direction_t, int duration = 50)

@@ -11,8 +11,8 @@ namespace THUnity2D
         protected readonly object privateLock = new object();
 
         //Layers
-        protected ConcurrentDictionary<int, ConcurrentDictionary<GameObject, byte>> _layers = new ConcurrentDictionary<int, ConcurrentDictionary<GameObject, byte>>();
-        protected internal ConcurrentDictionary<int, ConcurrentDictionary<GameObject, byte>> Layers { get { return _layers; } }
+        protected ConcurrentDictionary<Layer, ConcurrentDictionary<GameObject, byte>> _layers = new ConcurrentDictionary<Layer, ConcurrentDictionary<GameObject, byte>>();
+        protected internal ConcurrentDictionary<Layer, ConcurrentDictionary<GameObject, byte>> Layers { get { return _layers; } }
         protected void AddGameObjectToLayers(GameObject gameObject)
         {
             lock (privateLock)
@@ -39,13 +39,26 @@ namespace THUnity2D
                 }
             }
         }
-        public HashSet<GameObject> GetLayer(int layer)
+        public HashSet<GameObject>? GetObjects(Layer layer)
         {
             lock (privateLock)
             {
                 if (!_layers.ContainsKey(layer))
-                    return new HashSet<GameObject>();
+                    return null;
                 return new HashSet<GameObject>(_layers[layer].Keys);
+            }
+        }
+        public GameObject? GetFirstObject(Layer layer)
+        {
+            lock (privateLock)
+            {
+                if (!_layers.ContainsKey(layer))
+                    return null;
+                foreach(var gameObject in _layers[layer].Keys)
+                {
+                    return gameObject;
+                }
+                return null;
             }
         }
         //Layers end
@@ -79,13 +92,26 @@ namespace THUnity2D
                 }
             }
         }
-        public HashSet<GameObject> GetType(Type type)
+        public HashSet<GameObject>? GetObjects(Type type)
         {
             lock (privateLock)
             {
                 if (!_types.ContainsKey(type))
-                    return new HashSet<GameObject>();
+                    return null;
                 return new HashSet<GameObject>(_types[type].Keys);
+            }
+        }
+        public GameObject? GetFirstObject(Type type)
+        {
+            lock (privateLock)
+            {
+                if (!_types.ContainsKey(type))
+                    return null;
+                foreach(var gameObject in _types[type].Keys)
+                {
+                    return gameObject;
+                }
+                return null;
             }
         }
         //Types end
@@ -115,7 +141,7 @@ namespace THUnity2D
                 return _layers[gameObject.Layer].ContainsKey(gameObject);
             }
         }
-        public bool ContainsLayer(int layer)
+        public bool ContainsLayer(Layer layer)
         {
             lock (privateLock)
             {

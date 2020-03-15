@@ -1,8 +1,8 @@
 {
-    "profiles": {
-        "Communication.Agent": {
-            "commandName": "Project",
-            "commandLineArgs": "--server 127.0.0.1:10086 --port 30000"
-        }
+  "profiles": {
+    "Communication.Agent": {
+      "commandName": "Project",
+      "commandLineArgs": "--server 127.0.0.1:20000 --port 30000 -t fuck/offline -d 0"
     }
+  }
 }

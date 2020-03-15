@@ -13,7 +13,7 @@ namespace Logic.Server
         public System.Threading.Timer DurationTimer;
         public Trigger(double x_t, double y_t, TriggerType type_t, int owner_t, bool tech = false) : base(x_t, y_t, ObjType.Trigger)
         {
-            Layer = (int)MapLayer.TriggerLayer;
+            Layer = TriggerLayer;
             Movable = false;
             triggerType = type_t;
             OwnerTeam = owner_t;
@@ -48,4 +48,5 @@ namespace Logic.Server
 
         }
     }
+
 }

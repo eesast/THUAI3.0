@@ -20,10 +20,10 @@ namespace Logic.Server
                         (o) =>
                         {
                             Velocity = new THUnity2D.Vector(Velocity.angle, 0);
-                            Layer = (int)MapLayer.ItemLayer;
-                            foreach (Block block in WorldMap.Grid[(int)Position.x, (int)Position.y].GetType(typeof(Block)))
+                            Layer = ItemLayer;
+                            if (WorldMap.Grid[(int)Position.x, (int)Position.y].ContainsType(typeof(RubbishBin)))
                             {
-                                if (block.blockType == BlockType.RubbishBin) Parent = null;
+                                Parent = null;
                             }
                         });
                 return _stopMovingTimer;
@@ -33,7 +33,7 @@ namespace Logic.Server
         public Dish(double x_t, double y_t, DishType type_t) : base(x_t, y_t, ObjType.Dish)
         {
             Server.ServerDebug("Create Dish : " + type_t);
-            Layer = (int)MapLayer.ItemLayer;
+            Layer = ItemLayer;
             Movable = true;
             Bouncable = true;
             AddToMessage();

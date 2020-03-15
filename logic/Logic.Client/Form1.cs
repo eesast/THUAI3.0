@@ -24,9 +24,11 @@ namespace GameForm
         public static readonly int FORM_HEIGHT = WorldMap.Height * LABEL_WIDTH;
         public static readonly int CONTROL_LABELS_WIDTH = 200;
         public static readonly int CONTROL_LABELS_HEIGHT = 120;
+        private readonly ushort agentPort;
 
-        public Form1()
+        public Form1(ushort agentPort)
         {
+            this.agentPort = agentPort;
             InitializeComponent();
             Console.WriteLine("Start console output");
         }
@@ -53,9 +55,7 @@ namespace GameForm
 
             this.ClientSize = new System.Drawing.Size(FORM_WIDTH + CONTROL_LABELS_WIDTH, FORM_HEIGHT);
 
-            Player player = new Player(15, 12);
+            new Player(15, 12, this.agentPort);
         }
-
-
     }
 }

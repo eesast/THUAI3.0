@@ -54,15 +54,15 @@ namespace Logic.Server
                     Program.MessageToClient.GameObjectMessageList[this.ID].ToolType = (ToolTypeMessage)tool;
             }
         }
-        public TALENT Talent
+        public Talent Talent
         {
             get { return _talent; }
             set
             {
                 _talent = value;
-                if (_talent == TALENT.Runner) moveSpeed += (double)(Configs["RunnerTalentExtraMoveSpeed"]);
-                else if (_talent == TALENT.StrongMan) MaxThrowDistance += (int)(Configs["StrenthTalentExtraMoveSpeed"]);
-                else if (_talent == TALENT.LuckyBoy)
+                if (_talent == Talent.Runner) moveSpeed += (double)(Configs["RunnerTalentExtraMoveSpeed"]);
+                else if (_talent == Talent.StrongMan) MaxThrowDistance += (int)(Configs["StrenthTalentExtraMoveSpeed"]);
+                else if (_talent == Talent.LuckyBoy)
                 {
                     LuckTalentTimer = new System.Threading.Timer(Item, null, 30000, (int)Configs["LuckTalentRefreshTime"]);
                     void Item(object i)
@@ -93,14 +93,6 @@ namespace Logic.Server
             SpeedBuffTimer = new System.Threading.Timer((i) => { SpeedBuffExtraMoveSpeed = 0; });
             StrengthBuffTimer = new System.Threading.Timer((i) => { StrenthBuffThrowDistance = 0; });
             PositionChangeComplete += new PositionChangeCompleteHandler(ChangePositionInMessage);
-            void ChangePositionInMessage(GameObject thisGameObject)
-            {
-                lock (Program.MessageToClientLock)
-                {
-                    Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.X = thisGameObject.Position.x;
-                    Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.Y = thisGameObject.Position.y;
-                }
-            }
 
             lock (Program.MessageToClientLock)
             {
@@ -111,7 +103,9 @@ namespace Logic.Server
                         ObjType = ObjTypeMessage.People,
                         IsMoving = false,
                         Position = new XYPositionMessage { X = this.Position.x, Y = this.Position.y },
-                        Direction = (DirectionMessage)(int)this.facingDirection
+                        Direction = (DirectionMessage)(int)this.facingDirection,
+                        DishType = (DishTypeMessage)dish,
+                        ToolType = (ToolTypeMessage)tool
                     });
             }
             this.MoveStart += new MoveStartHandler(
@@ -129,19 +123,9 @@ namespace Logic.Server
                         if (Velocity.length > 0 && Velocity.length < 4)
                             this.Velocity = new Vector(Velocity.angle, MoveSpeed);
                     }
-
                     isStepOnGlue = false;
                 });
-            this.MoveComplete += new MoveCompleteHandler(
-                (thisGameObject) =>
-                {
-                    lock (Program.MessageToClientLock)
-                    {
-                        Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.X = thisGameObject.Position.x;
-                        Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.Y = thisGameObject.Position.y;
-                        Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Direction = (DirectionMessage)((Player)thisGameObject).facingDirection;
-                    }
-                });
+            this.MoveComplete += new MoveCompleteHandler(ChangePositionInMessage);
             this.OnTrigger += new TriggerHandler(
                 (triggerGameObjects) =>
                 {
@@ -157,16 +141,36 @@ namespace Logic.Server
             switch (msg.CommandType)
             {
                 case CommandTypeMessage.Move:
+                    if (msg.MoveDirection < 0)
+                        msg.MoveDirection = 0;
+                    else if (msg.MoveDirection >= DirectionMessage.DirectionSize)
+                        msg.MoveDirection = DirectionMessage.DirectionSize - 1;
+                    if (msg.MoveDuration < 0)
+                        msg.MoveDuration = 0;
+                    else if (msg.MoveDuration > 10000)
+                        msg.MoveDuration = 10000;
                     Move((Direction)msg.MoveDirection, msg.MoveDuration);
                     break;
                 case CommandTypeMessage.Pick:
                     Pick();
                     break;
                 case CommandTypeMessage.Put:
+                    if (msg.ThrowDistance < 0)
+                        msg.ThrowDistance = 0;
+                    else if (msg.ThrowDistance >= MaxThrowDistance)
+                        msg.ThrowDistance = MaxThrowDistance;
                     Put(msg.ThrowDistance, msg.IsThrowDish);
                     break;
                 case CommandTypeMessage.Use:
-                    Use(msg.UseType, msg.Parameter);
+                    if (msg.Parameter1 < -99)
+                        msg.Parameter1 = -99;
+                    else if (msg.Parameter1 > 99)
+                        msg.Parameter1 = 99;
+                    if (msg.Parameter2 < -99)
+                        msg.Parameter2 = -99;
+                    else if (msg.Parameter2 > 99)
+                        msg.Parameter2 = 99;
+                    Use(msg.UseType, msg.Parameter1, msg.Parameter2);
                     break;
                 case CommandTypeMessage.Speak:
                     SpeakToFriend(msg.SpeakText);
@@ -191,47 +195,64 @@ namespace Logic.Server
                 Program.MessageToClient.GameObjectMessageList[this.ID].IsMoving = true;
             MoveStopTimer.Change(durationMilliseconds, 0);
         }
+
+        void ChangePositionInMessage(GameObject thisGameObject)
+        {
+            lock (Program.MessageToClientLock)
+            {
+                Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.X = thisGameObject.Position.x;
+                Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.Y = thisGameObject.Position.y;
+                Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Direction = (DirectionMessage)((Player)thisGameObject).facingDirection;
+            }
+        }
+
         public override void Pick()
         {
             XYPosition[] toCheckPositions = new XYPosition[] { Position, Position + 2 * EightCornerVector[facingDirection] };
             foreach (var xypos in toCheckPositions)
             {
-                if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].ContainsType(typeof(Block)))
+                Block? block = null;
+                if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].ContainsType(typeof(FoodPoint)))
+                    block = (Block)WorldMap.Grid[(int)xypos.x, (int)xypos.y].GetFirstObject(typeof(FoodPoint));
+                else if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].ContainsType(typeof(Cooker)))
                 {
-                    foreach (Block block in WorldMap.Grid[(int)xypos.x, (int)xypos.y].GetType(typeof(Block)))
+                    block = (Cooker)WorldMap.Grid[(int)xypos.x, (int)xypos.y].GetFirstObject(typeof(Cooker));
+                    if (((Cooker)block).ProtectedTeam != team && ((Cooker)block).ProtectedTeam >= 0)
+                        block = null;
+                }
+                if (block != null && block.Dish != DishType.Empty)
+                {
+                    DishType temp = Dish;
+                    Dish = block.GetDish(Dish);
+                    if (temp != DishType.Empty)
                     {
-                        if ((block.blockType == BlockType.FoodPoint || (block.blockType == BlockType.Cooker && (block.ProtectedTeam == team || block.ProtectedTeam < 0)))
-                            && block.Dish != DishType.Empty)
+                        new Dish(Position.x, Position.y, temp).Parent = WorldMap;
+                        //Server.ServerDebug(111.ToString());
+                    }
+                    Server.ServerDebug("Player : " + ID + " Get Dish " + Dish.ToString());
+                    return;
+                }
+
+                if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].ContainsLayer(ItemLayer))
+                    foreach (var item in WorldMap.Grid[(int)xypos.x, (int)xypos.y].GetObjects(ItemLayer))
+                    {
+                        if (item is Dish)
                         {
-                            DishType temp = Dish;
-                            Dish = block.GetDish(Dish);
-                            if (temp != DishType.Empty) { new Dish(Position.x, Position.y, temp).Parent = WorldMap;Console.WriteLine(111); }
+                            Dish = ((Dish)item).GetDish(Dish);
                             Server.ServerDebug("Player : " + ID + " Get Dish " + Dish.ToString());
                             return;
                         }
-                        break;
+                        else if (item is Tool)
+                        {
+                            DeFunction(tool);
+                            Tool = ((Tool)item).GetTool(tool);
+                            Server.ServerDebug("Player : " + ID + " Get Tool " + tool.ToString());
+                            Function(tool);
+                            return;
+                        }
                     }
-                }
-
-                foreach (var item in WorldMap.Grid[(int)xypos.x, (int)xypos.y].GetLayer((int)MapLayer.ItemLayer))
-                {
-                    if (item is Dish)
-                    {
-                        Dish = ((Dish)item).GetDish(Dish);
-                        Server.ServerDebug("Player : " + ID + " Get Dish " + Dish.ToString());
-                        return;
-                    }
-                    else if (item is Tool)
-                    {
-                        DeFunction(tool);
-                        Tool = ((Tool)item).GetTool(tool);
-                        Server.ServerDebug("Player : " + ID + " Get Tool " + tool.ToString());
-                        Function(tool);
-                        return;
-                    }
-                }
             }
-            Console.WriteLine("没东西捡");
+            Server.ServerDebug("没东西捡");
             status = CommandType.Stop;
             Velocity = new Vector(0, 0);
         }
@@ -243,7 +264,7 @@ namespace Logic.Server
             if (Dish != DishType.Empty && isThrowDish)
             {
                 Dish dishToThrow = new Dish(Position.x, Position.y, Dish);
-                dishToThrow.Layer = (int)MapLayer.FlyingLayer;
+                dishToThrow.Layer = FlyingLayer;
                 dishToThrow.Parent = WorldMap;
                 dishToThrow.Velocity = new Vector((double)(int)facingDirection * Math.PI / 4, (int)Configs["ItemMoveSpeed"]);
                 dishToThrow.StopMovingTimer.Change(dueTime, 0);
@@ -252,13 +273,13 @@ namespace Logic.Server
             else if (tool != ToolType.Empty && !isThrowDish)
             {
                 Tool toolToThrow = new Tool(Position.x, Position.y, tool);
-                toolToThrow.Layer = (int)MapLayer.FlyingLayer;
+                toolToThrow.Layer = FlyingLayer;
                 toolToThrow.Parent = WorldMap;
                 toolToThrow.Velocity = new Vector((double)(int)facingDirection * Math.PI / 4, (int)Configs["ItemMoveSpeed"]);
                 toolToThrow.StopMovingTimer.Change(dueTime, 0);
                 Tool = ToolType.Empty;
             }
-            else Console.WriteLine("没有可以扔的东西");
+            else Server.ServerDebug("没有可以扔的东西");
             status = CommandType.Stop;
             Velocity = new Vector(0, 0);
         }
@@ -267,22 +288,17 @@ namespace Logic.Server
             if (type == 0)//type为0表示使用厨具做菜和提交菜品
             {
                 XYPosition xyPosition1 = Position + 2 * EightCornerVector[facingDirection];
-                if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].ContainsType(typeof(Block)))
+                if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].ContainsType(typeof(Cooker)))
                 {
-                    foreach (Block block in WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetType(typeof(Block)))
-                    {
-                        if (block.blockType == BlockType.Cooker)
-                        {
-                            if (block.Cooking == false) block.UseCooker(team, Talent);
-                        }
-                        else if (block.blockType == BlockType.TaskPoint)
-                        {
-                            int temp = block.HandIn(Dish);
-                            if(temp>0){ Score += temp; Dish = DishType.Empty; }
-                            else Console.WriteLine("提交任务失败！");
-                        }
-                        break;
-                    }
+                    Cooker cooker = (Cooker)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetFirstObject(typeof(Cooker));
+                    if (cooker.isCooking == false)
+                        cooker.UseCooker(team, Talent);
+                }
+                else if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].ContainsType(typeof(TaskPoint)))
+                {
+                    int tempScore = ((TaskPoint)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetFirstObject(typeof(TaskPoint))).HandIn(Dish);
+                    Score += tempScore;
+                    Dish = DishType.Empty;
                 }
             }
             else//否则为使用手中道具
@@ -304,7 +320,7 @@ namespace Logic.Server
             else if (type == ToolType.TeleScope) SightRange -= (int)(Configs["TeleScopeExtraSightRange"]);
         }
 
-        public void GetTalent(TALENT t)
+        public void GetTalent(Talent t)
         {
             Talent = t;
         }
@@ -316,66 +332,56 @@ namespace Logic.Server
                 case ToolType.TigerShoes:
                 case ToolType.TeleScope:
                 case ToolType.BreastPlate:
-                case ToolType.Empty: Console.WriteLine("物品使用失败（为空或无需使用）！"); break;
+                case ToolType.Empty: Server.ServerDebug("物品使用失败（为空或无需使用）！"); break;
                 case ToolType.Condiment:
                     {
                         XYPosition xyPosition1 = Position + 2 * EightCornerVector[facingDirection];
-                        if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].ContainsType(typeof(Block)))
+                        if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].ContainsType(typeof(TaskPoint)))
                         {
-                            foreach (Block block in WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetType(typeof(Block)))
+                            int temp = ((TaskPoint)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetFirstObject(typeof(TaskPoint))).HandIn(Dish);
+                            if (temp > 0)
                             {
-                                if (block.blockType == BlockType.TaskPoint)
-                                {
-                                    int temp = block.HandIn(Dish);
-                                    if (temp > 0)
-                                    {
-                                        if(Talent==TALENT.Cook) Score += (int)(temp * (1 + (double)(Configs["CookCondimentScoreParameter"])));
-                                        Score += (int)(temp*(1+ (double)(Configs["CondimentScoreParameter"]))); 
-                                        Dish = DishType.Empty; Tool = ToolType.Empty; 
-                                    }
-                                    else Console.WriteLine("物品使用失败（提交任务失败）！");
-                                }
-                                break;
+                                if (Talent == Talent.Cook) Score += (int)(temp * (1 + (double)(Configs["CookCondimentScoreParameter"])));
+                                Score += (int)(temp * (1 + (double)(Configs["CondimentScoreParameter"])));
+                                Dish = DishType.Empty;
                             }
+                            else Server.ServerDebug("物品使用失败（提交任务失败）！");
                         }
+                        Tool = ToolType.Empty;
                     }
                     break;
                 case ToolType.SpeedBuff:
                     {
                         SpeedBuffExtraMoveSpeed = (double)(Configs["SpeedBuffExtraMoveSpeed"]);
-                        if(Talent!=TALENT.Technician)SpeedBuffTimer.Change((int)(Configs["SpeedBuffDuration"]), 0);
+                        if (Talent != Talent.Technician) SpeedBuffTimer.Change((int)(Configs["SpeedBuffDuration"]), 0);
                         else SpeedBuffTimer.Change((int)(Configs["TechnicianSpeedBuffDuration"]), 0);
                         if (Velocity.length > 0)
                             Velocity = new Vector(Velocity.angle, MoveSpeed);
-                        tool = ToolType.Empty;
+                        Tool = ToolType.Empty;
                     }
                     break;
                 case ToolType.StrenthBuff:
                     {
                         StrenthBuffThrowDistance = (int)(Configs["StrenthBuffExtraThrowDistance"]);
-                        if (Talent != TALENT.Technician) SpeedBuffTimer.Change((int)(Configs["StrenthBuffDuration"]), 0);
+                        if (Talent != Talent.Technician) SpeedBuffTimer.Change((int)(Configs["StrenthBuffDuration"]), 0);
                         else SpeedBuffTimer.Change((int)(Configs["TechnicianStrenthBuffDuration"]), 0);
-                        tool = ToolType.Empty;
+                        Tool = ToolType.Empty;
                     }
                     break;
                 case ToolType.Fertilizer:
                     {
                         XYPosition xyPosition1 = Position.GetMid() + 2 * EightCornerVector[facingDirection];
-                        if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].ContainsType(typeof(Block)))
-                            foreach (Block block in WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetType(typeof(Block)))
-                            {
-                                if (block.blockType == BlockType.FoodPoint)
-                                    block.RefreshTime /= 2;
-                                else
-                                { Console.WriteLine("物品使用失败（未检测到施肥对象）！"); }
-                            }
-                        tool = ToolType.Empty;
+                        if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].ContainsType(typeof(FoodPoint)))
+                        {
+                            ((FoodPoint)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetFirstObject(typeof(FoodPoint))).RefreshTime /= 2;
+                        }
+                        Tool = ToolType.Empty;
                     }
                     break;
                 case ToolType.WaveGlue:
                     {
                         XYPosition xyPosition1 = Position.GetMid();
-                        if (this.Talent == TALENT.Technician)
+                        if (this.Talent == Talent.Technician)
                         {
                             for (int i = -2; i <= 2; i++)
                             {
@@ -397,33 +403,33 @@ namespace Logic.Server
                                 }
                             }
                         }
-                        tool = ToolType.Empty;
+                        Tool = ToolType.Empty;
                     }
                     break;
                 case ToolType.LandMine:
                     {
                         XYPosition xyPosition1 = Position.GetMid();
                         if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].ContainsType(typeof(Block)))
-                        { Console.WriteLine("物品使用失败（无效的陷阱放置地点）！"); break; }
+                        { Server.ServerDebug("物品使用失败（无效的陷阱放置地点）！"); break; }
                         new Trigger(xyPosition1.x, xyPosition1.y, TriggerType.Mine, team).Parent = WorldMap;
-                        tool = ToolType.Empty;
+                        Tool = ToolType.Empty;
                     }
                     break;
                 case ToolType.Trap:
                     {
                         XYPosition xyPosition1 = Position.GetMid();
                         if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].ContainsType(typeof(Block)))
-                        { Console.WriteLine("物品使用失败（无效的陷阱放置地点）！"); break; }
+                        { Server.ServerDebug("物品使用失败（无效的陷阱放置地点）！"); break; }
                         new Trigger(xyPosition1.x, xyPosition1.y, TriggerType.Trap, -1).Parent = WorldMap;
-                        tool = ToolType.Empty;
+                        Tool = ToolType.Empty;
                     }
                     break;
                 case ToolType.SpaceGate:
                     {
                         int dx = (parameter / 100) % 100, dy = parameter % 100;
-                        if(parameter>=100000) { parameter -= 100000;dx = -dx; }
-                        if(parameter>=10000) { dy = -dy; }
-                        if(Talent==TALENT.Technician)
+                        if (parameter >= 100000) { parameter -= 100000; dx = -dx; }
+                        if (parameter >= 10000) { dy = -dy; }
+                        if (Talent == Talent.Technician)
                         {
                             if (Math.Abs(dx) > (int)Configs["TechnicianSpaceGateMaxDistance"]) dx = (int)Configs["TechnicianSpaceGateMaxDistance"] * (dx / Math.Abs(dx));
                             if (Math.Abs(dy) > (int)Configs["TechnicianSpaceGateMaxDistance"]) dy = (int)Configs["TechnicianSpaceGateMaxDistance"] * (dy / Math.Abs(dy));
@@ -437,13 +443,11 @@ namespace Logic.Server
                         XYPosition aim = Position + new XYPosition(dx, dy);
                         Position = aim;
                         if (Math.Abs(Position.x - aim.x) > 0.001 || Math.Abs(Position.y - aim.y) > 0.001)
-                            {Position = previous;}
-                        tool = ToolType.Empty;
+                        { Position = previous; }
+                        Tool = ToolType.Empty;
                     }
                     break;
             }
-            lock (Program.MessageToClientLock)
-                Program.MessageToClient.GameObjectMessageList[this.ID].ToolType = (ToolTypeMessage)tool;
         }
         public bool TouchTrigger(Trigger trigger)
         {

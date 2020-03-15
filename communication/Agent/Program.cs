@@ -26,11 +26,13 @@ namespace Communication.Agent
             var server = app.Option("-s|--server", "game server endpoint", CommandOptionType.SingleValue);
             var port = app.Option("-p|--port", "agent port", CommandOptionType.SingleValue);
             var token = app.Option("-t|--token", "player token, leave empty to enable offline mode", CommandOptionType.SingleValue);
-            app.OnExecute(() => MainInternal(server.Value(), ushort.Parse(port.Value()), token.Value()));
+            var debugLevel = app.Option("-d|--debugLevel", "0 to disable debug output", CommandOptionType.SingleValue);
+
+            app.OnExecute(() => MainInternal(server.Value(), ushort.Parse(port.Value()), token.Value(), int.Parse(debugLevel.Value())));
             app.Execute(args);
         }
 
-        private static int MainInternal(string ep, ushort port, string token)
+        private static int MainInternal(string ep, ushort port, string token, int debugLevel)
         {
             string[] t = ep.Split(':');
             Console.WriteLine("Server endpoint: " + t);
@@ -66,14 +68,14 @@ namespace Communication.Agent
             };
 
             client.OnDisconnect += delegate ()
-             {
-                 if (server.Count == 0)
-                 {
-                     server.Stop(); //主动Disconnect意味着游戏结束，关闭Agent。
+            {
+                if (server.Count == 0)
+                {
+                    server.Stop(); //主动Disconnect意味着游戏结束，关闭Agent。
                     Environment.Exit(0);
-                 }
+                }
 
-             };
+            };
 
             server.OnAccept += delegate ()
             {
@@ -96,9 +98,10 @@ namespace Communication.Agent
                 }
             };
 
-            server.Start();
+            if (debugLevel == 0)
+                Constants.Debug = new Constants.DebugFunc((str) => { });
 
-            //Constants.Debug = new Constants.DebugFunc((str) => { });//注释掉这一行恢复Debug输出
+            server.Start();
 
             Thread.Sleep(int.MaxValue);
             return 0;
