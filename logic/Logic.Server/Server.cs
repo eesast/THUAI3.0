@@ -1,4 +1,4 @@
-﻿﻿using Communication.Proto;
+using Communication.Proto;
 using Communication.Server;
 using Logic.Constant;
 using System;
@@ -11,14 +11,13 @@ namespace Logic.Server
 {
     class Server
     {
-
-        protected ICommunication ServerCommunication = new CommunicationImpl();
+        protected ICommunication ServerCommunication;
 
         public Server(ushort serverPort, ushort playerCount, ushort agentCount, uint MaxGameTimeSeconds)
         {
-            Communication.Proto.Constants.ServerPort = serverPort;
             Communication.Proto.Constants.PlayerCount = playerCount;
             Communication.Proto.Constants.AgentCount = agentCount;
+            ServerCommunication = new CommunicationImpl { ServerPort = serverPort };
             ServerCommunication.Initialize();
             ServerCommunication.MsgProcess += OnRecieve;
             ServerCommunication.GameStart();
@@ -55,33 +54,24 @@ namespace Logic.Server
             SendMessageToAllClient();
 
             new Thread(Run).Start();
-            Console.WriteLine("Server constructed");
+            Server.ServerDebug("Server constructed");
 
         }
 
         public void Run()
         {
             Time.InitializeTime();
-            Console.WriteLine("Server begin to run");
-            TaskSystem.RefreshTimer.Change(1000, (int)(Configs["TaskRefreshTime"]));
-            void ToolRefresh(object i)
-            {
-                XYPosition tempPosition = new XYPosition(Program.Random.Next(0, map.GetLength(0)), Program.Random.Next(0, map.GetLength(1)));
-                while (WorldMap.Grid[(int)tempPosition.x, (int)tempPosition.y].ContainsType(typeof(Block)))
-                {
-                    tempPosition = new XYPosition(Program.Random.Next(0, map.GetLength(0)), Program.Random.Next(0, map.GetLength(1)));
-                }
-                new Tool(tempPosition.x + 0.5, tempPosition.y + 0.5, (ToolType)Program.Random.Next(0, (int)ToolType.Size - 1)).Parent = WorldMap;
-            }
+            Server.ServerDebug("Server begin to run");
+            TaskSystem.RefreshTimer.Change(1000, (int)Configs["TaskRefreshTime"]);
             System.Threading.Timer ToolRefreshTimer = new System.Threading.Timer(ToolRefresh, null,
                 0, (int)Configs["ToolRefreshTime"]);
 
-            System.Threading.Timer timer = new System.Threading.Timer(
+            new System.Threading.Timer(
                 (o) =>
                 {
                     SendMessageToAllClient();
                 },
-                new object(),
+                null,
                 TimeSpan.FromSeconds(TimeInterval),
                 TimeSpan.FromSeconds(TimeInterval));
 
@@ -98,15 +88,25 @@ namespace Logic.Server
 
             }
 
-            Console.WriteLine("Server stop running");
+            Server.ServerDebug("Server stop running");
+        }
+
+        void ToolRefresh(object o)
+        {
+            XYPosition tempPosition = null;
+            for (int i = 0; i < 10; i++)//加入次数限制，防止后期地图过满疯狂Random
+            {
+                tempPosition = new XYPosition(Program.Random.Next(1, map.GetLength(0) - 1), Program.Random.Next(1, map.GetLength(1) - 1));
+                if (WorldMap.Grid[(int)tempPosition.x, (int)tempPosition.y].IsEmpty())
+                    break;
+            }
+            new Tool(tempPosition.x + 0.5, tempPosition.y + 0.5, (ToolType)Program.Random.Next(1, (int)ToolType.Size - 1)).Parent = WorldMap;
         }
 
         protected void GodMode()
         {
-            Console.WriteLine("\n======= Welcome to God Mode ========\n");
+            Server.ServerDebug("\n======= Welcome to God Mode ========\n");
             string[] words = Console.ReadLine().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            if (words.Length < 5)
-                return;
             try
             {
                 switch (words[0])
@@ -142,6 +142,10 @@ namespace Logic.Server
             {
                 ServerDebug("Format Error");
             }
+            catch (IndexOutOfRangeException)
+            {
+                ServerDebug("Augment number incorrect");
+            }
         }
 
         protected void OnRecieve(Object communication, EventArgs e)
@@ -149,18 +153,15 @@ namespace Logic.Server
             CommunicationImpl communicationImpl = communication as CommunicationImpl;
             MessageEventArgs messageEventArgs = e as MessageEventArgs;
 
-            Console.WriteLine("GameTime : " + Time.GameTime().TotalSeconds.ToString("F3") + "s");
+            //Server.ServerDebug("GameTime : " + Time.GameTime().TotalSeconds.ToString("F3") + "s");
             Program.PlayerList[new Tuple<int, int>(messageEventArgs.message.Agent, messageEventArgs.message.Client)].ExecuteMessage(communicationImpl, (MessageToServer)((ServerMessage)messageEventArgs.message).Message);
-            //SendMessageToAllClient();
         }
 
         //向所有Client发送消息，按照帧率定时发送，严禁在其他地方调用此函数
         protected void SendMessageToAllClient()
         {
-            Server.ServerDebug("SendMessageToAll !!!");
             lock (Program.MessageToClientLock)
             {
-                Server.ServerDebug("Enter Lock !!!");
                 ServerCommunication.SendMessage(new ServerMessage
                 {
                     Agent = -2,

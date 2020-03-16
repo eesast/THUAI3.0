@@ -18,8 +18,6 @@ namespace Client
     class Player : Character
     {
         protected Int64 id = -1;//注意！！！在这个类里基类的ID已被弃用
-        private static int port = 30000;
-        static Thread operationThread;
         protected static DateTime lastSendTime = new DateTime();
         protected Communication.CAPI.API ClientCommunication = new Communication.CAPI.API();
         protected MessageToServer messageToServer = new MessageToServer();
@@ -62,7 +60,7 @@ namespace Client
                         else
                             ChangeControlLabelText("Dish", "");
                         if (gameObjectMessage.ToolType != ToolTypeMessage.ToolEmpty
-                            && gameObjectMessage.ToolType != ToolTypeMessage.ToolTypeSize)
+                            && gameObjectMessage.ToolType != ToolTypeMessage.ToolSize)
                             ChangeControlLabelText("Tool", gameObjectMessage.ToolType.ToString());
                         else
                             ChangeControlLabelText("Tool", "");
@@ -197,15 +195,14 @@ namespace Client
                 RefreshFormLabelMethod(id_t, gameObjectMessage);
             }
         }
-        public Player(double x, double y) :
+        public Player(double x, double y, ushort agentPort) :
             base(x, y)
         {
             ClientCommunication.Initialize();
             ClientCommunication.ReceiveMessage += OnReceive;
-            ClientCommunication.ConnectServer(new IPEndPoint(IPAddress.Loopback, port));
+            ClientCommunication.ConnectServer(new IPEndPoint(IPAddress.Loopback, agentPort));
 
-            operationThread = new Thread(Operation);
-            operationThread.Start();
+            new Thread(Operation).Start();
         }
         private void Operation()
         {
@@ -228,14 +225,15 @@ namespace Client
                     case 'x': Move(Direction.Down); break;
                     case 'c': Move(Direction.RightDown); break;
                     case 'f': Pick(); break;
-                    case 'u': 
+                    case 'u':
                         {
                             if (tool == ToolType.SpaceGate)
                             {
                                 Use(1, int.Parse(Console.ReadLine()), int.Parse(Console.ReadLine()));
+                                break;
                             }
-                            
-                        } 
+                            Use(1, 0, 0);
+                        }
                         break;
 
                     case 'i': Use(0, 0); break;
@@ -243,14 +241,14 @@ namespace Client
                         char temp = Console.ReadKey().KeyChar;
                         if (temp >= '0' && temp <= '9')
                         {
-                            Put(temp - '0', true);
+                            Put(temp - '0', (double)facingDirection * Math.PI / 4, true);
                         }
                         break;
                     case 't':
                         char tmp = Console.ReadKey().KeyChar;
                         if (tmp >= '0' && tmp <= '9')
                         {
-                            Put(tmp - '0', false);
+                            Put(tmp - '0', (double)facingDirection * Math.PI / 4, false);
                         }
                         break;
                     case ':':
@@ -264,28 +262,17 @@ namespace Client
         {
             messageToServer.CommandType = CommandTypeMessage.Move;
 
-            //这里必须做值检查，因为不知道用户会输入什么样的值
-            if (direction_t < 0)
-                direction_t = (Direction)0;
-            else if (direction_t >= Direction.Size)
-                direction_t = Direction.Size;
+            //值检查放在Server
             messageToServer.MoveDirection = (DirectionMessage)direction_t;
-
-            if (duration < 0)
-                duration = 0;
-            else if (duration > 10000)
-                duration = 10000;
             messageToServer.MoveDuration = duration;
 
             ClientCommunication.SendMessage(messageToServer);
         }
-        public override void Put(double distance, bool isThrowDish)
+        public override void Put(double distance, double angle, bool isThrowDish)
         {
-            if (distance < 0)
-                distance = 0;
-            else if (distance > 20)
-                distance = 20;
+            //值检查放在Server
             messageToServer.ThrowDistance = distance;
+            messageToServer.ThrowAngle = angle;
             messageToServer.IsThrowDish = isThrowDish;
 
             messageToServer.CommandType = CommandTypeMessage.Put;
@@ -293,13 +280,11 @@ namespace Client
         }
         public override void Use(int type, int parameter_1 = 0, int parameter_2 = 0)
         {
-            if (parameter_1 >= 100) parameter_1 = 99;
-            if (parameter_2 >= 100) parameter_2 = 99;
+            //在Server端控制变量范围
             messageToServer.CommandType = CommandTypeMessage.Use;
             messageToServer.UseType = type;
-            messageToServer.Parameter = Math.Abs(parameter_1) * 100 + Math.Abs(parameter_2);
-            if (parameter_1 < 0) messageToServer.Parameter += 100000;
-            if (parameter_2 < 0) messageToServer.Parameter += 10000;
+            messageToServer.Parameter1 = parameter_1;
+            messageToServer.Parameter2 = parameter_2;
             ClientCommunication.SendMessage(messageToServer);
         }
         public override void Pick()
@@ -369,7 +354,7 @@ namespace Client
                 Program.form.playerLabels.Remove(number);
             }
 
-            if(Program.form.ControlLabels["Task"].InvokeRequired)
+            if (Program.form.ControlLabels["Task"].InvokeRequired)
             {
                 Program.form.ControlLabels["Task"].Invoke(new Action<MessageToClient>(ChangeTaskLabel), msg);
             }
@@ -387,6 +372,11 @@ namespace Client
                 Program.form.ControlLabels["Task"].Text += "\n" + (DishType)task;
             }
         }
+
+        public static Action<string> ClientDebug = (string str) =>
+        {
+            Console.WriteLine(str);
+        };
     }
 
 }

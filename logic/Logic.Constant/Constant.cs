@@ -13,10 +13,8 @@ namespace Logic.Constant
 {
     public static class Constant
     {
-        public const double MoveSpeed = 5;
         public const double FrameRate = 20;
         public const double TimeInterval = 1 / FrameRate;
-        public const double MoveDistancePerFrame = MoveSpeed / FrameRate;
 
         private static JObject _configs;
         public static JObject Configs
@@ -148,7 +146,7 @@ namespace Logic.Constant
         Size
     }
 
-    public enum TALENT
+    public enum Talent
     {
         None,
         Runner,

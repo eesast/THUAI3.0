@@ -1,10 +1,9 @@
-#include"API.h"
-#include"player.h"
+#include "API.h"
+#include "player.h"
 
 using namespace THUAI3;
 
 void play()
 {
-	/*   ѡ�ִ���  */
-	
+	/*  玩家在这里写代码  */
 }

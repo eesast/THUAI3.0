@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using THUnity2D;
 using static Logic.Constant.Constant;
 using static Logic.Constant.MapInfo;
 using static THUnity2D.Tools;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq; 
+using Newtonsoft.Json.Linq;
 
 namespace Logic.Constant
 {
@@ -20,24 +20,24 @@ namespace Logic.Constant
         public int StrenthBuffThrowDistance = 0;
         public int MaxThrowDistance = (int)Configs["PlayerInitThrowDistance"];
         public int SightRange = (int)(Configs["PlayerInitSightRange"]);
-        protected TALENT _talent = TALENT.None;
-        
+        protected Talent _talent = Talent.None;
+
         protected int _score = 0;
 
-        public DishType dish = DishType.Hawthorn;
-        public ToolType tool = ToolType.SpaceGate;
+        public DishType dish = DishType.Empty;
+        public ToolType tool = ToolType.Empty;
         public Character(double x, double y) : base(new XYPosition(x, y))
         {
-            Layer = (int)MapLayer.PlayerLayer;
+            Layer = PlayerLayer;
             Movable = true;
         }
         public virtual void Move(Direction direction_t, int duration = 50)
         { }
-        public virtual void Put(double distance, bool isThrowDish)
+        public virtual void Put(double distance, double angle, bool isThrowDish)
         { }
         public virtual void Pick()
         { }
-        public virtual void Use(int type, int parameter_1,int parameter_2)
+        public virtual void Use(int type, int parameter_1, int parameter_2)
         { }
     }
 }

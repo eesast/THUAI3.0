@@ -28,34 +28,61 @@ enum BlockTypeMessage
 enum DishTypeMessage
 {
 	DishEmpty = 0;
-	Apple = 1;
-	Banana = 2;
-	Potato = 3;
-	Tomato = 4;
-	Egg = 5;
-	Flour = 6;
-	Chicken = 7;
-	Pork = 8;
-	Beef = 9;
-	Honey = 10;
-	Butter = 11;
-	Romaine = 12;
-
-	DishTypeSize1 = 13;
-//以下为菜品
-
-	Bread = 14;
-	BasicHamburger = 15;
-	GoodHamburger = 16;
-	ApplePie = 17;
-	BananaPie = 18;
-	TomatoEgg = 19;
-	MashedPotato = 20;
-	DishTypeSize2 = 21;
-
-	OverCookedDish = 22;
-	DarkDish = 23;
-	DishTypeSize3 = 24;
+        //以下为食材
+        Wheat = 1;//麦子
+        Rice = 2;//水稻
+        Tomato = 3;//番茄
+        Egg  =4;//鸡蛋
+        Milk = 5;//牛奶
+        Apple = 6;//苹果
+        Banana = 7;//香蕉
+        DarkPlum = 8;//乌梅
+        Hawthorn = 9;//山楂
+        Strawberry = 10;//草莓
+        Beef = 11;//牛肉
+        Pork = 12;//猪肉
+        ChickenMeat = 13;//鸡肉
+        Potato = 14;//土豆
+        Lettuce = 15;//生菜
+        Agaric = 16;//木耳
+        NeedleMushroom = 17;//金针菇
+        Cabbage = 18;//包菜
+        DishSize1 = 19;
+        //以下为中间产物
+        Flour = 20;//面粉
+        Noodle = 21;//面条
+        Bread = 22;//面包片
+        CookedRice = 23;//米饭
+        Ketchup = 24;//番茄酱
+        Cream = 25;//奶油
+        //以下为菜品
+        TomatoFriedEgg = 26;//番茄炒蛋
+        TomatoFriedEggNoodle = 27;//西红柿鸡蛋面
+        BeefNoodle = 28;//清青牛拉
+        OverRice = 29;//盖浇饭
+        HuangMenJi = 30;//黄焖鸡米饭
+        Barbecue = 31;//烤肉
+        FrenchFries = 32;//薯条
+        PlumJuice = 33;//酸梅汤
+        Hamburger = 34;//汉堡
+        StrawberryIcecream = 35;//草莓圣代
+        PopcornChicken = 36;//鸡米花
+        AgaricFriedEgg = 37;//木耳炒蛋
+        Cake = 38;//蛋糕
+        BingTangHuLu = 39;//冰糖葫芦
+        FruitSalad = 40;//水果色拉
+        SpicedPot = 41;
+        SpicedPot_3 = 42;
+        SpicedPot_4 = 43;
+        SpicedPot_5 = 44;
+        SpicedPot_6 = 45;
+        SpicedPot_7 = 46;
+        SpicedPot_8 = 47;//香锅
+        DishSize2 = 48;
+        //以下为垃圾
+        OverCookedDish = 49;
+        DarkDish = 50;//黑暗料理
+        DishSize3 = 51;
 }
 enum ToolTypeMessage
 {
@@ -68,22 +95,22 @@ enum ToolTypeMessage
 	Fertilizer = 6;
 	BreastPlate = 7;
 	SpaceGate = 8;
-	Eye = 9;
-	WaveGlue = 10;
-	LandMine = 11;
-	Trap = 12;
-	FlashBomb = 13;
-	Hammer = 14;
-	Brick = 15;
-	Stealer = 16;
-	ToolTypeSize = 17;
+	//Eye = 9;
+	WaveGlue = 9;
+	LandMine = 10;
+	Trap = 11;
+	//FlashBomb = 12;
+	//Hammer = 13;
+	//Brick = 14;
+	//Stealer = 15;
+	ToolSize = 16;
 }
 enum TriggerTypeMessage
 {
 	TriggerWaveGlue = 0;
 	TrapTrigger = 1;
 	Mine = 2;
-	TriggerTypeSize = 3;
+	TriggerSize = 3;
 }
 enum BuffMessage{
 	Frozen = 0;
