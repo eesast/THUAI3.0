@@ -1,6 +1,7 @@
 ﻿using Communication.Proto;
 using Logic.Constant;
 using THUnity2D;
+using static Logic.Constant.MapInfo;
 
 namespace Logic.Server
 {
@@ -34,13 +35,33 @@ namespace Logic.Server
             }
         }
 
+        protected System.Threading.Timer _stopMovingTimer = null;
+        public System.Threading.Timer StopMovingTimer
+        {
+            get
+            {
+                if (_stopMovingTimer == null)
+                    _stopMovingTimer = new System.Threading.Timer(
+                        (o) =>
+                        {
+                            Velocity = new THUnity2D.Vector(Velocity.angle, 0);
+                            Layer = ItemLayer;
+                            if (WorldMap.Grid[(int)Position.x, (int)Position.y].ContainsType(typeof(RubbishBin)))
+                            {
+                                Parent = null;
+                            }
+                        });
+                return _stopMovingTimer;
+            }
+        }
+
         public Obj(double x_t, double y_t, ObjType objType) : base(new XYPosition(x_t, y_t))
         {
             this.objType = objType;
         }
         public virtual DishType GetDish(DishType t) { return DishType.Empty; }
         public virtual ToolType GetTool(ToolType t) { return ToolType.Empty; }
-        public virtual void UseCooker(int TeamNumber,Talent t) { }
+        public virtual void UseCooker(int TeamNumber, Talent t) { }
         public virtual int HandIn(DishType dish_t) { return 0; }
         protected void AddToMessage()
         {

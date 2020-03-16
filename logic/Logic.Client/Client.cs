@@ -241,14 +241,14 @@ namespace Client
                         char temp = Console.ReadKey().KeyChar;
                         if (temp >= '0' && temp <= '9')
                         {
-                            Put(temp - '0', true);
+                            Put(temp - '0', (double)facingDirection * Math.PI / 4, true);
                         }
                         break;
                     case 't':
                         char tmp = Console.ReadKey().KeyChar;
                         if (tmp >= '0' && tmp <= '9')
                         {
-                            Put(tmp - '0', false);
+                            Put(tmp - '0', (double)facingDirection * Math.PI / 4, false);
                         }
                         break;
                     case ':':
@@ -262,28 +262,17 @@ namespace Client
         {
             messageToServer.CommandType = CommandTypeMessage.Move;
 
-            //这里必须做值检查，因为不知道用户会输入什么样的值
-            if (direction_t < 0)
-                direction_t = (Direction)0;
-            else if (direction_t >= Direction.Size)
-                direction_t = Direction.Size;
+            //值检查放在Server
             messageToServer.MoveDirection = (DirectionMessage)direction_t;
-
-            if (duration < 0)
-                duration = 0;
-            else if (duration > 10000)
-                duration = 10000;
             messageToServer.MoveDuration = duration;
 
             ClientCommunication.SendMessage(messageToServer);
         }
-        public override void Put(double distance, bool isThrowDish)
+        public override void Put(double distance, double angle, bool isThrowDish)
         {
-            if (distance < 0)
-                distance = 0;
-            else if (distance > 20)
-                distance = 20;
+            //值检查放在Server
             messageToServer.ThrowDistance = distance;
+            messageToServer.ThrowAngle = angle;
             messageToServer.IsThrowDish = isThrowDish;
 
             messageToServer.CommandType = CommandTypeMessage.Put;

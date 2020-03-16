@@ -159,7 +159,7 @@ namespace Logic.Server
                         msg.ThrowDistance = 0;
                     else if (msg.ThrowDistance >= MaxThrowDistance)
                         msg.ThrowDistance = MaxThrowDistance;
-                    Put(msg.ThrowDistance, msg.IsThrowDish);
+                    Put(msg.ThrowDistance, msg.ThrowAngle, msg.IsThrowDish);
                     break;
                 case CommandTypeMessage.Use:
                     if (msg.Parameter1 < -99)
@@ -189,7 +189,7 @@ namespace Logic.Server
         public override void Move(Direction direction, int durationMilliseconds)
         {
             this.facingDirection = direction;
-            this.Velocity = new Vector(((double)(int)direction) * Math.PI / 4, MoveSpeed);
+            this.Velocity = new Vector((int)direction * Math.PI / 4, MoveSpeed);
             this.status = CommandType.Move;
             lock (Program.MessageToClientLock)
                 Program.MessageToClient.GameObjectMessageList[this.ID].IsMoving = true;
@@ -256,30 +256,32 @@ namespace Logic.Server
             status = CommandType.Stop;
             Velocity = new Vector(0, 0);
         }
-        public override void Put(double distance, bool isThrowDish)
+        public override void Put(double distance, double angle, bool isThrowDish)
         {
             if (distance > MaxThrowDistance) distance = MaxThrowDistance;
             int dueTime = (int)(1000 * distance / (int)Configs["ItemMoveSpeed"]);
 
+            Obj ItemToThrow = null;
             if (Dish != DishType.Empty && isThrowDish)
             {
-                Dish dishToThrow = new Dish(Position.x, Position.y, Dish);
-                dishToThrow.Layer = FlyingLayer;
-                dishToThrow.Parent = WorldMap;
-                dishToThrow.Velocity = new Vector((double)(int)facingDirection * Math.PI / 4, (int)Configs["ItemMoveSpeed"]);
-                dishToThrow.StopMovingTimer.Change(dueTime, 0);
                 Dish = DishType.Empty;
+                ItemToThrow = new Dish(Position.x, Position.y, Dish);
             }
             else if (tool != ToolType.Empty && !isThrowDish)
             {
-                Tool toolToThrow = new Tool(Position.x, Position.y, tool);
-                toolToThrow.Layer = FlyingLayer;
-                toolToThrow.Parent = WorldMap;
-                toolToThrow.Velocity = new Vector((double)(int)facingDirection * Math.PI / 4, (int)Configs["ItemMoveSpeed"]);
-                toolToThrow.StopMovingTimer.Change(dueTime, 0);
                 Tool = ToolType.Empty;
+                ItemToThrow = new Tool(Position.x, Position.y, tool);
             }
-            else Server.ServerDebug("没有可以扔的东西");
+            else
+            {
+                Server.ServerDebug("没有可以扔的东西");
+                return;
+            }
+            ItemToThrow.Layer = FlyingLayer;
+            ItemToThrow.Parent = WorldMap;
+            ItemToThrow.Velocity = new Vector(angle, (int)Configs["ItemMoveSpeed"]);
+            ItemToThrow.StopMovingTimer.Change(dueTime, 0);
+
             status = CommandType.Stop;
             Velocity = new Vector(0, 0);
         }

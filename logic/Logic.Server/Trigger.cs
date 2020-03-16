@@ -17,24 +17,18 @@ namespace Logic.Server
             Movable = false;
             triggerType = type_t;
             OwnerTeam = owner_t;
-            if (tech && triggerType==TriggerType.Mine)
+            switch (triggerType)
             {
-                parameter = (int)(Configs["TechnicianMineScore"]);
+                case TriggerType.Mine:
+                    parameter = (int)(tech ? Configs["TechnicianMineScore"] : Configs["MineScore"]);
+                    break;
+                case TriggerType.Trap:
+                    parameter = (int)(tech ? Configs["TechnicianTrapStunDuration"] : Configs["TrapStunDuration"]);
+                    break;
+                case TriggerType.WaveGlue:
+                    DurationTimer = new System.Threading.Timer((i) => { Parent = null; }, null, (int)Configs["WaveGlueDuration"], 0);
+                    break;
             }
-            else if (tech && triggerType == TriggerType.Trap)
-            {
-                parameter = (int)(Configs["TechnicianTrapStunDuration"]);
-            }
-            if (!tech && triggerType == TriggerType.Mine)
-            {
-                parameter = (int)(Configs["MineScore"]);
-            }
-            else if (!tech && triggerType == TriggerType.Trap)
-            {
-                parameter = (int)(Configs["TrapStunDuration"]);
-            }
-            if (triggerType == TriggerType.WaveGlue) DurationTimer = new System.Threading.Timer(
-                (i) => { Parent = null; }, null, (int)(Configs["WaveGlueDuration"]), 0);
             this.OnTrigger += new TriggerHandler(
                 (t) =>
                 {
@@ -45,7 +39,6 @@ namespace Logic.Server
             lock (Program.MessageToClientLock)
                 Program.MessageToClient.GameObjectMessageList[ID].TriggerType = (TriggerTypeMessage)triggerType;
             this.OnParentDelete += new ParentDeleteHandler(DeleteFromMessage);
-
         }
     }
 

@@ -91,26 +91,22 @@ namespace Logic.Server
             Server.ServerDebug("Server stop running");
         }
 
-        void ToolRefresh(object i)
+        void ToolRefresh(object o)
         {
-            XYPosition tempPosition = new XYPosition(Program.Random.Next(1, map.GetLength(0) - 1), Program.Random.Next(1, map.GetLength(1) - 1));
-            while (WorldMap.Grid[(int)tempPosition.x, (int)tempPosition.y].ContainsType(typeof(Wall))
-                || WorldMap.Grid[(int)tempPosition.x, (int)tempPosition.y].ContainsType(typeof(Table))
-                || WorldMap.Grid[(int)tempPosition.x, (int)tempPosition.y].ContainsType(typeof(FoodPoint))
-                || WorldMap.Grid[(int)tempPosition.x, (int)tempPosition.y].ContainsType(typeof(TaskPoint))
-                || WorldMap.Grid[(int)tempPosition.x, (int)tempPosition.y].ContainsType(typeof(Cooker)))
+            XYPosition tempPosition = null;
+            for (int i = 0; i < 10; i++)//加入次数限制，防止后期地图过满疯狂Random
             {
                 tempPosition = new XYPosition(Program.Random.Next(1, map.GetLength(0) - 1), Program.Random.Next(1, map.GetLength(1) - 1));
+                if (WorldMap.Grid[(int)tempPosition.x, (int)tempPosition.y].IsEmpty())
+                    break;
             }
-            new Tool(tempPosition.x + 0.5, tempPosition.y + 0.5, (ToolType)Program.Random.Next(0, (int)ToolType.Size - 1)).Parent = WorldMap;
+            new Tool(tempPosition.x + 0.5, tempPosition.y + 0.5, (ToolType)Program.Random.Next(1, (int)ToolType.Size - 1)).Parent = WorldMap;
         }
 
         protected void GodMode()
         {
             Server.ServerDebug("\n======= Welcome to God Mode ========\n");
             string[] words = Console.ReadLine().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            if (words.Length < 5)
-                return;
             try
             {
                 switch (words[0])
@@ -146,6 +142,10 @@ namespace Logic.Server
             {
                 ServerDebug("Format Error");
             }
+            catch (IndexOutOfRangeException)
+            {
+                ServerDebug("Augment number incorrect");
+            }
         }
 
         protected void OnRecieve(Object communication, EventArgs e)
@@ -155,7 +155,6 @@ namespace Logic.Server
 
             //Server.ServerDebug("GameTime : " + Time.GameTime().TotalSeconds.ToString("F3") + "s");
             Program.PlayerList[new Tuple<int, int>(messageEventArgs.message.Agent, messageEventArgs.message.Client)].ExecuteMessage(communicationImpl, (MessageToServer)((ServerMessage)messageEventArgs.message).Message);
-            //SendMessageToAllClient();
         }
 
         //向所有Client发送消息，按照帧率定时发送，严禁在其他地方调用此函数
