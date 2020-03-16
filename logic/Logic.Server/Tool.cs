@@ -1,4 +1,4 @@
-﻿using Logic.Constant;
+using Logic.Constant;
 using static Logic.Constant.MapInfo;
 
 namespace Logic.Server

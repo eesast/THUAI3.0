@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using THUnity2D;
 using static Logic.Constant.Constant;
 using static Logic.Constant.MapInfo;

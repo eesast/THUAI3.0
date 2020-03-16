@@ -1,4 +1,4 @@
-﻿using Communication.Proto;
+using Communication.Proto;
 using Communication.Server;
 using Logic.Constant;
 using System;

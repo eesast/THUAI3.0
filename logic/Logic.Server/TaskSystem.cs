@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using Logic.Constant;
 using static Logic.Constant.Constant;

@@ -1,4 +1,4 @@
-﻿using Communication.Proto;
+using Communication.Proto;
 using Logic.Constant;
 using System;
 using System.Collections.Concurrent;

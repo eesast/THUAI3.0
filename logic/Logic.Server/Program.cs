@@ -1,4 +1,4 @@
-﻿using Communication.Proto;
+using Communication.Proto;
 using Logic.Constant;
 using System;
 using System.Collections.Generic;
@@ -60,7 +60,7 @@ namespace Logic.Server
                   {
                       if (!Convert.ToBoolean(o.debugLevel & 1))
                           Server.ServerDebug = new Action<string>(s => { });
-                      if(!Convert.ToBoolean(o.debugLevel & 2))
+                      if (!Convert.ToBoolean(o.debugLevel & 2))
                           Communication.Proto.Constants.Debug = new Constants.DebugFunc((str) => { });
                       if (!Convert.ToBoolean(o.debugLevel & 4))
                       {

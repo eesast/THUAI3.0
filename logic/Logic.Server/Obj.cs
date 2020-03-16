@@ -1,4 +1,4 @@
-﻿using Communication.Proto;
+using Communication.Proto;
 using Logic.Constant;
 using THUnity2D;
 using static Logic.Constant.MapInfo;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Collections.Concurrent;
@@ -54,7 +54,7 @@ namespace THUnity2D
             {
                 if (!_layers.ContainsKey(layer))
                     return null;
-                foreach(var gameObject in _layers[layer].Keys)
+                foreach (var gameObject in _layers[layer].Keys)
                 {
                     return gameObject;
                 }
@@ -107,7 +107,7 @@ namespace THUnity2D
             {
                 if (!_types.ContainsKey(type))
                     return null;
-                foreach(var gameObject in _types[type].Keys)
+                foreach (var gameObject in _types[type].Keys)
                 {
                     return gameObject;
                 }
