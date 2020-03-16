@@ -1,20 +1,20 @@
 #define _CRT_SECURE_NO_WARNINGS
-#ifndef NOMINMAX                      
+#ifndef NOMINMAX
 #define NOMINMAX
 #endif
-#include<cstdio>
-#include<HPSocket.h>
-#include<HPSocket-SSL.h>
-#include<HPTypeDef.h>
-#include<SocketInterface.h>
-#include<mutex>
-#include<sstream>
-#include<typeinfo>
-#include<ctime>
-#include<iostream>
-#include"CAPI.h"
-#include<thread>
-#pragma comment(lib, "HPSocket.lib" ) 
+#include <cstdio>
+#include <HPSocket.h>
+#include <HPSocket-SSL.h>
+#include <HPTypeDef.h>
+#include <SocketInterface.h>
+#include <mutex>
+#include <sstream>
+#include <typeinfo>
+#include <ctime>
+#include <iostream>
+#include "CAPI.h"
+#include <thread>
+#pragma comment(lib, "HPSocket.lib")
 
 #include <sys/timeb.h>
 
@@ -22,43 +22,44 @@ using namespace std;
 mutex io_mutex;
 mutex inforw_mutex;
 
-EnHandleResult CListenerImpl::OnPrepareConnect(ITcpClient* pSender, CONNID dwConnID, SOCKET socket) 
-{ 
+EnHandleResult CListenerImpl::OnPrepareConnect(ITcpClient *pSender, CONNID dwConnID, SOCKET socket)
+{
 	return HR_OK;
 }
 
-EnHandleResult CListenerImpl::OnConnect(ITcpClient* pSender, CONNID dwConnID)
+EnHandleResult CListenerImpl::OnConnect(ITcpClient *pSender, CONNID dwConnID)
 {
 	byte mes[maxl];
-	byte* tmp = mes;
+	byte *tmp = mes;
 	if (pthis->PlayerId == -1)
 	{
 		tmp = WriteInt32((int)PacketType::IdRequest, tmp);
-		Debug(1,"ClientSide: Request ID\n");
+		Debug(1, "ClientSide: Request ID\n");
 	}
 	else
 	{
-		tmp=WriteInt32((int)PacketType::IdAllocate,tmp);
-		tmp=WriteInt32(pthis->PlayerId,tmp);
-		Debug(1,"ClientSide: Using Pre-Allocated ID # " + to_string(pthis->PlayerId));
+		tmp = WriteInt32((int)PacketType::IdAllocate, tmp);
+		tmp = WriteInt32(pthis->PlayerId, tmp);
+		Debug(1, "ClientSide: Using Pre-Allocated ID # " + to_string(pthis->PlayerId));
 	}
 	tmp[0] = 0;
-	pthis->Send(mes,tmp-mes,0);
-	return HR_OK; 
+	pthis->Send(mes, tmp - mes, 0);
+	return HR_OK;
 }
-EnHandleResult CListenerImpl::OnHandShake(ITcpClient* pSender, CONNID dwConnID) {  return HR_OK; }
-EnHandleResult CListenerImpl::OnReceive(ITcpClient* pSender, CONNID dwConnID, int iLength) {return HR_OK;}
-EnHandleResult CListenerImpl::OnReceive(ITcpClient* pSender, CONNID dwConnID, const BYTE* pData, int iLength)
+EnHandleResult CListenerImpl::OnHandShake(ITcpClient *pSender, CONNID dwConnID) { return HR_OK; }
+EnHandleResult CListenerImpl::OnReceive(ITcpClient *pSender, CONNID dwConnID, int iLength) { return HR_OK; }
+EnHandleResult CListenerImpl::OnReceive(ITcpClient *pSender, CONNID dwConnID, const BYTE *pData, int iLength)
 {
-	if (pthis->PauseUpdate)return HR_IGNORE;
-	const byte* p = pData;
-	INT32 type = *(INT32*)p;
+	if (pthis->PauseUpdate)
+		return HR_IGNORE;
+	const byte *p = pData;
+	INT32 type = *(INT32 *)p;
 	p += 4;
-	Message* message = new Message();
+	Message *message = new Message();
 	switch (type)
 	{
 	case (INT32)PacketType::IdAllocate:
-		pthis->PlayerId = *(INT32*)p;
+		pthis->PlayerId = *(INT32 *)p;
 		Debug(1, "ClientSide: Allocated ID " + to_string(pthis->PlayerId));
 		p = NULL;
 		break;
@@ -77,14 +78,15 @@ EnHandleResult CListenerImpl::OnReceive(ITcpClient* pSender, CONNID dwConnID, co
 	}
 	return HR_OK;
 }
-EnHandleResult CListenerImpl::OnPrepareListen(ITcpServer* pSender, SOCKET soListen) {
+EnHandleResult CListenerImpl::OnPrepareListen(ITcpServer *pSender, SOCKET soListen)
+{
 	return HR_IGNORE;
 };
-EnHandleResult CListenerImpl::OnSend(ITcpClient* pSender, CONNID dwConnID, const BYTE* pData, int iLength)
-{ 
+EnHandleResult CListenerImpl::OnSend(ITcpClient *pSender, CONNID dwConnID, const BYTE *pData, int iLength)
+{
 	return HR_OK;
 }
-EnHandleResult CListenerImpl::OnClose(ITcpClient* pSender, CONNID dwConnID, EnSocketOperation enOperation, int iErrorCode)
+EnHandleResult CListenerImpl::OnClose(ITcpClient *pSender, CONNID dwConnID, EnSocketOperation enOperation, int iErrorCode)
 {
 	if (!pthis->Closed) //断线重连
 		while (!pSender->IsConnected())
@@ -93,34 +95,35 @@ EnHandleResult CListenerImpl::OnClose(ITcpClient* pSender, CONNID dwConnID, EnSo
 			pSender->Start((LPCTSTR)(pthis->ip.c_str()), pthis->port, false);
 			Sleep(1000);
 		}
-	return HR_OK; 
+	return HR_OK;
 }
 
-void CAPI::OnReceive(IMessage* message)
+void CAPI::OnReceive(IMessage *message)
 {
 	hash_t typehash = hash2(get_type(typeid(*message).name()));
 	if (typehash == hash2(get_type(typeid(Message).name())))
 	{
-		if (((Message*)message)->content != NULL)OnReceive(((Message*)message)->content);
+		if (((Message *)message)->content != NULL)
+			OnReceive(((Message *)message)->content);
 	}
 	else if (typehash == hash2(get_type(typeid(Protobuf::PingPacket).name())))
 	{
-		Ping = (currentTimeMillisec() - ((Protobuf::PingPacket*)message)->ticks()) * 0.0001f;		
+		Ping = (currentTimeMillisec() - ((Protobuf::PingPacket *)message)->ticks()) * 0.0001f;
 	}
 	else if (typehash == hash2(get_type(typeid(Protobuf::AgentId).name())))
 	{
-		AgentId = ((Protobuf::AgentId*)message)->agent(); //AgentId包通知Player对应的Agent
+		AgentId = ((Protobuf::AgentId *)message)->agent(); //AgentId包通知Player对应的Agent
 	}
 	else if (typehash == hash2(get_type(typeid(Protobuf::ChatMessage).name())))
 	{
 		Debug(1, "ChatMessage Received\n");
 		io_mutex.lock();
-		buffer += ((Protobuf::ChatMessage*)message)->message();
+		buffer += ((Protobuf::ChatMessage *)message)->message();
 		io_mutex.unlock();
 	}
 	else if (typehash == hash2(get_type(typeid(Protobuf::MessageToClient).name())))
 	{
-		UpdateInfo((Protobuf::MessageToClient*)message);
+		UpdateInfo((Protobuf::MessageToClient *)message);
 	}
 	else
 	{
@@ -138,38 +141,35 @@ void CAPI::Quit()
 
 void CAPI::SendChatMessage(string message)
 {
-	Protobuf::ChatMessage* mes1 = new Protobuf::ChatMessage();
+	Protobuf::ChatMessage *mes1 = new Protobuf::ChatMessage();
 	mes1->set_message(message);
-	Message* mes2 = new Message(PlayerId, mes1);
-	Message* mes3 = new Message(-1, mes2);
-	Message* mes = new Message(-1, mes3);
+	Message *mes2 = new Message(PlayerId, mes1);
+	Message *mes3 = new Message(-1, mes2);
+	Message *mes = new Message(-1, mes3);
 	Send(mes);
 }
 
-void CAPI::SendCommandMessage(MessageToServer* message)
+void CAPI::SendCommandMessage(MessageToServer *message)
 {
-	Message* mes2 = new Message(PlayerId, message);
-	Message* mes3 = new Message(-1, mes2);
-	Message* mes = new Message(-1, mes3);
+	Message *mes2 = new Message(PlayerId, message);
+	Message *mes3 = new Message(-1, mes2);
+	Message *mes = new Message(-1, mes3);
 	Send(mes);
 }
 
-void CAPI::UpdateInfo(Protobuf::MessageToClient* message)
+void CAPI::UpdateInfo(Protobuf::MessageToClient *message)
 {
-	
 }
 
 Player CAPI::GetInfo()
 {
 	inforw_mutex.lock();
-	Player p=player;
+	Player p = player;
 	inforw_mutex.unlock();
 	return p;
 }
 
-
-
-CAPI::CAPI():listener(this), pclient(&listener)
+CAPI::CAPI() : listener(this), pclient(&listener)
 {
 	Closed = false;
 	AgentId = 0;
@@ -183,16 +183,17 @@ void CAPI::Initialize()
 	PauseUpdate = false;
 }
 
-bool CAPI::ConnectServer(const char* address, USHORT port)
+bool CAPI::ConnectServer(const char *address, USHORT port)
 {
 	ip = address;
 	while (!pclient->IsConnected())
 	{
-		Debug(1,"ClientSide: Connecting to server ");
-		pclient->Start((LPCTSTR)address, port,false);
+		Debug(1, "ClientSide: Connecting to server ");
+		pclient->Start((LPCTSTR)address, port, false);
 		Sleep(1000);
 	}
-	while (AgentId == -1 || PlayerId == -1);
+	while (AgentId == -1 || PlayerId == -1)
+		;
 	return true;
 }
 
@@ -201,29 +202,29 @@ bool CAPI::IsConnected()
 	return pclient->IsConnected();
 }
 
-void CAPI::Send(Message* mes) //发送Message
+void CAPI::Send(Message *mes) //发送Message
 {
 	byte bytes[maxl];
-	byte* p = bytes;
+	byte *p = bytes;
 	p = WriteInt32((int)PacketType::ProtoPacket, p);
 	p = mes->SerializeToArray(p, maxl - 4);
-	pclient->Send(bytes, p-bytes);
+	pclient->Send(bytes, p - bytes);
 	Debug(2, "ClientSide: Data sent ", get_type(typeid(*(mes->content)).name()).c_str());
 }
 
-
 void CAPI::Refresh()
 {
-	if (AgentId == -1 || PlayerId == -1) throw new logic_error("Can not refresh when not ready.");
-	Protobuf::PingPacket* ping = new Protobuf::PingPacket();
+	if (AgentId == -1 || PlayerId == -1)
+		throw new logic_error("Can not refresh when not ready.");
+	Protobuf::PingPacket *ping = new Protobuf::PingPacket();
 	ping->set_ticks(currentTimeMillisec());
-	Message* mes1 = new Message(PlayerId, ping);
-	Message* mes2 = new Message(AgentId, mes1);
-	Message* mes = new Message(-1, mes2);
+	Message *mes1 = new Message(PlayerId, ping);
+	Message *mes2 = new Message(AgentId, mes1);
+	Message *mes = new Message(-1, mes2);
 	Send(mes);
 }
 
-bool CAPI::Send(const byte* pBuffer, int iLength, int iOffset )
+bool CAPI::Send(const byte *pBuffer, int iLength, int iOffset)
 {
 	return pclient->Send(pBuffer, iLength, iOffset);
 }
@@ -235,18 +236,13 @@ void CAPI::Disconnect()
 	pclient->Stop();
 }
 
-
 bool CAPI::PrintBuffer()
 {
-	if (buffer == "")return false;
+	if (buffer == "")
+		return false;
 	io_mutex.lock();
 	cout << buffer << endl;
 	buffer = "";
 	io_mutex.unlock();
 	return true;
 }
-
-
-
-
-
