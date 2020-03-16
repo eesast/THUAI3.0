@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "Logic.Client": {
-      "commandName": "Project",
-      "commandLineArgs": "-p 30000 -d 1"
-    }
-  }
-}

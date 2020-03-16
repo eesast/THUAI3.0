@@ -12,6 +12,7 @@ include/common
 *.cmake
 CMakeCache.txt
 CmakeFiles/
+build/
 
 ## VsCode
 .vscode/
