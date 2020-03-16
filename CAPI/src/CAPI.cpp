@@ -86,7 +86,7 @@ EnHandleResult CListenerImpl::OnSend(ITcpClient* pSender, CONNID dwConnID, const
 }
 EnHandleResult CListenerImpl::OnClose(ITcpClient* pSender, CONNID dwConnID, EnSocketOperation enOperation, int iErrorCode)
 {
-	if (!pthis->Closed) //��������
+	if (!pthis->Closed) //断线重连
 		while (!pSender->IsConnected())
 		{
 			printf("ClientSide: Connecting to server %s:%d\n", pthis->ip.c_str(), pthis->port);
@@ -109,7 +109,7 @@ void CAPI::OnReceive(IMessage* message)
 	}
 	else if (typehash == hash2(get_type(typeid(Protobuf::AgentId).name())))
 	{
-		AgentId = ((Protobuf::AgentId*)message)->agent(); //AgentId��֪ͨPlayer��Ӧ��Agent
+		AgentId = ((Protobuf::AgentId*)message)->agent(); //AgentId包通知Player对应的Agent
 	}
 	else if (typehash == hash2(get_type(typeid(Protobuf::ChatMessage).name())))
 	{
@@ -201,7 +201,7 @@ bool CAPI::IsConnected()
 	return pclient->IsConnected();
 }
 
-void CAPI::Send(Message* mes) //����Message
+void CAPI::Send(Message* mes) //发送Message
 {
 	byte bytes[maxl];
 	byte* p = bytes;

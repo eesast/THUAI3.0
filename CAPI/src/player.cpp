@@ -5,6 +5,6 @@ using namespace THUAI3;
 
 void play()
 {
-	/*   ѡ�ִ���  */
+	/*  玩家在这里写代码  */
 	
 }

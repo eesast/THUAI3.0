@@ -34,7 +34,7 @@ hash_t hash2(string str)
 
 string get_type(string s)
 {
-	/* ��ȡ��ʵtype����*/
+	/* 获取真实type名称*/
 	int i = 0;
 	while (i < s.length() && isdigit(s[i]))i++;
 	return s.substr(i);
@@ -83,7 +83,7 @@ Message* Message::New() const
 
 int Message::GetCachedSize() const
 {
-	// ��δ�����������ַ�����.��ʱ�ò����ú���
+	// 尚未加入类型名字符串长.暂时用不到该函数
 	return 4 + content->GetCachedSize();
 }
 

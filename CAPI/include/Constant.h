@@ -1,7 +1,7 @@
 #ifndef CONSTANT_H
 #define CONSTANT_H
 
-// ���������ݽṹ����ʹ�������ļ�����
+// 常量和数据结构，待使用配置文件生成
 struct Player
 {
 public:

@@ -17,7 +17,7 @@ enum class ObjType
 };
 
 enum class BlockType
-{               //��1����Ʒ�ӳ������ᷴ������0�Ļᴩ��ȥ
+{
     Wall,       //1
     Table,      //0
     FoodPoint,  //1
@@ -28,59 +28,85 @@ enum class BlockType
 };
 
 enum class DishType
-{
-    Empty = 0, //��
-    //����Ϊʳ��
-    Apple,
-    Banana,
-    Potato,
-    Tomato,
-    Egg,
-    Flour,
-    Chicken,
-    Pork,
-    Beef,
-    Honey,
-    Butter,
-    Romaine,
+{              //不确定英文怎么说的直接用了拼音
+    Empty = 0, //空
+    //以下为食材
+    Wheat,          //麦子
+    Rice,           //水稻
+    Tomato,         //番茄
+    Egg,            //鸡蛋
+    Milk,           //牛奶
+    Apple,          //苹果
+    Banana,         //香蕉
+    DarkPlum,       //乌梅
+    Hawthorn,       //山楂
+    Strawberry,     //草莓
+    Beef,           //牛肉
+    Pork,           //猪肉
+    ChickenMeat,    //鸡肉
+    Potato,         //土豆
+    Lettuce,        //生菜
+    Agaric,         //木耳
+    NeedleMushroom, //金针菇
+    Cabbage,        //包菜
     Size1,
-    //����Ϊ��Ʒ
-
-    Bread,
-    BasicHamburger,
-    GoodHamburger,
-    ApplePie,
-    BananaPie,
-    TomatoEgg,
-    MashedPotato,
+    //以下为中间产物
+    Flour,      //面粉
+    Noodle,     //面条
+    Bread,      //面包片
+    CookedRice, //米饭
+    Ketchup,    //番茄酱
+    Cream,      //奶油
+    //以下为菜品
+    TomatoFriedEgg,       //番茄炒蛋
+    TomatoFriedEggNoodle, //西红柿鸡蛋面
+    BeefNoodle,           //清青牛拉
+    OverRice,             //盖浇饭
+    HuangMenJi,           //黄焖鸡米饭
+    Barbecue,             //烤肉
+    FrenchFries,          //薯条
+    PlumJuice,            //酸梅汤
+    Hamburger,            //汉堡
+    StrawberryIcecream,   //草莓圣代
+    PopcornChicken,       //鸡米花
+    AgaricFriedEgg,       //木耳炒蛋
+    Cake,                 //蛋糕
+    BingTangHuLu,         //冰糖葫芦
+    FruitSalad,           //水果色拉
+    SpicedPot,
+    SpicedPot_3,
+    SpicedPot_4,
+    SpicedPot_5,
+    SpicedPot_6,
+    SpicedPot_7,
+    SpicedPot_8, //香锅
     Size2,
-    //����Ϊ����
-
+    //以下为垃圾
     OverCookedDish,
-    DarkDish,
+    DarkDish, //黑暗料理
     Size3
 };
 
 enum class ToolType
 {
     Empty = 0,
-    TigerShoes,  //��ͷЬ
-    SpeedBuff,   //����buff
-    StrenthBuff, //����buff
-    TeleScope,   //��Զ��
-    Condiment,   //����
-    Fertilizer,  //����
-    BreastPlate, //���ľ�
-    SpaceGate,   //������
-    Eye,         //��
+    TigerShoes,  //虎头鞋
+    SpeedBuff,   //极速buff
+    StrenthBuff, //力量buff
+    TeleScope,   //望远镜
+    Condiment,   //调料
+    Fertilizer,  //肥料
+    BreastPlate, //护心镜
+    SpaceGate,   //传送门
+    //Eye,//眼
 
-    WaveGlue,  //��ˮ
-    LandMine,  //����
-    Trap,      //����
-    FlashBomb, //���ⵯ
-    Hammer,    //����
-    Brick,     //שͷ
-    Stealer,   //����͵ȡ
+    WaveGlue, //胶水
+    LandMine, //地雷
+    Trap,     //陷阱
+    //FlashBomb,//闪光弹
+    //Hammer,//锤子
+    //Brick,//砖头
+    //Stealer,//分数偷取
 
     Size
 };
@@ -107,13 +133,12 @@ enum class CommandType
 enum class TALENT
 {
     None,
-    Run,
-    Strenth,
+    Runner,
+    StrongMan,
     Cook,
-    Technology,
-    Luck,
-    Bag,
-    Drunk
+    Technician,
+    LuckyBoy,
+    //DrunkMan
 };
 
 enum class MapLayer
@@ -140,13 +165,13 @@ enum class Direction
 };
 
 // 50x50
-// 0 : �յ�
-// 1 : �ύ�㣬λ������2x2����
-// 2 : ʳ�Ĳ����㣬��3��
-// 3 : ����̨�����ںϳ�ʳ���4��
-// 4 : ����Ͱ����5��
-// 5 : �ϰ������ɴ�������͸��
-// 6 : ���ӣ����ɴ������ɷ�����Ʒ
+// 0 : 空地
+// 1 : 提交点，位于中心2x2区域
+// 2 : 食材产生点，共3个
+// 3 : 工作台，用于合成食物，共4个
+// 4 : 垃圾桶，共5个
+// 5 : 障碍，不可穿过，不透明
+// 6 : 桌子，不可穿过，可放置物品
 const short mapinfo[][50] =
     {
         {5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5},
@@ -227,7 +252,7 @@ public:
 
 class Character : public GameObject
 {
-    std::pair<int, int> CommunicationID; //��һ������ʾAgent���ڶ�������ʾClient
+    std::pair<int, int> CommunicationID; //第一个数表示Agent，第二个数表示Client
     int team = 0;
     double GlueExtraMoveSpeed = 0;
     double moveSpeed = Player::InitMoveSpeed;

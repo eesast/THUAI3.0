@@ -47,10 +47,10 @@ namespace PacketType
 {
 	enum PacketType
 	{
-		ProtoPacket = 0, //���ݰ�(S2C,C2S)
-		IdRequest = 1, //Client����ID(C2S)
-		IdAllocate = 2, //Client�������ID(C2S)��Server��Client����ID(S2C)
-		Disconnected = 3 //Server�����Ͽ�(S2C)
+		ProtoPacket = 0, //内容包(S2C,C2S)
+		IdRequest = 1, //Client请求ID(C2S)
+		IdAllocate = 2, //Client请求分配ID(C2S)，Server给Client分配ID(S2C)
+		Disconnected = 3 //Server主动断开(S2C)
 	};
 }
 
@@ -59,7 +59,7 @@ string ReadString(const byte* bytes);
 class Message :public IMessage
 {
 public:
-	int Address; //������/�����ߣ��򻷾�����
+	int Address; //发送者/接收者，因环境而定
 	IMessage* content;
 	Message();
 	Message(int addr, IMessage* p);
@@ -68,7 +68,7 @@ public:
 	const byte* ParseFromArray(const byte* bytes, int size);
 	byte* SerializeToArray(byte* bytes, int size);
 protected:
-	// δʵ��
+	// 未实现
 	virtual google::protobuf::Metadata GetMetadata() const ;
 };
 

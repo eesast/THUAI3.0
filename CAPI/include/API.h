@@ -11,8 +11,8 @@ namespace THUAI3
 	void Pick();
 	void Use(int type, int parameter);
 	void SpeakToFriend(std::string speakText);
-	int GetPing();     // ��ȷ���������ʱ
-	void PauseCommunication();   // ��ͣ���ݸ���
+	int GetPing();     // 精确到毫秒的延时
+	void PauseCommunication();   // 暂停数据更新
 	void ResumeCommunication();
 	Player GetInfo();            
 } 

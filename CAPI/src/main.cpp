@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 	pthread_create(&pt, NULL, Ping, NULL);
 	pthread_detach(pt);
 	string message = "Connected!";
-	//��ѭ��ִ����ҳ���
+	//死循环执行玩家程序
 	/*
 	while (!GameFinished) 
 	{
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 	API.Quit();
 	*/
 
-	// client�����Ҳ���
+	// client聊天室测试
 	while (API.IsConnected())
 	{
 		if (message == "quit")
