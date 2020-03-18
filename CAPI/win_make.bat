@@ -1,5 +1,5 @@
 @echo off 
-cd .\proto\
+cd ./proto/
 start generator.bat
 cd ..
 md build && cd build

@@ -7,19 +7,96 @@ using System.Net;
 using Google.Protobuf;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
+using System.Text;
+using JWT;
+using JWT.Algorithms;
+using JWT.Serializers;
 
 namespace Communication.Server
 {
     public sealed class CommunicationImpl : ICommunication
     {
-        private IDServer server;
-        private ManualResetEvent full;
-        private DockerGameStatus status;
+        private readonly IDServer server = new IDServer();
+        private readonly ManualResetEvent full = new ManualResetEvent(false);
+        private string roomID, token;
+        private static readonly IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
+        private static readonly IJsonSerializer serializer = new JsonNetSerializer();
+        private static readonly IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
+        private static readonly IDateTimeProvider provider = new UtcDateTimeProvider();
+        private readonly JwtDecoder decoder = new JwtDecoder(serializer, new JwtValidator(serializer, provider), urlEncoder, algorithm);
+        
+        public string Token
+        {
+            get
+            {
+                return token;
+            }
+            set
+            {
+                roomID = (string) JObject.Parse(decoder.Decode(value))["roomID"];
+                token = value;
+            }
+        }
 
-        public IPEndPoint EndPoint { get; set; }
-        public string ID { get; set; }
+        private async Task HttpAsync(string uri, string token, string method, JObject data)
+        {
+            try
+            {
+                var request = WebRequest.CreateHttp(uri);
+                request.Method = method;
+                request.Headers.Add("Authorization", $"bearer {token}");
+                if (data != null)
+                {
+                    request.ContentType = "application/json";
+                    var raw = Encoding.UTF8.GetBytes(data.ToString());
+                    request.GetRequestStream().Write(raw, 0, raw.Length);
+                }
+                
+                var response = await request.GetResponseAsync() as HttpWebResponse;
+                if ((int)response.StatusCode / 100 != 2)
+                    Constants.Debug(response.StatusDescription);
+            }
+            catch (Exception e)
+            {
+                Constants.Debug(e.ToString());
+            }
+        }
+
+        private async Task NoticeServer(string token, DockerGameStatus status)
+        {
+            if (IsOffline) return;
+            if (token == null)
+            {
+                await HttpAsync($"http://localhost:28888/v1/rooms/{roomID}", this.token, "PUT", new JObject
+                {
+                    ["status"] = (int)status
+                });
+            }
+            else
+            {
+                await HttpAsync($"http://localhost:28888/v1/rooms/{roomID}/join", token, "GET", null);
+            }
+        }
+
+        private DockerGameStatus Status
+        {
+            set
+            {
+                Task.Run(() => NoticeServer(null, value));
+            }
+        }
 
         public int PlayerCount => server.Count;
+
+        public ushort ServerPort
+        {
+            get => server.Port;
+            set => server.Port = value;
+        }
+        public bool IsOffline { get; set; }
 
         public event MessageHandler MsgProcess;
 
@@ -29,7 +106,7 @@ namespace Communication.Server
         }
         public void GameOver()
         {
-            status = DockerGameStatus.PendingTerminated;
+            Status = DockerGameStatus.Finish;
             server.Stop();
         }
 
@@ -37,6 +114,17 @@ namespace Communication.Server
         {
             server.OnReceive += delegate (Message message) //收到信息后将消息传给逻辑处理
             {
+                if (message.Content is PlayerToken token)
+                {
+                    NoticeServer(token.Token, default).Wait();
+                    Constants.Debug($"Agent Connected: {server.Count}/{Constants.AgentCount}");
+                    if (server.Count == Constants.AgentCount)
+                    {
+                        full.Set();
+                        server.Pause();
+                    }
+                    return;
+                }
                 ServerMessage msg = new ServerMessage();
                 msg.Agent = message.Address;
                 message = message.Content as Message;
@@ -46,34 +134,21 @@ namespace Communication.Server
                 OnNewMessage(e);
             };
 
-            server.OnAccept += delegate () //判断是否满人
-            {
-                Constants.Debug($"Agent Connected: {server.Count}/{Constants.AgentCount}");
-                if (server.Count == Constants.AgentCount)
-                {
-                    full.Set();
-                    server.Pause();
-                }
-            };
             server.InternalQuit += delegate ()
             {
                 server.Resume();
             };
-            full = new ManualResetEvent(false);
-            server.Port = Constants.ServerPort;
+            full.Reset();
             server.Start();
-            status = DockerGameStatus.Listening;
             Constants.Debug("Waiting for clients");
             full.WaitOne();
-            //此时应广播通知Client，不过应该由logic广播？
-            status = DockerGameStatus.Heartbeat;
+            //FIXME: 现在似乎有的时候会先set状态competing再join，不知道会不会有什么影响
+            Status = DockerGameStatus.Competing;
         }
+
         public void Initialize()
         {
-            server = new IDServer();
-            status = DockerGameStatus.Idle;
-            //connect to the rest server
-
+            Status = DockerGameStatus.Waiting;
         }
 
         public void SendMessage(ServerMessage message)
@@ -93,6 +168,7 @@ namespace Communication.Server
         public void Dispose()
         {
             server.Dispose();
+            full.Dispose();
         }
     }
 }

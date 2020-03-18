@@ -49,29 +49,37 @@ namespace Communication.Proto {
             "chAEEg8KC09ialR5cGVTaXplEAUqdAoQQmxvY2tUeXBlTWVzc2FnZRIICgRX",
             "YWxsEAASCQoFVGFibGUQARINCglGb29kUG9pbnQQAhIKCgZDb29rZXIQAxIO",
             "CgpSdWJiaXNoQmluEAQSDQoJVGFza1BvaW50EAUSEQoNQmxvY2tUeXBlU2l6",
-            "ZRAGKvMCCg9EaXNoVHlwZU1lc3NhZ2USDQoJRGlzaEVtcHR5EAASCQoFQXBw",
-            "bGUQARIKCgZCYW5hbmEQAhIKCgZQb3RhdG8QAxIKCgZUb21hdG8QBBIHCgNF",
-            "Z2cQBRIJCgVGbG91chAGEgsKB0NoaWNrZW4QBxIICgRQb3JrEAgSCAoEQmVl",
-            "ZhAJEgkKBUhvbmV5EAoSCgoGQnV0dGVyEAsSCwoHUm9tYWluZRAMEhEKDURp",
-            "c2hUeXBlU2l6ZTEQDRIJCgVCcmVhZBAOEhIKDkJhc2ljSGFtYnVyZ2VyEA8S",
-            "EQoNR29vZEhhbWJ1cmdlchAQEgwKCEFwcGxlUGllEBESDQoJQmFuYW5hUGll",
-            "EBISDQoJVG9tYXRvRWdnEBMSEAoMTWFzaGVkUG90YXRvEBQSEQoNRGlzaFR5",
-            "cGVTaXplMhAVEhIKDk92ZXJDb29rZWREaXNoEBYSDAoIRGFya0Rpc2gQFxIR",
-            "Cg1EaXNoVHlwZVNpemUzEBgqkgIKD1Rvb2xUeXBlTWVzc2FnZRINCglUb29s",
-            "RW1wdHkQABIOCgpUaWdlclNob2VzEAESDQoJU3BlZWRCdWZmEAISDwoLU3Ry",
-            "ZW50aEJ1ZmYQAxINCglUZWxlU2NvcGUQBBINCglDb25kaW1lbnQQBRIOCgpG",
-            "ZXJ0aWxpemVyEAYSDwoLQnJlYXN0UGxhdGUQBxINCglTcGFjZUdhdGUQCBIH",
-            "CgNFeWUQCRIMCghXYXZlR2x1ZRAKEgwKCExhbmRNaW5lEAsSCAoEVHJhcBAM",
-            "Eg0KCUZsYXNoQm9tYhANEgoKBkhhbW1lchAOEgkKBUJyaWNrEA8SCwoHU3Rl",
-            "YWxlchAQEhAKDFRvb2xUeXBlU2l6ZRARKlkKElRyaWdnZXJUeXBlTWVzc2Fn",
-            "ZRITCg9UcmlnZ2VyV2F2ZUdsdWUQABIPCgtUcmFwVHJpZ2dlchABEggKBE1p",
-            "bmUQAhITCg9UcmlnZ2VyVHlwZVNpemUQAypBCgtCdWZmTWVzc2FnZRIKCgZG",
-            "cm96ZW4QABILCgdTdHVubmVkEAESCwoHU3BlZWRVcBACEgwKCFNsb3dEb3du",
-            "EAMqNQoQRGlzaFN0YXRlTWVzc2FnZRIHCgNSYXcQABIICgRHb29kEAESDgoK",
-            "T3ZlckNvb2tlZBACKoIBChBEaXJlY3Rpb25NZXNzYWdlEgkKBVJpZ2h0EAAS",
-            "CwoHUmlnaHRVcBABEgYKAlVwEAISCgoGTGVmdFVwEAMSCAoETGVmdBAEEgwK",
-            "CExlZnREb3duEAUSCAoERG93bhAGEg0KCVJpZ2h0RG93bhAHEhEKDURpcmVj",
-            "dGlvblNpemUQCEIWqgITQ29tbXVuaWNhdGlvbi5Qcm90b2IGcHJvdG8z"));
+            "ZRAGKpUGCg9EaXNoVHlwZU1lc3NhZ2USDQoJRGlzaEVtcHR5EAASCQoFV2hl",
+            "YXQQARIICgRSaWNlEAISCgoGVG9tYXRvEAMSBwoDRWdnEAQSCAoETWlsaxAF",
+            "EgkKBUFwcGxlEAYSCgoGQmFuYW5hEAcSDAoIRGFya1BsdW0QCBIMCghIYXd0",
+            "aG9ybhAJEg4KClN0cmF3YmVycnkQChIICgRCZWVmEAsSCAoEUG9yaxAMEg8K",
+            "C0NoaWNrZW5NZWF0EA0SCgoGUG90YXRvEA4SCwoHTGV0dHVjZRAPEgoKBkFn",
+            "YXJpYxAQEhIKDk5lZWRsZU11c2hyb29tEBESCwoHQ2FiYmFnZRASEg0KCURp",
+            "c2hTaXplMRATEgkKBUZsb3VyEBQSCgoGTm9vZGxlEBUSCQoFQnJlYWQQFhIO",
+            "CgpDb29rZWRSaWNlEBcSCwoHS2V0Y2h1cBAYEgkKBUNyZWFtEBkSEgoOVG9t",
+            "YXRvRnJpZWRFZ2cQGhIYChRUb21hdG9GcmllZEVnZ05vb2RsZRAbEg4KCkJl",
+            "ZWZOb29kbGUQHBIMCghPdmVyUmljZRAdEg4KCkh1YW5nTWVuSmkQHhIMCghC",
+            "YXJiZWN1ZRAfEg8KC0ZyZW5jaEZyaWVzECASDQoJUGx1bUp1aWNlECESDQoJ",
+            "SGFtYnVyZ2VyECISFgoSU3RyYXdiZXJyeUljZWNyZWFtECMSEgoOUG9wY29y",
+            "bkNoaWNrZW4QJBISCg5BZ2FyaWNGcmllZEVnZxAlEggKBENha2UQJhIQCgxC",
+            "aW5nVGFuZ0h1THUQJxIOCgpGcnVpdFNhbGFkECgSDQoJU3BpY2VkUG90ECkS",
+            "DwoLU3BpY2VkUG90XzMQKhIPCgtTcGljZWRQb3RfNBArEg8KC1NwaWNlZFBv",
+            "dF81ECwSDwoLU3BpY2VkUG90XzYQLRIPCgtTcGljZWRQb3RfNxAuEg8KC1Nw",
+            "aWNlZFBvdF84EC8SDQoJRGlzaFNpemUyEDASEgoOT3ZlckNvb2tlZERpc2gQ",
+            "MRIMCghEYXJrRGlzaBAyEg0KCURpc2hTaXplMxAzKtIBCg9Ub29sVHlwZU1l",
+            "c3NhZ2USDQoJVG9vbEVtcHR5EAASDgoKVGlnZXJTaG9lcxABEg0KCVNwZWVk",
+            "QnVmZhACEg8KC1N0cmVudGhCdWZmEAMSDQoJVGVsZVNjb3BlEAQSDQoJQ29u",
+            "ZGltZW50EAUSDgoKRmVydGlsaXplchAGEg8KC0JyZWFzdFBsYXRlEAcSDQoJ",
+            "U3BhY2VHYXRlEAgSDAoIV2F2ZUdsdWUQCRIMCghMYW5kTWluZRAKEggKBFRy",
+            "YXAQCxIMCghUb29sU2l6ZRAQKlUKElRyaWdnZXJUeXBlTWVzc2FnZRITCg9U",
+            "cmlnZ2VyV2F2ZUdsdWUQABIPCgtUcmFwVHJpZ2dlchABEggKBE1pbmUQAhIP",
+            "CgtUcmlnZ2VyU2l6ZRADKkEKC0J1ZmZNZXNzYWdlEgoKBkZyb3plbhAAEgsK",
+            "B1N0dW5uZWQQARILCgdTcGVlZFVwEAISDAoIU2xvd0Rvd24QAyo1ChBEaXNo",
+            "U3RhdGVNZXNzYWdlEgcKA1JhdxAAEggKBEdvb2QQARIOCgpPdmVyQ29va2Vk",
+            "EAIqggEKEERpcmVjdGlvbk1lc3NhZ2USCQoFUmlnaHQQABILCgdSaWdodFVw",
+            "EAESBgoCVXAQAhIKCgZMZWZ0VXAQAxIICgRMZWZ0EAQSDAoITGVmdERvd24Q",
+            "BRIICgREb3duEAYSDQoJUmlnaHREb3duEAcSEQoNRGlyZWN0aW9uU2l6ZRAI",
+            "QhaqAhNDb21tdW5pY2F0aW9uLlByb3RvYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Communication.Proto.ObjTypeMessage), typeof(global::Communication.Proto.BlockTypeMessage), typeof(global::Communication.Proto.DishTypeMessage), typeof(global::Communication.Proto.ToolTypeMessage), typeof(global::Communication.Proto.TriggerTypeMessage), typeof(global::Communication.Proto.BuffMessage), typeof(global::Communication.Proto.DishStateMessage), typeof(global::Communication.Proto.DirectionMessage), }, new pbr::GeneratedClrTypeInfo[] {
@@ -105,33 +113,183 @@ namespace Communication.Proto {
 
   public enum DishTypeMessage {
     [pbr::OriginalName("DishEmpty")] DishEmpty = 0,
-    [pbr::OriginalName("Apple")] Apple = 1,
-    [pbr::OriginalName("Banana")] Banana = 2,
-    [pbr::OriginalName("Potato")] Potato = 3,
-    [pbr::OriginalName("Tomato")] Tomato = 4,
-    [pbr::OriginalName("Egg")] Egg = 5,
-    [pbr::OriginalName("Flour")] Flour = 6,
-    [pbr::OriginalName("Chicken")] Chicken = 7,
-    [pbr::OriginalName("Pork")] Pork = 8,
-    [pbr::OriginalName("Beef")] Beef = 9,
-    [pbr::OriginalName("Honey")] Honey = 10,
-    [pbr::OriginalName("Butter")] Butter = 11,
-    [pbr::OriginalName("Romaine")] Romaine = 12,
+    /// <summary>
+    ///以下为食材
+    /// </summary>
+    [pbr::OriginalName("Wheat")] Wheat = 1,
+    /// <summary>
+    ///水稻
+    /// </summary>
+    [pbr::OriginalName("Rice")] Rice = 2,
+    /// <summary>
+    ///番茄
+    /// </summary>
+    [pbr::OriginalName("Tomato")] Tomato = 3,
+    /// <summary>
+    ///鸡蛋
+    /// </summary>
+    [pbr::OriginalName("Egg")] Egg = 4,
+    /// <summary>
+    ///牛奶
+    /// </summary>
+    [pbr::OriginalName("Milk")] Milk = 5,
+    /// <summary>
+    ///苹果
+    /// </summary>
+    [pbr::OriginalName("Apple")] Apple = 6,
+    /// <summary>
+    ///香蕉
+    /// </summary>
+    [pbr::OriginalName("Banana")] Banana = 7,
+    /// <summary>
+    ///乌梅
+    /// </summary>
+    [pbr::OriginalName("DarkPlum")] DarkPlum = 8,
+    /// <summary>
+    ///山楂
+    /// </summary>
+    [pbr::OriginalName("Hawthorn")] Hawthorn = 9,
+    /// <summary>
+    ///草莓
+    /// </summary>
+    [pbr::OriginalName("Strawberry")] Strawberry = 10,
+    /// <summary>
+    ///牛肉
+    /// </summary>
+    [pbr::OriginalName("Beef")] Beef = 11,
+    /// <summary>
+    ///猪肉
+    /// </summary>
+    [pbr::OriginalName("Pork")] Pork = 12,
+    /// <summary>
+    ///鸡肉
+    /// </summary>
+    [pbr::OriginalName("ChickenMeat")] ChickenMeat = 13,
+    /// <summary>
+    ///土豆
+    /// </summary>
+    [pbr::OriginalName("Potato")] Potato = 14,
+    /// <summary>
+    ///生菜
+    /// </summary>
+    [pbr::OriginalName("Lettuce")] Lettuce = 15,
+    /// <summary>
+    ///木耳
+    /// </summary>
+    [pbr::OriginalName("Agaric")] Agaric = 16,
+    /// <summary>
+    ///金针菇
+    /// </summary>
+    [pbr::OriginalName("NeedleMushroom")] NeedleMushroom = 17,
+    /// <summary>
+    ///包菜
+    /// </summary>
+    [pbr::OriginalName("Cabbage")] Cabbage = 18,
+    [pbr::OriginalName("DishSize1")] DishSize1 = 19,
+    /// <summary>
+    ///以下为中间产物
+    /// </summary>
+    [pbr::OriginalName("Flour")] Flour = 20,
+    /// <summary>
+    ///面条
+    /// </summary>
+    [pbr::OriginalName("Noodle")] Noodle = 21,
+    /// <summary>
+    ///面包片
+    /// </summary>
+    [pbr::OriginalName("Bread")] Bread = 22,
+    /// <summary>
+    ///米饭
+    /// </summary>
+    [pbr::OriginalName("CookedRice")] CookedRice = 23,
+    /// <summary>
+    ///番茄酱
+    /// </summary>
+    [pbr::OriginalName("Ketchup")] Ketchup = 24,
+    /// <summary>
+    ///奶油
+    /// </summary>
+    [pbr::OriginalName("Cream")] Cream = 25,
     /// <summary>
     ///以下为菜品
     /// </summary>
-    [pbr::OriginalName("DishTypeSize1")] DishTypeSize1 = 13,
-    [pbr::OriginalName("Bread")] Bread = 14,
-    [pbr::OriginalName("BasicHamburger")] BasicHamburger = 15,
-    [pbr::OriginalName("GoodHamburger")] GoodHamburger = 16,
-    [pbr::OriginalName("ApplePie")] ApplePie = 17,
-    [pbr::OriginalName("BananaPie")] BananaPie = 18,
-    [pbr::OriginalName("TomatoEgg")] TomatoEgg = 19,
-    [pbr::OriginalName("MashedPotato")] MashedPotato = 20,
-    [pbr::OriginalName("DishTypeSize2")] DishTypeSize2 = 21,
-    [pbr::OriginalName("OverCookedDish")] OverCookedDish = 22,
-    [pbr::OriginalName("DarkDish")] DarkDish = 23,
-    [pbr::OriginalName("DishTypeSize3")] DishTypeSize3 = 24,
+    [pbr::OriginalName("TomatoFriedEgg")] TomatoFriedEgg = 26,
+    /// <summary>
+    ///西红柿鸡蛋面
+    /// </summary>
+    [pbr::OriginalName("TomatoFriedEggNoodle")] TomatoFriedEggNoodle = 27,
+    /// <summary>
+    ///清青牛拉
+    /// </summary>
+    [pbr::OriginalName("BeefNoodle")] BeefNoodle = 28,
+    /// <summary>
+    ///盖浇饭
+    /// </summary>
+    [pbr::OriginalName("OverRice")] OverRice = 29,
+    /// <summary>
+    ///黄焖鸡米饭
+    /// </summary>
+    [pbr::OriginalName("HuangMenJi")] HuangMenJi = 30,
+    /// <summary>
+    ///烤肉
+    /// </summary>
+    [pbr::OriginalName("Barbecue")] Barbecue = 31,
+    /// <summary>
+    ///薯条
+    /// </summary>
+    [pbr::OriginalName("FrenchFries")] FrenchFries = 32,
+    /// <summary>
+    ///酸梅汤
+    /// </summary>
+    [pbr::OriginalName("PlumJuice")] PlumJuice = 33,
+    /// <summary>
+    ///汉堡
+    /// </summary>
+    [pbr::OriginalName("Hamburger")] Hamburger = 34,
+    /// <summary>
+    ///草莓圣代
+    /// </summary>
+    [pbr::OriginalName("StrawberryIcecream")] StrawberryIcecream = 35,
+    /// <summary>
+    ///鸡米花
+    /// </summary>
+    [pbr::OriginalName("PopcornChicken")] PopcornChicken = 36,
+    /// <summary>
+    ///木耳炒蛋
+    /// </summary>
+    [pbr::OriginalName("AgaricFriedEgg")] AgaricFriedEgg = 37,
+    /// <summary>
+    ///蛋糕
+    /// </summary>
+    [pbr::OriginalName("Cake")] Cake = 38,
+    /// <summary>
+    ///冰糖葫芦
+    /// </summary>
+    [pbr::OriginalName("BingTangHuLu")] BingTangHuLu = 39,
+    /// <summary>
+    ///水果色拉
+    /// </summary>
+    [pbr::OriginalName("FruitSalad")] FruitSalad = 40,
+    [pbr::OriginalName("SpicedPot")] SpicedPot = 41,
+    [pbr::OriginalName("SpicedPot_3")] SpicedPot3 = 42,
+    [pbr::OriginalName("SpicedPot_4")] SpicedPot4 = 43,
+    [pbr::OriginalName("SpicedPot_5")] SpicedPot5 = 44,
+    [pbr::OriginalName("SpicedPot_6")] SpicedPot6 = 45,
+    [pbr::OriginalName("SpicedPot_7")] SpicedPot7 = 46,
+    /// <summary>
+    ///香锅
+    /// </summary>
+    [pbr::OriginalName("SpicedPot_8")] SpicedPot8 = 47,
+    [pbr::OriginalName("DishSize2")] DishSize2 = 48,
+    /// <summary>
+    ///以下为垃圾
+    /// </summary>
+    [pbr::OriginalName("OverCookedDish")] OverCookedDish = 49,
+    /// <summary>
+    ///黑暗料理
+    /// </summary>
+    [pbr::OriginalName("DarkDish")] DarkDish = 50,
+    [pbr::OriginalName("DishSize3")] DishSize3 = 51,
   }
 
   public enum ToolTypeMessage {
@@ -144,22 +302,26 @@ namespace Communication.Proto {
     [pbr::OriginalName("Fertilizer")] Fertilizer = 6,
     [pbr::OriginalName("BreastPlate")] BreastPlate = 7,
     [pbr::OriginalName("SpaceGate")] SpaceGate = 8,
-    [pbr::OriginalName("Eye")] Eye = 9,
-    [pbr::OriginalName("WaveGlue")] WaveGlue = 10,
-    [pbr::OriginalName("LandMine")] LandMine = 11,
-    [pbr::OriginalName("Trap")] Trap = 12,
-    [pbr::OriginalName("FlashBomb")] FlashBomb = 13,
-    [pbr::OriginalName("Hammer")] Hammer = 14,
-    [pbr::OriginalName("Brick")] Brick = 15,
-    [pbr::OriginalName("Stealer")] Stealer = 16,
-    [pbr::OriginalName("ToolTypeSize")] ToolTypeSize = 17,
+    /// <summary>
+    ///Eye = 9;
+    /// </summary>
+    [pbr::OriginalName("WaveGlue")] WaveGlue = 9,
+    [pbr::OriginalName("LandMine")] LandMine = 10,
+    [pbr::OriginalName("Trap")] Trap = 11,
+    /// <summary>
+    ///FlashBomb = 12;
+    ///Hammer = 13;
+    ///Brick = 14;
+    ///Stealer = 15;
+    /// </summary>
+    [pbr::OriginalName("ToolSize")] ToolSize = 16,
   }
 
   public enum TriggerTypeMessage {
     [pbr::OriginalName("TriggerWaveGlue")] TriggerWaveGlue = 0,
     [pbr::OriginalName("TrapTrigger")] TrapTrigger = 1,
     [pbr::OriginalName("Mine")] Mine = 2,
-    [pbr::OriginalName("TriggerTypeSize")] TriggerTypeSize = 3,
+    [pbr::OriginalName("TriggerSize")] TriggerSize = 3,
   }
 
   public enum BuffMessage {

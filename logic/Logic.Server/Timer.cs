@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 //#pragma warning disable CS8622
@@ -6,7 +6,7 @@ namespace Timer
 {
     public static class Time
     {
-        private static DateTime initTime = new DateTime();
+        public static DateTime initTime = new DateTime();
         public static bool run = true;
         public static void InitializeTime()
         {
