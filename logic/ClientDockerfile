@@ -1,8 +1,13 @@
 # Agent and client
 
 # FROM mcr.microsoft.com/dotnet/core/runtime:3.0
-FROM mcr.microsoft.com/dotnet/core/runtime:3.0-nanoserver-1909
+FROM mcr.microsoft.com/dotnet/core/runtime:3.0-nanoserver-1803
 COPY logic/Logic.Client/bin/Release/netcoreapp3.0/win-x64/ app/
-# COPY communication/Agent/bin/Release/netcoreapp3.0/linux-x64/ app/
-# ENTRYPOINT ["dotnet", "app/Communication.Agent.dll","127.0.0.1:10086","30000"]
-ENTRYPOINT ["dotnet", "app/Logic.Client.dll"]
+COPY communication/Agent/bin/Release/netcoreapp3.0/linux-x64/ app/
+COPY logic/RunAgentClient.sh app/
+# RUN dotnet app/Logic.Client.dll
+# ENTRYPOINT ["dotnet", "app/Communication.Agent.dll"]
+ENTRYPOINT ["./app/RunAgentClient.sh"]
+CMD ["1","2"]
+# CMD ["127.0.0.1:10086","30000"]
+# ENTRYPOINT ["dotnet", "app/Logic.Client.dll"]

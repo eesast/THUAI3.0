@@ -3,3 +3,4 @@
 FROM mcr.microsoft.com/dotnet/core/runtime:3.0
 COPY logic/Logic.Server/bin/Release/netcoreapp3.0/linux-x64/ app/
 ENTRYPOINT ["dotnet", "app/Logic.Server.dll"]
+CMD ["10086","1","1","5000"]
