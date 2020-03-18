@@ -3,7 +3,7 @@ name: .NET Core
 on: 
   push:
     branches: 
-    - master
+    - dev
 
 jobs:
 #   build:
@@ -50,9 +50,17 @@ jobs:
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/thuai_agent:latest -f logic/AgentDockerfile .
 #       - name: Build docker image of client
 #         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/thuai_client:latest -f logic/ClientDockerfile .
+      - name: Build CAPI_compile docker image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/thuai_capi_compile:latest -f CAPI/Dockerfile_compile .
+      - name: Build CAPI_run docker image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/thuai_capi_run:latest -f CAPI/Dockerfile_run .
       - name: Push server image to DockerHub
         run: docker push ${{ secrets.DOCKER_USERNAME }}/thuai_server:latest
       - name: Push agent image to DockerHub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/thuai_agent:latest
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/thuai_capi_compile
+      - name: Push CAPI_compile image to DockerHub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/thuai_capi_compile:latest
+      - name: Push CAPI_run image to DockerHub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/thuai_capi_run:latest
 #       - name: Push server image to DockerHub
 #         run: docker push ${{ secrets.DOCKER_USERNAME }}/thuai_client:latest
