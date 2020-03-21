@@ -32,14 +32,15 @@ namespace Logic.Server
                     Program.PlayerList.Add(playerIDTuple, new Player(2.5, 1.5));//new Random().Next(2, WORLD_MAP_WIDTH - 2), new Random().Next(2, WORLD_MAP_HEIGHT - 2)));
                     Program.PlayerList[playerIDTuple].CommunicationID = playerIDTuple;
                     MessageToClient msg = new MessageToClient();
-                    msg.GameObjectMessageList.Add(
+                    msg.GameObjectList.Add(
                         Program.PlayerList[playerIDTuple].ID,
-                        new GameObjectMessage
+                        new Communication.Proto.GameObject
                         {
-                            ObjType = ObjTypeMessage.People,
+                            ObjType = ObjType.People,
                             IsMoving = false,
-                            Position = new XYPositionMessage { X = Program.PlayerList[playerIDTuple].Position.x, Y = Program.PlayerList[playerIDTuple].Position.y },
-                            Direction = (DirectionMessage)(int)Program.PlayerList[playerIDTuple].facingDirection
+                            PositionX = Program.PlayerList[playerIDTuple].Position.x,
+                            PositionY = Program.PlayerList[playerIDTuple].Position.y,
+                            Direction = (Communication.Proto.Direction)Program.PlayerList[playerIDTuple].facingDirection
                         });
                     ServerCommunication.SendMessage(new ServerMessage
                     {
@@ -93,14 +94,14 @@ namespace Logic.Server
 
         void ToolRefresh(object o)
         {
-            XYPosition tempPosition = null;
+            THUnity2D.XYPosition tempPosition = null;
             for (int i = 0; i < 10; i++)//加入次数限制，防止后期地图过满疯狂Random
             {
-                tempPosition = new XYPosition(Program.Random.Next(1, map.GetLength(0) - 1), Program.Random.Next(1, map.GetLength(1) - 1));
+                tempPosition = new THUnity2D.XYPosition(Program.Random.Next(1, map.GetLength(0) - 1), Program.Random.Next(1, map.GetLength(1) - 1));
                 if (WorldMap.Grid[(int)tempPosition.x, (int)tempPosition.y].IsEmpty())
                     break;
             }
-            new Tool(tempPosition.x + 0.5, tempPosition.y + 0.5, (ToolType)Program.Random.Next(1, (int)ToolType.Size - 1)).Parent = WorldMap;
+            new Tool(tempPosition.x + 0.5, tempPosition.y + 0.5, (ToolType)Program.Random.Next(1, (int)ToolType.ToolSize - 1)).Parent = WorldMap;
         }
 
         protected void GodMode()
@@ -116,19 +117,19 @@ namespace Logic.Server
                         {
                             case "Dish":
                                 DishType dishtype = (DishType)int.Parse(words[2]);
-                                if (dishtype >= DishType.Size2 || dishtype == DishType.Size1 || dishtype == DishType.Empty)
+                                if (dishtype >= DishType.DishSize2 || dishtype == DishType.DishSize1 || dishtype == DishType.DishEmpty)
                                     return;
                                 new Dish(double.Parse(words[3]), double.Parse(words[4]), dishtype).Parent = MapInfo.WorldMap;
                                 break;
                             case "Tool":
                                 ToolType tooltype = (ToolType)int.Parse(words[2]);
-                                if (tooltype >= ToolType.Size || tooltype == ToolType.Empty)
+                                if (tooltype >= ToolType.ToolSize || tooltype == ToolType.ToolEmpty)
                                     return;
                                 new Tool(double.Parse(words[3]), double.Parse(words[4]), tooltype).Parent = MapInfo.WorldMap;
                                 break;
                             case "Trigger":
                                 TriggerType triggertype = (TriggerType)int.Parse(words[2]);
-                                if (triggertype >= TriggerType.Size)
+                                if (triggertype >= TriggerType.TriggerSize)
                                     return;
                                 new Trigger(double.Parse(words[3]), double.Parse(words[4]), triggertype, -1).Parent = MapInfo.WorldMap;
                                 break;

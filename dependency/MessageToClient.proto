@@ -1,0 +1,151 @@
+﻿syntax = "proto3";
+package Protobuf;
+option csharp_namespace = "Communication.Proto";
+
+enum ObjType {
+  People = 0;
+  Block = 1;
+  Dish = 2;
+  Tool = 3;
+  Trigger = 4;
+  ObjTypeSize = 5;
+}
+enum BlockType {  //标1的物品扔出碰到会反弹，标0的会穿过去
+  Wall = 0;       // 1
+  Table = 1;      // 0
+  FoodPoint = 2;  // 1
+  Cooker = 3;     // 0
+  RubbishBin = 4; // 0
+  TaskPoint = 5;  // 1
+  BlockTypeSize = 6;
+}
+enum DishType {
+  DishEmpty = 0;
+  //以下为食材
+  Wheat = 1;           //麦子
+  Rice = 2;            //水稻
+  Tomato = 3;          //番茄
+  Egg = 4;             //鸡蛋
+  Milk = 5;            //牛奶
+  Apple = 6;           //苹果
+  Banana = 7;          //香蕉
+  DarkPlum = 8;        //乌梅
+  Hawthorn = 9;        //山楂
+  Strawberry = 10;     //草莓
+  Beef = 11;           //牛肉
+  Pork = 12;           //猪肉
+  ChickenMeat = 13;    //鸡肉
+  Potato = 14;         //土豆
+  Lettuce = 15;        //生菜
+  Agaric = 16;         //木耳
+  NeedleMushroom = 17; //金针菇
+  Cabbage = 18;        //包菜
+  DishSize1 = 19;
+  //以下为中间产物
+  Flour = 20;      //面粉
+  Noodle = 21;     //面条
+  Bread = 22;      //面包片
+  CookedRice = 23; //米饭
+  Ketchup = 24;    //番茄酱
+  Cream = 25;      //奶油
+  //以下为菜品
+  TomatoFriedEgg = 26;       //番茄炒蛋
+  TomatoFriedEggNoodle = 27; //西红柿鸡蛋面
+  BeefNoodle = 28;           //清青牛拉
+  OverRice = 29;             //盖浇饭
+  YellowPheasant = 30;       //黄焖鸡米饭
+  Barbecue = 31;             //烤肉
+  FrenchFries = 32;          //薯条
+  PlumJuice = 33;            //酸梅汤
+  Hamburger = 34;            //汉堡
+  StrawberryIcecream = 35;   //草莓圣代
+  PopcornChicken = 36;       //鸡米花
+  AgaricFriedEgg = 37;       //木耳炒蛋
+  Cake = 38;                 //蛋糕
+  SugarCoatedHaws = 39;      //冰糖葫芦
+  FruitSalad = 40;           //水果色拉
+  SpicedPot = 41;
+  SpicedPot3 = 42;
+  SpicedPot4 = 43;
+  SpicedPot5 = 44;
+  SpicedPot6 = 45;
+  SpicedPot7 = 46;
+  SpicedPot8 = 47; //香锅
+  DishSize2 = 48;
+  //以下为垃圾
+  OverCookedDish = 49;
+  DarkDish = 50; //黑暗料理
+  DishSize3 = 51;
+}
+enum ToolType {
+  ToolEmpty = 0;
+  TigerShoes = 1;
+  SpeedBuff = 2;
+  StrenthBuff = 3;
+  TeleScope = 4;
+  Condiment = 5;
+  Fertilizer = 6;
+  BreastPlate = 7;
+  SpaceGate = 8;
+  // Eye = 9;
+  WaveGlueBottle = 9;
+  LandMine = 10;
+  TrapTool = 11;
+  // FlashBomb = 12;
+  // Hammer = 13;
+  // Brick = 14;
+  // Stealer = 15;
+  ToolSize = 16;
+}
+enum TriggerType {
+  WaveGlue = 0;
+  Trap = 1;
+  Mine = 2;
+  TriggerSize = 3;
+}
+enum Buff {
+  Frozen = 0;
+  Stunned = 1;
+  SpeedUp = 2;
+  SlowDown = 3;
+}
+enum Direction {
+  Right = 0;
+  RightUp = 1;
+  Up = 2;
+  LeftUp = 3;
+  Left = 4;
+  LeftDown = 5;
+  Down = 6;
+  RightDown = 7;
+  DirectionSize = 8;
+}
+enum Talent {
+  None = 0;
+  Runner = 1;
+  StrongMan = 2;
+  Cook = 3;
+  Technician = 4;
+  LuckyBoy = 5;
+  // DrunkMan
+}
+message GameObject {
+  double PositionX = 1;
+  double PositionY = 2;
+  int32 Width = 3;
+  int32 Height = 4;
+  Direction Direction = 5;
+  ObjType ObjType = 6;
+  BlockType BlockType = 7;
+  DishType DishType = 8;
+  ToolType ToolType = 9;
+  TriggerType TriggerType = 10;
+  bool isMoving = 11;
+  repeated Buff Buff = 12;
+  int32 Score = 13;
+  string SpeakText = 14;
+}
+message MessageToClient {
+  map<int64, GameObject> GameObjectList = 1;
+  repeated DishType Tasks = 2;
+}

@@ -23,7 +23,7 @@ namespace Logic.Server
             if (!TaskQueue.ContainsKey(task))
                 TaskQueue.TryAdd(task, 0);
             TaskQueue[task]++;
-            Program.MessageToClient.Tasks.Add((DishTypeMessage)task);
+            Program.MessageToClient.Tasks.Add(task);
             Server.ServerDebug("Add task : " + task);
             //PrintAllTask();
         }
@@ -35,7 +35,7 @@ namespace Logic.Server
                 uint i = 0;
                 TaskQueue.TryRemove(task, out i);
             }
-            Program.MessageToClient.Tasks.Remove((DishTypeMessage)task);
+            Program.MessageToClient.Tasks.Remove(task);
             Server.ServerDebug("Remove task : " + task);
             //PrintAllTask();
         }
@@ -50,12 +50,12 @@ namespace Logic.Server
         }
         public static void TaskProduce(object i)
         {
-            DishType temp = DishType.Empty;
+            DishType temp = DishType.DishEmpty;
             for (; ; )
             {
                 if (Timer.Time.GameTime() < TimeSpan.FromMinutes(10)) temp = (DishType)Program.Random.Next((int)DishType.TomatoFriedEgg, (int)DishType.SpicedPot);
                 else temp = (DishType)Program.Random.Next((int)DishType.TomatoFriedEgg, (int)DishType.SpicedPot + 1);
-                if (temp == DishType.Size1)
+                if (temp == DishType.DishSize1)
                     continue;
                 break;
             }
@@ -72,7 +72,7 @@ namespace Logic.Server
                 score = (int)Configs[dish_t.ToString()]["Score"];//菜品名+Score，在App.config里加
                 RemoveTask(dish_t);
             }
-            else if (dish_t >= DishType.SpicedPot && dish_t <= DishType.SpicedPot_8 && TaskQueue.ContainsKey(DishType.SpicedPot))
+            else if (dish_t >= DishType.SpicedPot && dish_t <= DishType.SpicedPot8 && TaskQueue.ContainsKey(DishType.SpicedPot))
             {
                 string[] i = Convert.ToString(dish_t).Split('_');
                 double temp = Convert.ToDouble(i[1]);

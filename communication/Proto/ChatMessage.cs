@@ -24,9 +24,9 @@ namespace Communication.Proto {
     static ChatMessageReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChFDaGF0TWVzc2FnZS5wcm90bxIPZ29vZ2xlLnByb3RvYnVmIh4KC0NoYXRN",
-            "ZXNzYWdlEg8KB01lc3NhZ2UYASABKAlCFqoCE0NvbW11bmljYXRpb24uUHJv",
-            "dG9iBnByb3RvMw=="));
+            "ChFDaGF0TWVzc2FnZS5wcm90bxIIUHJvdG9idWYiHgoLQ2hhdE1lc3NhZ2US",
+            "DwoHTWVzc2FnZRgBIAEoCUIWqgITQ29tbXVuaWNhdGlvbi5Qcm90b2IGcHJv",
+            "dG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {

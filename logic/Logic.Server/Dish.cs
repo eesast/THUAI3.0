@@ -1,6 +1,8 @@
 using Logic.Constant;
 using static Logic.Constant.MapInfo;
 using static THUnity2D.Tools;
+using Communication.Proto;
+using Direction = Communication.Proto.Direction;
 
 namespace Logic.Server
 {
@@ -25,7 +27,7 @@ namespace Logic.Server
         public override DishType GetDish(DishType t)
         {
             DishType temp = Dish;
-            if (t == DishType.Empty) this.Parent = null;
+            if (t == DishType.DishEmpty) this.Parent = null;
             else
             {
                 Dish = t;

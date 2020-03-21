@@ -128,7 +128,7 @@
         "TaskTime": 90000,
         "CookTime": 20000
     },
-    "HuangMenJi": {
+    "YellowPheasant": {
         "Score": 100,
         "TaskTime": 90000,
         "CookTime": 20000
@@ -173,7 +173,7 @@
         "TaskTime": 120000,
         "CookTime": 30000
     },
-    "BingTangHuLu": {
+    "SugarCoatedHaws": {
         "Score": 20,
         "TaskTime": 60000,
         "CookTime": 10000
@@ -209,7 +209,7 @@
         "NoodleTomatoFriedEgg": "TomatoFriedEggNoodle",
         "BeefNoodle": "BeefNoodle",
         "PorkCabbageRice": "OverRice",
-        "ChickenMeatPotatoRice": "HuangMenJi",
+        "ChickenMeatPotatoRice": "YellowPheasant",
         "LettucePork": "Barbecue",
         "PotatoKetchup": "FrenchFries",
         "DarkPlumHawthorn": "PlumJuice",
@@ -218,7 +218,7 @@
         "ChickenMeatKetchup": "PopcornChicken",
         "EggAgaric": "AgaricFriedEgg",
         "EggStrawberryFlourCream": "Cake",
-        "Hawthorn": "BingTangHuLu",
+        "Hawthorn": "SugarCoatedHaws",
         "TomatoAppleBananaStrawberry": "FruitSalad"
     }
 }
