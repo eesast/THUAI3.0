@@ -25,7 +25,7 @@ namespace Logic.Server
         public override DishType GetDish(DishType t)
         {
             DishType temp = Dish;
-            Dish = DishType.Empty;
+            Dish = DishType.DishEmpty;
             return temp;
         }
     }
@@ -38,9 +38,9 @@ namespace Logic.Server
         {
             Layer = WallLayer;
             AddToMessage();
-            Dish = (DishType)Program.Random.Next(1, (int)DishType.Size1 - 1);
+            Dish = (DishType)Program.Random.Next(1, (int)DishType.DishSize1 - 1);
             lock (Program.MessageToClientLock)
-                Program.MessageToClient.GameObjectMessageList[ID].BlockType = BlockTypeMessage.FoodPoint;
+                Program.MessageToClient.GameObjectList[ID].BlockType = BlockType.FoodPoint;
             Server.ServerDebug("食品刷新：地点（" + Position.x + "," + Position.y + "）, 种类 : " + Dish);
         }
 
@@ -62,7 +62,7 @@ namespace Logic.Server
         }
         public void Refresh(object i)
         {
-            Dish = (DishType)Program.Random.Next(1, (int)DishType.Size1 - 1);
+            Dish = (DishType)Program.Random.Next(1, (int)DishType.DishSize1 - 1);
             Server.ServerDebug("食品刷新：地点（" + Position.x + "," + Position.y + "）, 种类 : " + Dish);
         }
         //Refresh End
@@ -74,9 +74,9 @@ namespace Logic.Server
         {
             Layer = BlockLayer;
             AddToMessage();
-            Dish = DishType.Empty;
+            Dish = DishType.DishEmpty;
             lock (Program.MessageToClientLock)
-                Program.MessageToClient.GameObjectMessageList[ID].BlockType = BlockTypeMessage.Cooker;
+                Program.MessageToClient.GameObjectList[ID].BlockType = BlockType.Cooker;
 
         }
 
@@ -101,7 +101,7 @@ namespace Logic.Server
         protected void Cook(object o)
         {
             Dish = (DishType)Enum.Parse(typeof(DishType), cookingResult);
-            if (Dish > DishType.Empty && Dish < DishType.Size2 && Dish != DishType.Size1)
+            if (Dish > DishType.DishEmpty && Dish < DishType.DishSize2 && Dish != DishType.DishSize1)
             {
                 if (Dish < DishType.SpicedPot)
                     CookingTimer.Change((int)(0.5 * (double)Configs[cookingResult]["CookTime"]), 0);

@@ -1,3 +1,5 @@
+#pragma warning(disable:26495)
+
 #include "CAPI.h"
 #include "Constant.h"
 #include <iostream>
@@ -9,7 +11,6 @@
 using namespace std;
 
 CAPI API;
-int frame = 0;
 bool GameFinished = false;
 
 void *Ping(void *param)
@@ -27,6 +28,8 @@ void *Ping(void *param)
 }
 int main(int argc, char *argv[])
 {
+	initialize_map();
+
 	char *agent_ip = (argv[1]);
 	int agent_port = atoi(argv[2]);
 	API.Initialize();
@@ -35,19 +38,18 @@ int main(int argc, char *argv[])
 	pthread_create(&pt, NULL, Ping, NULL);
 	pthread_detach(pt);
 	string message = "Connected!";
+
+	DebugFunc = DebugSilently;
 	//死循环执行玩家程序
-	/*
 	while (!GameFinished) 
 	{
-		int now_frame = frame;
 		play();
-		while (frame == now_frame);
 	}
 	getchar();
 	API.Quit();
-	*/
 
 	// client聊天室测试
+	/*
 	while (API.IsConnected())
 	{
 		if (message == "quit")
@@ -58,6 +60,7 @@ int main(int argc, char *argv[])
 			API.SendChatMessage(message + " from Agent " + to_string(API.AgentId) + " Player " + to_string(API.PlayerId));
 		cin >> message;
 	}
+	*/
 	cout << "Disconnected from server.\n";
 	getchar();
 	return 0;
