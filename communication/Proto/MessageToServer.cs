@@ -24,21 +24,20 @@ namespace Communication.Proto {
     static MessageToServerReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChVNZXNzYWdlVG9TZXJ2ZXIucHJvdG8SD2dvb2dsZS5wcm90b2J1ZhoVTWVz",
-            "c2FnZVRvQ2xpZW50LnByb3RvIrMCCg9NZXNzYWdlVG9TZXJ2ZXISCgoCSUQY",
-            "ASABKAMSOAoLQ29tbWFuZFR5cGUYAiABKA4yIy5nb29nbGUucHJvdG9idWYu",
-            "Q29tbWFuZFR5cGVNZXNzYWdlEjgKDU1vdmVEaXJlY3Rpb24YAyABKA4yIS5n",
-            "b29nbGUucHJvdG9idWYuRGlyZWN0aW9uTWVzc2FnZRIUCgxNb3ZlRHVyYXRp",
-            "b24YBCABKAUSFQoNVGhyb3dEaXN0YW5jZRgFIAEoARISCgpUaHJvd0FuZ2xl",
-            "GAYgASgBEhMKC0lzVGhyb3dEaXNoGAcgASgIEg8KB1VzZVR5cGUYCCABKAUS",
-            "EQoJU3BlYWtUZXh0GAkgASgJEhIKClBhcmFtZXRlcjEYCiABKAUSEgoKUGFy",
-            "YW1ldGVyMhgLIAEoBSpkChJDb21tYW5kVHlwZU1lc3NhZ2USCAoETW92ZRAA",
-            "EggKBFBpY2sQARIHCgNQdXQQAhIHCgNVc2UQAxIICgRTdG9wEAQSCQoFU3Bl",
-            "YWsQBRITCg9Db21tYW5kVHlwZVNpemUQBkIWqgITQ29tbXVuaWNhdGlvbi5Q",
-            "cm90b2IGcHJvdG8z"));
+            "ChVNZXNzYWdlVG9TZXJ2ZXIucHJvdG8SCFByb3RvYnVmGhVNZXNzYWdlVG9D",
+            "bGllbnQucHJvdG8ilwIKD01lc3NhZ2VUb1NlcnZlchIKCgJJRBgBIAEoAxIq",
+            "CgtDb21tYW5kVHlwZRgCIAEoDjIVLlByb3RvYnVmLkNvbW1hbmRUeXBlEioK",
+            "DU1vdmVEaXJlY3Rpb24YAyABKA4yEy5Qcm90b2J1Zi5EaXJlY3Rpb24SFAoM",
+            "TW92ZUR1cmF0aW9uGAQgASgFEhUKDVRocm93RGlzdGFuY2UYBSABKAESEgoK",
+            "VGhyb3dBbmdsZRgGIAEoARITCgtJc1Rocm93RGlzaBgHIAEoCBIPCgdVc2VU",
+            "eXBlGAggASgFEhEKCVNwZWFrVGV4dBgJIAEoCRISCgpQYXJhbWV0ZXIxGAog",
+            "ASgFEhIKClBhcmFtZXRlcjIYCyABKAUqXQoLQ29tbWFuZFR5cGUSCAoETW92",
+            "ZRAAEggKBFBpY2sQARIHCgNQdXQQAhIHCgNVc2UQAxIICgRTdG9wEAQSCQoF",
+            "U3BlYWsQBRITCg9Db21tYW5kVHlwZVNpemUQBkIWqgITQ29tbXVuaWNhdGlv",
+            "bi5Qcm90b2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Communication.Proto.MessageToClientReflection.Descriptor, },
-          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Communication.Proto.CommandTypeMessage), }, new pbr::GeneratedClrTypeInfo[] {
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Communication.Proto.CommandType), }, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.MessageToServer), global::Communication.Proto.MessageToServer.Parser, new[]{ "ID", "CommandType", "MoveDirection", "MoveDuration", "ThrowDistance", "ThrowAngle", "IsThrowDish", "UseType", "SpeakText", "Parameter1", "Parameter2" }, null, null, null)
           }));
     }
@@ -46,14 +45,14 @@ namespace Communication.Proto {
 
   }
   #region Enums
-  public enum CommandTypeMessage {
+  public enum CommandType {
     [pbr::OriginalName("Move")] Move = 0,
     [pbr::OriginalName("Pick")] Pick = 1,
     [pbr::OriginalName("Put")] Put = 2,
     [pbr::OriginalName("Use")] Use = 3,
     [pbr::OriginalName("Stop")] Stop = 4,
     [pbr::OriginalName("Speak")] Speak = 5,
-    [pbr::OriginalName("CommandTypeSize")] CommandTypeSize = 6,
+    [pbr::OriginalName("CommandTypeSize")] Size = 6,
   }
 
   #endregion
@@ -116,9 +115,9 @@ namespace Communication.Proto {
 
     /// <summary>Field number for the "CommandType" field.</summary>
     public const int CommandTypeFieldNumber = 2;
-    private global::Communication.Proto.CommandTypeMessage commandType_ = 0;
+    private global::Communication.Proto.CommandType commandType_ = 0;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Communication.Proto.CommandTypeMessage CommandType {
+    public global::Communication.Proto.CommandType CommandType {
       get { return commandType_; }
       set {
         commandType_ = value;
@@ -127,9 +126,9 @@ namespace Communication.Proto {
 
     /// <summary>Field number for the "MoveDirection" field.</summary>
     public const int MoveDirectionFieldNumber = 3;
-    private global::Communication.Proto.DirectionMessage moveDirection_ = 0;
+    private global::Communication.Proto.Direction moveDirection_ = 0;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Communication.Proto.DirectionMessage MoveDirection {
+    public global::Communication.Proto.Direction MoveDirection {
       get { return moveDirection_; }
       set {
         moveDirection_ = value;
@@ -423,11 +422,11 @@ namespace Communication.Proto {
             break;
           }
           case 16: {
-            CommandType = (global::Communication.Proto.CommandTypeMessage) input.ReadEnum();
+            CommandType = (global::Communication.Proto.CommandType) input.ReadEnum();
             break;
           }
           case 24: {
-            MoveDirection = (global::Communication.Proto.DirectionMessage) input.ReadEnum();
+            MoveDirection = (global::Communication.Proto.Direction) input.ReadEnum();
             break;
           }
           case 32: {

@@ -37,7 +37,7 @@ namespace Logic.Server
                 });
             AddToMessage();
             lock (Program.MessageToClientLock)
-                Program.MessageToClient.GameObjectMessageList[ID].TriggerType = (TriggerTypeMessage)triggerType;
+                Program.MessageToClient.GameObjectList[ID].TriggerType = triggerType;
             this.OnParentDelete += new ParentDeleteHandler(DeleteFromMessage);
         }
     }
