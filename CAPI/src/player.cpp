@@ -2,7 +2,7 @@
 #include "player.h"
 #include <iostream>
 #include "CAPI.h"
-
+#include "OS_related.h"
 using namespace THUAI3;
 void play()
 {

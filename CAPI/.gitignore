@@ -1,10 +1,7 @@
 ## Yours
-# linux_only/
 windows_only/
 proto/*.proto
-include/common
 !.gitkeep
-
 # Cmake Generate
 *.sln
 *.vcxproj
