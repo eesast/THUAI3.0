@@ -10,7 +10,8 @@ RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v3.8.0-rc
 	&& rm -rf /usr/local/protobuf-3.8.0-rc-1
 ENV LD_LIBRARY_PATH=/usr/local/protobuf/lib
 ENV Protobuf_INCLUDE_DIR=/usr/local/protobuf/include
-ADD CAPI /usr/local/CAPI
+ADD ./dependency /usr/local/dependency
+ADD ./CAPI /usr/local/CAPI
 RUN wget https://github.com/ldcsaa/HP-Socket/archive/v5.7.1.tar.gz --no-check-certificate \
 	&& tar -zxvf v5.7.1.tar.gz && rm  v5.7.1.tar.gz \
 	&& cp -r ./HP-Socket-5.7.1/Linux/include/hpsocket/* ./CAPI/linux_only/include \
