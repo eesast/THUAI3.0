@@ -1,7 +1,7 @@
 @echo off 
-cd ./proto/
-start generator.bat
-cd ..
+cd ../dependency
+start generateProto.ps1
+cd ../CAPI
 md build && cd build
 cmake ..
 pause

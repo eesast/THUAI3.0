@@ -8,7 +8,7 @@ using namespace Protobuf;
 #include <vector>
 #include <list>
 #include <memory>
-
+#include <iostream>
 
 // 50x50
 // 0 : 空地

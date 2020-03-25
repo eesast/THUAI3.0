@@ -1,7 +1,7 @@
 project (AI)
 cmake_minimum_required(VERSION 3.6.0)
 if(UNIX)
-	add_subdirectory(${PROJECT_SOURCE_DIR}/proto)
+	add_subdirectory(${PROJECT_SOURCE_DIR}/../dependency ./proto)
 
 	set(CMAKE_BUILD_TYPE Release)
 	add_compile_options(-std=c++11)
