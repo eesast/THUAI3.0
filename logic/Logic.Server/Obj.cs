@@ -92,7 +92,7 @@ namespace Logic.Server
                 Program.MessageToClient.GameObjectList[thisGameObject.ID].PositionX = thisGameObject.Position.x;
                 Program.MessageToClient.GameObjectList[thisGameObject.ID].PositionY = thisGameObject.Position.y;
             }
-            //Server.ServerDebug(this.Position.ToString());
+            Server.ServerDebug(this.Position.ToString());
         }
     }
 }

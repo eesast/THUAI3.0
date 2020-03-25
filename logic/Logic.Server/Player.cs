@@ -80,8 +80,14 @@ namespace Logic.Server
             set
             {
                 base._score = value;
+                for (int i = 0; i < Communication.Proto.Constants.PlayerCount; i++)
+                {
+                    if (i == CommunicationID.Item2)
+                        continue;
+                    Program.PlayerList[new Tuple<int, int>(CommunicationID.Item1, i)]._score = value;
+                }
                 lock (Program.MessageToClientLock)
-                    Program.MessageToClient.GameObjectList[this.ID].Score = base._score;
+                    Program.MessageToClient.Scores[CommunicationID.Item1] = base._score;
             }
         }
 
@@ -107,7 +113,8 @@ namespace Logic.Server
                         PositionY = this.Position.y,
                         Direction = (Direction)this.facingDirection,
                         DishType = dish,
-                        ToolType = tool
+                        ToolType = tool,
+                        Team = CommunicationID.Item1
                     });
             }
             this.MoveStart += new MoveStartHandler(
@@ -261,7 +268,7 @@ namespace Logic.Server
         public override void Put(double distance, double angle, bool isThrowDish)
         {
             if (distance > MaxThrowDistance) distance = MaxThrowDistance;
-            int dueTime = (int)(1000 * distance / (int)Configs["ItemMoveSpeed"]);
+            int dueTime = (int)((double)1000 * distance / (double)Configs["ItemMoveSpeed"]) - (int)TimeIntervalInMillisecond + 10;
 
             Obj ItemToThrow = null;
             if (Dish != DishType.DishEmpty && isThrowDish)

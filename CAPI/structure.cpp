@@ -6,21 +6,49 @@ using namespace Protobuf;
 #include <list>
 #include <memory>
 #include "structures.h"
+#include "CAPI.h"
 
-std::vector<std::vector<std::unordered_map<int64_t, std::shared_ptr<Obj>>>> obj_map;
-std::unordered_map<int64_t, std::shared_ptr<Obj>> obj_list;
+
+std::vector<std::vector<std::unordered_map<int64_t, std::shared_ptr<Obj>>>>MapInfo::obj_map;
+std::unordered_map<int64_t, std::shared_ptr<Obj>>MapInfo::obj_list;
+
+
 std::list<DishType> task_list;
 
-void initialize_map()
+void MapInfo::initialize_map()
 {
-	obj_map.resize(mapinfo.size());
-	for (int i = 0; i < obj_map.size(); i++)
+	obj_map.resize(init_mapinfo.size());
+	for (int x = 0; x < obj_map.size(); x++)
 	{
-		obj_map[i].resize(mapinfo[i].size());
+		obj_map[x].resize(init_mapinfo[x].size());
+		for (int y = 0; y < obj_map[x].size(); y++)
+		{
+			switch (init_mapinfo[x][y])
+			{
+			case 1:
+				obj_map[x][y].insert(std::pair<int64_t, std::shared_ptr<Obj>>(-1, std::make_shared<Obj>(XYPosition(x + 0.5, y + 0.5), ObjType::Block)));
+				obj_map[x][y].begin()->second->blockType = BlockType::TaskPoint;
+				break;
+			case 4:
+				obj_map[x][y].insert(std::pair<int64_t, std::shared_ptr<Obj>>(-1, std::make_shared<Obj>(XYPosition(x + 0.5, y + 0.5), ObjType::Block)));
+				obj_map[x][y].begin()->second->blockType = BlockType::RubbishBin;
+				break;
+			case 5:
+				obj_map[x][y].insert(std::pair<int64_t, std::shared_ptr<Obj>>(-1, std::make_shared<Obj>(XYPosition(x + 0.5, y + 0.5), ObjType::Block)));
+				obj_map[x][y].begin()->second->blockType = BlockType::Wall;
+				break;
+			case 6:
+				obj_map[x][y].insert(std::pair<int64_t, std::shared_ptr<Obj>>(-1, std::make_shared<Obj>(XYPosition(x + 0.5, y + 0.5), ObjType::Block)));
+				obj_map[x][y].begin()->second->blockType = BlockType::Table;
+				break;
+			default:
+				break;
+			}
+		}
 	}
 }
 
-void print_map()
+void MapInfo::print_map()
 {
 	std::cout << std::endl;
 	for (int i = 0; i < obj_map.size(); i++)
@@ -34,7 +62,7 @@ void print_map()
 	}
 }
 
-void print_map(int x, int y)
+void MapInfo::print_map(int x, int y)
 {
 	std::cout << std::endl
 		<< "map[" << x << "][" << y << "] : ";
@@ -45,7 +73,7 @@ void print_map(int x, int y)
 	std::cout << std::endl;
 }
 
-void print_obj_list()
+void MapInfo::print_obj_list()
 {
 	std::cout << std::endl
 		<< "obj_list : " << std::endl;
@@ -55,8 +83,20 @@ void print_obj_list()
 	}
 }
 
+std::list<Obj> MapInfo::get_mapcell(const int x, const int y)
+{
+	if (x < 0 || x >= obj_map.size() || y < 0 || y >= obj_map.size())
+	{
+		return list<Obj>();
+	}
+	list<Obj> list;
+	for (std::unordered_map<int64_t, shared_ptr<Obj>>::iterator i = obj_map[x][y].begin(); i != obj_map[x][y].end(); i++)
+	{
+		list.push_back(*(i->second));
+	}
+	return list;
+}
+
 Obj::Obj(const XYPosition& pos, ObjType objType) : position(pos), objType(objType)
 { }
-
-
 player_info PlayerInfo;

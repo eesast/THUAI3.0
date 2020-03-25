@@ -158,62 +158,64 @@ void CAPI::SendCommandMessage(MessageToServer* message)
 	Send(mes);
 }
 
-void createObj(int64_t id, Protobuf::MessageToClient* message)
+void CAPI::CreateObj(int64_t id, Protobuf::MessageToClient* message)
 {
-	obj_list.insert(std::pair<int64_t, shared_ptr< Obj>>(id, make_shared<Obj>(XYPosition(message->gameobjectlist().at(id).positionx(), message->gameobjectlist().at(id).positiony()), message->gameobjectlist().at(id).objtype())));
-	obj_list[id]->blockType = message->gameobjectlist().at(id).blocktype();
-	obj_list[id]->dish = message->gameobjectlist().at(id).dishtype();
-	obj_list[id]->tool = message->gameobjectlist().at(id).tooltype();
-	obj_list[id]->facingDiretion = message->gameobjectlist().at(id).direction();
-	obj_list[id]->trigger = message->gameobjectlist().at(id).triggertype();
+	MapInfo::obj_list.insert(std::pair<int64_t, shared_ptr< Obj>>(id, make_shared<Obj>(XYPosition(message->gameobjectlist().at(id).positionx(), message->gameobjectlist().at(id).positiony()), message->gameobjectlist().at(id).objtype())));
+	MapInfo::obj_list[id]->blockType = message->gameobjectlist().at(id).blocktype();
+	MapInfo::obj_list[id]->dish = message->gameobjectlist().at(id).dishtype();
+	MapInfo::obj_list[id]->tool = message->gameobjectlist().at(id).tooltype();
+	MapInfo::obj_list[id]->facingDiretion = message->gameobjectlist().at(id).direction();
+	MapInfo::obj_list[id]->trigger = message->gameobjectlist().at(id).triggertype();
 }
 
-void moveObj(int64_t id, Protobuf::MessageToClient* message, std::unordered_map<int64_t, std::shared_ptr<Obj>>& objectsToDelete)
+void CAPI::MoveObj(int64_t id, Protobuf::MessageToClient* message, std::unordered_map<int64_t, std::shared_ptr<Obj>>& objectsToDelete)
 {
-	if (obj_list.find(id) == obj_list.end())
+	if (MapInfo::obj_list.find(id) == MapInfo::obj_list.end())
 	{
-		createObj(id, message);
+		CreateObj(id, message);
 	}
 	else
 	{
 		objectsToDelete.erase(id);
 	}
-	obj_map[(int)obj_list[id]->position.x][(int)obj_list[id]->position.y].erase(id);
+	MapInfo::obj_map[(int)MapInfo::obj_list[id]->position.x][(int)MapInfo::obj_list[id]->position.y].erase(id);
 
-	obj_list[id]->dish = message->gameobjectlist().at(id).dishtype();
-	obj_list[id]->tool = message->gameobjectlist().at(id).tooltype();
-	obj_list[id]->position.x = message->gameobjectlist().at(id).positionx();
-	obj_list[id]->position.y = message->gameobjectlist().at(id).positiony();
-	obj_list[id]->facingDiretion = message->gameobjectlist().at(id).direction();
+	MapInfo::obj_list[id]->dish = message->gameobjectlist().at(id).dishtype();
+	MapInfo::obj_list[id]->tool = message->gameobjectlist().at(id).tooltype();
+	MapInfo::obj_list[id]->position.x = message->gameobjectlist().at(id).positionx();
+	MapInfo::obj_list[id]->position.y = message->gameobjectlist().at(id).positiony();
+	MapInfo::obj_list[id]->facingDiretion = message->gameobjectlist().at(id).direction();
 
-	obj_map[(int)obj_list[id]->position.x][(int)obj_list[id]->position.y].insert(std::pair<int64_t, shared_ptr< Obj>>(id, obj_list[id]));
+	MapInfo::obj_map[(int)MapInfo::obj_list[id]->position.x][(int)MapInfo::obj_list[id]->position.y].insert(std::pair<int64_t, shared_ptr< Obj>>(id, MapInfo::obj_list[id]));
 
 }
 
 void CAPI::UpdateInfo(Protobuf::MessageToClient* message)
 {
-	if (PlayerInfo.id < 0)
+	if (PlayerInfo._id < 0)
 	{
-		PlayerInfo.id = message->gameobjectlist().begin()->first;
-		std::cout << "Initialize Player : ID : " << PlayerInfo.id << std::endl;
+		PlayerInfo._id = PlayerInfo.id = message->gameobjectlist().begin()->first;
+		PlayerInfo._team = PlayerInfo.team = message->gameobjectlist().begin()->second.team();
+		std::cout << "Initialize Player : ID : " << PlayerInfo._id << "  team : " << PlayerInfo._team << std::endl;
 	}
-	PlayerInfo.position.x = message->gameobjectlist().begin()->second.positionx();
-	PlayerInfo.position.y = message->gameobjectlist().begin()->second.positiony();
+	PlayerInfo._position.x = PlayerInfo.position.x = message->gameobjectlist().begin()->second.positionx();
+	PlayerInfo._position.y = PlayerInfo.position.y = message->gameobjectlist().begin()->second.positiony();
 	PlayerInfo.facingDirection = message->gameobjectlist().begin()->second.direction();
 	PlayerInfo.dish = message->gameobjectlist().begin()->second.dishtype();
 	PlayerInfo.tool = message->gameobjectlist().begin()->second.tooltype();
-	PlayerInfo.score = message->gameobjectlist().begin()->second.score();
+	if (message->scores().contains(PlayerInfo._team))
+		PlayerInfo.score = message->scores().at(PlayerInfo._team);
 
-	std::unordered_map<int64_t, std::shared_ptr<Obj>> objectsToDelete = obj_list;
+	std::unordered_map<int64_t, std::shared_ptr<Obj>> objectsToDelete = MapInfo::obj_list;
 	for (google::protobuf::Map<google::protobuf::int64, Protobuf::GameObject>::const_iterator i = message->gameobjectlist().begin(); i != message->gameobjectlist().end(); i++)
 	{
-		moveObj(i->first, message, objectsToDelete);
+		MoveObj(i->first, message, objectsToDelete);
 	}
 
 	for (std::unordered_map<int64_t, std::shared_ptr<Obj>>::iterator i = objectsToDelete.begin(); i != objectsToDelete.end(); i++)
 	{
 		std::cout << "Delete Obj" << std::endl;
-		obj_list.erase(i->first);
+		MapInfo::obj_list.erase(i->first);
 	}
 	task_list.resize(0);
 	for (google::protobuf::RepeatedField<google::protobuf::int32>::const_iterator i = message->tasks().begin(); i != message->tasks().end(); i++)

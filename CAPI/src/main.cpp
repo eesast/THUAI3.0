@@ -28,7 +28,7 @@ void *Ping(void *param)
 }
 int main(int argc, char *argv[])
 {
-	initialize_map();
+	MapInfo::initialize_map();
 
 	char *agent_ip = (argv[1]);
 	int agent_port = atoi(argv[2]);

@@ -114,7 +114,7 @@
         "CookTime": 10000
     },
     "TomatoFriedEggNoodle": {
-        "Score": 0,
+        "Score": 100,
         "TaskTime": 90000,
         "CookTime": 15000
     },

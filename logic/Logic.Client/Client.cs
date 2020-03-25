@@ -19,6 +19,7 @@ namespace Client
     class Player : Character
     {
         protected Int64 id = -1;//注意！！！在这个类里基类的ID已被弃用
+        protected int team = 0;
         protected static DateTime lastSendTime = new DateTime();
         protected Communication.CAPI.API ClientCommunication = new Communication.CAPI.API();
         protected MessageToServer messageToServer = new MessageToServer();
@@ -26,7 +27,7 @@ namespace Client
         {
             if (Program.form.ControlLabels[id].InvokeRequired)
             {
-                Program.form.ControlLabels[id].Invoke(new Action<object>((o) => { Program.form.ControlLabels[id].Text = id + "  " + str; }));
+                Program.form.ControlLabels[id].Invoke(new Action(() => { Program.form.ControlLabels[id].Text = id + "  " + str; }));
             }
             else
             {
@@ -65,7 +66,6 @@ namespace Client
                             ChangeControlLabelText("Tool", gameObjectMessage.ToolType.ToString());
                         else
                             ChangeControlLabelText("Tool", "");
-                        ChangeControlLabelText("Score", gameObjectMessage.Score.ToString());
                     }
                     break;
                 case ObjType.Block:
@@ -314,6 +314,7 @@ namespace Client
                 foreach (var gameObject in msg.GameObjectList)
                 {
                     this.id = gameObject.Key;
+                    this.team = gameObject.Value.Team;
                     Console.WriteLine("\nThis Player :\n" + "\t" + id.ToString() + "\n\tposition: " + Position.ToString());
                     break;
                 }
@@ -359,6 +360,8 @@ namespace Client
             {
                 ChangeTaskLabel(msg);
             }
+            if (msg.Scores.ContainsKey(team))
+                ChangeControlLabelText("Score", msg.Scores[team].ToString());
         }
 
         public void ChangeTaskLabel(MessageToClient msg)

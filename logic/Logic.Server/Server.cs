@@ -12,11 +12,18 @@ namespace Logic.Server
     class Server
     {
         protected ICommunication ServerCommunication;
+        protected uint MaxRunTimeInSecond;
+        System.Threading.Timer SendMessageTimer = null;
+        System.Threading.Timer ToolRefreshTimer = null;
+        System.Threading.Timer ServerStopTimer = null;
+        System.Threading.Timer WatchInputTimer = null;
+        Thread ServerRunThread = null;
 
         public Server(ushort serverPort, ushort playerCount, ushort agentCount, uint MaxGameTimeSeconds)
         {
             Communication.Proto.Constants.PlayerCount = playerCount;
             Communication.Proto.Constants.AgentCount = agentCount;
+            MaxRunTimeInSecond = MaxGameTimeSeconds;
             ServerCommunication = new CommunicationImpl { ServerPort = serverPort };
             ServerCommunication.Initialize();
             ServerCommunication.MsgProcess += OnRecieve;
@@ -26,6 +33,7 @@ namespace Logic.Server
             //向所有Client发送他们自己的ID
             for (int a = 0; a < Constants.AgentCount; a++)
             {
+                Program.MessageToClient.Scores.Add(a, 0);
                 for (int c = 0; c < Constants.PlayerCount; c++)
                 {
                     Tuple<int, int> playerIDTuple = new Tuple<int, int>(a, c);
@@ -38,6 +46,7 @@ namespace Logic.Server
                         {
                             ObjType = ObjType.People,
                             IsMoving = false,
+                            Team = playerIDTuple.Item1,
                             PositionX = Program.PlayerList[playerIDTuple].Position.x,
                             PositionY = Program.PlayerList[playerIDTuple].Position.y,
                             Direction = (Communication.Proto.Direction)Program.PlayerList[playerIDTuple].facingDirection
@@ -54,9 +63,9 @@ namespace Logic.Server
 
             SendMessageToAllClient();
 
-            new Thread(Run).Start();
+            ServerRunThread = new Thread(Run);
+            ServerRunThread.Start();
             Server.ServerDebug("Server constructed");
-
         }
 
         public void Run()
@@ -64,31 +73,19 @@ namespace Logic.Server
             Time.InitializeTime();
             Server.ServerDebug("Server begin to run");
             TaskSystem.RefreshTimer.Change(1000, (int)Configs["TaskRefreshTime"]);
-            System.Threading.Timer ToolRefreshTimer = new System.Threading.Timer(ToolRefresh, null,
+            ToolRefreshTimer = new System.Threading.Timer(ToolRefresh, null,
                 0, (int)Configs["ToolRefreshTime"]);
 
-            new System.Threading.Timer(
+            SendMessageTimer = new System.Threading.Timer(
                 (o) =>
                 {
                     SendMessageToAllClient();
-                },
-                null,
-                TimeSpan.FromSeconds(TimeInterval),
-                TimeSpan.FromSeconds(TimeInterval));
+                }, null, TimeSpan.FromSeconds(TimeInterval), TimeSpan.FromSeconds(TimeInterval));
 
-            while (true)
-            {
-                /*
-                这里应该放定时、刷新物品等代码。
-                */
-                char key = Console.ReadKey().KeyChar;
-                switch (key)
-                {
-                    case '`': GodMode(); break;
-                }
+            WatchInputTimer = new System.Threading.Timer(WatchInput, null, 0, 0);
 
-            }
-
+            Thread.Sleep((int)MaxRunTimeInSecond * 1000);
+            PrintScore();
             Server.ServerDebug("Server stop running");
         }
 
@@ -102,6 +99,32 @@ namespace Logic.Server
                     break;
             }
             new Tool(tempPosition.x + 0.5, tempPosition.y + 0.5, (ToolType)Program.Random.Next(1, (int)ToolType.ToolSize - 1)).Parent = WorldMap;
+        }
+
+        protected void PrintScore()
+        {
+            Console.WriteLine("============= Score ===========");
+            for(int i=0;i<Communication.Proto.Constants.AgentCount;i++)
+            {
+                Console.WriteLine("Team " + i + " : " + Program.MessageToClient.Scores[i]);
+            }
+            Console.WriteLine("===============================");
+        }
+
+        protected void WatchInput(object o)
+        {
+            while (true)
+            {
+                /*
+                这里应该放定时、刷新物品等代码。
+                */
+                char key = Console.ReadKey().KeyChar;
+                switch (key)
+                {
+                    case '`': GodMode(); break;
+                }
+
+            }
         }
 
         protected void GodMode()
@@ -161,6 +184,13 @@ namespace Logic.Server
         //向所有Client发送消息，按照帧率定时发送，严禁在其他地方调用此函数
         protected void SendMessageToAllClient()
         {
+            //for (int i = 0; i < 20; i++)
+            //{
+            //    Console.Write("Send");
+            //    for (int k = 0; k < i; k++)
+            //        Console.Write(" ");
+            //    Console.WriteLine(i);
+            //}
             lock (Program.MessageToClientLock)
             {
                 ServerCommunication.SendMessage(new ServerMessage

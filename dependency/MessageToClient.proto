@@ -142,10 +142,12 @@ message GameObject {
   TriggerType TriggerType = 10;
   bool isMoving = 11;
   repeated Buff Buff = 12;
-  int32 Score = 13;
-  string SpeakText = 14;
+  // int32 Score = 13;
+  string SpeakText = 13;
+  int32 team = 14;
 }
 message MessageToClient {
   map<int64, GameObject> GameObjectList = 1;
   repeated DishType Tasks = 2;
+  map<int32, int32> Scores = 3;
 }
