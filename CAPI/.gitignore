@@ -1,5 +1,5 @@
 ## Yours
-linux_only/
+# linux_only/
 windows_only/
 proto/*.proto
 include/common
