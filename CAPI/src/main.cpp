@@ -1,18 +1,19 @@
-#include"CAPI.h"
-#include"constants.h"
-#include<iostream>
-#include<sstream>
-#include<mutex>
-#include"player.h"
-#include"API.h"
+#pragma warning(disable:26495)
+
+#include "CAPI.h"
+#include "Constant.h"
+#include <iostream>
+#include <sstream>
+#include <mutex>
+#include "player.h"
+#include "API.h"
 
 using namespace std;
 
 CAPI API;
-int frame = 0;
 bool GameFinished = false;
 
-void* Ping(void* param)
+void *Ping(void *param)
 {
 	while (API.IsConnected())
 	{
@@ -25,9 +26,11 @@ void* Ping(void* param)
 	}
 	return NULL;
 }
-int main(int argc,char* argv[])
+int main(int argc, char *argv[])
 {
-	char *agent_ip=(argv[1]);
+	initialize_map();
+
+	char *agent_ip = (argv[1]);
 	int agent_port = atoi(argv[2]);
 	API.Initialize();
 	API.ConnectServer(agent_ip, agent_port);
@@ -35,28 +38,29 @@ int main(int argc,char* argv[])
 	pthread_create(&pt, NULL, Ping, NULL);
 	pthread_detach(pt);
 	string message = "Connected!";
-	//ËÀÑ­»·Ö´ÐÐÍæ¼Ò³ÌÐò
-	/*
+
+	DebugFunc = DebugSilently;
+	//æ­»å¾ªçŽ¯æ‰§è¡ŒçŽ©å®¶ç¨‹åº
 	while (!GameFinished) 
 	{
-		int now_frame = frame;
 		play();
-		while (frame == now_frame);
 	}
 	getchar();
 	API.Quit();
-	*/
 
-	// clientÁÄÌìÊÒ²âÊÔ
-	while (API.IsConnected()) 
+	// clientèŠå¤©å®¤æµ‹è¯•
+	/*
+	while (API.IsConnected())
 	{
 		if (message == "quit")
 		{
 			API.Quit();
 		}
-		else API.SendChatMessage(message + " from Agent " + to_string(API.AgentId) + " Player " + to_string(API.PlayerId));
+		else
+			API.SendChatMessage(message + " from Agent " + to_string(API.AgentId) + " Player " + to_string(API.PlayerId));
 		cin >> message;
 	}
+	*/
 	cout << "Disconnected from server.\n";
 	getchar();
 	return 0;

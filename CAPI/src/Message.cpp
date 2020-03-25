@@ -1,19 +1,20 @@
-#include"Message.h"
-#include<string>
-#include<cstdio>
-#include<cstring>
-#include<sstream>
-#include<sys/timeb.h>
-#include<iostream>
-#pragma comment(lib,"libprotobuf.lib")
-#pragma comment(lib,"libprotoc.lib")
+#include "Message.h"
+#include "Constant.h"
+#include <string>
+#include <cstdio>
+#include <cstring>
+#include <sstream>
+#include <sys/timeb.h>
+#include <iostream>
+#pragma comment(lib, "libprotobuf.lib")
+#pragma comment(lib, "libprotoc.lib")
 
 using namespace std;
 
 typedef std::uint64_t hash_t;
 
-
-INT64 currentTimeMillisec() {
+INT64 currentTimeMillisec()
+{
 	struct timeb tb;
 	ftime(&tb);
 	return (tb.time * 1000 + tb.millitm) * 10000 + 621355968000000000;
@@ -30,16 +31,16 @@ hash_t hash2(string str)
 	return ret;
 }
 
-
 string get_type(string s)
 {
-	/* »ñÈ¡ÕæÊµtypeÃû³Æ*/
+	/* è·å–çœŸå®typeåç§°*/
 	int i = 0;
-	while (i < s.length() && isdigit(s[i]))i++;
+	while (i < s.length() && isdigit(s[i]))
+		i++;
 	return s.substr(i);
 }
 
-string get_string(stringstream* ss)
+string get_string(stringstream *ss)
 {
 	int length;
 	*ss >> length;
@@ -53,10 +54,9 @@ string get_string(stringstream* ss)
 	return res;
 }
 
-
-string ReadString(const byte* bytes)
+string ReadString(const byte *bytes)
 {
-	const byte* p = bytes;
+	const byte *p = bytes;
 	int len = p[0];
 	p++;
 	string str;
@@ -69,29 +69,31 @@ Message::Message()
 {
 	content = NULL;
 }
-Message::Message(int addr, IMessage* p)
+Message::Message(int addr, IMessage *p)
 {
 	Address = addr;
 	content = p;
 }
-Message* Message::New() const
+Message *Message::New() const
 {
-	Message* mes = new Message();
+	Message *mes = new Message();
 	return mes;
 }
 
 int Message::GetCachedSize() const
 {
-	// ÉĞÎ´¼ÓÈëÀàĞÍÃû×Ö·û´®³¤.ÔİÊ±ÓÃ²»µ½¸Ãº¯Êı
+	// å°šæœªåŠ å…¥ç±»å‹åå­—ç¬¦ä¸²é•¿.æš‚æ—¶ç”¨ä¸åˆ°è¯¥å‡½æ•°
 	return 4 + content->GetCachedSize();
 }
 
-const byte* Message::ParseFromArray(const byte* bytes, int size)
+const byte *Message::ParseFromArray(const byte *bytes, int size)
 {
-	const byte* p = bytes;
+	const byte *p = bytes;
 	Address = ReadMessageInt32(p);
-	if (Address >= 0&&Address<=10)p += 1;
-	else p += (Address < 0 ? 10 : 4);
+	if (Address >= 0 && Address <= 10)
+		p += 1;
+	else
+		p += (Address < 0 ? 10 : 4);
 	if (bytes + size - p > 0)
 	{
 		string type = ReadString(p);
@@ -122,37 +124,39 @@ const byte* Message::ParseFromArray(const byte* bytes, int size)
 			throw new domain_error("unknown protobuf packet type \n");
 		}
 	}
-	else content = NULL;
+	else
+		content = NULL;
 }
 
-byte* Message::SerializeToArray(byte* bytes, int size)
+byte *Message::SerializeToArray(byte *bytes, int size)
 {
-	byte* p = bytes;
+	byte *p = bytes;
 	p = WriteMessageInt32(this->Address, p);
-	if (this->content == NULL)return p;
+	if (this->content == NULL)
+		return p;
 	hash_t typehash = hash2(get_type(typeid(*(this->content)).name()));
 	if (typehash == hash2(get_type(typeid(Message).name())))
 	{
 		p = WriteString("Communication.Proto.Message", p);
-		p = ((Message*)content)->SerializeToArray(p, size - 5 - strlen("Communication.Proto.Message"));
+		p = ((Message *)content)->SerializeToArray(p, size - 5 - strlen("Communication.Proto.Message"));
 	}
 	else if (typehash == hash2(get_type(typeid(Protobuf::PingPacket).name())))
 	{
 		p = WriteString("Communication.Proto.PingPacket", p);
-		((Protobuf::PingPacket*)content)->SerializeToArray(p, size - 5 - strlen("Communication.Proto.PingPacket"));
-		p += ((Protobuf::PingPacket*)content)->ByteSize();
+		((Protobuf::PingPacket *)content)->SerializeToArray(p, size - 5 - strlen("Communication.Proto.PingPacket"));
+		p += ((Protobuf::PingPacket *)content)->ByteSize();
 	}
 	else if (typehash == hash2(get_type(typeid(Protobuf::ChatMessage).name())))
 	{
 		p = WriteString("Communication.Proto.ChatMessage", p);
-		((Protobuf::ChatMessage*)content)->SerializeToArray(p, size - 5 - strlen("Communication.Proto.ChatMessage"));
-		p += ((Protobuf::ChatMessage*)content)->ByteSize();
+		((Protobuf::ChatMessage *)content)->SerializeToArray(p, size - 5 - strlen("Communication.Proto.ChatMessage"));
+		p += ((Protobuf::ChatMessage *)content)->ByteSize();
 	}
 	else if (typehash == hash2(get_type(typeid(Protobuf::MessageToServer).name())))
 	{
 		p = WriteString("Communication.Proto.MessageToServer", p);
-		((Protobuf::MessageToServer*)content)->SerializeToArray(p, size - 5 - strlen("Communication.Proto.ChatMessage"));
-		p += ((Protobuf::MessageToServer*)content)->ByteSize();
+		((Protobuf::MessageToServer *)content)->SerializeToArray(p, size - 5 - strlen("Communication.Proto.ChatMessage"));
+		p += ((Protobuf::MessageToServer *)content)->ByteSize();
 	}
 	else
 	{
@@ -161,15 +165,12 @@ byte* Message::SerializeToArray(byte* bytes, int size)
 	return p;
 }
 
-
-
 google::protobuf::Metadata Message::GetMetadata() const
 {
 	return google::protobuf::Metadata();
 }
 
-
-byte* WriteInt32(INT64 x, byte* bytes)
+byte *WriteInt32(INT64 x, byte *bytes)
 {
 	for (int i = 0; i < 4; i++)
 	{
@@ -179,7 +180,7 @@ byte* WriteInt32(INT64 x, byte* bytes)
 	return &bytes[4];
 }
 
-byte* WriteMessageInt32(INT64 x, byte* bytes)
+byte *WriteMessageInt32(INT64 x, byte *bytes)
 {
 	assert(x > -3);
 	if (x == -1)
@@ -209,21 +210,20 @@ byte* WriteMessageInt32(INT64 x, byte* bytes)
 	return &bytes[4];
 }
 
-int ReadMessageInt32(const byte* bytes)
+int ReadMessageInt32(const byte *bytes)
 {
 	if (bytes[0] >= 0 && bytes[0] <= 10)
 	{
 		return (int)bytes[0];
 	}
-	const byte* p = bytes;
-	return *(INT32*)p;
+	const byte *p = bytes;
+	return *(INT32 *)p;
 }
 
-
-byte* WriteString(string str, byte* bytes)
+byte *WriteString(string str, byte *bytes)
 {
 	int len = str.length();
-	byte* p = bytes;
+	byte *p = bytes;
 	p[0] = (unsigned char)len;
 	p++;
 	for (int i = 0; i < len; i++)
@@ -233,5 +233,5 @@ byte* WriteString(string str, byte* bytes)
 	return &p[len];
 }
 
-
-
+const double Player::InitMoveSpeed = 5.0;
+const int Player::InitSightRange = 9;

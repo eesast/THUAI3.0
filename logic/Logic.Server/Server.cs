@@ -1,4 +1,4 @@
-﻿﻿using Communication.Proto;
+using Communication.Proto;
 using Communication.Server;
 using Logic.Constant;
 using System;
@@ -11,14 +11,13 @@ namespace Logic.Server
 {
     class Server
     {
-
-        protected ICommunication ServerCommunication = new CommunicationImpl();
+        protected ICommunication ServerCommunication;
 
         public Server(ushort serverPort, ushort playerCount, ushort agentCount, uint MaxGameTimeSeconds)
         {
-            Communication.Proto.Constants.ServerPort = serverPort;
             Communication.Proto.Constants.PlayerCount = playerCount;
             Communication.Proto.Constants.AgentCount = agentCount;
+            ServerCommunication = new CommunicationImpl { ServerPort = serverPort };
             ServerCommunication.Initialize();
             ServerCommunication.MsgProcess += OnRecieve;
             ServerCommunication.GameStart();
@@ -33,14 +32,15 @@ namespace Logic.Server
                     Program.PlayerList.Add(playerIDTuple, new Player(2.5, 1.5));//new Random().Next(2, WORLD_MAP_WIDTH - 2), new Random().Next(2, WORLD_MAP_HEIGHT - 2)));
                     Program.PlayerList[playerIDTuple].CommunicationID = playerIDTuple;
                     MessageToClient msg = new MessageToClient();
-                    msg.GameObjectMessageList.Add(
+                    msg.GameObjectList.Add(
                         Program.PlayerList[playerIDTuple].ID,
-                        new GameObjectMessage
+                        new Communication.Proto.GameObject
                         {
-                            ObjType = ObjTypeMessage.People,
+                            ObjType = ObjType.People,
                             IsMoving = false,
-                            Position = new XYPositionMessage { X = Program.PlayerList[playerIDTuple].Position.x, Y = Program.PlayerList[playerIDTuple].Position.y },
-                            Direction = (DirectionMessage)(int)Program.PlayerList[playerIDTuple].facingDirection
+                            PositionX = Program.PlayerList[playerIDTuple].Position.x,
+                            PositionY = Program.PlayerList[playerIDTuple].Position.y,
+                            Direction = (Communication.Proto.Direction)Program.PlayerList[playerIDTuple].facingDirection
                         });
                     ServerCommunication.SendMessage(new ServerMessage
                     {
@@ -55,33 +55,24 @@ namespace Logic.Server
             SendMessageToAllClient();
 
             new Thread(Run).Start();
-            Console.WriteLine("Server constructed");
+            Server.ServerDebug("Server constructed");
 
         }
 
         public void Run()
         {
             Time.InitializeTime();
-            Console.WriteLine("Server begin to run");
-            TaskSystem.RefreshTimer.Change(1000, (int)(Configs["TaskRefreshTime"]));
-            void ToolRefresh(object i)
-            {
-                XYPosition tempPosition = new XYPosition(Program.Random.Next(0, map.GetLength(0)), Program.Random.Next(0, map.GetLength(1)));
-                while (WorldMap.Grid[(int)tempPosition.x, (int)tempPosition.y].ContainsType(typeof(Block)))
-                {
-                    tempPosition = new XYPosition(Program.Random.Next(0, map.GetLength(0)), Program.Random.Next(0, map.GetLength(1)));
-                }
-                new Tool(tempPosition.x + 0.5, tempPosition.y + 0.5, (ToolType)Program.Random.Next(0, (int)ToolType.Size - 1)).Parent = WorldMap;
-            }
+            Server.ServerDebug("Server begin to run");
+            TaskSystem.RefreshTimer.Change(1000, (int)Configs["TaskRefreshTime"]);
             System.Threading.Timer ToolRefreshTimer = new System.Threading.Timer(ToolRefresh, null,
                 0, (int)Configs["ToolRefreshTime"]);
 
-            System.Threading.Timer timer = new System.Threading.Timer(
+            new System.Threading.Timer(
                 (o) =>
                 {
                     SendMessageToAllClient();
                 },
-                new object(),
+                null,
                 TimeSpan.FromSeconds(TimeInterval),
                 TimeSpan.FromSeconds(TimeInterval));
 
@@ -98,15 +89,25 @@ namespace Logic.Server
 
             }
 
-            Console.WriteLine("Server stop running");
+            Server.ServerDebug("Server stop running");
+        }
+
+        void ToolRefresh(object o)
+        {
+            THUnity2D.XYPosition tempPosition = null;
+            for (int i = 0; i < 10; i++)//加入次数限制，防止后期地图过满疯狂Random
+            {
+                tempPosition = new THUnity2D.XYPosition(Program.Random.Next(1, map.GetLength(0) - 1), Program.Random.Next(1, map.GetLength(1) - 1));
+                if (WorldMap.Grid[(int)tempPosition.x, (int)tempPosition.y].IsEmpty())
+                    break;
+            }
+            new Tool(tempPosition.x + 0.5, tempPosition.y + 0.5, (ToolType)Program.Random.Next(1, (int)ToolType.ToolSize - 1)).Parent = WorldMap;
         }
 
         protected void GodMode()
         {
-            Console.WriteLine("\n======= Welcome to God Mode ========\n");
+            Server.ServerDebug("\n======= Welcome to God Mode ========\n");
             string[] words = Console.ReadLine().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            if (words.Length < 5)
-                return;
             try
             {
                 switch (words[0])
@@ -116,19 +117,19 @@ namespace Logic.Server
                         {
                             case "Dish":
                                 DishType dishtype = (DishType)int.Parse(words[2]);
-                                if (dishtype >= DishType.Size2 || dishtype == DishType.Size1 || dishtype == DishType.Empty)
+                                if (dishtype >= DishType.DishSize2 || dishtype == DishType.DishSize1 || dishtype == DishType.DishEmpty)
                                     return;
                                 new Dish(double.Parse(words[3]), double.Parse(words[4]), dishtype).Parent = MapInfo.WorldMap;
                                 break;
                             case "Tool":
                                 ToolType tooltype = (ToolType)int.Parse(words[2]);
-                                if (tooltype >= ToolType.Size || tooltype == ToolType.Empty)
+                                if (tooltype >= ToolType.ToolSize || tooltype == ToolType.ToolEmpty)
                                     return;
                                 new Tool(double.Parse(words[3]), double.Parse(words[4]), tooltype).Parent = MapInfo.WorldMap;
                                 break;
                             case "Trigger":
                                 TriggerType triggertype = (TriggerType)int.Parse(words[2]);
-                                if (triggertype >= TriggerType.Size)
+                                if (triggertype >= TriggerType.TriggerSize)
                                     return;
                                 new Trigger(double.Parse(words[3]), double.Parse(words[4]), triggertype, -1).Parent = MapInfo.WorldMap;
                                 break;
@@ -142,6 +143,10 @@ namespace Logic.Server
             {
                 ServerDebug("Format Error");
             }
+            catch (IndexOutOfRangeException)
+            {
+                ServerDebug("Augment number incorrect");
+            }
         }
 
         protected void OnRecieve(Object communication, EventArgs e)
@@ -149,18 +154,15 @@ namespace Logic.Server
             CommunicationImpl communicationImpl = communication as CommunicationImpl;
             MessageEventArgs messageEventArgs = e as MessageEventArgs;
 
-            Console.WriteLine("GameTime : " + Time.GameTime().TotalSeconds.ToString("F3") + "s");
+            //Server.ServerDebug("GameTime : " + Time.GameTime().TotalSeconds.ToString("F3") + "s");
             Program.PlayerList[new Tuple<int, int>(messageEventArgs.message.Agent, messageEventArgs.message.Client)].ExecuteMessage(communicationImpl, (MessageToServer)((ServerMessage)messageEventArgs.message).Message);
-            //SendMessageToAllClient();
         }
 
         //向所有Client发送消息，按照帧率定时发送，严禁在其他地方调用此函数
         protected void SendMessageToAllClient()
         {
-            Server.ServerDebug("SendMessageToAll !!!");
             lock (Program.MessageToClientLock)
             {
-                Server.ServerDebug("Enter Lock !!!");
                 ServerCommunication.SendMessage(new ServerMessage
                 {
                     Agent = -2,

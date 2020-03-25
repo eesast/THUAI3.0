@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.7.82" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\communication\Client\Communication.CAPI.csproj" />
     <ProjectReference Include="..\Logic.Constant\Logic.Constant.csproj" />
   </ItemGroup>
