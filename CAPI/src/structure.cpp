@@ -89,6 +89,10 @@ std::list<Obj> MapInfo::get_mapcell(const int x, const int y)
 	{
 		return list<Obj>();
 	}
+	if (abs(x - PlayerInfo._position.x) > PlayerInfo._sightRange || abs(y - PlayerInfo._position.y) > PlayerInfo._sightRange)
+	{
+		return list<Obj>();
+	}
 	list<Obj> list;
 	for (std::unordered_map<int64_t, shared_ptr<Obj>>::iterator i = obj_map[x][y].begin(); i != obj_map[x][y].end(); i++)
 	{

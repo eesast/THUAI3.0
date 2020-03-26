@@ -19,10 +19,13 @@ namespace Client
     class Player : Character
     {
         protected Int64 id = -1;//注意！！！在这个类里基类的ID已被弃用
-        protected int team = 0;
+        protected new int team = 0;
         protected static DateTime lastSendTime = new DateTime();
         protected Communication.CAPI.API ClientCommunication = new Communication.CAPI.API();
         protected MessageToServer messageToServer = new MessageToServer();
+        protected Talent playerTalent;
+        protected bool isStartedGame = false;
+
         public void ChangeControlLabelText(string id, string str)
         {
             if (Program.form.ControlLabels[id].InvokeRequired)
@@ -100,6 +103,10 @@ namespace Client
                     Program.form.playerLabels[id_t].Text = gameObjectMessage.ToolType.ToString();
                     break;
                 case ObjType.Trigger:
+                    Program.form.playerLabels[id_t].Location =
+                        new System.Drawing.Point(
+                            (int)((gameObjectMessage.PositionX - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL),
+                            Convert.ToInt32((WorldMap.Height - gameObjectMessage.PositionY - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL));
                     break;
             }
         }
@@ -196,12 +203,13 @@ namespace Client
                 RefreshFormLabelMethod(id_t, gameObjectMessage);
             }
         }
-        public Player(double x, double y, ushort agentPort) :
+        public Player(double x, double y, ushort agentPort, Talent talent) :
             base(x, y)
         {
             ClientCommunication.Initialize();
             ClientCommunication.ReceiveMessage += OnReceive;
             ClientCommunication.ConnectServer(new IPEndPoint(IPAddress.Loopback, agentPort));
+            playerTalent = talent;
 
             new Thread(Operation).Start();
         }
@@ -212,7 +220,8 @@ namespace Client
             while (true)
             {
                 key = Console.ReadKey().KeyChar;
-
+                if (!isStartedGame)
+                    continue;
                 if ((DateTime.Now - lastSendTime).TotalSeconds <= TimeInterval)
                     continue;
                 switch (key)
@@ -227,32 +236,28 @@ namespace Client
                     case 'c': Move(THUnity2D.Direction.RightDown); break;
                     case 'f': Pick(); break;
                     case 'u':
-                        {
-                            if (tool == ToolType.SpaceGate)
-                            {
-                                Use(1, int.Parse(Console.ReadLine()), int.Parse(Console.ReadLine()));
-                                break;
-                            }
-                            Use(1, 0, 0);
-                        }
+                        Console.WriteLine("Please Input 2 parameters : ");
+                        Use(1, int.Parse(Console.ReadLine()), int.Parse(Console.ReadLine()));
                         break;
-
                     case 'i': Use(0, 0); break;
                     case 'r':
+                        Console.WriteLine("Please Input throw distance : ");
                         char temp = Console.ReadKey().KeyChar;
                         if (temp >= '0' && temp <= '9')
                         {
-                            Put(temp - '0', (double)facingDirection * Math.PI / 4, true);
+                            Put(temp - '0', (double)FacingDirection * Math.PI / 4, true);
                         }
                         break;
                     case 't':
+                        Console.WriteLine("Please Input throw distance : ");
                         char tmp = Console.ReadKey().KeyChar;
                         if (tmp >= '0' && tmp <= '9')
                         {
-                            Put(tmp - '0', (double)facingDirection * Math.PI / 4, false);
+                            Put(tmp - '0', (double)FacingDirection * Math.PI / 4, false);
                         }
                         break;
                     case ':':
+                        Console.WriteLine("Please Input your text to speak : ");
                         SpeakToFriend(Console.ReadLine());
                         break;
                 }
@@ -279,7 +284,7 @@ namespace Client
             messageToServer.CommandType = CommandType.Put;
             ClientCommunication.SendMessage(messageToServer);
         }
-        public override void Use(int type, int parameter_1 = 0, int parameter_2 = 0)
+        public override void Use(int type, double parameter_1 = 0, double parameter_2 = 0)
         {
             //在Server端控制变量范围
             messageToServer.CommandType = CommandType.Use;
@@ -308,21 +313,27 @@ namespace Client
                 throw new Exception("Recieve Error !");
             MessageToClient msg = message as MessageToClient;
 
-            //自己的id小于0时为未初始化状态，此时初始化自己的id
+            //自己的id小于0时为未初始化状态，此时初始化自己的id，然后发送message选择天赋
             if (this.id < 0)
             {
+                isStartedGame = true;
                 foreach (var gameObject in msg.GameObjectList)
                 {
                     this.id = gameObject.Key;
                     this.team = gameObject.Value.Team;
                     Console.WriteLine("\nThis Player :\n" + "\t" + id.ToString() + "\n\tposition: " + Position.ToString());
+                    ClientCommunication.SendMessage(new MessageToServer
+                    {
+                        Talent = playerTalent,
+                        IsSetTalent = true
+                    });
                     break;
                 }
                 messageToServer.ID = this.id;
             }
 
             this.Position = new XYPosition(msg.GameObjectList[this.id].PositionX, msg.GameObjectList[this.id].PositionY);
-            this.facingDirection = (THUnity2D.Direction)msg.GameObjectList[this.id].Direction;
+            this._facingDirection = (THUnity2D.Direction)msg.GameObjectList[this.id].Direction;
 
             ChangeAllLabels(msg);
         }

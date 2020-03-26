@@ -81,7 +81,7 @@ enum ToolType {
   ToolEmpty = 0;
   TigerShoes = 1;
   SpeedBuff = 2;
-  StrenthBuff = 3;
+  StrengthBuff = 3;
   TeleScope = 4;
   Condiment = 5;
   Fertilizer = 6;
@@ -91,17 +91,20 @@ enum ToolType {
   WaveGlueBottle = 9;
   LandMine = 10;
   TrapTool = 11;
-  // FlashBomb = 12;
-  // Hammer = 13;
-  // Brick = 14;
-  // Stealer = 15;
+  FlashBomb = 12;
+  ThrowHammer = 13;
+  Bow = 14;
+  Stealer = 15;
   ToolSize = 16;
 }
 enum TriggerType {
   WaveGlue = 0;
   Trap = 1;
   Mine = 2;
-  TriggerSize = 3;
+  Bomb = 3;
+  Arrow = 4;
+  Hammer = 5;
+  TriggerSize = 6;
 }
 enum Buff {
   Frozen = 0;
@@ -128,6 +131,7 @@ enum Talent {
   Technician = 4;
   LuckyBoy = 5;
   // DrunkMan
+  TalentSize = 6;
 }
 message GameObject {
   double PositionX = 1;
@@ -145,6 +149,7 @@ message GameObject {
   // int32 Score = 13;
   string SpeakText = 13;
   int32 team = 14;
+  int32 SightRange = 15;
 }
 message MessageToClient {
   map<int64, GameObject> GameObjectList = 1;

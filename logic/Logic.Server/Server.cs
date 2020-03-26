@@ -37,7 +37,7 @@ namespace Logic.Server
                 for (int c = 0; c < Constants.PlayerCount; c++)
                 {
                     Tuple<int, int> playerIDTuple = new Tuple<int, int>(a, c);
-                    Program.PlayerList.Add(playerIDTuple, new Player(2.5, 1.5));//new Random().Next(2, WORLD_MAP_WIDTH - 2), new Random().Next(2, WORLD_MAP_HEIGHT - 2)));
+                    Program.PlayerList.TryAdd(playerIDTuple, new Player(2.5, 1.5));//new Random().Next(2, WORLD_MAP_WIDTH - 2), new Random().Next(2, WORLD_MAP_HEIGHT - 2)));
                     Program.PlayerList[playerIDTuple].CommunicationID = playerIDTuple;
                     MessageToClient msg = new MessageToClient();
                     msg.GameObjectList.Add(
@@ -49,7 +49,7 @@ namespace Logic.Server
                             Team = playerIDTuple.Item1,
                             PositionX = Program.PlayerList[playerIDTuple].Position.x,
                             PositionY = Program.PlayerList[playerIDTuple].Position.y,
-                            Direction = (Communication.Proto.Direction)Program.PlayerList[playerIDTuple].facingDirection
+                            Direction = (Communication.Proto.Direction)Program.PlayerList[playerIDTuple].FacingDirection
                         });
                     ServerCommunication.SendMessage(new ServerMessage
                     {
@@ -104,7 +104,7 @@ namespace Logic.Server
         protected void PrintScore()
         {
             Console.WriteLine("============= Score ===========");
-            for(int i=0;i<Communication.Proto.Constants.AgentCount;i++)
+            for (int i = 0; i < Communication.Proto.Constants.AgentCount; i++)
             {
                 Console.WriteLine("Team " + i + " : " + Program.MessageToClient.Scores[i]);
             }
@@ -154,7 +154,7 @@ namespace Logic.Server
                                 TriggerType triggertype = (TriggerType)int.Parse(words[2]);
                                 if (triggertype >= TriggerType.TriggerSize)
                                     return;
-                                new Trigger(double.Parse(words[3]), double.Parse(words[4]), triggertype, -1).Parent = MapInfo.WorldMap;
+                                new Trigger(double.Parse(words[3]), double.Parse(words[4]), triggertype, -1, Talent.None).Parent = MapInfo.WorldMap;
                                 break;
                         }
                         break;
@@ -176,9 +176,24 @@ namespace Logic.Server
         {
             CommunicationImpl communicationImpl = communication as CommunicationImpl;
             MessageEventArgs messageEventArgs = e as MessageEventArgs;
+            Tuple<int, int> playerCommunitionID = new Tuple<int, int>(messageEventArgs.message.Agent, messageEventArgs.message.Client);
+            if (((MessageToServer)messageEventArgs.message.Message).IsSetTalent)
+            {
+                while (!Program.PlayerList.ContainsKey(playerCommunitionID))
+                {
+                    Thread.Sleep(100);
+                }
+                if (((MessageToServer)messageEventArgs.message.Message).Talent < Talent.None || ((MessageToServer)messageEventArgs.message.Message).Talent >= Talent.Size)
+                {
+                    ((MessageToServer)messageEventArgs.message.Message).Talent = Talent.None;
+                }
+                Program.PlayerList[playerCommunitionID].Talent = ((MessageToServer)messageEventArgs.message.Message).Talent;
+                Server.ServerDebug("Player " + playerCommunitionID.Item1 + "." + playerCommunitionID.Item2 + " has chose talent " + Program.PlayerList[playerCommunitionID].Talent);
+                return;
+            }
 
             //Server.ServerDebug("GameTime : " + Time.GameTime().TotalSeconds.ToString("F3") + "s");
-            Program.PlayerList[new Tuple<int, int>(messageEventArgs.message.Agent, messageEventArgs.message.Client)].ExecuteMessage(communicationImpl, (MessageToServer)((ServerMessage)messageEventArgs.message).Message);
+            Program.PlayerList[playerCommunitionID].ExecuteMessage(communicationImpl, (MessageToServer)messageEventArgs.message.Message);
         }
 
         //向所有Client发送消息，按照帧率定时发送，严禁在其他地方调用此函数

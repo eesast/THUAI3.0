@@ -24,7 +24,7 @@ namespace Communication.Proto {
     static MessageToClientReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChVNZXNzYWdlVG9DbGllbnQucHJvdG8SCFByb3RvYnVmIo4DCgpHYW1lT2Jq",
+            "ChVNZXNzYWdlVG9DbGllbnQucHJvdG8SCFByb3RvYnVmIqIDCgpHYW1lT2Jq",
             "ZWN0EhEKCVBvc2l0aW9uWBgBIAEoARIRCglQb3NpdGlvblkYAiABKAESDQoF",
             "V2lkdGgYAyABKAUSDgoGSGVpZ2h0GAQgASgFEiYKCURpcmVjdGlvbhgFIAEo",
             "DjITLlByb3RvYnVmLkRpcmVjdGlvbhIiCgdPYmpUeXBlGAYgASgOMhEuUHJv",
@@ -33,53 +33,55 @@ namespace Communication.Proto {
             "ZRIkCghUb29sVHlwZRgJIAEoDjISLlByb3RvYnVmLlRvb2xUeXBlEioKC1Ry",
             "aWdnZXJUeXBlGAogASgOMhUuUHJvdG9idWYuVHJpZ2dlclR5cGUSEAoIaXNN",
             "b3ZpbmcYCyABKAgSHAoEQnVmZhgMIAMoDjIOLlByb3RvYnVmLkJ1ZmYSEQoJ",
-            "U3BlYWtUZXh0GA0gASgJEgwKBHRlYW0YDiABKAUirgIKD01lc3NhZ2VUb0Ns",
-            "aWVudBJFCg5HYW1lT2JqZWN0TGlzdBgBIAMoCzItLlByb3RvYnVmLk1lc3Nh",
-            "Z2VUb0NsaWVudC5HYW1lT2JqZWN0TGlzdEVudHJ5EiEKBVRhc2tzGAIgAygO",
-            "MhIuUHJvdG9idWYuRGlzaFR5cGUSNQoGU2NvcmVzGAMgAygLMiUuUHJvdG9i",
-            "dWYuTWVzc2FnZVRvQ2xpZW50LlNjb3Jlc0VudHJ5GksKE0dhbWVPYmplY3RM",
-            "aXN0RW50cnkSCwoDa2V5GAEgASgDEiMKBXZhbHVlGAIgASgLMhQuUHJvdG9i",
-            "dWYuR2FtZU9iamVjdDoCOAEaLQoLU2NvcmVzRW50cnkSCwoDa2V5GAEgASgF",
-            "Eg0KBXZhbHVlGAIgASgFOgI4ASpSCgdPYmpUeXBlEgoKBlBlb3BsZRAAEgkK",
-            "BUJsb2NrEAESCAoERGlzaBACEggKBFRvb2wQAxILCgdUcmlnZ2VyEAQSDwoL",
-            "T2JqVHlwZVNpemUQBSptCglCbG9ja1R5cGUSCAoEV2FsbBAAEgkKBVRhYmxl",
-            "EAESDQoJRm9vZFBvaW50EAISCgoGQ29va2VyEAMSDgoKUnViYmlzaEJpbhAE",
-            "Eg0KCVRhc2tQb2ludBAFEhEKDUJsb2NrVHlwZVNpemUQBiqPBgoIRGlzaFR5",
-            "cGUSDQoJRGlzaEVtcHR5EAASCQoFV2hlYXQQARIICgRSaWNlEAISCgoGVG9t",
-            "YXRvEAMSBwoDRWdnEAQSCAoETWlsaxAFEgkKBUFwcGxlEAYSCgoGQmFuYW5h",
-            "EAcSDAoIRGFya1BsdW0QCBIMCghIYXd0aG9ybhAJEg4KClN0cmF3YmVycnkQ",
-            "ChIICgRCZWVmEAsSCAoEUG9yaxAMEg8KC0NoaWNrZW5NZWF0EA0SCgoGUG90",
-            "YXRvEA4SCwoHTGV0dHVjZRAPEgoKBkFnYXJpYxAQEhIKDk5lZWRsZU11c2hy",
-            "b29tEBESCwoHQ2FiYmFnZRASEg0KCURpc2hTaXplMRATEgkKBUZsb3VyEBQS",
-            "CgoGTm9vZGxlEBUSCQoFQnJlYWQQFhIOCgpDb29rZWRSaWNlEBcSCwoHS2V0",
-            "Y2h1cBAYEgkKBUNyZWFtEBkSEgoOVG9tYXRvRnJpZWRFZ2cQGhIYChRUb21h",
-            "dG9GcmllZEVnZ05vb2RsZRAbEg4KCkJlZWZOb29kbGUQHBIMCghPdmVyUmlj",
-            "ZRAdEhIKDlllbGxvd1BoZWFzYW50EB4SDAoIQmFyYmVjdWUQHxIPCgtGcmVu",
-            "Y2hGcmllcxAgEg0KCVBsdW1KdWljZRAhEg0KCUhhbWJ1cmdlchAiEhYKElN0",
-            "cmF3YmVycnlJY2VjcmVhbRAjEhIKDlBvcGNvcm5DaGlja2VuECQSEgoOQWdh",
-            "cmljRnJpZWRFZ2cQJRIICgRDYWtlECYSEwoPU3VnYXJDb2F0ZWRIYXdzECcS",
-            "DgoKRnJ1aXRTYWxhZBAoEg0KCVNwaWNlZFBvdBApEg4KClNwaWNlZFBvdDMQ",
-            "KhIOCgpTcGljZWRQb3Q0ECsSDgoKU3BpY2VkUG90NRAsEg4KClNwaWNlZFBv",
-            "dDYQLRIOCgpTcGljZWRQb3Q3EC4SDgoKU3BpY2VkUG90OBAvEg0KCURpc2hT",
-            "aXplMhAwEhIKDk92ZXJDb29rZWREaXNoEDESDAoIRGFya0Rpc2gQMhINCglE",
-            "aXNoU2l6ZTMQMyrVAQoIVG9vbFR5cGUSDQoJVG9vbEVtcHR5EAASDgoKVGln",
-            "ZXJTaG9lcxABEg0KCVNwZWVkQnVmZhACEg8KC1N0cmVudGhCdWZmEAMSDQoJ",
-            "VGVsZVNjb3BlEAQSDQoJQ29uZGltZW50EAUSDgoKRmVydGlsaXplchAGEg8K",
-            "C0JyZWFzdFBsYXRlEAcSDQoJU3BhY2VHYXRlEAgSEgoOV2F2ZUdsdWVCb3R0",
-            "bGUQCRIMCghMYW5kTWluZRAKEgwKCFRyYXBUb29sEAsSDAoIVG9vbFNpemUQ",
-            "ECpACgtUcmlnZ2VyVHlwZRIMCghXYXZlR2x1ZRAAEggKBFRyYXAQARIICgRN",
-            "aW5lEAISDwoLVHJpZ2dlclNpemUQAyo6CgRCdWZmEgoKBkZyb3plbhAAEgsK",
-            "B1N0dW5uZWQQARILCgdTcGVlZFVwEAISDAoIU2xvd0Rvd24QAyp7CglEaXJl",
-            "Y3Rpb24SCQoFUmlnaHQQABILCgdSaWdodFVwEAESBgoCVXAQAhIKCgZMZWZ0",
-            "VXAQAxIICgRMZWZ0EAQSDAoITGVmdERvd24QBRIICgREb3duEAYSDQoJUmln",
-            "aHREb3duEAcSEQoNRGlyZWN0aW9uU2l6ZRAIKlUKBlRhbGVudBIICgROb25l",
-            "EAASCgoGUnVubmVyEAESDQoJU3Ryb25nTWFuEAISCAoEQ29vaxADEg4KClRl",
-            "Y2huaWNpYW4QBBIMCghMdWNreUJveRAFQhaqAhNDb21tdW5pY2F0aW9uLlBy",
-            "b3RvYgZwcm90bzM="));
+            "U3BlYWtUZXh0GA0gASgJEgwKBHRlYW0YDiABKAUSEgoKU2lnaHRSYW5nZRgP",
+            "IAEoBSKuAgoPTWVzc2FnZVRvQ2xpZW50EkUKDkdhbWVPYmplY3RMaXN0GAEg",
+            "AygLMi0uUHJvdG9idWYuTWVzc2FnZVRvQ2xpZW50LkdhbWVPYmplY3RMaXN0",
+            "RW50cnkSIQoFVGFza3MYAiADKA4yEi5Qcm90b2J1Zi5EaXNoVHlwZRI1CgZT",
+            "Y29yZXMYAyADKAsyJS5Qcm90b2J1Zi5NZXNzYWdlVG9DbGllbnQuU2NvcmVz",
+            "RW50cnkaSwoTR2FtZU9iamVjdExpc3RFbnRyeRILCgNrZXkYASABKAMSIwoF",
+            "dmFsdWUYAiABKAsyFC5Qcm90b2J1Zi5HYW1lT2JqZWN0OgI4ARotCgtTY29y",
+            "ZXNFbnRyeRILCgNrZXkYASABKAUSDQoFdmFsdWUYAiABKAU6AjgBKlIKB09i",
+            "alR5cGUSCgoGUGVvcGxlEAASCQoFQmxvY2sQARIICgREaXNoEAISCAoEVG9v",
+            "bBADEgsKB1RyaWdnZXIQBBIPCgtPYmpUeXBlU2l6ZRAFKm0KCUJsb2NrVHlw",
+            "ZRIICgRXYWxsEAASCQoFVGFibGUQARINCglGb29kUG9pbnQQAhIKCgZDb29r",
+            "ZXIQAxIOCgpSdWJiaXNoQmluEAQSDQoJVGFza1BvaW50EAUSEQoNQmxvY2tU",
+            "eXBlU2l6ZRAGKo8GCghEaXNoVHlwZRINCglEaXNoRW1wdHkQABIJCgVXaGVh",
+            "dBABEggKBFJpY2UQAhIKCgZUb21hdG8QAxIHCgNFZ2cQBBIICgRNaWxrEAUS",
+            "CQoFQXBwbGUQBhIKCgZCYW5hbmEQBxIMCghEYXJrUGx1bRAIEgwKCEhhd3Ro",
+            "b3JuEAkSDgoKU3RyYXdiZXJyeRAKEggKBEJlZWYQCxIICgRQb3JrEAwSDwoL",
+            "Q2hpY2tlbk1lYXQQDRIKCgZQb3RhdG8QDhILCgdMZXR0dWNlEA8SCgoGQWdh",
+            "cmljEBASEgoOTmVlZGxlTXVzaHJvb20QERILCgdDYWJiYWdlEBISDQoJRGlz",
+            "aFNpemUxEBMSCQoFRmxvdXIQFBIKCgZOb29kbGUQFRIJCgVCcmVhZBAWEg4K",
+            "CkNvb2tlZFJpY2UQFxILCgdLZXRjaHVwEBgSCQoFQ3JlYW0QGRISCg5Ub21h",
+            "dG9GcmllZEVnZxAaEhgKFFRvbWF0b0ZyaWVkRWdnTm9vZGxlEBsSDgoKQmVl",
+            "Zk5vb2RsZRAcEgwKCE92ZXJSaWNlEB0SEgoOWWVsbG93UGhlYXNhbnQQHhIM",
+            "CghCYXJiZWN1ZRAfEg8KC0ZyZW5jaEZyaWVzECASDQoJUGx1bUp1aWNlECES",
+            "DQoJSGFtYnVyZ2VyECISFgoSU3RyYXdiZXJyeUljZWNyZWFtECMSEgoOUG9w",
+            "Y29ybkNoaWNrZW4QJBISCg5BZ2FyaWNGcmllZEVnZxAlEggKBENha2UQJhIT",
+            "Cg9TdWdhckNvYXRlZEhhd3MQJxIOCgpGcnVpdFNhbGFkECgSDQoJU3BpY2Vk",
+            "UG90ECkSDgoKU3BpY2VkUG90MxAqEg4KClNwaWNlZFBvdDQQKxIOCgpTcGlj",
+            "ZWRQb3Q1ECwSDgoKU3BpY2VkUG90NhAtEg4KClNwaWNlZFBvdDcQLhIOCgpT",
+            "cGljZWRQb3Q4EC8SDQoJRGlzaFNpemUyEDASEgoOT3ZlckNvb2tlZERpc2gQ",
+            "MRIMCghEYXJrRGlzaBAyEg0KCURpc2hTaXplMxAzKowCCghUb29sVHlwZRIN",
+            "CglUb29sRW1wdHkQABIOCgpUaWdlclNob2VzEAESDQoJU3BlZWRCdWZmEAIS",
+            "EAoMU3RyZW5ndGhCdWZmEAMSDQoJVGVsZVNjb3BlEAQSDQoJQ29uZGltZW50",
+            "EAUSDgoKRmVydGlsaXplchAGEg8KC0JyZWFzdFBsYXRlEAcSDQoJU3BhY2VH",
+            "YXRlEAgSEgoOV2F2ZUdsdWVCb3R0bGUQCRIMCghMYW5kTWluZRAKEgwKCFRy",
+            "YXBUb29sEAsSDQoJRmxhc2hCb21iEAwSDwoLVGhyb3dIYW1tZXIQDRIHCgNC",
+            "b3cQDhILCgdTdGVhbGVyEA8SDAoIVG9vbFNpemUQECphCgtUcmlnZ2VyVHlw",
+            "ZRIMCghXYXZlR2x1ZRAAEggKBFRyYXAQARIICgRNaW5lEAISCAoEQm9tYhAD",
+            "EgkKBUFycm93EAQSCgoGSGFtbWVyEAUSDwoLVHJpZ2dlclNpemUQBio6CgRC",
+            "dWZmEgoKBkZyb3plbhAAEgsKB1N0dW5uZWQQARILCgdTcGVlZFVwEAISDAoI",
+            "U2xvd0Rvd24QAyp7CglEaXJlY3Rpb24SCQoFUmlnaHQQABILCgdSaWdodFVw",
+            "EAESBgoCVXAQAhIKCgZMZWZ0VXAQAxIICgRMZWZ0EAQSDAoITGVmdERvd24Q",
+            "BRIICgREb3duEAYSDQoJUmlnaHREb3duEAcSEQoNRGlyZWN0aW9uU2l6ZRAI",
+            "KmUKBlRhbGVudBIICgROb25lEAASCgoGUnVubmVyEAESDQoJU3Ryb25nTWFu",
+            "EAISCAoEQ29vaxADEg4KClRlY2huaWNpYW4QBBIMCghMdWNreUJveRAFEg4K",
+            "ClRhbGVudFNpemUQBkIWqgITQ29tbXVuaWNhdGlvbi5Qcm90b2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Communication.Proto.ObjType), typeof(global::Communication.Proto.BlockType), typeof(global::Communication.Proto.DishType), typeof(global::Communication.Proto.ToolType), typeof(global::Communication.Proto.TriggerType), typeof(global::Communication.Proto.Buff), typeof(global::Communication.Proto.Direction), typeof(global::Communication.Proto.Talent), }, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.GameObject), global::Communication.Proto.GameObject.Parser, new[]{ "PositionX", "PositionY", "Width", "Height", "Direction", "ObjType", "BlockType", "DishType", "ToolType", "TriggerType", "IsMoving", "Buff", "SpeakText", "Team" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.GameObject), global::Communication.Proto.GameObject.Parser, new[]{ "PositionX", "PositionY", "Width", "Height", "Direction", "ObjType", "BlockType", "DishType", "ToolType", "TriggerType", "IsMoving", "Buff", "SpeakText", "Team", "SightRange" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.MessageToClient), global::Communication.Proto.MessageToClient.Parser, new[]{ "GameObjectList", "Tasks", "Scores" }, null, null, new pbr::GeneratedClrTypeInfo[] { null, null, })
           }));
     }
@@ -312,7 +314,7 @@ namespace Communication.Proto {
     [pbr::OriginalName("ToolEmpty")] ToolEmpty = 0,
     [pbr::OriginalName("TigerShoes")] TigerShoes = 1,
     [pbr::OriginalName("SpeedBuff")] SpeedBuff = 2,
-    [pbr::OriginalName("StrenthBuff")] StrenthBuff = 3,
+    [pbr::OriginalName("StrengthBuff")] StrengthBuff = 3,
     [pbr::OriginalName("TeleScope")] TeleScope = 4,
     [pbr::OriginalName("Condiment")] Condiment = 5,
     [pbr::OriginalName("Fertilizer")] Fertilizer = 6,
@@ -324,12 +326,10 @@ namespace Communication.Proto {
     [pbr::OriginalName("WaveGlueBottle")] WaveGlueBottle = 9,
     [pbr::OriginalName("LandMine")] LandMine = 10,
     [pbr::OriginalName("TrapTool")] TrapTool = 11,
-    /// <summary>
-    /// FlashBomb = 12;
-    /// Hammer = 13;
-    /// Brick = 14;
-    /// Stealer = 15;
-    /// </summary>
+    [pbr::OriginalName("FlashBomb")] FlashBomb = 12,
+    [pbr::OriginalName("ThrowHammer")] ThrowHammer = 13,
+    [pbr::OriginalName("Bow")] Bow = 14,
+    [pbr::OriginalName("Stealer")] Stealer = 15,
     [pbr::OriginalName("ToolSize")] ToolSize = 16,
   }
 
@@ -337,7 +337,10 @@ namespace Communication.Proto {
     [pbr::OriginalName("WaveGlue")] WaveGlue = 0,
     [pbr::OriginalName("Trap")] Trap = 1,
     [pbr::OriginalName("Mine")] Mine = 2,
-    [pbr::OriginalName("TriggerSize")] TriggerSize = 3,
+    [pbr::OriginalName("Bomb")] Bomb = 3,
+    [pbr::OriginalName("Arrow")] Arrow = 4,
+    [pbr::OriginalName("Hammer")] Hammer = 5,
+    [pbr::OriginalName("TriggerSize")] TriggerSize = 6,
   }
 
   public enum Buff {
@@ -365,10 +368,11 @@ namespace Communication.Proto {
     [pbr::OriginalName("StrongMan")] StrongMan = 2,
     [pbr::OriginalName("Cook")] Cook = 3,
     [pbr::OriginalName("Technician")] Technician = 4,
+    [pbr::OriginalName("LuckyBoy")] LuckyBoy = 5,
     /// <summary>
     /// DrunkMan
     /// </summary>
-    [pbr::OriginalName("LuckyBoy")] LuckyBoy = 5,
+    [pbr::OriginalName("TalentSize")] Size = 6,
   }
 
   #endregion
@@ -413,6 +417,7 @@ namespace Communication.Proto {
       buff_ = other.buff_.Clone();
       speakText_ = other.speakText_;
       team_ = other.team_;
+      sightRange_ = other.sightRange_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -577,6 +582,17 @@ namespace Communication.Proto {
       }
     }
 
+    /// <summary>Field number for the "SightRange" field.</summary>
+    public const int SightRangeFieldNumber = 15;
+    private int sightRange_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int SightRange {
+      get { return sightRange_; }
+      set {
+        sightRange_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as GameObject);
@@ -604,6 +620,7 @@ namespace Communication.Proto {
       if(!buff_.Equals(other.buff_)) return false;
       if (SpeakText != other.SpeakText) return false;
       if (Team != other.Team) return false;
+      if (SightRange != other.SightRange) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -624,6 +641,7 @@ namespace Communication.Proto {
       hash ^= buff_.GetHashCode();
       if (SpeakText.Length != 0) hash ^= SpeakText.GetHashCode();
       if (Team != 0) hash ^= Team.GetHashCode();
+      if (SightRange != 0) hash ^= SightRange.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -690,6 +708,10 @@ namespace Communication.Proto {
         output.WriteRawTag(112);
         output.WriteInt32(Team);
       }
+      if (SightRange != 0) {
+        output.WriteRawTag(120);
+        output.WriteInt32(SightRange);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -737,6 +759,9 @@ namespace Communication.Proto {
       }
       if (Team != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Team);
+      }
+      if (SightRange != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(SightRange);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -788,6 +813,9 @@ namespace Communication.Proto {
       }
       if (other.Team != 0) {
         Team = other.Team;
+      }
+      if (other.SightRange != 0) {
+        SightRange = other.SightRange;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -855,6 +883,10 @@ namespace Communication.Proto {
           }
           case 112: {
             Team = input.ReadInt32();
+            break;
+          }
+          case 120: {
+            SightRange = input.ReadInt32();
             break;
           }
         }

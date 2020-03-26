@@ -120,21 +120,23 @@ class  player_info
 private:
 	XYPosition _position = XYPosition(0, 0);
 	int64_t _id = -1;
-	int _SightRange = Player::InitSightRange;
+	int _sightRange = Player::InitSightRange;
 	int _team = 0;
 public:
 	friend class CAPI;
+	friend class MapInfo;
 	XYPosition position = XYPosition(0, 0);
 	int64_t id = -1;
 	std::pair<int, int> CommunicationID; //第一个数表示Agent，第二个数表示Client
 	int team = 0;
 	Direction facingDirection;
-	int SightRange = Player::InitSightRange;
+	int sightRange = Player::InitSightRange;
 	Talent talent;
 	int score = 0;
 	DishType dish = DishType::DishEmpty;
 	ToolType tool = ToolType::ToolEmpty;
 };
 extern player_info PlayerInfo;
+extern Protobuf::Talent initTalent;
 
 #endif // !STRUCTURES_H

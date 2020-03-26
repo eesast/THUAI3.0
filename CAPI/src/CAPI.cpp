@@ -197,12 +197,17 @@ void CAPI::UpdateInfo(Protobuf::MessageToClient* message)
 		PlayerInfo._id = PlayerInfo.id = message->gameobjectlist().begin()->first;
 		PlayerInfo._team = PlayerInfo.team = message->gameobjectlist().begin()->second.team();
 		std::cout << "Initialize Player : ID : " << PlayerInfo._id << "  team : " << PlayerInfo._team << std::endl;
+		MessageToServer mesC2S;
+		mesC2S.set_issettalent(true);
+		mesC2S.set_talent(initTalent);
+		SendCommandMessage(&mesC2S);
 	}
-	PlayerInfo._position.x = PlayerInfo.position.x = message->gameobjectlist().begin()->second.positionx();
-	PlayerInfo._position.y = PlayerInfo.position.y = message->gameobjectlist().begin()->second.positiony();
-	PlayerInfo.facingDirection = message->gameobjectlist().begin()->second.direction();
-	PlayerInfo.dish = message->gameobjectlist().begin()->second.dishtype();
-	PlayerInfo.tool = message->gameobjectlist().begin()->second.tooltype();
+	PlayerInfo._position.x = PlayerInfo.position.x = message->gameobjectlist().at(PlayerInfo._id).positionx();
+	PlayerInfo._position.y = PlayerInfo.position.y = message->gameobjectlist().at(PlayerInfo._id).positiony();
+	PlayerInfo.facingDirection = message->gameobjectlist().at(PlayerInfo._id).direction();
+	PlayerInfo.sightRange = PlayerInfo._sightRange = message->gameobjectlist().at(PlayerInfo._id).sightrange();
+	PlayerInfo.dish = message->gameobjectlist().at(PlayerInfo._id).dishtype();
+	PlayerInfo.tool = message->gameobjectlist().at(PlayerInfo._id).tooltype();
 	if (message->scores().contains(PlayerInfo._team))
 		PlayerInfo.score = message->scores().at(PlayerInfo._team);
 
