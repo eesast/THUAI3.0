@@ -1,8 +1,10 @@
+#define DEVELOPER_ONLY
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
 #include "API.h"
 #include "CAPI.h"
+
 
 extern CAPI API;
 
