@@ -1,6 +1,6 @@
 @echo off 
 cd ../dependency
-start generateProto.ps1
+PowerShell -NoProfile -ExecutionPolicy Bypass -Command "& '.\generateProto.ps1'"
 cd ../CAPI
 md build && cd build
 cmake ..

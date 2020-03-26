@@ -2,7 +2,8 @@
 #define OS_RELATED_H
 
 #ifdef WIN32
-
+#include<winsock2.h>
+#include<Windows.h>
 #endif
 
 #ifdef __linux__

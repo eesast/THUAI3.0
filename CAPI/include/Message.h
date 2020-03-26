@@ -1,6 +1,8 @@
 #ifndef MESSAGE_H
 #define MESSAGE_H
-
+#ifndef DEVELOPER_ONLY
+#error This file is only included for developers
+#endif
 #include "OS_related.h"
 #include <string>
 #include <sys/timeb.h>

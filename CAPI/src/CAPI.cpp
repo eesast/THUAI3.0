@@ -1,3 +1,4 @@
+#define DEVELOPER_ONLY
 #define _CRT_SECURE_NO_WARNINGS
 #ifndef NOMINMAX
 #define NOMINMAX

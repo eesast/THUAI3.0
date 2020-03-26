@@ -1,3 +1,8 @@
+cat player.cpp | grep "#define DEVELOPER_ONLY"
+if [ $? -ne 0 ];then
+	echo "file inclusion error" >> error.txt
+	exit 1
+fi
 docker pull veritaria/thuai_capi_compile
 docker pull veritaria/thuai_capi_run
 docker run -itd --name compile veritaria/thuai_capi_compile
@@ -12,10 +17,12 @@ if [ $? -ne 0 ];then
 else
 	# if no compilation error occurs, continue
 	echo "compilation success"
-	docker cp compile:/usr/local/CAPI/. ./COMPILED_CAPI
-	cp ./COMPILED_CAPI/build/AI /home/backup/name  # save executable file
+	docker cp compile:/usr/local/CAPI/build/AI ./
+	docker cp compile:/usr/local/CAPI/build/proto/lib/libprotos.so ./
+	cp ./AI /home/backup/name  # save executable file
 	docker run -itd --name run veritaria/thuai_capi_run 
-	docker cp ./COMPILED_CAPI/. run:/usr/local/CAPI
+	docker cp ./AI run:/usr/local/
+	docker cp ./libprotos.so run:/usr/lib/
 	docker exec run /bin/bash -c '/usr/local/CAPI/build/AI 127.0.0.1 8888'
 	wait
 	docker stop compile
