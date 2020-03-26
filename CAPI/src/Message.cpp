@@ -1,3 +1,4 @@
+#define DEVELOPER_ONLY
 #include "Message.h"
 #include "Constant.h"
 #include <string>

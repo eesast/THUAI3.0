@@ -1,6 +1,8 @@
 #ifndef CAPI_H
 #define CAPI_H
-
+#ifndef DEVELOPER_ONLY
+#error This file is only included for developers
+#endif
 #define _CRT_SECURE_NO_WARNINGS
 #include "Message.h"
 #include "Constant.h"

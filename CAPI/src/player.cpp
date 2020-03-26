@@ -1,3 +1,4 @@
+#define USER_ONLY
 #include "API.h"
 #include "player.h"
 #include <iostream>

@@ -7,8 +7,9 @@
 
 # Dockerfile
 **/Docker*
-**/*.sh
 **/.dockerignore
 
 # doc
 **/*.md
+
+# player.cpp

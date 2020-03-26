@@ -1,3 +1,4 @@
+#define DEVELOPER_ONLY
 #pragma warning(disable:26495)
 
 #include "CAPI.h"

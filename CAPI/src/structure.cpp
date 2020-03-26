@@ -1,3 +1,4 @@
+#define DEVELOPER_ONLY
 #include "MessageToClient.pb.h"
 using namespace Protobuf;
 #include "Constant.h"
