@@ -2,5 +2,7 @@
 
 FROM mcr.microsoft.com/dotnet/core/runtime:3.0
 COPY logic/Logic.Server/bin/Release/netcoreapp3.0/linux-x64/ app/
+RUN mkdir app/Config/
+COPY ../Config/Config.json app/Config/
 ENTRYPOINT ["dotnet", "app/Logic.Server.dll"]
 CMD ["-p", "20000", "-d", "1", "-c", "2", "-a", "1", "-t", "600"]
