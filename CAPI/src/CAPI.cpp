@@ -211,7 +211,6 @@ void CAPI::UpdateInfo(Protobuf::MessageToClient* message)
 	PlayerInfo.tool = message->gameobjectlist().at(PlayerInfo._id).tooltype();
 	if (message->scores().contains(PlayerInfo._team))
 		PlayerInfo.score = message->scores().at(PlayerInfo._team);
-
 	std::unordered_map<int64_t, std::shared_ptr<Obj>> objectsToDelete = MapInfo::obj_list;
 	for (google::protobuf::Map<google::protobuf::int64, Protobuf::GameObject>::const_iterator i = message->gameobjectlist().begin(); i != message->gameobjectlist().end(); i++)
 	{
