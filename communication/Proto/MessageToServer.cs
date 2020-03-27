@@ -25,20 +25,21 @@ namespace Communication.Proto {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "ChVNZXNzYWdlVG9TZXJ2ZXIucHJvdG8SCFByb3RvYnVmGhVNZXNzYWdlVG9D",
-            "bGllbnQucHJvdG8ilwIKD01lc3NhZ2VUb1NlcnZlchIKCgJJRBgBIAEoAxIq",
+            "bGllbnQucHJvdG8izgIKD01lc3NhZ2VUb1NlcnZlchIKCgJJRBgBIAEoAxIq",
             "CgtDb21tYW5kVHlwZRgCIAEoDjIVLlByb3RvYnVmLkNvbW1hbmRUeXBlEioK",
             "DU1vdmVEaXJlY3Rpb24YAyABKA4yEy5Qcm90b2J1Zi5EaXJlY3Rpb24SFAoM",
             "TW92ZUR1cmF0aW9uGAQgASgFEhUKDVRocm93RGlzdGFuY2UYBSABKAESEgoK",
             "VGhyb3dBbmdsZRgGIAEoARITCgtJc1Rocm93RGlzaBgHIAEoCBIPCgdVc2VU",
             "eXBlGAggASgFEhEKCVNwZWFrVGV4dBgJIAEoCRISCgpQYXJhbWV0ZXIxGAog",
-            "ASgFEhIKClBhcmFtZXRlcjIYCyABKAUqXQoLQ29tbWFuZFR5cGUSCAoETW92",
-            "ZRAAEggKBFBpY2sQARIHCgNQdXQQAhIHCgNVc2UQAxIICgRTdG9wEAQSCQoF",
-            "U3BlYWsQBRITCg9Db21tYW5kVHlwZVNpemUQBkIWqgITQ29tbXVuaWNhdGlv",
-            "bi5Qcm90b2IGcHJvdG8z"));
+            "ASgBEhIKClBhcmFtZXRlcjIYCyABKAESEwoLSXNTZXRUYWxlbnQYDCABKAgS",
+            "IAoGVGFsZW50GA0gASgOMhAuUHJvdG9idWYuVGFsZW50Kl0KC0NvbW1hbmRU",
+            "eXBlEggKBE1vdmUQABIICgRQaWNrEAESBwoDUHV0EAISBwoDVXNlEAMSCAoE",
+            "U3RvcBAEEgkKBVNwZWFrEAUSEwoPQ29tbWFuZFR5cGVTaXplEAZCFqoCE0Nv",
+            "bW11bmljYXRpb24uUHJvdG9iBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Communication.Proto.MessageToClientReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Communication.Proto.CommandType), }, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.MessageToServer), global::Communication.Proto.MessageToServer.Parser, new[]{ "ID", "CommandType", "MoveDirection", "MoveDuration", "ThrowDistance", "ThrowAngle", "IsThrowDish", "UseType", "SpeakText", "Parameter1", "Parameter2" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.MessageToServer), global::Communication.Proto.MessageToServer.Parser, new[]{ "ID", "CommandType", "MoveDirection", "MoveDuration", "ThrowDistance", "ThrowAngle", "IsThrowDish", "UseType", "SpeakText", "Parameter1", "Parameter2", "IsSetTalent", "Talent" }, null, null, null)
           }));
     }
     #endregion
@@ -94,6 +95,8 @@ namespace Communication.Proto {
       speakText_ = other.speakText_;
       parameter1_ = other.parameter1_;
       parameter2_ = other.parameter2_;
+      isSetTalent_ = other.isSetTalent_;
+      talent_ = other.talent_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -203,9 +206,9 @@ namespace Communication.Proto {
 
     /// <summary>Field number for the "Parameter1" field.</summary>
     public const int Parameter1FieldNumber = 10;
-    private int parameter1_;
+    private double parameter1_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int Parameter1 {
+    public double Parameter1 {
       get { return parameter1_; }
       set {
         parameter1_ = value;
@@ -214,12 +217,34 @@ namespace Communication.Proto {
 
     /// <summary>Field number for the "Parameter2" field.</summary>
     public const int Parameter2FieldNumber = 11;
-    private int parameter2_;
+    private double parameter2_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int Parameter2 {
+    public double Parameter2 {
       get { return parameter2_; }
       set {
         parameter2_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "IsSetTalent" field.</summary>
+    public const int IsSetTalentFieldNumber = 12;
+    private bool isSetTalent_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool IsSetTalent {
+      get { return isSetTalent_; }
+      set {
+        isSetTalent_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "Talent" field.</summary>
+    public const int TalentFieldNumber = 13;
+    private global::Communication.Proto.Talent talent_ = 0;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Communication.Proto.Talent Talent {
+      get { return talent_; }
+      set {
+        talent_ = value;
       }
     }
 
@@ -245,8 +270,10 @@ namespace Communication.Proto {
       if (IsThrowDish != other.IsThrowDish) return false;
       if (UseType != other.UseType) return false;
       if (SpeakText != other.SpeakText) return false;
-      if (Parameter1 != other.Parameter1) return false;
-      if (Parameter2 != other.Parameter2) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(Parameter1, other.Parameter1)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(Parameter2, other.Parameter2)) return false;
+      if (IsSetTalent != other.IsSetTalent) return false;
+      if (Talent != other.Talent) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -262,8 +289,10 @@ namespace Communication.Proto {
       if (IsThrowDish != false) hash ^= IsThrowDish.GetHashCode();
       if (UseType != 0) hash ^= UseType.GetHashCode();
       if (SpeakText.Length != 0) hash ^= SpeakText.GetHashCode();
-      if (Parameter1 != 0) hash ^= Parameter1.GetHashCode();
-      if (Parameter2 != 0) hash ^= Parameter2.GetHashCode();
+      if (Parameter1 != 0D) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(Parameter1);
+      if (Parameter2 != 0D) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(Parameter2);
+      if (IsSetTalent != false) hash ^= IsSetTalent.GetHashCode();
+      if (Talent != 0) hash ^= Talent.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -313,13 +342,21 @@ namespace Communication.Proto {
         output.WriteRawTag(74);
         output.WriteString(SpeakText);
       }
-      if (Parameter1 != 0) {
-        output.WriteRawTag(80);
-        output.WriteInt32(Parameter1);
+      if (Parameter1 != 0D) {
+        output.WriteRawTag(81);
+        output.WriteDouble(Parameter1);
       }
-      if (Parameter2 != 0) {
-        output.WriteRawTag(88);
-        output.WriteInt32(Parameter2);
+      if (Parameter2 != 0D) {
+        output.WriteRawTag(89);
+        output.WriteDouble(Parameter2);
+      }
+      if (IsSetTalent != false) {
+        output.WriteRawTag(96);
+        output.WriteBool(IsSetTalent);
+      }
+      if (Talent != 0) {
+        output.WriteRawTag(104);
+        output.WriteEnum((int) Talent);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -356,11 +393,17 @@ namespace Communication.Proto {
       if (SpeakText.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(SpeakText);
       }
-      if (Parameter1 != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Parameter1);
+      if (Parameter1 != 0D) {
+        size += 1 + 8;
       }
-      if (Parameter2 != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Parameter2);
+      if (Parameter2 != 0D) {
+        size += 1 + 8;
+      }
+      if (IsSetTalent != false) {
+        size += 1 + 1;
+      }
+      if (Talent != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Talent);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -400,11 +443,17 @@ namespace Communication.Proto {
       if (other.SpeakText.Length != 0) {
         SpeakText = other.SpeakText;
       }
-      if (other.Parameter1 != 0) {
+      if (other.Parameter1 != 0D) {
         Parameter1 = other.Parameter1;
       }
-      if (other.Parameter2 != 0) {
+      if (other.Parameter2 != 0D) {
         Parameter2 = other.Parameter2;
+      }
+      if (other.IsSetTalent != false) {
+        IsSetTalent = other.IsSetTalent;
+      }
+      if (other.Talent != 0) {
+        Talent = other.Talent;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -453,12 +502,20 @@ namespace Communication.Proto {
             SpeakText = input.ReadString();
             break;
           }
-          case 80: {
-            Parameter1 = input.ReadInt32();
+          case 81: {
+            Parameter1 = input.ReadDouble();
             break;
           }
-          case 88: {
-            Parameter2 = input.ReadInt32();
+          case 89: {
+            Parameter2 = input.ReadDouble();
+            break;
+          }
+          case 96: {
+            IsSetTalent = input.ReadBool();
+            break;
+          }
+          case 104: {
+            Talent = (global::Communication.Proto.Talent) input.ReadEnum();
             break;
           }
         }

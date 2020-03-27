@@ -3,33 +3,119 @@
     "PlayerInitThrowDistance": 10,
     "PlayerInitSightRange": 9,
     "ItemMoveSpeed": 10,
-    "TigerShoeExtraMoveSpeed": 2,
-    "TechnicianTigerShoeExtraMoveSpeed": 3,
-    "SpeedBuffExtraMoveSpeed": 5,
-    "SpeedBuffDuration": 20000,
-    "TechnicianSpeedBuffDuration": 30000,
-    "StrenthBuffExtraThrowDistance": 5,
-    "StrenthBuffDuration": 40000,
-    "TechnicianStrenthBuffDuration": 60000,
-    "TeleScopeExtraSightRange": 4,
-    "TechnicianTeleScopeExtraSightRange": 6,
-    "CondimentScoreParameter": 0.3,
-    "CookCondimentScoreParameter": 0.5,
-    "SpaceGateMaxDistance": 10,
-    "TechnicianSpaceGateMaxDistance": 15,
-    "WaveGlueExtraMoveSpeed": -3,
-    "WaveGlueDuration": 30000,
-    "MineScore": -50,
-    "TechnicianMineScore": -100,
-    "TrapStunDuration": 5000,
-    "TechnicianTrapStunDuration": 8000,
     "TaskTimeLimit": 60000,
     "TaskRefreshTime": 8000,
     "ToolRefreshTime": 10000,
     "FoodPointInitRefreshTime": 10000,
-    "LuckTalentRefreshTime": 30000,
-    "RunnerTalentExtraMoveSpeed": 3,
-    "StrenthTalentExtraThrowDistance": 5,
+    "Trigger": {
+        "WaveGlue": {
+            "ExtraMoveSpeed": -3,
+            "Duration": 30000
+        },
+        "Mine": {
+            "StunDuration": 1000,
+            "Score": -50
+        },
+        "Trap": {
+            "StunDuration": 5000
+        },
+        "Bomb": {
+            "StunDuration": 2000
+        },
+        "Arrow": {
+            "Score": -20,
+            "StunDuration": 500,
+            "Speed": 15
+        },
+        "Hammer": {
+            "StunDuration": 1000,
+            "Speed": 10
+        }
+    },
+    "Tool": {
+        "SpeedBuff": {
+            "Duration": 20000,
+            "ExtraMoveSpeed": 5
+        },
+        "StrengthBuff": {
+            "Duration": 40000,
+            "ExtraThrowDistance": 5
+        },
+        "TigerShoe": {
+            "ExtraMoveSpeed": 2
+        },
+        "TeleScope": {
+            "ExtraSightRange": 4
+        },
+        "Condiment": {
+            "ScoreParameter": 0.3
+        },
+        "SpaceGate": {
+            "MaxDistance": 10
+        },
+        "ThrowHammer": {
+            "MaxDistance": 6
+        },
+        "Bow": {
+            "MaxDistance": 10
+        }
+    },
+    "Talent": {
+        "LuckyBoy": {
+            "RefreshTime": 30000
+        },
+        "Runner": {
+            "ExtraMoveSpeed": 3
+        },
+        "StrongMan": {
+            "ExtraThrowDistance": 5,
+            "ThrowHammer": {
+                "MaxDistance": 10
+            },
+            "Bow": {
+                "MaxDistance": 15
+            },
+            "Arrow": {
+                "Score": -40,
+                "StunDuration": 1000
+            },
+            "Hammer": {
+                "StunDuration": 2000
+            }
+        },
+        "Technician": {
+            "TigerShoe": {
+                "ExtraMoveSpeed": 3
+            },
+            "SpeedBuff": {
+                "Duration": 30000
+            },
+            "StrengthBuff": {
+                "Duration": 60000
+            },
+            "TeleScope": {
+                "ExtraSightRange": 6
+            },
+            "SpaceGate": {
+                "MaxDistance": 15
+            },
+            "Mine": {
+                "Score": -100,
+                "StunDuration": 2000
+            },
+            "Trap": {
+                "StunDuration": 8000
+            },
+            "Bomb": {
+                "StunDuration": 4000
+            }
+        },
+        "Cook": {
+            "Condiment": {
+                "ScoreParameter": 0.5
+            }
+        }
+    },
     "Wheat": {
         "Score": 0
     },
@@ -114,7 +200,7 @@
         "CookTime": 10000
     },
     "TomatoFriedEggNoodle": {
-        "Score": 0,
+        "Score": 100,
         "TaskTime": 90000,
         "CookTime": 15000
     },

@@ -375,16 +375,17 @@ namespace THUnity2D
                 return;
             lock (privateLock)
             {
+                if (!this._movable)
+                {
+                    return;
+                }
                 if ((DateTime.Now - lastMoveTime).TotalSeconds < 1 / _frameRate)
                     return;
                 MoveStart?.Invoke(this);
                 XYPosition previousPosition = _position;
                 _position = _position + new XYPosition(e.distance * Math.Cos(e.angle), e.distance * Math.Sin(e.angle));
                 Debug(this, "Move from " + previousPosition.ToString() + " angle : " + e.angle + " distance : " + e.distance + " aim : " + _position.ToString());
-                if (this._movable)
-                {
-                    OnMove?.Invoke(this, e, previousPosition);
-                }
+                OnMove?.Invoke(this, e, previousPosition);
                 Debug(this, "Move result poition : " + this._position.ToString());
                 MoveComplete?.Invoke(this);
             }

@@ -29,6 +29,7 @@ public:
 	virtual EnHandleResult OnPrepareListen(ITcpServer *pSender, SOCKET soListen);
 };
 
+class Obj;
 class CAPI
 {
 public:
@@ -46,6 +47,8 @@ public:
 private:
 	CListenerImpl listener;
 	CTcpPackClientPtr pclient;
+	void CreateObj(int64_t id, Protobuf::MessageToClient* message);
+	void MoveObj(int64_t id, Protobuf::MessageToClient* message, std::unordered_map<int64_t, std::shared_ptr<Obj>>& objectsToDelete);
 
 public:
 	CAPI();
@@ -65,4 +68,4 @@ public:
 	Player GetInfo();
 };
 
-#endif
+#endif //CAPI_H

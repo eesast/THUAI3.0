@@ -2,7 +2,7 @@
   "profiles": {
     "Logic.Client": {
       "commandName": "Project",
-      "commandLineArgs": "-p 30000 -d 1"
+      "commandLineArgs": "-p 30000 -d 1 -t 2"
     }
   }
 }

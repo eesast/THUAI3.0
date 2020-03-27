@@ -10,7 +10,7 @@ namespace Logic.Server
         [Option('p', "port", Required = true, HelpText = "Server listening port")]
         public ushort serverPort { get; set; } = 10086;
 
-        [Option('c', "playerCount", Required = false, HelpText = "Player count in each team")]
+        [Option('c', "playerCount", Required = false, HelpText = "Player count in each CommunicationID.Item1")]
         public ushort playerCount { get; set; } = 1;
 
         [Option('a', "agentCount", Required = false, HelpText = "Agent count")]

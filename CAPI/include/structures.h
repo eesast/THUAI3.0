@@ -8,7 +8,46 @@ using namespace Protobuf;
 #include <vector>
 #include <list>
 #include <memory>
+#include "CAPI.h"
 #include <iostream>
+
+struct XYPosition
+{
+	double x;
+	double y;
+	XYPosition(double x, double y) : x(x), y(y)
+	{ }
+	XYPosition(const XYPosition& xy) : x(xy.x), y(xy.y)
+	{ }
+};
+
+class Obj
+{
+public:
+	XYPosition position;
+	ObjType objType;
+	BlockType blockType;
+	DishType dish;
+	ToolType tool;
+	TriggerType trigger;
+	Direction facingDiretion;
+	Obj(const XYPosition& pos, ObjType objType);
+};
+
+class MapInfo
+{
+private:
+	static std::vector<std::vector<std::unordered_map<int64_t, std::shared_ptr<Obj>>>> obj_map;
+	static std::unordered_map<int64_t, std::shared_ptr<Obj>> obj_list;
+	static void initialize_map();
+public:
+	friend class CAPI;
+	friend int main(int argc, char* argv[]);
+	static void print_map();
+	static void print_map(int x, int y);
+	static void print_obj_list();
+	static std::list<Obj> get_mapcell(int x, int y);
+};
 
 // 50x50
 // 0 : 空地
@@ -18,7 +57,7 @@ using namespace Protobuf;
 // 4 : 垃圾桶，共5个
 // 5 : 障碍，不可穿过，不透明
 // 6 : 桌子，不可穿过，可放置物品
-const std::vector<std::vector<short>> mapinfo =
+const std::vector<std::vector<short>> init_mapinfo =
 {
 	{5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5},
 	{5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5},
@@ -71,52 +110,33 @@ const std::vector<std::vector<short>> mapinfo =
 	{5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5},
 	{5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5} };
 
-struct XYPosition
-{
-	double x;
-	double y;
-	XYPosition(double x, double y) : x(x), y(y)
-	{ }
-	XYPosition(const XYPosition& xy) : x(xy.x), y(xy.y)
-	{ }
-};
 
-class Obj
-{
-public:
-	XYPosition position;
-	ObjType objType;
-	BlockType blockType;
-	DishType dish;
-	ToolType tool;
-	TriggerType trigger;
-	Direction facingDiretion;
-	Obj(const XYPosition& pos, ObjType objType);
-};
-
-extern std::vector<std::vector<std::unordered_map<int64_t, std::shared_ptr<Obj>>>> obj_map;
-extern std::unordered_map<int64_t, std::shared_ptr<Obj>> obj_list;
 extern std::list<DishType> task_list;
 
 
-extern void initialize_map();
-extern void print_map();
-extern void print_map(int x, int y);
-extern void print_obj_list();
 
-struct player_info
+class  player_info
 {
+private:
+	XYPosition _position = XYPosition(0, 0);
+	int64_t _id = -1;
+	int _sightRange = Player::InitSightRange;
+	int _team = 0;
+public:
+	friend class CAPI;
+	friend class MapInfo;
 	XYPosition position = XYPosition(0, 0);
 	int64_t id = -1;
 	std::pair<int, int> CommunicationID; //第一个数表示Agent，第二个数表示Client
 	int team = 0;
 	Direction facingDirection;
-	int SightRange = Player::InitSightRange;
+	int sightRange = Player::InitSightRange;
 	Talent talent;
 	int score = 0;
 	DishType dish = DishType::DishEmpty;
 	ToolType tool = ToolType::ToolEmpty;
 };
 extern player_info PlayerInfo;
+extern Protobuf::Talent initTalent;
 
 #endif // !STRUCTURES_H
