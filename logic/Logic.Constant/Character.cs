@@ -11,15 +11,17 @@ namespace Logic.Constant
     public class Character : THUnity2D.GameObject
     {
         public Tuple<int, int> CommunicationID = new Tuple<int, int>(0, 0);//第一个数表示Agent，第二个数表示Client
-        public int team = 0;
-        public double GlueExtraMoveSpeed = 0;
-        public double SpeedBuffExtraMoveSpeed = 0;
-        public double moveSpeed = (double)Configs["PlayerInitMoveSpeed"];
-        public double MoveSpeed { get { return moveSpeed + GlueExtraMoveSpeed + SpeedBuffExtraMoveSpeed; } }
-        public THUnity2D.Direction facingDirection;
-        public int StrenthBuffThrowDistance = 0;
-        public int MaxThrowDistance = (int)Configs["PlayerInitThrowDistance"];
-        public int SightRange = (int)(Configs["PlayerInitSightRange"]);
+        //public int team = 0;
+        protected double GlueExtraMoveSpeed = 0;
+        protected double SpeedBuffExtraMoveSpeed = 0;
+        protected double moveSpeed = (double)Configs["PlayerInitMoveSpeed"];
+        protected double MoveSpeed { get { return moveSpeed + GlueExtraMoveSpeed + SpeedBuffExtraMoveSpeed; } }
+        protected THUnity2D.Direction _facingDirection;
+        public THUnity2D.Direction FacingDirection { get => _facingDirection; }
+        protected int StrenthBuffThrowDistance = 0;
+        protected int MaxThrowDistance = (int)Configs["PlayerInitThrowDistance"];
+        protected int _sightRange = (int)Configs["PlayerInitSightRange"];
+        public int SightRange { get => _sightRange; }
         protected Talent _talent = Talent.None;
 
         protected int _score = 0;
@@ -37,7 +39,7 @@ namespace Logic.Constant
         { }
         public virtual void Pick()
         { }
-        public virtual void Use(int type, int parameter_1, int parameter_2)
+        public virtual void Use(int type, double parameter_1, double parameter_2)
         { }
     }
 }

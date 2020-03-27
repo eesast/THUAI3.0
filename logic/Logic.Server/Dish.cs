@@ -20,6 +20,14 @@ namespace Logic.Server
             Bouncable = true;
             AddToMessage();
             Dish = type_t;
+            this.StopMoving += new StopMovingHandler((o) =>
+            {
+                Layer = ItemLayer;
+                if (WorldMap.Grid[(int)Position.x, (int)Position.y].ContainsType(typeof(RubbishBin)))
+                {
+                    Parent = null;
+                }
+            });
             this.MoveComplete += new MoveCompleteHandler(ChangePositionInMessage);
             this.OnParentDelete += new ParentDeleteHandler(DeleteFromMessage);
         }

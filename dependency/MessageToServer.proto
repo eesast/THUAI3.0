@@ -22,6 +22,8 @@ message MessageToServer {
   bool IsThrowDish = 7;
   int32 UseType = 8;
   string SpeakText = 9;
-  int32 Parameter1 = 10;
-  int32 Parameter2 = 11;
+  double Parameter1 = 10;
+  double Parameter2 = 11;
+  bool IsSetTalent = 12;
+  Talent Talent = 13;
 }

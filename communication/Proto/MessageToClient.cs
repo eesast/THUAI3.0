@@ -24,7 +24,7 @@ namespace Communication.Proto {
     static MessageToClientReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChVNZXNzYWdlVG9DbGllbnQucHJvdG8SCFByb3RvYnVmIo8DCgpHYW1lT2Jq",
+            "ChVNZXNzYWdlVG9DbGllbnQucHJvdG8SCFByb3RvYnVmIqIDCgpHYW1lT2Jq",
             "ZWN0EhEKCVBvc2l0aW9uWBgBIAEoARIRCglQb3NpdGlvblkYAiABKAESDQoF",
             "V2lkdGgYAyABKAUSDgoGSGVpZ2h0GAQgASgFEiYKCURpcmVjdGlvbhgFIAEo",
             "DjITLlByb3RvYnVmLkRpcmVjdGlvbhIiCgdPYmpUeXBlGAYgASgOMhEuUHJv",
@@ -32,52 +32,57 @@ namespace Communication.Proto {
             "bG9ja1R5cGUSJAoIRGlzaFR5cGUYCCABKA4yEi5Qcm90b2J1Zi5EaXNoVHlw",
             "ZRIkCghUb29sVHlwZRgJIAEoDjISLlByb3RvYnVmLlRvb2xUeXBlEioKC1Ry",
             "aWdnZXJUeXBlGAogASgOMhUuUHJvdG9idWYuVHJpZ2dlclR5cGUSEAoIaXNN",
-            "b3ZpbmcYCyABKAgSHAoEQnVmZhgMIAMoDjIOLlByb3RvYnVmLkJ1ZmYSDQoF",
-            "U2NvcmUYDSABKAUSEQoJU3BlYWtUZXh0GA4gASgJIsgBCg9NZXNzYWdlVG9D",
-            "bGllbnQSRQoOR2FtZU9iamVjdExpc3QYASADKAsyLS5Qcm90b2J1Zi5NZXNz",
-            "YWdlVG9DbGllbnQuR2FtZU9iamVjdExpc3RFbnRyeRIhCgVUYXNrcxgCIAMo",
-            "DjISLlByb3RvYnVmLkRpc2hUeXBlGksKE0dhbWVPYmplY3RMaXN0RW50cnkS",
-            "CwoDa2V5GAEgASgDEiMKBXZhbHVlGAIgASgLMhQuUHJvdG9idWYuR2FtZU9i",
-            "amVjdDoCOAEqUgoHT2JqVHlwZRIKCgZQZW9wbGUQABIJCgVCbG9jaxABEggK",
-            "BERpc2gQAhIICgRUb29sEAMSCwoHVHJpZ2dlchAEEg8KC09ialR5cGVTaXpl",
-            "EAUqbQoJQmxvY2tUeXBlEggKBFdhbGwQABIJCgVUYWJsZRABEg0KCUZvb2RQ",
-            "b2ludBACEgoKBkNvb2tlchADEg4KClJ1YmJpc2hCaW4QBBINCglUYXNrUG9p",
-            "bnQQBRIRCg1CbG9ja1R5cGVTaXplEAYqjwYKCERpc2hUeXBlEg0KCURpc2hF",
-            "bXB0eRAAEgkKBVdoZWF0EAESCAoEUmljZRACEgoKBlRvbWF0bxADEgcKA0Vn",
-            "ZxAEEggKBE1pbGsQBRIJCgVBcHBsZRAGEgoKBkJhbmFuYRAHEgwKCERhcmtQ",
-            "bHVtEAgSDAoISGF3dGhvcm4QCRIOCgpTdHJhd2JlcnJ5EAoSCAoEQmVlZhAL",
-            "EggKBFBvcmsQDBIPCgtDaGlja2VuTWVhdBANEgoKBlBvdGF0bxAOEgsKB0xl",
-            "dHR1Y2UQDxIKCgZBZ2FyaWMQEBISCg5OZWVkbGVNdXNocm9vbRAREgsKB0Nh",
-            "YmJhZ2UQEhINCglEaXNoU2l6ZTEQExIJCgVGbG91chAUEgoKBk5vb2RsZRAV",
-            "EgkKBUJyZWFkEBYSDgoKQ29va2VkUmljZRAXEgsKB0tldGNodXAQGBIJCgVD",
-            "cmVhbRAZEhIKDlRvbWF0b0ZyaWVkRWdnEBoSGAoUVG9tYXRvRnJpZWRFZ2dO",
-            "b29kbGUQGxIOCgpCZWVmTm9vZGxlEBwSDAoIT3ZlclJpY2UQHRISCg5ZZWxs",
-            "b3dQaGVhc2FudBAeEgwKCEJhcmJlY3VlEB8SDwoLRnJlbmNoRnJpZXMQIBIN",
-            "CglQbHVtSnVpY2UQIRINCglIYW1idXJnZXIQIhIWChJTdHJhd2JlcnJ5SWNl",
-            "Y3JlYW0QIxISCg5Qb3Bjb3JuQ2hpY2tlbhAkEhIKDkFnYXJpY0ZyaWVkRWdn",
-            "ECUSCAoEQ2FrZRAmEhMKD1N1Z2FyQ29hdGVkSGF3cxAnEg4KCkZydWl0U2Fs",
-            "YWQQKBINCglTcGljZWRQb3QQKRIOCgpTcGljZWRQb3QzECoSDgoKU3BpY2Vk",
-            "UG90NBArEg4KClNwaWNlZFBvdDUQLBIOCgpTcGljZWRQb3Q2EC0SDgoKU3Bp",
-            "Y2VkUG90NxAuEg4KClNwaWNlZFBvdDgQLxINCglEaXNoU2l6ZTIQMBISCg5P",
-            "dmVyQ29va2VkRGlzaBAxEgwKCERhcmtEaXNoEDISDQoJRGlzaFNpemUzEDMq",
-            "1QEKCFRvb2xUeXBlEg0KCVRvb2xFbXB0eRAAEg4KClRpZ2VyU2hvZXMQARIN",
-            "CglTcGVlZEJ1ZmYQAhIPCgtTdHJlbnRoQnVmZhADEg0KCVRlbGVTY29wZRAE",
-            "Eg0KCUNvbmRpbWVudBAFEg4KCkZlcnRpbGl6ZXIQBhIPCgtCcmVhc3RQbGF0",
-            "ZRAHEg0KCVNwYWNlR2F0ZRAIEhIKDldhdmVHbHVlQm90dGxlEAkSDAoITGFu",
-            "ZE1pbmUQChIMCghUcmFwVG9vbBALEgwKCFRvb2xTaXplEBAqQAoLVHJpZ2dl",
-            "clR5cGUSDAoIV2F2ZUdsdWUQABIICgRUcmFwEAESCAoETWluZRACEg8KC1Ry",
-            "aWdnZXJTaXplEAMqOgoEQnVmZhIKCgZGcm96ZW4QABILCgdTdHVubmVkEAES",
-            "CwoHU3BlZWRVcBACEgwKCFNsb3dEb3duEAMqewoJRGlyZWN0aW9uEgkKBVJp",
-            "Z2h0EAASCwoHUmlnaHRVcBABEgYKAlVwEAISCgoGTGVmdFVwEAMSCAoETGVm",
-            "dBAEEgwKCExlZnREb3duEAUSCAoERG93bhAGEg0KCVJpZ2h0RG93bhAHEhEK",
-            "DURpcmVjdGlvblNpemUQCCpVCgZUYWxlbnQSCAoETm9uZRAAEgoKBlJ1bm5l",
-            "chABEg0KCVN0cm9uZ01hbhACEggKBENvb2sQAxIOCgpUZWNobmljaWFuEAQS",
-            "DAoITHVja3lCb3kQBUIWqgITQ29tbXVuaWNhdGlvbi5Qcm90b2IGcHJvdG8z"));
+            "b3ZpbmcYCyABKAgSHAoEQnVmZhgMIAMoDjIOLlByb3RvYnVmLkJ1ZmYSEQoJ",
+            "U3BlYWtUZXh0GA0gASgJEgwKBHRlYW0YDiABKAUSEgoKU2lnaHRSYW5nZRgP",
+            "IAEoBSKuAgoPTWVzc2FnZVRvQ2xpZW50EkUKDkdhbWVPYmplY3RMaXN0GAEg",
+            "AygLMi0uUHJvdG9idWYuTWVzc2FnZVRvQ2xpZW50LkdhbWVPYmplY3RMaXN0",
+            "RW50cnkSIQoFVGFza3MYAiADKA4yEi5Qcm90b2J1Zi5EaXNoVHlwZRI1CgZT",
+            "Y29yZXMYAyADKAsyJS5Qcm90b2J1Zi5NZXNzYWdlVG9DbGllbnQuU2NvcmVz",
+            "RW50cnkaSwoTR2FtZU9iamVjdExpc3RFbnRyeRILCgNrZXkYASABKAMSIwoF",
+            "dmFsdWUYAiABKAsyFC5Qcm90b2J1Zi5HYW1lT2JqZWN0OgI4ARotCgtTY29y",
+            "ZXNFbnRyeRILCgNrZXkYASABKAUSDQoFdmFsdWUYAiABKAU6AjgBKlIKB09i",
+            "alR5cGUSCgoGUGVvcGxlEAASCQoFQmxvY2sQARIICgREaXNoEAISCAoEVG9v",
+            "bBADEgsKB1RyaWdnZXIQBBIPCgtPYmpUeXBlU2l6ZRAFKm0KCUJsb2NrVHlw",
+            "ZRIICgRXYWxsEAASCQoFVGFibGUQARINCglGb29kUG9pbnQQAhIKCgZDb29r",
+            "ZXIQAxIOCgpSdWJiaXNoQmluEAQSDQoJVGFza1BvaW50EAUSEQoNQmxvY2tU",
+            "eXBlU2l6ZRAGKo8GCghEaXNoVHlwZRINCglEaXNoRW1wdHkQABIJCgVXaGVh",
+            "dBABEggKBFJpY2UQAhIKCgZUb21hdG8QAxIHCgNFZ2cQBBIICgRNaWxrEAUS",
+            "CQoFQXBwbGUQBhIKCgZCYW5hbmEQBxIMCghEYXJrUGx1bRAIEgwKCEhhd3Ro",
+            "b3JuEAkSDgoKU3RyYXdiZXJyeRAKEggKBEJlZWYQCxIICgRQb3JrEAwSDwoL",
+            "Q2hpY2tlbk1lYXQQDRIKCgZQb3RhdG8QDhILCgdMZXR0dWNlEA8SCgoGQWdh",
+            "cmljEBASEgoOTmVlZGxlTXVzaHJvb20QERILCgdDYWJiYWdlEBISDQoJRGlz",
+            "aFNpemUxEBMSCQoFRmxvdXIQFBIKCgZOb29kbGUQFRIJCgVCcmVhZBAWEg4K",
+            "CkNvb2tlZFJpY2UQFxILCgdLZXRjaHVwEBgSCQoFQ3JlYW0QGRISCg5Ub21h",
+            "dG9GcmllZEVnZxAaEhgKFFRvbWF0b0ZyaWVkRWdnTm9vZGxlEBsSDgoKQmVl",
+            "Zk5vb2RsZRAcEgwKCE92ZXJSaWNlEB0SEgoOWWVsbG93UGhlYXNhbnQQHhIM",
+            "CghCYXJiZWN1ZRAfEg8KC0ZyZW5jaEZyaWVzECASDQoJUGx1bUp1aWNlECES",
+            "DQoJSGFtYnVyZ2VyECISFgoSU3RyYXdiZXJyeUljZWNyZWFtECMSEgoOUG9w",
+            "Y29ybkNoaWNrZW4QJBISCg5BZ2FyaWNGcmllZEVnZxAlEggKBENha2UQJhIT",
+            "Cg9TdWdhckNvYXRlZEhhd3MQJxIOCgpGcnVpdFNhbGFkECgSDQoJU3BpY2Vk",
+            "UG90ECkSDgoKU3BpY2VkUG90MxAqEg4KClNwaWNlZFBvdDQQKxIOCgpTcGlj",
+            "ZWRQb3Q1ECwSDgoKU3BpY2VkUG90NhAtEg4KClNwaWNlZFBvdDcQLhIOCgpT",
+            "cGljZWRQb3Q4EC8SDQoJRGlzaFNpemUyEDASEgoOT3ZlckNvb2tlZERpc2gQ",
+            "MRIMCghEYXJrRGlzaBAyEg0KCURpc2hTaXplMxAzKowCCghUb29sVHlwZRIN",
+            "CglUb29sRW1wdHkQABIOCgpUaWdlclNob2VzEAESDQoJU3BlZWRCdWZmEAIS",
+            "EAoMU3RyZW5ndGhCdWZmEAMSDQoJVGVsZVNjb3BlEAQSDQoJQ29uZGltZW50",
+            "EAUSDgoKRmVydGlsaXplchAGEg8KC0JyZWFzdFBsYXRlEAcSDQoJU3BhY2VH",
+            "YXRlEAgSEgoOV2F2ZUdsdWVCb3R0bGUQCRIMCghMYW5kTWluZRAKEgwKCFRy",
+            "YXBUb29sEAsSDQoJRmxhc2hCb21iEAwSDwoLVGhyb3dIYW1tZXIQDRIHCgNC",
+            "b3cQDhILCgdTdGVhbGVyEA8SDAoIVG9vbFNpemUQECphCgtUcmlnZ2VyVHlw",
+            "ZRIMCghXYXZlR2x1ZRAAEggKBFRyYXAQARIICgRNaW5lEAISCAoEQm9tYhAD",
+            "EgkKBUFycm93EAQSCgoGSGFtbWVyEAUSDwoLVHJpZ2dlclNpemUQBio6CgRC",
+            "dWZmEgoKBkZyb3plbhAAEgsKB1N0dW5uZWQQARILCgdTcGVlZFVwEAISDAoI",
+            "U2xvd0Rvd24QAyp7CglEaXJlY3Rpb24SCQoFUmlnaHQQABILCgdSaWdodFVw",
+            "EAESBgoCVXAQAhIKCgZMZWZ0VXAQAxIICgRMZWZ0EAQSDAoITGVmdERvd24Q",
+            "BRIICgREb3duEAYSDQoJUmlnaHREb3duEAcSEQoNRGlyZWN0aW9uU2l6ZRAI",
+            "KmUKBlRhbGVudBIICgROb25lEAASCgoGUnVubmVyEAESDQoJU3Ryb25nTWFu",
+            "EAISCAoEQ29vaxADEg4KClRlY2huaWNpYW4QBBIMCghMdWNreUJveRAFEg4K",
+            "ClRhbGVudFNpemUQBkIWqgITQ29tbXVuaWNhdGlvbi5Qcm90b2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Communication.Proto.ObjType), typeof(global::Communication.Proto.BlockType), typeof(global::Communication.Proto.DishType), typeof(global::Communication.Proto.ToolType), typeof(global::Communication.Proto.TriggerType), typeof(global::Communication.Proto.Buff), typeof(global::Communication.Proto.Direction), typeof(global::Communication.Proto.Talent), }, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.GameObject), global::Communication.Proto.GameObject.Parser, new[]{ "PositionX", "PositionY", "Width", "Height", "Direction", "ObjType", "BlockType", "DishType", "ToolType", "TriggerType", "IsMoving", "Buff", "Score", "SpeakText" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.MessageToClient), global::Communication.Proto.MessageToClient.Parser, new[]{ "GameObjectList", "Tasks" }, null, null, new pbr::GeneratedClrTypeInfo[] { null, })
+            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.GameObject), global::Communication.Proto.GameObject.Parser, new[]{ "PositionX", "PositionY", "Width", "Height", "Direction", "ObjType", "BlockType", "DishType", "ToolType", "TriggerType", "IsMoving", "Buff", "SpeakText", "Team", "SightRange" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.MessageToClient), global::Communication.Proto.MessageToClient.Parser, new[]{ "GameObjectList", "Tasks", "Scores" }, null, null, new pbr::GeneratedClrTypeInfo[] { null, null, })
           }));
     }
     #endregion
@@ -309,7 +314,7 @@ namespace Communication.Proto {
     [pbr::OriginalName("ToolEmpty")] ToolEmpty = 0,
     [pbr::OriginalName("TigerShoes")] TigerShoes = 1,
     [pbr::OriginalName("SpeedBuff")] SpeedBuff = 2,
-    [pbr::OriginalName("StrenthBuff")] StrenthBuff = 3,
+    [pbr::OriginalName("StrengthBuff")] StrengthBuff = 3,
     [pbr::OriginalName("TeleScope")] TeleScope = 4,
     [pbr::OriginalName("Condiment")] Condiment = 5,
     [pbr::OriginalName("Fertilizer")] Fertilizer = 6,
@@ -321,12 +326,10 @@ namespace Communication.Proto {
     [pbr::OriginalName("WaveGlueBottle")] WaveGlueBottle = 9,
     [pbr::OriginalName("LandMine")] LandMine = 10,
     [pbr::OriginalName("TrapTool")] TrapTool = 11,
-    /// <summary>
-    /// FlashBomb = 12;
-    /// Hammer = 13;
-    /// Brick = 14;
-    /// Stealer = 15;
-    /// </summary>
+    [pbr::OriginalName("FlashBomb")] FlashBomb = 12,
+    [pbr::OriginalName("ThrowHammer")] ThrowHammer = 13,
+    [pbr::OriginalName("Bow")] Bow = 14,
+    [pbr::OriginalName("Stealer")] Stealer = 15,
     [pbr::OriginalName("ToolSize")] ToolSize = 16,
   }
 
@@ -334,7 +337,10 @@ namespace Communication.Proto {
     [pbr::OriginalName("WaveGlue")] WaveGlue = 0,
     [pbr::OriginalName("Trap")] Trap = 1,
     [pbr::OriginalName("Mine")] Mine = 2,
-    [pbr::OriginalName("TriggerSize")] TriggerSize = 3,
+    [pbr::OriginalName("Bomb")] Bomb = 3,
+    [pbr::OriginalName("Arrow")] Arrow = 4,
+    [pbr::OriginalName("Hammer")] Hammer = 5,
+    [pbr::OriginalName("TriggerSize")] TriggerSize = 6,
   }
 
   public enum Buff {
@@ -362,10 +368,11 @@ namespace Communication.Proto {
     [pbr::OriginalName("StrongMan")] StrongMan = 2,
     [pbr::OriginalName("Cook")] Cook = 3,
     [pbr::OriginalName("Technician")] Technician = 4,
+    [pbr::OriginalName("LuckyBoy")] LuckyBoy = 5,
     /// <summary>
     /// DrunkMan
     /// </summary>
-    [pbr::OriginalName("LuckyBoy")] LuckyBoy = 5,
+    [pbr::OriginalName("TalentSize")] Size = 6,
   }
 
   #endregion
@@ -408,8 +415,9 @@ namespace Communication.Proto {
       triggerType_ = other.triggerType_;
       isMoving_ = other.isMoving_;
       buff_ = other.buff_.Clone();
-      score_ = other.score_;
       speakText_ = other.speakText_;
+      team_ = other.team_;
+      sightRange_ = other.sightRange_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -549,25 +557,39 @@ namespace Communication.Proto {
       get { return buff_; }
     }
 
-    /// <summary>Field number for the "Score" field.</summary>
-    public const int ScoreFieldNumber = 13;
-    private int score_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int Score {
-      get { return score_; }
-      set {
-        score_ = value;
-      }
-    }
-
     /// <summary>Field number for the "SpeakText" field.</summary>
-    public const int SpeakTextFieldNumber = 14;
+    public const int SpeakTextFieldNumber = 13;
     private string speakText_ = "";
+    /// <summary>
+    /// int32 Score = 13;
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public string SpeakText {
       get { return speakText_; }
       set {
         speakText_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "team" field.</summary>
+    public const int TeamFieldNumber = 14;
+    private int team_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Team {
+      get { return team_; }
+      set {
+        team_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "SightRange" field.</summary>
+    public const int SightRangeFieldNumber = 15;
+    private int sightRange_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int SightRange {
+      get { return sightRange_; }
+      set {
+        sightRange_ = value;
       }
     }
 
@@ -596,8 +618,9 @@ namespace Communication.Proto {
       if (TriggerType != other.TriggerType) return false;
       if (IsMoving != other.IsMoving) return false;
       if(!buff_.Equals(other.buff_)) return false;
-      if (Score != other.Score) return false;
       if (SpeakText != other.SpeakText) return false;
+      if (Team != other.Team) return false;
+      if (SightRange != other.SightRange) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -616,8 +639,9 @@ namespace Communication.Proto {
       if (TriggerType != 0) hash ^= TriggerType.GetHashCode();
       if (IsMoving != false) hash ^= IsMoving.GetHashCode();
       hash ^= buff_.GetHashCode();
-      if (Score != 0) hash ^= Score.GetHashCode();
       if (SpeakText.Length != 0) hash ^= SpeakText.GetHashCode();
+      if (Team != 0) hash ^= Team.GetHashCode();
+      if (SightRange != 0) hash ^= SightRange.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -676,13 +700,17 @@ namespace Communication.Proto {
         output.WriteBool(IsMoving);
       }
       buff_.WriteTo(output, _repeated_buff_codec);
-      if (Score != 0) {
-        output.WriteRawTag(104);
-        output.WriteInt32(Score);
-      }
       if (SpeakText.Length != 0) {
-        output.WriteRawTag(114);
+        output.WriteRawTag(106);
         output.WriteString(SpeakText);
+      }
+      if (Team != 0) {
+        output.WriteRawTag(112);
+        output.WriteInt32(Team);
+      }
+      if (SightRange != 0) {
+        output.WriteRawTag(120);
+        output.WriteInt32(SightRange);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -726,11 +754,14 @@ namespace Communication.Proto {
         size += 1 + 1;
       }
       size += buff_.CalculateSize(_repeated_buff_codec);
-      if (Score != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Score);
-      }
       if (SpeakText.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(SpeakText);
+      }
+      if (Team != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Team);
+      }
+      if (SightRange != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(SightRange);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -777,11 +808,14 @@ namespace Communication.Proto {
         IsMoving = other.IsMoving;
       }
       buff_.Add(other.buff_);
-      if (other.Score != 0) {
-        Score = other.Score;
-      }
       if (other.SpeakText.Length != 0) {
         SpeakText = other.SpeakText;
+      }
+      if (other.Team != 0) {
+        Team = other.Team;
+      }
+      if (other.SightRange != 0) {
+        SightRange = other.SightRange;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -843,12 +877,16 @@ namespace Communication.Proto {
             buff_.AddEntriesFrom(input, _repeated_buff_codec);
             break;
           }
-          case 104: {
-            Score = input.ReadInt32();
+          case 106: {
+            SpeakText = input.ReadString();
             break;
           }
-          case 114: {
-            SpeakText = input.ReadString();
+          case 112: {
+            Team = input.ReadInt32();
+            break;
+          }
+          case 120: {
+            SightRange = input.ReadInt32();
             break;
           }
         }
@@ -884,6 +922,7 @@ namespace Communication.Proto {
     public MessageToClient(MessageToClient other) : this() {
       gameObjectList_ = other.gameObjectList_.Clone();
       tasks_ = other.tasks_.Clone();
+      scores_ = other.scores_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -912,6 +951,16 @@ namespace Communication.Proto {
       get { return tasks_; }
     }
 
+    /// <summary>Field number for the "Scores" field.</summary>
+    public const int ScoresFieldNumber = 3;
+    private static readonly pbc::MapField<int, int>.Codec _map_scores_codec
+        = new pbc::MapField<int, int>.Codec(pb::FieldCodec.ForInt32(8), pb::FieldCodec.ForInt32(16), 26);
+    private readonly pbc::MapField<int, int> scores_ = new pbc::MapField<int, int>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pbc::MapField<int, int> Scores {
+      get { return scores_; }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as MessageToClient);
@@ -927,6 +976,7 @@ namespace Communication.Proto {
       }
       if (!GameObjectList.Equals(other.GameObjectList)) return false;
       if(!tasks_.Equals(other.tasks_)) return false;
+      if (!Scores.Equals(other.Scores)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -935,6 +985,7 @@ namespace Communication.Proto {
       int hash = 1;
       hash ^= GameObjectList.GetHashCode();
       hash ^= tasks_.GetHashCode();
+      hash ^= Scores.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -950,6 +1001,7 @@ namespace Communication.Proto {
     public void WriteTo(pb::CodedOutputStream output) {
       gameObjectList_.WriteTo(output, _map_gameObjectList_codec);
       tasks_.WriteTo(output, _repeated_tasks_codec);
+      scores_.WriteTo(output, _map_scores_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -960,6 +1012,7 @@ namespace Communication.Proto {
       int size = 0;
       size += gameObjectList_.CalculateSize(_map_gameObjectList_codec);
       size += tasks_.CalculateSize(_repeated_tasks_codec);
+      size += scores_.CalculateSize(_map_scores_codec);
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -973,6 +1026,7 @@ namespace Communication.Proto {
       }
       gameObjectList_.Add(other.gameObjectList_);
       tasks_.Add(other.tasks_);
+      scores_.Add(other.scores_);
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -991,6 +1045,10 @@ namespace Communication.Proto {
           case 18:
           case 16: {
             tasks_.AddEntriesFrom(input, _repeated_tasks_codec);
+            break;
+          }
+          case 26: {
+            scores_.AddEntriesFrom(input, _map_scores_codec);
             break;
           }
         }

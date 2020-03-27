@@ -99,7 +99,7 @@ namespace THUnity2D
         //目前只能检查边长为1的方块
         //检查规则：任何方块的任何部分不能超出地图边界
         //如果方块为可碰撞的，则方块不能与其他可碰撞方块有重叠部分。
-        protected bool XYPositionIsLegal(XYPosition position, int objectWidth = 0, int objectHeight = 0, Layer? objectLayer = null)
+        public bool XYPositionIsLegal(XYPosition position, int objectWidth = 0, int objectHeight = 0, Layer? objectLayer = null)
         {
             DebugWithoutEndline(this, "Checking position : " + position.ToString() + " width : " + objectWidth + " height : " + objectHeight + " layer : " + objectLayer);
 

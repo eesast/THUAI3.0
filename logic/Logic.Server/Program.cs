@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using static Logic.Constant.MapInfo;
 using CommandLine;
+using System.Collections.Concurrent;
 
 namespace Logic.Server
 {
