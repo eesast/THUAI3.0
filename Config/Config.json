@@ -28,7 +28,8 @@
             "Speed": 15
         },
         "Hammer": {
-            "StunDuration": 1000
+            "StunDuration": 1000,
+            "Speed": 10
         }
     },
     "Tool": {
