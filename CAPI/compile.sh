@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /usr/local/CAPI 
+cd /usr/local/CAPI
 cat src/player.cpp | grep "#define DEVELOPER_ONLY"
 if [ $? -ne 1 ];then
 	echo "file inclusion error" >> error.txt
