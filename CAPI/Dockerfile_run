@@ -1,0 +1,15 @@
+FROM ubuntu
+WORKDIR /usr/local
+RUN apt-get update \
+	&& apt-get install --no-install-recommends -y libprotobuf-dev wget gcc g++ make
+RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v3.8.0-rc1/protobuf-cpp-3.8.0-rc-1.tar.gz --no-check-certificate \
+	&& tar -zxvf protobuf-cpp-3.8.0-rc-1.tar.gz && rm protobuf-cpp-3.8.0-rc-1.tar.gz \
+	&& cd protobuf-3.8.0-rc-1 && ./configure --prefix=/usr/local/protobuf && make && make install \
+	&& LD_LIBRARY_PATH=/usr/local/protobuf/lib \
+	&& rm -rf /usr/local/protobuf-3.8.0-rc-1
+ENV Protobuf_INCLUDE_DIR=/usr/local/protobuf/include
+RUN wget https://github.com/ldcsaa/HP-Socket/archive/v5.7.1.tar.gz --no-check-certificate \
+	&& tar -zxvf v5.7.1.tar.gz && rm  v5.7.1.tar.gz \
+	&& cp -r ./HP-Socket-5.7.1/Linux/lib/hpsocket/x64/libhpsocket.a /usr/lib \
+	&& rm -rf /usr/local/HP-Socket-5.7.1 \
+ADD ./dependency /usr/local/dependency

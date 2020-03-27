@@ -1,14 +1,16 @@
 ## Yours
-
-*.dll
-*.lib
-/include/*
-/include(linux)/*
-/lib/*
-/lib(linux)/*
-/proto/*
-*.lib
+windows_only/
+proto/*.proto
 !.gitkeep
+# Cmake Generate
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.cmake
+CMakeCache.txt
+CmakeFiles/
+build/
+!.
 
 ## VsCode
 .vscode/

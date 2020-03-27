@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.IO;
 using System.Text;
@@ -7,7 +7,7 @@ namespace Login
 {
     public class Program
     {
-        
+
         bool HttpPost(string url, string data)
         {
             HttpWebRequest httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(url);
@@ -35,7 +35,7 @@ namespace Login
             catch (WebException ex)
             {
                 //这后面的代码是登录失败后执行的
-                if(((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.Unauthorized)
+                if (((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.Unauthorized)
                 {
                     Console.WriteLine("用户名或密码错误");
                 }
@@ -55,9 +55,9 @@ namespace Login
             Program example1 = new Program();
             string data = "{\"username\": \"username\",\"password\": \"password\"}";
             //HttpPost本身也会返回布尔值以供判断成功与否
-            if(example1.HttpPost("https://api.eesast.com/v1/users/login", data))
+            if (example1.HttpPost("https://api.eesast.com/v1/users/login", data))
             {
-                
+
             }
         }
     }

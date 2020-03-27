@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using Logic.Constant;
+using THUnity2D;
 
 namespace Logic.Constant
 {
@@ -26,7 +26,7 @@ namespace Logic.Constant
             { 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5 },
             { 5, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 5 },
             { 5, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 6, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5 },
-            { 5, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 6, 6, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5 },
+            { 5, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 6, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5 },
             { 5, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5 },
             { 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5 },
             { 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5 },
@@ -77,32 +77,30 @@ namespace Logic.Constant
                 if (_worldMap == null)
                 {
                     _worldMap = new THUnity2D.Map(map.GetLength(0), map.GetLength(1));
-                    _worldMap.LayerCount = 5;
-                    //分5层，0层为墙，1层为人，2层为不碰撞的物品，3层为可以与墙壁碰撞但不与人碰撞的物品
-                    _worldMap.SetLayerCollisionTrue((int)MapLayer.BlockLayer, (int)MapLayer.PlayerLayer);
-                    _worldMap.SetLayerCollisionTrue((int)MapLayer.BlockLayer, (int)MapLayer.BlockLayer);
-                    _worldMap.SetLayerCollisionTrue((int)MapLayer.PlayerLayer, (int)MapLayer.PlayerLayer);
-                    _worldMap.SetLayerCollisionTrue((int)MapLayer.BlockLayer, (int)MapLayer.FlyingLayer);
-                    _worldMap.SetLayerTriggerTrue((int)MapLayer.PlayerLayer, (int)MapLayer.TriggerLayer);
+                    BlockLayer = _worldMap.AddLayer();
+                    PlayerLayer = _worldMap.AddLayer();
+                    ItemLayer = _worldMap.AddLayer();
+                    TriggerLayer = _worldMap.AddLayer();
+                    FlyingLayer = _worldMap.AddLayer();
+                    WallLayer = _worldMap.AddLayer();
+                    //分6层，0层为不可碰撞的方块，1层为人，2层为不碰撞的物品，3层为Trigger，4层为飞行员专用层，5层为墙
+                    _worldMap.SetLayerCollisionTrue(BlockLayer, PlayerLayer);
+                    _worldMap.SetLayerCollisionTrue(PlayerLayer, PlayerLayer);
+                    _worldMap.SetLayerCollisionTrue(BlockLayer, BlockLayer);
+                    _worldMap.SetLayerCollisionTrue(WallLayer, FlyingLayer);
+                    _worldMap.SetLayerCollisionTrue(PlayerLayer, WallLayer);
+                    _worldMap.SetLayerTriggerTrue(PlayerLayer, TriggerLayer);
                     _worldMap.FrameRate = Constant.FrameRate;
                 }
                 return _worldMap;
             }
         }
-        public enum MapLayer
-        {
-            BlockLayer = 0,
-            PlayerLayer,
-            ItemLayer,
-            TriggerLayer,
-            FlyingLayer
-        }
 
-        // Update is called once per frame
-        public static void Update()
-        {
-
-        }
-
+        public static Layer BlockLayer;
+        public static Layer PlayerLayer;
+        public static Layer ItemLayer;
+        public static Layer TriggerLayer;
+        public static Layer FlyingLayer;
+        public static Layer WallLayer;
     }
 }

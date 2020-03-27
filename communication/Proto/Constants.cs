@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 
 namespace Communication.Proto
@@ -6,7 +6,7 @@ namespace Communication.Proto
     public static class Constants
     {
         public delegate void DebugFunc(string DebugMessage);
-        public static ushort PlayerCount = 1;
+        public static ushort PlayerCount = 2;
         public static ushort AgentCount = 1;
         public static ushort ServerPort = 10086;
         public static readonly ushort AgentPort = 8887;

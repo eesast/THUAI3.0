@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using static THUnity2D.Tools;
-using static Logic.Constant.MapInfo;
 using Logic.Constant;
+using static Logic.Constant.MapInfo;
+using static THUnity2D.Tools;
 using Communication.Proto;
+using Direction = Communication.Proto.Direction;
 
 namespace Logic.Server
 {
@@ -13,66 +11,31 @@ namespace Logic.Server
 
         public int distance;
         public Direction direction;
-        //public TimeSpan LastActTime;
-        protected System.Threading.Timer _stopMovingTimer = null;
-        public System.Threading.Timer StopMovingTimer
-        {
-            get
-            {
-                if (_stopMovingTimer == null)
-                    _stopMovingTimer = new System.Threading.Timer(
-                        (o) =>
-                        {
-                            Velocity = new THUnity2D.Vector(Velocity.angle, 0);
-                            Layer = (int)MapLayer.ItemLayer;
-                        });
-                return _stopMovingTimer;
-            }
-        }
 
-        public Dish(double x_t, double y_t, DishType type_t) : base(x_t, y_t)
+        public Dish(double x_t, double y_t, DishType type_t) : base(x_t, y_t, ObjType.Dish)
         {
             Server.ServerDebug("Create Dish : " + type_t);
-            Layer = (int)MapLayer.ItemLayer;
+            Layer = ItemLayer;
             Movable = true;
             Bouncable = true;
-            _dish = type_t;
-            lock (Program.MessageToClientLock)
+            AddToMessage();
+            Dish = type_t;
+            this.StopMoving += new StopMovingHandler((o) =>
             {
-                Program.MessageToClient.GameObjectMessageList.Add(
-                    this.ID,
-                    new GameObjectMessage
-                    {
-                        ObjType = (ObjTypeMessage)ObjType.Dish,
-                        DishType = (DishTypeMessage)Dish,
-                        Position = new XYPositionMessage { X = Position.x, Y = Position.y }
-                    });
-                Server.ServerDebug("Add Dish to Message list : " + type_t);
-            }
-            this.MoveComplete += new MoveCompleteHandler(
-                (thisGameObject) =>
+                Layer = ItemLayer;
+                if (WorldMap.Grid[(int)Position.x, (int)Position.y].ContainsType(typeof(RubbishBin)))
                 {
-                    lock (Program.MessageToClientLock)
-                    {
-                        Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.X = thisGameObject.Position.x;
-                        Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.Y = thisGameObject.Position.y;
-                    }
-                    //Server.ServerDebug(this.Position.ToString());
-                });
-            this.OnParentDelete += new ParentDeleteHandler(
-                () =>
-                {
-                    lock (Program.MessageToClientLock)
-                    {
-                        Program.MessageToClient.GameObjectMessageList.Remove(ID);
-                    }
-                });
+                    Parent = null;
+                }
+            });
+            this.MoveComplete += new MoveCompleteHandler(ChangePositionInMessage);
+            this.OnParentDelete += new ParentDeleteHandler(DeleteFromMessage);
         }
 
         public override DishType GetDish(DishType t)
         {
             DishType temp = Dish;
-            if (t == DishType.Empty) this.Parent = null;
+            if (t == DishType.DishEmpty) this.Parent = null;
             else
             {
                 Dish = t;

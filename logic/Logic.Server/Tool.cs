@@ -1,6 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Logic.Constant;
 using static Logic.Constant.MapInfo;
 using Communication.Proto;
@@ -9,67 +6,32 @@ namespace Logic.Server
 {
     public class Tool : Obj
     {
-        protected System.Threading.Timer _stopMovingTimer = null;
-        public System.Threading.Timer StopMovingTimer
-        {
-            get
-            {
-                if (_stopMovingTimer == null)
-                    _stopMovingTimer = new System.Threading.Timer(
-                        (o) =>
-                        {
-                            Velocity = new THUnity2D.Vector(Velocity.angle, 0);
-                            Layer = (int)MapLayer.ItemLayer;
-                        });
-                return _stopMovingTimer;
-            }
-        }
 
-        public Tool(double x_t, double y_t, ToolType type_t) : base(x_t, y_t)
+        public Tool(double x_t, double y_t, ToolType type_t) : base(x_t, y_t, ObjType.Tool)
         {
             Server.ServerDebug("Create Tool : " + type_t);
-            Layer = (int)MapLayer.ItemLayer;
+            Layer = ItemLayer;
             Movable = true;
             Bouncable = true;
-            _tool = type_t;
 
-            lock (Program.MessageToClientLock)
+            AddToMessage();
+            Tool = type_t;
+            this.StopMoving += new StopMovingHandler((o) =>
             {
-                Program.MessageToClient.GameObjectMessageList.Add(
-                    this.ID,
-                    new GameObjectMessage
-                    {
-                        ObjType = ObjTypeMessage.Tool,
-                        ToolType = (ToolTypeMessage)Tool,
-                        Position = new XYPositionMessage { X = Position.x, Y = Position.y }
-                    });
-                Server.ServerDebug("Add Tool to Message list : " + type_t);
-            }
-            this.MoveComplete += new MoveCompleteHandler(
-                (thisGameObject) =>
+                Layer = ItemLayer;
+                if (WorldMap.Grid[(int)Position.x, (int)Position.y].ContainsType(typeof(RubbishBin)))
                 {
-                    lock (Program.MessageToClientLock)
-                    {
-                        Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.X = thisGameObject.Position.x;
-                        Program.MessageToClient.GameObjectMessageList[thisGameObject.ID].Position.Y = thisGameObject.Position.y;
-                    }
-                    //Server.ServerDebug(this.Position.ToString());
-                });
-            this.OnParentDelete += new ParentDeleteHandler(
-                () =>
-                {
-                    lock (Program.MessageToClientLock)
-                    {
-                        Program.MessageToClient.GameObjectMessageList.Remove(ID);
-                        Server.ServerDebug("Delete Tool From Message List");
-                    }
-                });
+                    Parent = null;
+                }
+            });
+            this.MoveComplete += new MoveCompleteHandler(ChangePositionInMessage);
+            this.OnParentDelete += new ParentDeleteHandler(DeleteFromMessage);
 
         }
         public override ToolType GetTool(ToolType t)
         {
             ToolType temp = Tool;
-            if (t == ToolType.Empty) this.Parent = null;
+            if (t == ToolType.ToolEmpty) this.Parent = null;
             else
             {
                 Tool = t;

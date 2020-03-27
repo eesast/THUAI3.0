@@ -1,0 +1,15 @@
+
+# windows
+**/windows_only
+**/*.py
+**/.gitignore
+**/dependency/generateProto.ps1
+
+# Dockerfile
+**/Docker*
+**/.dockerignore
+
+# doc
+**/*.md
+
+# player.cpp

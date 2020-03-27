@@ -13,125 +13,144 @@ using THUnity2D;
 using static THUnity2D.Tools;
 using GameForm;
 using System.Collections.Generic;
+using Communication;
 namespace Client
 {
     class Player : Character
     {
-        protected Int64 id = -1;
-        private static int port = 30000;
-        static Thread operationThread;
+        protected Int64 id = -1;//注意！！！在这个类里基类的ID已被弃用
+        protected new int team = 0;
         protected static DateTime lastSendTime = new DateTime();
         protected Communication.CAPI.API ClientCommunication = new Communication.CAPI.API();
         protected MessageToServer messageToServer = new MessageToServer();
+        protected Talent playerTalent;
+        protected bool isStartedGame = false;
+
         public void ChangeControlLabelText(string id, string str)
         {
             if (Program.form.ControlLabels[id].InvokeRequired)
             {
-                Program.form.ControlLabels[id].Invoke(new Action<object>((o) => { Program.form.ControlLabels[id].Text = id + "  " + str; }));
+                Program.form.ControlLabels[id].Invoke(new Action(() => { Program.form.ControlLabels[id].Text = id + "  " + str; }));
             }
             else
             {
                 Program.form.ControlLabels[id].Text = id + "  " + str;
             }
         }
-        public void RefreshFormLabelMethod(Int64 id_t, GameObjectMessage gameObjectMessage)
+        public void RefreshFormLabelMethod(Int64 id_t, Communication.Proto.GameObject gameObjectMessage)
         {
             switch (gameObjectMessage.ObjType)
             {
-                case ObjTypeMessage.People:
+                case ObjType.People:
                     Program.form.playerLabels[id_t].Location =
                         new System.Drawing.Point(
-                            (int)((gameObjectMessage.Position.X - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL),
-                            Convert.ToInt32((WorldMap.Height - gameObjectMessage.Position.Y - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL));
-                    switch ((Direction)gameObjectMessage.Direction)
+                            (int)((gameObjectMessage.PositionX - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL),
+                            Convert.ToInt32((WorldMap.Height - gameObjectMessage.PositionY - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL));
+                    switch ((THUnity2D.Direction)gameObjectMessage.Direction)
                     {
-                        case Direction.Right: Program.form.playerLabels[id_t].Text = "→"; break;
-                        case Direction.RightUp: Program.form.playerLabels[id_t].Text = "↗"; break;
-                        case Direction.Up: Program.form.playerLabels[id_t].Text = "↑"; break;
-                        case Direction.LeftUp: Program.form.playerLabels[id_t].Text = "↖"; break;
-                        case Direction.Left: Program.form.playerLabels[id_t].Text = "←"; break;
-                        case Direction.LeftDown: Program.form.playerLabels[id_t].Text = "↙"; break;
-                        case Direction.Down: Program.form.playerLabels[id_t].Text = "↓"; break;
-                        case Direction.RightDown: Program.form.playerLabels[id_t].Text = "↘"; break;
+                        case THUnity2D.Direction.Right: Program.form.playerLabels[id_t].Text = "→"; break;
+                        case THUnity2D.Direction.RightUp: Program.form.playerLabels[id_t].Text = "↗"; break;
+                        case THUnity2D.Direction.Up: Program.form.playerLabels[id_t].Text = "↑"; break;
+                        case THUnity2D.Direction.LeftUp: Program.form.playerLabels[id_t].Text = "↖"; break;
+                        case THUnity2D.Direction.Left: Program.form.playerLabels[id_t].Text = "←"; break;
+                        case THUnity2D.Direction.LeftDown: Program.form.playerLabels[id_t].Text = "↙"; break;
+                        case THUnity2D.Direction.Down: Program.form.playerLabels[id_t].Text = "↓"; break;
+                        case THUnity2D.Direction.RightDown: Program.form.playerLabels[id_t].Text = "↘"; break;
                         default: break;
                     }
-                    if (gameObjectMessage.DishType != DishTypeMessage.DishEmpty)
-                        ChangeControlLabelText("Dish", gameObjectMessage.DishType.ToString());
-                    else
-                        ChangeControlLabelText("Dish", "");
-                    if (gameObjectMessage.ToolType != ToolTypeMessage.ToolEmpty
-                        && gameObjectMessage.ToolType != ToolTypeMessage.ToolTypeSize)
-                        ChangeControlLabelText("Tool", gameObjectMessage.ToolType.ToString());
-                    else
-                        ChangeControlLabelText("Tool", "");
+                    if (id_t == this.id)
+                    {
+                        if (gameObjectMessage.DishType != DishType.DishEmpty)
+                            ChangeControlLabelText("Dish", gameObjectMessage.DishType.ToString());
+                        else
+                            ChangeControlLabelText("Dish", "");
+                        if (gameObjectMessage.ToolType != ToolType.ToolEmpty
+                            && gameObjectMessage.ToolType != ToolType.ToolSize)
+                            ChangeControlLabelText("Tool", gameObjectMessage.ToolType.ToString());
+                        else
+                            ChangeControlLabelText("Tool", "");
+                    }
                     break;
-                case ObjTypeMessage.Block:
+                case ObjType.Block:
                     switch (gameObjectMessage.BlockType)
                     {
-                        case BlockTypeMessage.FoodPoint:
-                            if (gameObjectMessage.DishType == DishTypeMessage.DishEmpty)
+                        case BlockType.FoodPoint:
+                            if (gameObjectMessage.DishType == DishType.DishEmpty)
                                 Program.form.playerLabels[id_t].Text = "";
                             else
                                 Program.form.playerLabels[id_t].Text = gameObjectMessage.DishType.ToString();
                             break;
-                        case BlockTypeMessage.Cooker:
+                        case BlockType.Cooker:
+                            if (gameObjectMessage.DishType == DishType.DishEmpty)
+                                Program.form.playerLabels[id_t].Text = "";
+                            else
+                                Program.form.playerLabels[id_t].Text = gameObjectMessage.DishType.ToString();
                             break;
                     }
                     break;
-                case ObjTypeMessage.Dish:
+                case ObjType.Dish:
                     Program.form.playerLabels[id_t].Location =
                         new System.Drawing.Point(
-                            (int)((gameObjectMessage.Position.X - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL),
-                            Convert.ToInt32((WorldMap.Height - gameObjectMessage.Position.Y - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL));
+                            (int)((gameObjectMessage.PositionX - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL),
+                            Convert.ToInt32((WorldMap.Height - gameObjectMessage.PositionY - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL));
+                    Program.form.playerLabels[id_t].Text = gameObjectMessage.DishType.ToString();
                     break;
-                case ObjTypeMessage.Tool:
+                case ObjType.Tool:
                     Program.form.playerLabels[id_t].Location =
                         new System.Drawing.Point(
-                            (int)((gameObjectMessage.Position.X - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL),
-                            Convert.ToInt32((WorldMap.Height - gameObjectMessage.Position.Y - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL));
+                            (int)((gameObjectMessage.PositionX - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL),
+                            Convert.ToInt32((WorldMap.Height - gameObjectMessage.PositionY - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL));
+                    Program.form.playerLabels[id_t].Text = gameObjectMessage.ToolType.ToString();
                     break;
-                case ObjTypeMessage.Trigger:
+                case ObjType.Trigger:
+                    Program.form.playerLabels[id_t].Location =
+                        new System.Drawing.Point(
+                            (int)((gameObjectMessage.PositionX - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL),
+                            Convert.ToInt32((WorldMap.Height - gameObjectMessage.PositionY - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL));
                     break;
             }
         }
-        public void initializeFormLabelMethod(Int64 id_t, GameObjectMessage gameObjectMessage)
+        public void initializeFormLabelMethod(Int64 id_t, Communication.Proto.GameObject gameObjectMessage)
         {
             switch (gameObjectMessage.ObjType)
             {
-                case ObjTypeMessage.People: Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.Red; break;
-                case ObjTypeMessage.Block:
+                case ObjType.People:
+                    Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.Red;
+                    Program.form.playerLabels[id_t].TabIndex = 1;
+                    break;
+                case ObjType.Block:
                     switch (gameObjectMessage.BlockType)
                     {
-                        case BlockTypeMessage.Wall:
-                            Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.White;
-                            break;
-                        case BlockTypeMessage.FoodPoint:
+                        case BlockType.FoodPoint:
                             Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.Purple;
                             Program.form.playerLabels[id_t].Text = gameObjectMessage.DishType.ToString();
                             break;
-                        case BlockTypeMessage.Cooker:
+                        case BlockType.Cooker:
                             Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.SandyBrown;
+                            break;
+                        case BlockType.RubbishBin:
+                            Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.DarkGreen;
                             break;
                     }
                     break;
-                case ObjTypeMessage.Dish:
+                case ObjType.Dish:
                     Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.LightSalmon;
                     Program.form.playerLabels[id_t].Text = gameObjectMessage.DishType.ToString();
                     break;
-                case ObjTypeMessage.Tool:
+                case ObjType.Tool:
                     Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.LightCyan;
                     Program.form.playerLabels[id_t].Text = gameObjectMessage.ToolType.ToString();
                     break;
-                case ObjTypeMessage.Trigger:
+                case ObjType.Trigger:
                     Program.form.playerLabels[id_t].BackColor = System.Drawing.Color.DarkBlue;
                     Program.form.playerLabels[id_t].Text = gameObjectMessage.TriggerType.ToString();
                     break;
             }
-            Program.form.playerLabels[id_t].TabIndex = 1;
+
             Program.form.playerLabels[id_t].Location =
                         new System.Drawing.Point(
-                            (int)((gameObjectMessage.Position.X - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL),
-                            Convert.ToInt32((WorldMap.Height - gameObjectMessage.Position.Y - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL));
+                            (int)((gameObjectMessage.PositionX - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL),
+                            Convert.ToInt32((WorldMap.Height - gameObjectMessage.PositionY - 0.5) * GameForm.Form1.LABEL_WIDTH + Form1.HALF_LABEL_INTERVAL));
             Program.form.playerLabels[id_t].Size = new System.Drawing.Size(Form1.LABEL_WIDTH - Form1.LABEL_INTERVAL, Form1.LABEL_WIDTH - Form1.LABEL_INTERVAL);
             Program.form.playerLabels[id_t].BringToFront();
         }
@@ -152,47 +171,47 @@ namespace Client
             }
         }
 
-        public void moveFormLabel(Int64 id_t, GameObjectMessage gameObjectMessage, ref Dictionary<bool, HashSet<Int64>> recordDic)
+        public void moveFormLabel(Int64 id_t, Communication.Proto.GameObject gameObjectMessage, ref HashSet<Int64> IDsToDelete)
         {
             if (!Program.form.playerLabels.ContainsKey(id_t))
             {
                 CreatePlayerLabel(id_t);
                 if (Program.form.playerLabels[id_t].InvokeRequired)
                 {
-                    Program.form.playerLabels[id_t].Invoke(new Action<Int64, GameObjectMessage>(initializeFormLabelMethod), id_t, gameObjectMessage);
+                    Program.form.playerLabels[id_t].Invoke(new Action<Int64, Communication.Proto.GameObject>(initializeFormLabelMethod), id_t, gameObjectMessage);
                 }
                 else
                 {
                     initializeFormLabelMethod(id_t, gameObjectMessage);
                 }
                 //recordDic[true].Add(id_t);
-                Console.WriteLine("New Form : " + id_t + "  (" + gameObjectMessage.Position.X + "," + gameObjectMessage.Position.Y + ")  " + gameObjectMessage.ObjType);
+                Console.WriteLine("New Form : " + id_t + "  (" + gameObjectMessage.PositionX + "," + gameObjectMessage.PositionY + ")  " + gameObjectMessage.ObjType);
             }
             else
             {
                 //recordDic[true].Add(id_t);
-                recordDic[false].Remove(id_t);
+                IDsToDelete.Remove(id_t);
                 //Console.WriteLine("Change Form");
             }
 
             if (Program.form.playerLabels[id_t].InvokeRequired)
             {
-                Program.form.playerLabels[id_t].Invoke(new Action<Int64, GameObjectMessage>(RefreshFormLabelMethod), id_t, gameObjectMessage);
+                Program.form.playerLabels[id_t].Invoke(new Action<Int64, Communication.Proto.GameObject>(RefreshFormLabelMethod), id_t, gameObjectMessage);
             }
             else
             {
                 RefreshFormLabelMethod(id_t, gameObjectMessage);
             }
         }
-        public Player(double x, double y) :
+        public Player(double x, double y, ushort agentPort, Talent talent) :
             base(x, y)
         {
             ClientCommunication.Initialize();
             ClientCommunication.ReceiveMessage += OnReceive;
-            ClientCommunication.ConnectServer(new IPEndPoint(IPAddress.Loopback, port));
+            ClientCommunication.ConnectServer(new IPEndPoint(IPAddress.Loopback, agentPort));
+            playerTalent = talent;
 
-            operationThread = new Thread(Operation);
-            operationThread.Start();
+            new Thread(Operation).Start();
         }
         private void Operation()
         {
@@ -201,67 +220,90 @@ namespace Client
             while (true)
             {
                 key = Console.ReadKey().KeyChar;
-
+                if (!isStartedGame)
+                    continue;
                 if ((DateTime.Now - lastSendTime).TotalSeconds <= TimeInterval)
                     continue;
                 switch (key)
                 {
-                    case 'd': Move(Direction.Right); break;
-                    case 'e': Move(Direction.RightUp); break;
-                    case 'w': Move(Direction.Up); break;
-                    case 'q': Move(Direction.LeftUp); break;
-                    case 'a': Move(Direction.Left); break;
-                    case 'z': Move(Direction.LeftDown); break;
-                    case 'x': Move(Direction.Down); break;
-                    case 'c': Move(Direction.RightDown); break;
+                    case 'd': Move(THUnity2D.Direction.Right); break;
+                    case 'e': Move(THUnity2D.Direction.RightUp); break;
+                    case 'w': Move(THUnity2D.Direction.Up); break;
+                    case 'q': Move(THUnity2D.Direction.LeftUp); break;
+                    case 'a': Move(THUnity2D.Direction.Left); break;
+                    case 'z': Move(THUnity2D.Direction.LeftDown); break;
+                    case 'x': Move(THUnity2D.Direction.Down); break;
+                    case 'c': Move(THUnity2D.Direction.RightDown); break;
                     case 'f': Pick(); break;
-                    case 'u': Use(1, 0); break;
-                    case 'r': Put(5, true); break;
-                    case 't': Put(5, false); break;
+                    case 'u':
+                        Console.WriteLine("Please Input 2 parameters : ");
+                        Use(1, int.Parse(Console.ReadLine()), int.Parse(Console.ReadLine()));
+                        break;
+                    case 'i': Use(0, 0); break;
+                    case 'r':
+                        Console.WriteLine("Please Input throw distance : ");
+                        char temp = Console.ReadKey().KeyChar;
+                        if (temp >= '0' && temp <= '9')
+                        {
+                            Put(temp - '0', (double)FacingDirection * Math.PI / 4, true);
+                        }
+                        break;
+                    case 't':
+                        Console.WriteLine("Please Input throw distance : ");
+                        char tmp = Console.ReadKey().KeyChar;
+                        if (tmp >= '0' && tmp <= '9')
+                        {
+                            Put(tmp - '0', (double)FacingDirection * Math.PI / 4, false);
+                        }
+                        break;
+                    case ':':
+                        Console.WriteLine("Please Input your text to speak : ");
+                        SpeakToFriend(Console.ReadLine());
+                        break;
                 }
                 lastSendTime = DateTime.Now;
             }
         }
-        public override void Move(Direction direction_t, int duration = 1000)
+        public override void Move(THUnity2D.Direction direction_t, int duration = 1000)
         {
-            messageToServer.CommandType = CommandTypeMessage.Move;
+            messageToServer.CommandType = CommandType.Move;
 
-            //这里必须做值检查，因为不知道用户会输入什么样的值
-            if (direction_t < 0)
-                direction_t = (Direction)0;
-            else if (direction_t >= Direction.Size)
-                direction_t = Direction.Size;
-            messageToServer.MoveDirection = (DirectionMessage)direction_t;
-
-            if (duration < 0)
-                duration = 0;
-            else if (duration > 10000)
-                duration = 10000;
+            //值检查放在Server
+            messageToServer.MoveDirection = (Communication.Proto.Direction)direction_t;
             messageToServer.MoveDuration = duration;
 
             ClientCommunication.SendMessage(messageToServer);
         }
-        public override void Put(int distance, bool isThrowDish)
+        public override void Put(double distance, double angle, bool isThrowDish)
         {
-            if (distance < 0)
-                distance = 0;
-            else if (distance > 20)
-                distance = 20;
+            //值检查放在Server
             messageToServer.ThrowDistance = distance;
+            messageToServer.ThrowAngle = angle;
             messageToServer.IsThrowDish = isThrowDish;
 
-            messageToServer.CommandType = CommandTypeMessage.Put;
+            messageToServer.CommandType = CommandType.Put;
             ClientCommunication.SendMessage(messageToServer);
         }
-        public override void Use(int type, int parameter)
+        public override void Use(int type, double parameter_1 = 0, double parameter_2 = 0)
         {
-
-            messageToServer.CommandType = CommandTypeMessage.Use;
+            //在Server端控制变量范围
+            messageToServer.CommandType = CommandType.Use;
+            messageToServer.UseType = type;
+            messageToServer.Parameter1 = parameter_1;
+            messageToServer.Parameter2 = parameter_2;
             ClientCommunication.SendMessage(messageToServer);
         }
         public override void Pick()
         {
-            messageToServer.CommandType = CommandTypeMessage.Pick;
+            messageToServer.CommandType = CommandType.Pick;
+            ClientCommunication.SendMessage(messageToServer);
+        }
+        public void SpeakToFriend(string speakText)
+        {
+            messageToServer.CommandType = CommandType.Speak;
+            if (speakText.Length > 16)//限制发送的字符串长度为16
+                speakText = speakText.Substring(0, 15);
+            messageToServer.SpeakText = speakText;
             ClientCommunication.SendMessage(messageToServer);
         }
 
@@ -271,46 +313,40 @@ namespace Client
                 throw new Exception("Recieve Error !");
             MessageToClient msg = message as MessageToClient;
 
-            //自己的id小于0时为未初始化状态，此时初始化自己的id
+            //自己的id小于0时为未初始化状态，此时初始化自己的id，然后发送message选择天赋
             if (this.id < 0)
             {
-                foreach (var gameObject in msg.GameObjectMessageList)
+                isStartedGame = true;
+                foreach (var gameObject in msg.GameObjectList)
                 {
                     this.id = gameObject.Key;
-                    this.Position = new XYPosition(gameObject.Value.Position.X, gameObject.Value.Position.Y);
-                    this.facingDirection = (Tools.Direction)(int)gameObject.Value.Direction;
+                    this.team = gameObject.Value.Team;
                     Console.WriteLine("\nThis Player :\n" + "\t" + id.ToString() + "\n\tposition: " + Position.ToString());
-                    Dictionary<bool, HashSet<long>> tempDic = new Dictionary<bool, HashSet<long>>
+                    ClientCommunication.SendMessage(new MessageToServer
                     {
-                        { false, new HashSet<long>(Program.form.playerLabels.Keys) },
-                        { true, new HashSet<long>() }
-                    };
-                    moveFormLabel(this.id, gameObject.Value, ref tempDic);
-                    return;
+                        Talent = playerTalent,
+                        IsSetTalent = true
+                    });
+                    break;
                 }
                 messageToServer.ID = this.id;
             }
 
-            this.Position = new XYPosition(msg.GameObjectMessageList[this.id].Position.X, msg.GameObjectMessageList[this.id].Position.Y);
-            this.facingDirection = (Tools.Direction)msg.GameObjectMessageList[this.id].Direction;
+            this.Position = new XYPosition(msg.GameObjectList[this.id].PositionX, msg.GameObjectList[this.id].PositionY);
+            this._facingDirection = (THUnity2D.Direction)msg.GameObjectList[this.id].Direction;
 
             ChangeAllLabels(msg);
         }
 
-        Dictionary<bool, HashSet<Int64>> recordDic = new Dictionary<bool, HashSet<long>>
-                {
-                    { false, new HashSet<long>(Program.form.playerLabels.Keys) },
-                    { true, new HashSet<long>() }
-                };
+        HashSet<Int64> IDsToDelete = new HashSet<long>();
         public void ChangeAllLabels(MessageToClient msg)
         {
-            recordDic[false] = new HashSet<long>(Program.form.playerLabels.Keys);
-            //recordDic[true].Clear();
-            foreach (var gameObject in msg.GameObjectMessageList)
+            IDsToDelete = new HashSet<long>(Program.form.playerLabels.Keys);
+            foreach (var gameObject in msg.GameObjectList)
             {
-                moveFormLabel(gameObject.Key, gameObject.Value, ref recordDic);
+                moveFormLabel(gameObject.Key, gameObject.Value, ref IDsToDelete);
             }
-            foreach (var number in recordDic[false])
+            foreach (var number in IDsToDelete)
             {
                 Console.WriteLine("Delete Form : " + number);
                 if (Program.form.InvokeRequired)
@@ -327,7 +363,31 @@ namespace Client
                 Program.form.playerLabels.Remove(number);
             }
 
+            if (Program.form.ControlLabels["Task"].InvokeRequired)
+            {
+                Program.form.ControlLabels["Task"].Invoke(new Action<MessageToClient>(ChangeTaskLabel), msg);
+            }
+            else
+            {
+                ChangeTaskLabel(msg);
+            }
+            if (msg.Scores.ContainsKey(team))
+                ChangeControlLabelText("Score", msg.Scores[team].ToString());
         }
+
+        public void ChangeTaskLabel(MessageToClient msg)
+        {
+            Program.form.ControlLabels["Task"].Text = "Task : ";
+            foreach (var task in msg.Tasks)
+            {
+                Program.form.ControlLabels["Task"].Text += "\n" + (DishType)task;
+            }
+        }
+
+        public static Action<string> ClientDebug = (string str) =>
+        {
+            Console.WriteLine(str);
+        };
     }
 
 }

@@ -1,0 +1,5 @@
+syntax = "proto3";
+package Protobuf;
+option csharp_namespace = "Communication.Proto";
+
+message PingPacket { int64 Ticks = 1; }

@@ -24,8 +24,8 @@ namespace Communication.Proto {
     static AgentIdReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "Cg1BZ2VudElkLnByb3RvEg9nb29nbGUucHJvdG9idWYiGAoHQWdlbnRJZBIN",
-            "CgVBZ2VudBgBIAEoBUIWqgITQ29tbXVuaWNhdGlvbi5Qcm90b2IGcHJvdG8z"));
+            "Cg1BZ2VudElkLnByb3RvEghQcm90b2J1ZiIYCgdBZ2VudElkEg0KBUFnZW50",
+            "GAEgASgFQhaqAhNDb21tdW5pY2F0aW9uLlByb3RvYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {

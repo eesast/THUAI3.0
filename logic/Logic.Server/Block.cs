@@ -1,151 +1,223 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using static Logic.Constant.MapInfo;
-using System.Configuration;
-using Logic.Constant;
 using Communication.Proto;
+using Logic.Constant;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using static Logic.Constant.Constant;
+using static Logic.Constant.MapInfo;
 
 namespace Logic.Server
 {
     public class Block : Obj
     {
-        public int RefreshTime;//食物刷新点的食物刷新速率，毫秒
+        public BlockType blockType;
 
-
-        public List<DishType> Task = null;//任务点的任务列表
-        public Block(double x_t, double y_t, BlockType type_t) : base(x_t, y_t)
+        public Block(double x_t, double y_t, BlockType type_t) : base(x_t, y_t, ObjType.Block)
         {
-            type = ObjType.Block;
-            Layer = (int)MapLayer.BlockLayer;
+            if (type_t == BlockType.Wall || type_t == BlockType.FoodPoint || type_t == BlockType.TaskPoint)
+                Layer = WallLayer;
+            else
+                Layer = BlockLayer;
             Movable = false;
             blockType = type_t;
-            switch (blockType)
-            {
-                case BlockType.FoodPoint:
-                    _dish = (DishType)Program.Random.Next(1, (int)DishType.Size1 - 1);
-                    RefreshTime = 4000;
-                    Console.WriteLine("食品刷新：地点（" + Position.x + "," + Position.y + "）, 种类 : " + Dish);
-                    lock (Program.MessageToClientLock)
-                    {
-                        Program.MessageToClient.GameObjectMessageList.Add(
-                            this.ID,
-                            new GameObjectMessage
-                            {
-                                ObjType = ObjTypeMessage.Block,
-                                BlockType = BlockTypeMessage.FoodPoint,
-                                DishType = (DishTypeMessage)Dish,
-                                Position = new XYPositionMessage { X = Position.x, Y = Position.y }
-                            });
-                    }
-                    break;
-                case BlockType.Cooker:
-                    _dish = DishType.Empty;
-                    lock (Program.MessageToClientLock)
-                    {
-                        Program.MessageToClient.GameObjectMessageList.Add(
-                            this.ID,
-                            new GameObjectMessage
-                            {
-                                ObjType = ObjTypeMessage.Block,
-                                BlockType = BlockTypeMessage.Cooker,
-                                DishType = (DishTypeMessage)Dish,
-                                Position = new XYPositionMessage { X = Position.x, Y = Position.y }
-                            });
-                    }
-                    break;
-                case BlockType.TaskPoint:
-                    //Task = new List<DishType>();
-                    //new System.Threading.Timer(TaskProduce, null, 1000, Convert.ToInt32(ConfigurationManager.AppSettings["TaskRefreshTime"]));
-                    //lock (Program.MessageToClientLock)
-                    //{
-                    //    Program.MessageToClient.GameObjectMessageList.Add(
-                    //        this.ID,
-                    //        new GameObjectMessage
-                    //        {
-                    //            ObjType = ObjTypeMessage.Block,
-                    //            BlockType = BlockTypeMessage.TaskPoint,
-                    //            DishType = (DishTypeMessage)Dish,
-                    //            Position = new XYPositionMessage { X = Position.x, Y = Position.y }
-                    //        });
-                    //}
-                    break;
-            }
         }
+
         public override DishType GetDish(DishType t)
         {
             DishType temp = Dish;
-            Dish = DishType.Empty;
-            RefreshTimer.Change(RefreshTime, 0);
+            Dish = DishType.DishEmpty;
             return temp;
         }
+    }
+
+    public class FoodPoint : Block
+    {
+        public int RefreshTime = (int)Configs["FoodPointInitRefreshTime"];//食物刷新点的食物刷新速率，毫秒
+
+        public FoodPoint(double x_t, double y_t) : base(x_t, y_t, BlockType.FoodPoint)
+        {
+            Layer = WallLayer;
+            AddToMessage();
+            Dish = (DishType)Program.Random.Next(1, (int)DishType.DishSize1 - 1);
+            lock (Program.MessageToClientLock)
+                Program.MessageToClient.GameObjectList[ID].BlockType = BlockType.FoodPoint;
+            Server.ServerDebug("食品刷新：地点（" + Position.x + "," + Position.y + "）, 种类 : " + Dish);
+        }
+
+        public override DishType GetDish(DishType t)
+        {
+            RefreshTimer.Change(RefreshTime, 0);
+            return base.GetDish(t);
+        }
+
+        //Refresh
         protected System.Threading.Timer _refreshTimer;
         public System.Threading.Timer RefreshTimer
         {
             get
             {
-                _refreshTimer = _refreshTimer ?? new System.Threading.Timer(Refresh);
+                if (this.blockType == BlockType.FoodPoint) _refreshTimer = _refreshTimer ?? new System.Threading.Timer(Refresh);
                 return _refreshTimer;
             }
         }
         public void Refresh(object i)
         {
-            Dish = (DishType)Program.Random.Next(1, (int)DishType.Size1 - 1);
-            Console.WriteLine("食品刷新：地点（" + Position.x + "," + Position.y + "）, 种类 : " + Dish);
+            Dish = (DishType)Program.Random.Next(1, (int)DishType.DishSize1 - 1);
+            Server.ServerDebug("食品刷新：地点（" + Position.x + "," + Position.y + "）, 种类 : " + Dish);
+        }
+        //Refresh End
+    }
+
+    public class Cooker : Block
+    {
+        public Cooker(double x_t, double y_t) : base(x_t, y_t, BlockType.Cooker)
+        {
+            Layer = BlockLayer;
+            AddToMessage();
+            Dish = DishType.DishEmpty;
+            lock (Program.MessageToClientLock)
+                Program.MessageToClient.GameObjectList[ID].BlockType = BlockType.Cooker;
+
         }
 
-        public override void UseCooker()
+        public override DishType GetDish(DishType t)
+        {
+            cookingResult = "Empty";
+            isCooking = false;
+            ProtectTimer.Change(0, 0);
+            return base.GetDish(t);
+        }
+
+        //Cook
+        protected System.Threading.Timer _cookingTimer;
+        protected System.Threading.Timer CookingTimer
+        {
+            get
+            {
+                _cookingTimer = _cookingTimer ?? new System.Threading.Timer(Cook);
+                return _cookingTimer;
+            }
+        }
+        protected void Cook(object o)
+        {
+            Dish = (DishType)Enum.Parse(typeof(DishType), cookingResult);
+            if (Dish > DishType.DishEmpty && Dish < DishType.DishSize2 && Dish != DishType.DishSize1)
+            {
+                if (Dish < DishType.SpicedPot)
+                    CookingTimer.Change((int)(0.5 * (double)Configs[cookingResult]["CookTime"]), 0);
+                else
+                    CookingTimer.Change((int)(0.5 * (double)Configs["SpicedPot"]["CookTime"]), 0);
+                cookingResult = "OverCookedDish";
+            }
+        }
+        protected string cookingResult;
+        public bool isCooking = false;
+
+        public int ProtectedTeam = -1;
+        protected System.Threading.Timer _protectTimer;
+        public System.Threading.Timer ProtectTimer
+        {
+            get
+            {
+                _protectTimer = _protectTimer ?? new System.Threading.Timer((i) => { ProtectedTeam = -1; });
+                return _protectTimer;
+            }
+        }
+
+        public override void UseCooker(int TeamNumber, Talent t)
         {
             string Material = "";
 
             SortedSet<DishType> dishTypeSet = new SortedSet<DishType>();
-            foreach (var GameObject in WorldMap.Grid[(int)Position.x, (int)Position.y].GetLayer((int)MapLayer.ItemLayer))
+            bool isSpicedPot = false;
+            if (WorldMap.Grid[(int)Position.x, (int)Position.y].ContainsType(typeof(Tool)))
             {
-                if (GameObject is Dish)
-                    dishTypeSet.Add(((Dish)GameObject).Dish);
+                foreach (Tool GameObject in WorldMap.Grid[(int)Position.x, (int)Position.y].GetObjects(typeof(Tool)))
+                {
+                    if (GameObject.Tool == ToolType.Condiment)
+                    {
+                        GameObject.Parent = null;
+                        isSpicedPot = true;
+                        break;
+                    }
+                }
             }
-
-            foreach (var dishType in dishTypeSet)
+            if (WorldMap.Grid[(int)Position.x, (int)Position.y].ContainsType(typeof(Dish)))
+                foreach (Dish GameObject in WorldMap.Grid[(int)Position.x, (int)Position.y].GetObjects(typeof(Dish)))
+                {
+                    dishTypeSet.Add(GameObject.Dish);
+                    GameObject.Parent = null;
+                }
+            if (dishTypeSet.Count == 0) return;
+            if (!isSpicedPot)
             {
-                Material += dishType.ToString() + " ";
+                isCooking = true;
+                ProtectedTeam = TeamNumber;
+                Dish = DishType.DarkDish;//未煮熟之前都是黑暗料理
+                foreach (var dishType in dishTypeSet)
+                {
+                    Material += dishType.ToString();
+                }
+                cookingResult = (string)Configs["CookingTable"][Material];
+                if (cookingResult == null) cookingResult = "DarkDish";
+                CookingTimer.Change((int)Configs[cookingResult]["CookTime"], 0);
+                ProtectTimer.Change((int)(1.25 * (double)Configs[cookingResult]["CookTime"]), 0);
             }
-
-            string result = ConfigurationManager.AppSettings[Material];
-            System.Threading.Timer timer = new System.Threading.Timer(Cook, result, Convert.ToInt32(ConfigurationManager.AppSettings[result + "Time"]), 0);
-            DishType GetResult(string s)
+            else
             {
-                return DishType.DarkDish;
-            }
-            void Cook(object s)
-            {
-                if (s is string)
-                    Dish = GetResult((string)s);
+                int score = 0;
+                foreach (var dishType in dishTypeSet)
+                {
+                    score += (int)Configs[dishType.ToString()]["Score"];
+                }
+                if (score < 60) return;
+                isCooking = true;
+                ProtectedTeam = TeamNumber;
+                Dish = DishType.DarkDish;
+                cookingResult = "SpicedPot_" + (score / 20).ToString();
+                CookingTimer.Change((int)Configs["SpicedPot"]["CookTime"], 0);
+                ProtectTimer.Change((int)(1.25 * (double)Configs["SpicedPot"]["CookTime"]), 0);
             }
         }
+        //Cook End
 
-        public void TaskProduce(object i)
+    }
+
+    public class TaskPoint : Block
+    {
+        public TaskPoint(double x_t, double y_t) : base(x_t, y_t, BlockType.TaskPoint)
         {
-            DishType temp = DishType.Apple;//(Dish.Type)new Random().Next();
-            Task.Add(temp);
-            new System.Threading.Timer(remove, temp,
-                Convert.ToInt32(ConfigurationManager.AppSettings["TaskTimeLimit"]), 0);
-
-            void remove(object task)
-            {
-                if (task is DishType)
-                    Task.Remove((DishType)task);
-            }
+            Layer = WallLayer;
         }
 
         public override int HandIn(DishType dish_t)
         {
-            if (Task.Contains(dish_t))
-            {
-                Task.Remove(dish_t);
-                return Convert.ToInt32(ConfigurationManager.AppSettings[dish_t.ToString() + "Score"]);//菜品名+Score，在App.config里加，里面有AppleScore
-                //测试的时候能直接把食材交进去，比赛的只会产生菜品任务
-            }
-            return 0;
+            return TaskSystem.HandIn(dish_t);
         }
     }
+
+    public class Wall : Block
+    {
+        public Wall(double x_t, double y_t) : base(x_t, y_t, BlockType.Wall)
+        {
+            Layer = WallLayer;
+        }
+    }
+
+    public class Table : Block
+    {
+        public Table(double x_t, double y_t) : base(x_t, y_t, BlockType.Table)
+        {
+            Layer = BlockLayer;
+        }
+    }
+
+    public class RubbishBin : Block
+    {
+        public RubbishBin(double x_t, double y_t) : base(x_t, y_t, BlockType.RubbishBin)
+        {
+            Layer = BlockLayer;
+        }
+    }
+
 }

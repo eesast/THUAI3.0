@@ -24,9 +24,8 @@ namespace Communication.Proto {
     static PingPacketReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChBQaW5nUGFja2V0LnByb3RvEg9nb29nbGUucHJvdG9idWYiGwoKUGluZ1Bh",
-            "Y2tldBINCgVUaWNrcxgBIAEoA0IWqgITQ29tbXVuaWNhdGlvbi5Qcm90b2IG",
-            "cHJvdG8z"));
+            "ChBQaW5nUGFja2V0LnByb3RvEghQcm90b2J1ZiIbCgpQaW5nUGFja2V0Eg0K",
+            "BVRpY2tzGAEgASgDQhaqAhNDb21tdW5pY2F0aW9uLlByb3RvYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {

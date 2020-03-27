@@ -1,0 +1,5 @@
+syntax = "proto3";
+package Protobuf;
+option csharp_namespace = "Communication.Proto";
+
+message AgentId { int32 Agent = 1; }

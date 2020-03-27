@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Client;
 using System.Runtime.InteropServices;
+using CommandLine;
+using Communication.Proto;
 
 namespace GameForm
 {
@@ -20,18 +18,29 @@ namespace GameForm
 
 
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
-            Communication.Proto.Constants.Debug = new Communication.Proto.Constants.DebugFunc((str) => { });
-            THUnity2D.GameObject.Debug = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
-            THUnity2D.GameObject.DebugWithoutEndline = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
-            THUnity2D.GameObject.DebugWithoutID = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
-            THUnity2D.GameObject.DebugWithoutIDEndline = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
             AllocConsole();
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            form = new Form1();
-            Application.Run(form);
+
+            Parser.Default.ParseArguments<AugmentOptions>(args)
+                    .WithParsed<AugmentOptions>(o =>
+                    {
+                        if (!Convert.ToBoolean(o.debugLevel & 1))
+                            Player.ClientDebug = new Action<string>(s => { });
+                        if (!Convert.ToBoolean(o.debugLevel & 2))
+                            Communication.Proto.Constants.Debug = new Constants.DebugFunc((str) => { });
+                        if (!Convert.ToBoolean(o.debugLevel & 4))
+                        {
+                            THUnity2D.GameObject.Debug = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
+                            THUnity2D.GameObject.DebugWithoutEndline = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
+                            THUnity2D.GameObject.DebugWithoutID = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
+                            THUnity2D.GameObject.DebugWithoutIDEndline = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
+                        }
+                        Application.EnableVisualStyles();
+                        Application.SetCompatibleTextRenderingDefault(false);
+                        form = new Form1(o.agentPort, (Talent)o.talent);
+                        Application.Run(form);
+                    });
 
             Console.WriteLine("\n\nEnd");
             Console.ReadKey();

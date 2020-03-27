@@ -2,7 +2,7 @@
   "profiles": {
     "Logic.Server": {
       "commandName": "Project",
-      "commandLineArgs": "10086 1 1 5000"
+      "commandLineArgs": "-p 20000 -d 1 -c 2 -a 1 -t 600"
     },
     "Docker": {
       "commandName": "Docker"
