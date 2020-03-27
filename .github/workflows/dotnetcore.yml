@@ -35,3 +35,5 @@ jobs:
         run: docker push ${{ secrets.DOCKER_USERNAME }}/thuai_agent:latest
       - name: Push CAPI_compile image to DockerHub
         run: docker push ${{ secrets.DOCKER_USERNAME }}/thuai_compiler:latest
+      - name: Push CAPI_runtime image to DockerHub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/thuai_client:latest
