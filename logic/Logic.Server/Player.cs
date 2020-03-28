@@ -183,7 +183,7 @@ namespace Logic.Server
                     Use(msg.UseType, msg.Parameter1, msg.Parameter2);
                     break;
                 case CommandType.Speak:
-                    SpeakToFriend(msg.SpeakText);
+                    SpeakToFriend(msg.SpeakText.Substring(0, 15));
                     break;
                 default:
                     break;
@@ -260,7 +260,7 @@ namespace Logic.Server
                         }
                     }
             }
-            Server.ServerDebug("没东西捡");
+            //Server.ServerDebug("没东西捡");
             status = CommandType.Stop;
             Velocity = new Vector(0, 0);
         }
@@ -577,7 +577,7 @@ namespace Logic.Server
 
         protected void SpeakToFriend(string speakText)
         {
-            Server.ServerDebug("Recieve text : " + speakText);
+            //Server.ServerDebug("Recieve text : " + speakText);
             for (int i = 0; i < Communication.Proto.Constants.PlayerCount; i++)
             {
                 if (i == CommunicationID.Item2)

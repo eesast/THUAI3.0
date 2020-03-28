@@ -34,8 +34,12 @@ namespace Communication.Agent
             app.OnExecute(() =>
             {
                 Constants.PlayerCount = ushort.Parse(playercount.Value());
+                if (Constants.PlayerCount < 1) Constants.PlayerCount = 1;
+                else if (Constants.PlayerCount > 2) Constants.PlayerCount = 2;
                 //Constants.MaxMessage = int.Parse(messagelmt.Value());
                 Constants.TimeLimit = double.Parse(timelmt.Value());
+                if (Constants.TimeLimit < 20) Constants.TimeLimit = 20;
+                else if (Constants.TimeLimit > 100) Constants.TimeLimit = 100;
                 return MainInternal(server.Value(), ushort.Parse(port.Value()), token.Value(), int.Parse(debugLevel.Value()));
             });
             app.Execute(args);
@@ -49,6 +53,7 @@ namespace Communication.Agent
             server.Port = port;
             Console.WriteLine("Agent Listen Port: " + server.Port.ToString());
             Console.WriteLine("Client Token: " + (token ?? "<offline>"));
+            LastSpam = Environment.TickCount;
 
             //init timer
             myTimer.Interval = Interval;

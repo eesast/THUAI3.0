@@ -1,1 +1,1 @@
-@dotnet logic/Logic.Server/bin/Release/netcoreapp3.0/Logic.Server.dll -p 20000 -d 1 -c 2 -a 1 -t 600
+@dotnet logic/Logic.Server/bin/Release/netcoreapp3.0/Logic.Server.dll --port 20000 --debugLevel 1 --playerCount 1 --agentCount 1 --gameTime 600

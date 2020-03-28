@@ -10,7 +10,12 @@ using namespace Protobuf;
 #include "CAPI.h"
 
 
+const double Constant::Tool::Condiment::ScoreParameter = 0.5;
+const double Constant::Talent::Cook::Condiment::ScoreParameter = 0.5;
+
+
 std::vector<std::vector<std::unordered_map<int64_t, std::shared_ptr<Obj>>>>MapInfo::obj_map;
+std::vector<std::vector<std::mutex*>>MapInfo::mutex_map;
 std::unordered_map<int64_t, std::shared_ptr<Obj>>MapInfo::obj_list;
 
 
@@ -19,11 +24,14 @@ std::list<DishType> task_list;
 void MapInfo::initialize_map()
 {
 	obj_map.resize(init_mapinfo.size());
+	mutex_map.resize(init_mapinfo.size());
 	for (int x = 0; x < obj_map.size(); x++)
 	{
 		obj_map[x].resize(init_mapinfo[x].size());
+		mutex_map[x].resize(init_mapinfo[x].size());
 		for (int y = 0; y < obj_map[x].size(); y++)
 		{
+			mutex_map[x][y] = new std::mutex();
 			switch (init_mapinfo[x][y])
 			{
 			case 1:
@@ -65,11 +73,17 @@ void MapInfo::print_map()
 
 void MapInfo::print_map(int x, int y)
 {
+	if (x < 0 || x >= obj_map.size() || y < 0 || y >= obj_map.size())
+	{
+		std::cout << "Invalid" << std::endl;
+		return;
+	}
+
 	std::cout << std::endl
-		<< "map[" << x << "][" << y << "] : ";
+		<< "map[" << x << "][" << y << "] : " << std::endl;
 	for (std::unordered_map<int64_t, std::shared_ptr<Obj>>::iterator i = obj_map[x][y].begin(); i != obj_map[x][y].end(); i++)
 	{
-		std::cout << i->second->objType << " , ";
+		std::cout << "\tobjType : " << i->second->objType << std::endl;
 	}
 	std::cout << std::endl;
 }
@@ -95,10 +109,12 @@ std::list<Obj> MapInfo::get_mapcell(const int x, const int y)
 		return list<Obj>();
 	}
 	list<Obj> list;
+	mutex_map[x][y]->lock();
 	for (std::unordered_map<int64_t, shared_ptr<Obj>>::iterator i = obj_map[x][y].begin(); i != obj_map[x][y].end(); i++)
 	{
 		list.push_back(*(i->second));
 	}
+	mutex_map[x][y]->unlock();
 	return list;
 }
 

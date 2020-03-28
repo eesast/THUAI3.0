@@ -1,7 +1,13 @@
-#define DEVELOPER_ONLY
+#pragma warning(disable:4711)
+#pragma warning(disable:4710)
+#pragma warning(disable:5027)
+#pragma warning(disable:4623)
+#pragma warning(disable:4626)
+#pragma warning(disable:4668)
+#pragma warning(disable:4100)
 #pragma warning(disable:26495)
+#pragma warning(disable:26812)
 
-#include "CAPI.h"
 #include "Constant.h"
 #include <iostream>
 #include <sstream>
