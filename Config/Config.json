@@ -1,9 +1,10 @@
 {
-    "PlayerInitMoveSpeed": 5,
-    "PlayerInitThrowDistance": 10,
-    "PlayerInitSightRange": 9,
+    "Player": {
+        "InitMoveSpeed": 5,
+        "InitThrowDistance": 10,
+        "InitSightRange": 9
+    },
     "ItemMoveSpeed": 10,
-    "TaskTimeLimit": 60000,
     "TaskRefreshTime": 8000,
     "ToolRefreshTime": 10000,
     "FoodPointInitRefreshTime": 10000,
@@ -280,7 +281,7 @@
         "CookTime": 60000
     },
     "OverCookedDish": {
-        "Score": 0,
+        "Score": -10,
         "TaskTime": 300000,
         "CookTime": 60000
     },

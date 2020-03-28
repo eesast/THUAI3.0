@@ -1,6 +1,6 @@
 #ifndef STRUCTURES_H
 #define STRUCTURES_H
-
+#define DEVELOPER_ONLY
 #include "MessageToClient.pb.h"
 using namespace Protobuf;
 #include "Constant.h"
