@@ -28,9 +28,15 @@ namespace Communication.Agent
             var playercount = app.Option("-n|--playercount", "player count", CommandOptionType.SingleValue);
             var token = app.Option("-t|--token", "player token, leave empty to enable offline mode", CommandOptionType.SingleValue);
             var debugLevel = app.Option("-d|--debugLevel", "0 to disable debug output", CommandOptionType.SingleValue);
-
-            Constants.PlayerCount = ushort.Parse(playercount.Value());
-            app.OnExecute(() => MainInternal(server.Value(), ushort.Parse(port.Value()), token.Value(), int.Parse(debugLevel.Value())));
+            var timelmt = app.Option("--timelimit", "time limit", CommandOptionType.SingleValue);
+            var messagelmt = app.Option("--msglimit", "message limit", CommandOptionType.SingleValue);
+            app.OnExecute(() =>
+            {
+                Constants.PlayerCount = ushort.Parse(playercount.Value());
+                Constants.MaxMessage = int.Parse(messagelmt.Value());
+                Constants.TimeLimit = double.Parse(timelmt.Value());
+                return MainInternal(server.Value(), ushort.Parse(port.Value()), token.Value(), int.Parse(debugLevel.Value()));
+            });
             app.Execute(args);
         }
 
