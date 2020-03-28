@@ -25,9 +25,11 @@ namespace Communication.Agent
             app.HelpOption("-h|--help");
             var server = app.Option("-s|--server", "game server endpoint", CommandOptionType.SingleValue);
             var port = app.Option("-p|--port", "agent port", CommandOptionType.SingleValue);
+            var playercount = app.Option("-n|--playercount", "player count", CommandOptionType.SingleValue);
             var token = app.Option("-t|--token", "player token, leave empty to enable offline mode", CommandOptionType.SingleValue);
             var debugLevel = app.Option("-d|--debugLevel", "0 to disable debug output", CommandOptionType.SingleValue);
 
+            Constants.PlayerCount = ushort.Parse(playercount.Value());
             app.OnExecute(() => MainInternal(server.Value(), ushort.Parse(port.Value()), token.Value(), int.Parse(debugLevel.Value())));
             app.Execute(args);
         }
