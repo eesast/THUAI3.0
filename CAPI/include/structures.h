@@ -8,7 +8,10 @@ using namespace Protobuf;
 #include <vector>
 #include <list>
 #include <memory>
+#include "CAPI.h"
+#include <string>
 #include <iostream>
+#include <mutex>
 
 struct XYPosition
 {
@@ -37,6 +40,7 @@ class MapInfo
 {
 private:
 	static std::vector<std::vector<std::unordered_map<int64_t, std::shared_ptr<Obj>>>> obj_map;
+	static std::vector<std::vector<std::mutex*>> mutex_map;
 	static std::unordered_map<int64_t, std::shared_ptr<Obj>> obj_list;
 	static void initialize_map();
 public:
@@ -47,6 +51,7 @@ public:
 	static void print_obj_list();
 	static std::list<Obj> get_mapcell(int x, int y);
 };
+
 
 // 50x50
 // 0 : 空地
@@ -113,29 +118,29 @@ const std::vector<std::vector<short>> init_mapinfo =
 extern std::list<DishType> task_list;
 
 
+extern Protobuf::Talent initTalent;
 
 class  player_info
 {
 private:
 	XYPosition _position = XYPosition(0, 0);
 	int64_t _id = -1;
-	int _sightRange = Player::InitSightRange;
+	int _sightRange = Constant::Player::InitSightRange;
 	int _team = 0;
 public:
 	friend class CAPI;
 	friend class MapInfo;
-	XYPosition position = XYPosition(0, 0);
-	int64_t id = -1;
-	std::pair<int, int> CommunicationID; //第一个数表示Agent，第二个数表示Client
-	int team = 0;
-	Direction facingDirection;
-	int sightRange = Player::InitSightRange;
-	Talent talent;
-	int score = 0;
-	DishType dish = DishType::DishEmpty;
-	ToolType tool = ToolType::ToolEmpty;
+	XYPosition position = XYPosition(0, 0);//玩家自身位置
+	int64_t id = -1;//玩家自身id
+	int team = 0;//玩家所属队伍
+	Direction facingDirection;//玩家当前面朝的方向
+	int sightRange = Constant::Player::InitSightRange;//玩家的视野半径
+	Talent talent = initTalent;//玩家的天赋
+	int score = 0;//玩家所在队伍当前的分数
+	DishType dish = DishType::DishEmpty;//玩家手上拿的食材，只能同时拿一个
+	ToolType tool = ToolType::ToolEmpty; //玩家手上拿的道具，只能同时拿一个
+	std::string recieveText; //玩家接受到的同一队伍的其他玩家发的消息，若另一玩家没有再次发消息，则一直保持上一次接收到的消息
 };
 extern player_info PlayerInfo;
-extern Protobuf::Talent initTalent;
 
 #endif // !STRUCTURES_H

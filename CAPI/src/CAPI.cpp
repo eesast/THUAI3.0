@@ -179,7 +179,9 @@ void CAPI::MoveObj(int64_t id, Protobuf::MessageToClient* message, std::unordere
 	{
 		objectsToDelete.erase(id);
 	}
+	MapInfo::mutex_map[(int)MapInfo::obj_list[id]->position.x][(int)MapInfo::obj_list[id]->position.y]->lock();
 	MapInfo::obj_map[(int)MapInfo::obj_list[id]->position.x][(int)MapInfo::obj_list[id]->position.y].erase(id);
+	MapInfo::mutex_map[(int)MapInfo::obj_list[id]->position.x][(int)MapInfo::obj_list[id]->position.y]->unlock();
 
 	MapInfo::obj_list[id]->dish = message->gameobjectlist().at(id).dishtype();
 	MapInfo::obj_list[id]->tool = message->gameobjectlist().at(id).tooltype();
@@ -187,8 +189,9 @@ void CAPI::MoveObj(int64_t id, Protobuf::MessageToClient* message, std::unordere
 	MapInfo::obj_list[id]->position.y = message->gameobjectlist().at(id).positiony();
 	MapInfo::obj_list[id]->facingDiretion = message->gameobjectlist().at(id).direction();
 
+	MapInfo::mutex_map[(int)MapInfo::obj_list[id]->position.x][(int)MapInfo::obj_list[id]->position.y]->lock();
 	MapInfo::obj_map[(int)MapInfo::obj_list[id]->position.x][(int)MapInfo::obj_list[id]->position.y].insert(std::pair<int64_t, shared_ptr< Obj>>(id, MapInfo::obj_list[id]));
-
+	MapInfo::mutex_map[(int)MapInfo::obj_list[id]->position.x][(int)MapInfo::obj_list[id]->position.y]->unlock();
 }
 
 void CAPI::UpdateInfo(Protobuf::MessageToClient* message)
@@ -209,8 +212,10 @@ void CAPI::UpdateInfo(Protobuf::MessageToClient* message)
 	PlayerInfo.sightRange = PlayerInfo._sightRange = message->gameobjectlist().at(PlayerInfo._id).sightrange();
 	PlayerInfo.dish = message->gameobjectlist().at(PlayerInfo._id).dishtype();
 	PlayerInfo.tool = message->gameobjectlist().at(PlayerInfo._id).tooltype();
+	PlayerInfo.recieveText = message->gameobjectlist().at(PlayerInfo._id).speaktext();
 	if (message->scores().contains(PlayerInfo._team))
 		PlayerInfo.score = message->scores().at(PlayerInfo._team);
+
 	std::unordered_map<int64_t, std::shared_ptr<Obj>> objectsToDelete = MapInfo::obj_list;
 	for (google::protobuf::Map<google::protobuf::int64, Protobuf::GameObject>::const_iterator i = message->gameobjectlist().begin(); i != message->gameobjectlist().end(); i++)
 	{
@@ -230,10 +235,10 @@ void CAPI::UpdateInfo(Protobuf::MessageToClient* message)
 }
 
 
-Player CAPI::GetInfo()
+Constant::Player CAPI::GetInfo()
 {
 	inforw_mutex.lock();
-	Player p = player;
+	Constant::Player p = player;
 	inforw_mutex.unlock();
 	return p;
 }

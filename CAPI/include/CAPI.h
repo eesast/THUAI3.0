@@ -3,6 +3,7 @@
 #ifndef DEVELOPER_ONLY
 #error This file is only included for developers
 #endif
+
 #define _CRT_SECURE_NO_WARNINGS
 #include "Message.h"
 #include "Constant.h"
@@ -40,7 +41,7 @@ public:
 	int AgentId;
 	int AgentCount;
 	string buffer;
-	Player player;
+	Constant::Player player;
 	bool Closed;
 	bool PauseUpdate;
 
@@ -65,7 +66,7 @@ public:
 	void SendChatMessage(string message);
 	void SendCommandMessage(Protobuf::MessageToServer *message);
 	void UpdateInfo(Protobuf::MessageToClient *message);
-	Player GetInfo();
+	Constant::Player GetInfo();
 };
 
 #endif //CAPI_H

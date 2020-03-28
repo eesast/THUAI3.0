@@ -1,4 +1,3 @@
-#define DEVELOPER_ONLY
 #include "Message.h"
 #include "Constant.h"
 #include <string>
@@ -234,5 +233,5 @@ byte *WriteString(string str, byte *bytes)
 	return &p[len];
 }
 
-const double Player::InitMoveSpeed = 5.0;
-const int Player::InitSightRange = 9;
+//const double Player::InitMoveSpeed = 5.0;
+//const int Player::InitSightRange = 9;

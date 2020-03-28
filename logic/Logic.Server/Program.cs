@@ -70,6 +70,18 @@ namespace Logic.Server
                           THUnity2D.GameObject.DebugWithoutID = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
                           THUnity2D.GameObject.DebugWithoutIDEndline = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
                       }
+                      if (o.playerCount < 1)
+                          o.playerCount = 1;
+                      else if (o.playerCount > 2)
+                          o.playerCount = 2;
+                      if (o.agentCount < 1)
+                          o.agentCount = 1;
+                      else if (o.agentCount > 4)
+                          o.agentCount = 4;
+                      if (o.totalGameTimeSeconds < 10)
+                          o.totalGameTimeSeconds = 10;
+                      else if (o.totalGameTimeSeconds > 3600)
+                          o.totalGameTimeSeconds = 3600;
                       InitializeMap();
                       server = new Server(o.serverPort, o.playerCount, o.agentCount, o.totalGameTimeSeconds);
                   });

@@ -1,4 +1,3 @@
-#define DEVELOPER_ONLY
 #include "OS_related.h"
 
 #ifdef __linux__

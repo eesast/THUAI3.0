@@ -219,49 +219,53 @@ namespace Client
             char key;
             while (true)
             {
-                key = Console.ReadKey().KeyChar;
-                if (!isStartedGame)
-                    continue;
-                if ((DateTime.Now - lastSendTime).TotalSeconds <= TimeInterval)
-                    continue;
-                switch (key)
+                try
                 {
-                    case 'd': Move(THUnity2D.Direction.Right); break;
-                    case 'e': Move(THUnity2D.Direction.RightUp); break;
-                    case 'w': Move(THUnity2D.Direction.Up); break;
-                    case 'q': Move(THUnity2D.Direction.LeftUp); break;
-                    case 'a': Move(THUnity2D.Direction.Left); break;
-                    case 'z': Move(THUnity2D.Direction.LeftDown); break;
-                    case 'x': Move(THUnity2D.Direction.Down); break;
-                    case 'c': Move(THUnity2D.Direction.RightDown); break;
-                    case 'f': Pick(); break;
-                    case 'u':
-                        Console.WriteLine("Please Input 2 parameters : ");
-                        Use(1, int.Parse(Console.ReadLine()), int.Parse(Console.ReadLine()));
-                        break;
-                    case 'i': Use(0, 0); break;
-                    case 'r':
-                        Console.WriteLine("Please Input throw distance : ");
-                        char temp = Console.ReadKey().KeyChar;
-                        if (temp >= '0' && temp <= '9')
-                        {
-                            Put(temp - '0', (double)FacingDirection * Math.PI / 4, true);
-                        }
-                        break;
-                    case 't':
-                        Console.WriteLine("Please Input throw distance : ");
-                        char tmp = Console.ReadKey().KeyChar;
-                        if (tmp >= '0' && tmp <= '9')
-                        {
-                            Put(tmp - '0', (double)FacingDirection * Math.PI / 4, false);
-                        }
-                        break;
-                    case ':':
-                        Console.WriteLine("Please Input your text to speak : ");
-                        SpeakToFriend(Console.ReadLine());
-                        break;
+
+                    key = Console.ReadKey().KeyChar;
+                    if (!isStartedGame)
+                        continue;
+                    if ((DateTime.Now - lastSendTime).TotalSeconds <= TimeInterval)
+                        continue;
+                    switch (key)
+                    {
+                        case 'd': Move(THUnity2D.Direction.Right); break;
+                        case 'e': Move(THUnity2D.Direction.RightUp); break;
+                        case 'w': Move(THUnity2D.Direction.Up); break;
+                        case 'q': Move(THUnity2D.Direction.LeftUp); break;
+                        case 'a': Move(THUnity2D.Direction.Left); break;
+                        case 'z': Move(THUnity2D.Direction.LeftDown); break;
+                        case 'x': Move(THUnity2D.Direction.Down); break;
+                        case 'c': Move(THUnity2D.Direction.RightDown); break;
+                        case 'f': Pick(); break;
+                        case 'u':
+                            Console.WriteLine("Please Input 2 parameters : ");
+                            Use(1, double.Parse(Console.ReadLine()), double.Parse(Console.ReadLine()));
+                            break;
+                        case 'i': Use(0, 0); break;
+                        case 'r':
+                            Console.WriteLine("Please Input 2 parameters : ");
+                            Put(double.Parse(Console.ReadLine()), double.Parse(Console.ReadLine()), true);
+                            break;
+                        case 't':
+                            Console.WriteLine("Please Input 2 parameters : ");
+                            Put(double.Parse(Console.ReadLine()), double.Parse(Console.ReadLine()), false);
+                            break;
+                        case ':':
+                            Console.WriteLine("Please Input your text to speak : ");
+                            SpeakToFriend(Console.ReadLine());
+                            break;
+                    }
+                    lastSendTime = DateTime.Now;
                 }
-                lastSendTime = DateTime.Now;
+                catch(ArgumentNullException)
+                {
+                    ClientDebug("Argument Null !!!");
+                }
+                catch(FormatException)
+                {
+                    ClientDebug("Format Incorrect !!!");
+                }
             }
         }
         public override void Move(THUnity2D.Direction direction_t, int duration = 1000)
