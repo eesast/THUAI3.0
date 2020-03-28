@@ -11,5 +11,6 @@ ENV Protobuf_INCLUDE_DIR=/usr/local/protobuf/include
 RUN wget https://github.com/ldcsaa/HP-Socket/archive/v5.7.1.tar.gz --no-check-certificate \
 	&& tar -zxvf v5.7.1.tar.gz && rm  v5.7.1.tar.gz \
 	&& cp -r ./HP-Socket-5.7.1/Linux/lib/hpsocket/x64/libhpsocket.a /usr/lib \
-	&& rm -rf /usr/local/HP-Socket-5.7.1 \
+	&& rm -rf /usr/local/HP-Socket-5.7.1 
 ADD ./dependency /usr/local/dependency
+RUN apt-get remove -y libprotobuf-dev && cp -r /usr/local/protobuf/include/* /usr/include/ && cp -r /usr/local/protobuf/lib/*.* /usr/lib/x86_64-linux-gnu/

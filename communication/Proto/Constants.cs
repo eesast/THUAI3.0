@@ -10,8 +10,8 @@ namespace Communication.Proto
         public static ushort AgentCount = 1;
         public static ushort ServerPort = 10086;
         public static readonly ushort AgentPort = 8887;
-        public static readonly int MaxMessage = 2;
-        public static readonly double TimeLimit = 100;   // 在TimeLimt内agent只会转发MaxMessage条消息
+        public static int MaxMessage = 3;
+        public static double TimeLimit = 1000;   // 在TimeLimt内agent只会转发MaxMessage条消息
         public static readonly IPEndPoint Server = new IPEndPoint(IPAddress.Loopback, ServerPort);
         public static readonly IPEndPoint Agent = new IPEndPoint(IPAddress.Loopback, AgentPort);
         public static readonly int HeartbeatInternal = 1000;

@@ -8,6 +8,6 @@ Protobuf::Talent initTalent = Protobuf::Talent::None;//指定人物天赋。选�
 void play()
 {
 	Sleep(5000);
-	cout << PlayerInfo.position.x << "   " << PlayerInfo.position.y << endl;
+	std::cout << PlayerInfo.position.x << "   " << PlayerInfo.position.y << std::endl;
 	/*  玩家在这里写代码  */
 }

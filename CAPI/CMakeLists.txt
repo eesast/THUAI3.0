@@ -8,7 +8,7 @@ if(UNIX)
 	
 	aux_source_directory(${PROJECT_SOURCE_DIR}/src DIR_SRC)
 
-	set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -o3 -Wall -Wextra")
+	set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -o3 -Wall -Wextra ")
 	include_directories(${PROJECT_SOURCE_DIR}/include)
 	include_directories(${PROJECT_SOURCE_DIR}/linux_only/include)
 

@@ -8,7 +8,6 @@ using namespace Protobuf;
 #include <vector>
 #include <list>
 #include <memory>
-#include "CAPI.h"
 #include <iostream>
 
 struct XYPosition
