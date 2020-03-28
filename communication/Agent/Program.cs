@@ -13,22 +13,31 @@ namespace Communication.Agent
         private static IDServer server = new IDServer();
         private static System.Timers.Timer myTimer = new System.Timers.Timer();
         private static IPEndPoint Server;
-        private static int MessageLimit = Constants.MaxMessage;
+        private static object LastSpam;// = Constants.MaxMessage;
+        /*
         private static void TimeCount(object source, System.Timers.ElapsedEventArgs e) //倒计时
         {
             MessageLimit++;
         }
-
+        */
         public static void Main(string[] args)
         {
             var app = new CommandLineApplication();
             app.HelpOption("-h|--help");
             var server = app.Option("-s|--server", "game server endpoint", CommandOptionType.SingleValue);
             var port = app.Option("-p|--port", "agent port", CommandOptionType.SingleValue);
+            var playercount = app.Option("-n|--playercount", "player count", CommandOptionType.SingleValue);
             var token = app.Option("-t|--token", "player token, leave empty to enable offline mode", CommandOptionType.SingleValue);
             var debugLevel = app.Option("-d|--debugLevel", "0 to disable debug output", CommandOptionType.SingleValue);
-
-            app.OnExecute(() => MainInternal(server.Value(), ushort.Parse(port.Value()), token.Value(), int.Parse(debugLevel.Value())));
+            var timelmt = app.Option("--timelimit", "time limit", CommandOptionType.SingleValue);
+            //var messagelmt = app.Option("--msglimit", "message limit", CommandOptionType.SingleValue);
+            app.OnExecute(() =>
+            {
+                Constants.PlayerCount = ushort.Parse(playercount.Value());
+                //Constants.MaxMessage = int.Parse(messagelmt.Value());
+                Constants.TimeLimit = double.Parse(timelmt.Value());
+                return MainInternal(server.Value(), ushort.Parse(port.Value()), token.Value(), int.Parse(debugLevel.Value()));
+            });
             app.Execute(args);
         }
 
@@ -56,15 +65,14 @@ namespace Communication.Agent
             };
             server.OnReceive += delegate (Message message)
             {
-                if (MessageLimit > 0)
+                var now = Environment.TickCount;
+                lock (LastSpam)
                 {
-                    client.Send(message.Content as Message);
-                    MessageLimit--;
-                    System.Timers.Timer timer = new System.Timers.Timer(Constants.TimeLimit);
-                    timer.AutoReset = false;
-                    timer.Elapsed += TimeCount;
-                    timer.Start();
+                    if (now <= (int)LastSpam + Constants.TimeLimit) return;
+                    LastSpam = now;
                 }
+
+                client.Send(message.Content as Message);
             };
 
             client.OnDisconnect += delegate ()
