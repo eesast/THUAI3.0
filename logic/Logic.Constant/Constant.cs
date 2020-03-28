@@ -16,6 +16,7 @@ namespace Logic.Constant
         public const double FrameRate = 20;
         public const double TimeInterval = 1 / FrameRate;
         public const double TimeIntervalInMillisecond = 1000 * 1 / FrameRate;
+        public const double HalfTimeIntervalInMillisecond = TimeIntervalInMillisecond / 2;
 
         private static JObject _configs;
         public static JObject Configs

@@ -82,7 +82,7 @@ namespace Logic.Server
 
         public override DishType GetDish(DishType t)
         {
-            cookingResult = "Empty";
+            cookingResult = "DishEmpty";
             isCooking = false;
             ProtectTimer.Change(0, 0);
             return base.GetDish(t);
@@ -100,11 +100,12 @@ namespace Logic.Server
         }
         protected void Cook(object o)
         {
+            isCooking = false;
             Dish = (DishType)Enum.Parse(typeof(DishType), cookingResult);
             if (Dish > DishType.DishEmpty && Dish < DishType.DishSize2 && Dish != DishType.DishSize1)
             {
                 if (Dish < DishType.SpicedPot)
-                    CookingTimer.Change((int)(0.5 * (double)Configs[cookingResult]["CookTime"]), 0);
+                    CookingTimer.Change((int)(0.5 * (double)Configs[cookingResult]["CookTime"]), 0);//0.5倍CookTime是保鲜时间
                 else
                     CookingTimer.Change((int)(0.5 * (double)Configs["SpicedPot"]["CookTime"]), 0);
                 cookingResult = "OverCookedDish";
@@ -126,6 +127,8 @@ namespace Logic.Server
 
         public override void UseCooker(int TeamNumber, Talent t)
         {
+            if (isCooking)
+                return;
             string Material = "";
 
             SortedSet<DishType> dishTypeSet = new SortedSet<DishType>();
