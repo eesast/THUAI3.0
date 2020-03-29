@@ -7,10 +7,12 @@ namespace StartGame
     {
         static void Main(string[] args)
         {
-
+			int clientNumber = 1;
 			string serverPort = "20000";
 			string clientPort = "30000";
 			string argumentsServer, argumentsAgent, argumentsClient;
+
+
 			System.Diagnostics.Process processServer = new System.Diagnostics.Process();
 			processServer.StartInfo.FileName = ".\\THUAI3.0\\Logic.Server.exe";
 			//传递进exe的参数
@@ -27,17 +29,23 @@ namespace StartGame
 			processAgent.Start();
 			Console.WriteLine("进程Agent");
 
-			System.Diagnostics.Process processClient = new System.Diagnostics.Process();
-			processClient.StartInfo.FileName = ".\\THUAI3.0\\Logic.Client.exe";
 
-			argumentsClient = "-p " + clientPort + " -d 1 -t 2";
-			processClient.StartInfo.Arguments = argumentsClient;
-			processClient.Start();
-			Console.WriteLine("进程Client");
+			for(int k = 0; k < clientNumber; k++)
+			{
+				System.Diagnostics.Process processClient = new System.Diagnostics.Process();
+				processClient.StartInfo.FileName = ".\\THUAI3.0\\Logic.Client.exe";
+
+				argumentsClient = "-p " + clientPort + " -d 1 -t 2";
+				processClient.StartInfo.Arguments = argumentsClient;
+				processClient.Start();
+				Console.Write("进程Client");
+				Console.WriteLine(k);
+			}
+			
 
 			processServer.WaitForExit();
 			processAgent.WaitForExit();
-			processClient.WaitForExit();
+			//processClient.WaitForExit();
 			Console.WriteLine("进程全部退出");
 
         }
