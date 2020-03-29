@@ -267,7 +267,7 @@ namespace Logic.Server
         public override void Put(double distance, double angle, bool isThrowDish)
         {
             if (distance > MaxThrowDistance) distance = MaxThrowDistance;
-            int dueTime = (int)((double)1000 * distance / (double)Configs["ItemMoveSpeed"]) - (int)TimeIntervalInMillisecond + 10;
+            int dueTime = (int)((double)1000 * distance / (double)Configs["ItemMoveSpeed"]) - (int)HalfTimeIntervalInMillisecond;//注意到如果直接用 distance / ItemMoveSpeed 会在最后多走一步，所以必须做一些数值处理
 
             Obj ItemToThrow = null;
             if (Dish != DishType.DishEmpty && isThrowDish)
@@ -285,13 +285,18 @@ namespace Logic.Server
                 Server.ServerDebug("没有可以扔的东西");
                 return;
             }
-            ItemToThrow.Layer = FlyingLayer;
-            ItemToThrow.Parent = WorldMap;
-            ItemToThrow.Velocity = new Vector(angle, (int)Configs["ItemMoveSpeed"]);
-            ItemToThrow.StopMovingTimer.Change(dueTime, 0);
+            if (dueTime > 0)
+            {
+                ItemToThrow.Layer = FlyingLayer;
+                ItemToThrow.Parent = WorldMap;
+                ItemToThrow.Velocity = new Vector(angle, (int)Configs["ItemMoveSpeed"]);
+                ItemToThrow.StopMovingTimer.Change(dueTime, 0);
+            }
+            else
+                ItemToThrow.Parent = WorldMap;
 
             status = CommandType.Stop;
-            Velocity = new Vector(0, 0);
+            Velocity = new Vector(Velocity.angle, 0);
         }
         public override void Use(int type, double parameter_1, double parameter_2)
         {
