@@ -326,11 +326,11 @@ namespace Client
                     this.id = gameObject.Key;
                     this.team = gameObject.Value.Team;
                     Console.WriteLine("\nThis Player :\n" + "\t" + id.ToString() + "\n\tposition: " + Position.ToString());
-                    ClientCommunication.SendMessage(new MessageToServer
-                    {
-                        Talent = playerTalent,
-                        IsSetTalent = true
-                    });
+                    //ClientCommunication.SendMessage(new MessageToServer
+                    //{
+                    //    Talent = playerTalent,
+                    //    IsSetTalent = true
+                    //});
                     break;
                 }
                 messageToServer.ID = this.id;
