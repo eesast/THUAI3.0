@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <map>
 #include "MessageToClient.pb.h"
+#include <list>
 
 namespace Constant
 {
@@ -211,7 +212,7 @@ namespace Constant
 	{int(Protobuf::DarkDish), {-10,60000,30000} },
 	{int(Protobuf::OverCookedDish), {-10,60000,300000} },
 	};
-	const static std::unordered_map<int, std::list<Protobuf::DishType>> CookingTable =
+	const static std::unordered_map<int, std::list<Protobuf::DishType> > CookingTable =
 	{
 	{int(Protobuf::Flour), {Protobuf::Wheat} },
 	{int(Protobuf::Noodle), {Protobuf::Flour} },
