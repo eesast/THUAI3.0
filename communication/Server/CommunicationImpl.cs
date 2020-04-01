@@ -36,7 +36,10 @@ namespace Communication.Server
             }
             set
             {
-                roomID = (string) JObject.Parse(decoder.Decode(value))["roomID"];
+                var json = JObject.Parse(decoder.Decode(value));
+                Constants.Debug($"Parsing roomID from {json}");
+                roomID = (string)json["roomID"];
+                Constants.Debug($"roomID = {roomID}");
                 token = value;
             }
         }

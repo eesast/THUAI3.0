@@ -7,6 +7,9 @@ namespace Logic.Server
 {
     class AugmentOptions
     {
+        [Option('k', "token", Required = true, HelpText = "Web API token")]
+        public string token { get; set; } = "";
+
         [Option('p', "port", Required = true, HelpText = "Server listening port")]
         public ushort serverPort { get; set; } = 10086;
 

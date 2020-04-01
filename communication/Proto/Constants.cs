@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Net;
 
 namespace Communication.Proto
@@ -19,7 +20,9 @@ namespace Communication.Proto
 
         public static DebugFunc Debug = delegate (string DebugMessage)
         {
-            Console.WriteLine(DebugMessage);
+            var stack = new StackTrace();
+            var method = stack.GetFrame(1).GetMethod();
+            Console.WriteLine($"[{method.DeclaringType.Name}/{method.Name}] {DebugMessage}");
         };
     }
 }
