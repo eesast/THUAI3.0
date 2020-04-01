@@ -36,13 +36,17 @@ namespace Communication.Server
             }
             set
             {
-                roomID = (string) JObject.Parse(decoder.Decode(value))["roomID"];
+                var json = JObject.Parse(decoder.Decode(value));
+                Constants.Debug($"Parsing roomID from {json}");
+                roomID = (string)json["roomID"];
+                Constants.Debug($"roomID = {roomID}");
                 token = value;
             }
         }
 
         private async Task HttpAsync(string uri, string token, string method, JObject data)
         {
+            if (string.IsNullOrEmpty(token)) return;
             try
             {
                 var request = WebRequest.CreateHttp(uri);
