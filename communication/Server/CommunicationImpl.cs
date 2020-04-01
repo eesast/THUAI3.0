@@ -46,6 +46,7 @@ namespace Communication.Server
 
         private async Task HttpAsync(string uri, string token, string method, JObject data)
         {
+            if (string.IsNullOrEmpty(token)) return;
             try
             {
                 var request = WebRequest.CreateHttp(uri);
