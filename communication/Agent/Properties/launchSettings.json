@@ -2,7 +2,7 @@
     "profiles": {
         "Communication.Agent": {
             "commandName": "Project",
-            "commandLineArgs": "--server 127.0.0.1:10086 --port 30000"
+            "commandLineArgs": "--server 127.0.0.1:8888 --port 30000"
         }
     }
 }
