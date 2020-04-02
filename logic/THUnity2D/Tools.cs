@@ -1,25 +1,23 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Text;
-using THUnity2D;
 
 namespace THUnity2D
 {
+    public enum Direction
+    {
+        Right = 0,
+        RightUp,
+        Up,
+        LeftUp,
+        Left,
+        LeftDown,
+        Down,
+        RightDown,
+        Size
+    }
+
     public static class Tools
     {
-        public enum Direction
-        {
-            Right = 0,
-            RightUp,
-            Up,
-            LeftUp,
-            Left,
-            LeftDown,
-            Down,
-            RightDown,
-            Size
-        }
-
         //长度为1的向量。
         public static readonly Dictionary<Direction, XYPosition> EightUnitVector = new Dictionary<Direction, XYPosition> {
             { Direction.Right, new XYPosition (1, 0) },
@@ -55,11 +53,6 @@ namespace THUnity2D
             while (angle >= 2 * Math.PI)
                 angle -= 2 * Math.PI;
             return angle;
-        }
-
-        public static void Debug(string str)
-        {
-            Console.WriteLine(str);
         }
 
         public static double DivisionWithoutNaN(double d1, double d2)

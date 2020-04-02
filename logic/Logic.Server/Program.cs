@@ -1,8 +1,10 @@
-﻿using Communication.Proto;
+using Communication.Proto;
 using Logic.Constant;
 using System;
 using System.Collections.Generic;
 using static Logic.Constant.MapInfo;
+using CommandLine;
+using System.Collections.Concurrent;
 
 namespace Logic.Server
 {
@@ -39,48 +41,50 @@ namespace Logic.Server
                     switch (map[x, y])
                     {
                         case 0: break;
-                        case 1: new Block(x + 0.5, y + 0.5, BlockType.TaskPoint).Parent = WorldMap; break;
-                        case 2: new Block(x + 0.5, y + 0.5, BlockType.FoodPoint).Parent = WorldMap; break;
-                        case 3: new Block(x + 0.5, y + 0.5, BlockType.Cooker).Parent = WorldMap; break;
-                        case 4: new Block(x + 0.5, y + 0.5, BlockType.RubbishBin).Parent = WorldMap; break;
-                        case 5: new Block(x + 0.5, y + 0.5, BlockType.Wall).Parent = WorldMap; break;
-                        case 6: new Block(x + 0.5, y + 0.5, BlockType.Table).Parent = WorldMap; break;
+                        case 1: new TaskPoint(x + 0.5, y + 0.5).Parent = WorldMap; break;
+                        case 2: new FoodPoint(x + 0.5, y + 0.5).Parent = WorldMap; break;
+                        case 3: new Cooker(x + 0.5, y + 0.5).Parent = WorldMap; break;
+                        case 4: new RubbishBin(x + 0.5, y + 0.5).Parent = WorldMap; break;
+                        case 5: new Wall(x + 0.5, y + 0.5).Parent = WorldMap; break;
+                        case 6: new Table(x + 0.5, y + 0.5).Parent = WorldMap; break;
                     }
                 }
             }
-            
-            //new Tool(1.5, 1.5, ToolType.SpeedBuff).Parent = WorldMap;
         }
 
         public static Dictionary<Tuple<int, int>, Player> PlayerList = new Dictionary<Tuple<int, int>, Player>();
         private static Server server;
         public static void Main(string[] args)
         {
-            //Communication.Proto.Constants.Debug = new Constants.DebugFunc((str) => { });
-            THUnity2D.GameObject.Debug = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
-            THUnity2D.GameObject.DebugWithoutEndline = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
-            THUnity2D.GameObject.DebugWithoutID = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
-            THUnity2D.GameObject.DebugWithoutIDEndline = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
-            InitializeMap();
-
-            ushort serverPort = 0, playerCount = 0, agentCount = 0;
-            uint maxGameTimeSecond = 1000;
-            try
-            {
-                serverPort = 8888;// ushort.Parse(args[0]);
-                playerCount = ushort.Parse(args[1]);
-                agentCount = ushort.Parse(args[2]);
-                maxGameTimeSecond = uint.Parse(args[3]);
-            }
-            catch (FormatException)
-            {
-                Server.ServerDebug("Format Error");
-            }
-            catch (IndexOutOfRangeException)
-            {
-                Server.ServerDebug("Arguments Number Error");
-            }
-            server = new Server(serverPort, playerCount, agentCount, maxGameTimeSecond);
+            Parser.Default.ParseArguments<AugmentOptions>(args)
+                  .WithParsed<AugmentOptions>(o =>
+                  {
+                      if (!Convert.ToBoolean(o.debugLevel & 1))
+                          Server.ServerDebug = new Action<string>(s => { });
+                      if (!Convert.ToBoolean(o.debugLevel & 2))
+                          Communication.Proto.Constants.Debug = new Constants.DebugFunc((str) => { });
+                      if (!Convert.ToBoolean(o.debugLevel & 4))
+                      {
+                          THUnity2D.GameObject.Debug = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
+                          THUnity2D.GameObject.DebugWithoutEndline = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
+                          THUnity2D.GameObject.DebugWithoutID = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
+                          THUnity2D.GameObject.DebugWithoutIDEndline = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
+                      }
+                      if (o.playerCount < 1)
+                          o.playerCount = 1;
+                      else if (o.playerCount > 2)
+                          o.playerCount = 2;
+                      if (o.agentCount < 1)
+                          o.agentCount = 1;
+                      else if (o.agentCount > 4)
+                          o.agentCount = 4;
+                      if (o.totalGameTimeSeconds < 10)
+                          o.totalGameTimeSeconds = 10;
+                      else if (o.totalGameTimeSeconds > 3600)
+                          o.totalGameTimeSeconds = 3600;
+                      InitializeMap();
+                      server = new Server(o.serverPort, o.playerCount, o.agentCount, o.totalGameTimeSeconds, o.token);
+                  });
         }
     }
 }

@@ -4,29 +4,9 @@ on:
   push:
     branches: 
     - master
+    - dev
 
 jobs:
-#   build:
-#     runs-on: windows-latest
-#     steps:
-#     - uses: actions/checkout@v2
-#     - name: Setup .NET Core
-#       uses: actions/setup-dotnet@v1
-#       with:
-#         dotnet-version: 3.0.100
-#     - name: Build server
-#       run: dotnet build "logic/Logic.Server/Logic.Server.csproj" -c Release
-#     - name: Build agent
-#       run: dotnet build "communication/Agent/Communication.Agent.csproj" -c Release -f netcoreapp3.0
-#     - name: Build client
-#       run: dotnet build "logic/Logic.Client/Logic.Client.csproj" -c Release
-#     - name: Publish server
-#       run: dotnet publish "logic/Logic.Server/Logic.Server.csproj" -c Release -o logic/Logic.Server/bin/Release/netcoreapp3.0
-#     - name: Publish agent
-#       run: dotnet publish "communication/Agent/Communication.Agent.csproj" -c Release -f netcoreapp3.0 -o communication/Agent/bin/Release/netcoreapp3.0  
-#     - name: Publish client
-#       run: dotnet publish "logic/Logic.Client/Logic.Client.csproj" -c Release -o logic/Logic.Client/bin/Release/netcoreapp3.0
-  
   deploy:
     runs-on: ubuntu-latest
 #     needs: build
@@ -42,17 +22,19 @@ jobs:
         run: dotnet publish "logic/Logic.Server/Logic.Server.csproj" -c Release -r linux-x64 --self-contained true
       - name: Publish agent
         run: dotnet publish "communication/Agent/Communication.Agent.csproj" -c Release -r linux-x64 -f netcoreapp3.0 --self-contained true
-#       - name: Publish client
-#         run: dotnet publish "logic/Logic.Client/Logic.Client.csproj" -c Release -r win-x64 -o logic/Logic.Client/bin/Release/netcoreapp3.0
       - name: Build docker image of server
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/thuai_server:latest -f logic/ServerDockerfile .
       - name: Build docker image of agent
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/thuai_agent:latest -f logic/AgentDockerfile .
-#       - name: Build docker image of client
-#         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/thuai_client:latest -f logic/ClientDockerfile .
+      - name: Build CAPI_compile docker image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/thuai_compiler:latest -f CAPI/Dockerfile_compile .
+      - name: Build CAPI_run docker image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/thuai_client:latest -f CAPI/Dockerfile_run .
       - name: Push server image to DockerHub
         run: docker push ${{ secrets.DOCKER_USERNAME }}/thuai_server:latest
       - name: Push agent image to DockerHub
         run: docker push ${{ secrets.DOCKER_USERNAME }}/thuai_agent:latest
-#       - name: Push server image to DockerHub
-#         run: docker push ${{ secrets.DOCKER_USERNAME }}/thuai_client:latest
+      - name: Push CAPI_compile image to DockerHub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/thuai_compiler:latest
+      - name: Push CAPI_runtime image to DockerHub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/thuai_client:latest

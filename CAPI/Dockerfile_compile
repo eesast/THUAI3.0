@@ -1,18 +1,20 @@
 FROM ubuntu
 Maintainer eesast.com
 WORKDIR /usr/local
-RUN apt-get update && apt-get install --no-install-recommends -y gcc g++ make libprotobuf-dev protobuf-compiler wget
+RUN apt-get update && apt-get install --no-install-recommends -y gcc g++ make libprotobuf-dev wget
 RUN wget https://github.com/Kitware/CMake/releases/download/v3.15.7/cmake-3.15.7-Linux-x86_64.tar.gz --no-check-certificate \
 	&& tar -zxvf cmake-3.15.7-Linux-x86_64.tar.gz && rm cmake-3.15.7-Linux-x86_64.tar.gz
 ENV PATH=$PATH:/usr/local/cmake-3.15.7-Linux-x86_64/bin
 RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v3.8.0-rc1/protobuf-cpp-3.8.0-rc-1.tar.gz --no-check-certificate \
 	&& tar -zxvf protobuf-cpp-3.8.0-rc-1.tar.gz && rm protobuf-cpp-3.8.0-rc-1.tar.gz && cd protobuf-3.8.0-rc-1 && ./configure --prefix=/usr/local/protobuf && make && make install \
-	&& rm -rf /usr/local/protobuf-3.8.0-rc-1
+	&& rm -rf /usr/local/protobuf-3.8.0-rc-1 && cp /usr/local/protobuf/bin/protoc /usr/bin/protoc
 ENV LD_LIBRARY_PATH=/usr/local/protobuf/lib
 ENV Protobuf_INCLUDE_DIR=/usr/local/protobuf/include
-ADD CAPI /usr/local/CAPI
+ADD ./dependency /usr/local/dependency
+ADD ./CAPI /usr/local/CAPI
 RUN wget https://github.com/ldcsaa/HP-Socket/archive/v5.7.1.tar.gz --no-check-certificate \
 	&& tar -zxvf v5.7.1.tar.gz && rm  v5.7.1.tar.gz \
 	&& cp -r ./HP-Socket-5.7.1/Linux/include/hpsocket/* ./CAPI/linux_only/include \
 	&& cp -r ./HP-Socket-5.7.1/Linux/lib/hpsocket/x64/libhpsocket.a ./CAPI/linux_only/lib \
-	&& rm -rf /usr/local/HP-Socket-5.7.1 \
+	&& rm -rf /usr/local/HP-Socket-5.7.1 
+RUN apt-get remove -y libprotobuf-dev && cp -r /usr/local/protobuf/include/* /usr/include/ && cp -r /usr/local/protobuf/lib/*.* /usr/lib/x86_64-linux-gnu/

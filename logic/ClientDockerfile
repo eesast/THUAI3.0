@@ -1,7 +1,0 @@
-# Agent and client
-
-FROM mcr.microsoft.com/dotnet/core/runtime:3.0
-COPY logic/Logic.Client/bin/Release/netcoreapp3.0/win-x64/ app/
-COPY communication/Agent/bin/Release/netcoreapp3.0/linux-x64/ app/
-ENTRYPOINT ["dotnet", "app/Communication.Agent.dll","127.0.0.1:10086","30000"]
-# ENTRYPOINT ["./app/Logic.Client.exe"]

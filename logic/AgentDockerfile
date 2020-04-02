@@ -2,4 +2,5 @@
 
 FROM mcr.microsoft.com/dotnet/core/runtime:3.0
 COPY communication/Agent/bin/Release/netcoreapp3.0/linux-x64/ app/
-ENTRYPOINT ["dotnet", "app/Communication.Agent.dll","127.0.0.1:10086","30000"]
+ENTRYPOINT ["dotnet", "app/Communication.Agent.dll"]
+CMD ["--server", "127.0.0.1:20000", "--port", "30000", "-d", "0", "--playercount", "1", "--timelimit", "100"]

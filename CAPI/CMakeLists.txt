@@ -1,14 +1,14 @@
 project (AI)
 cmake_minimum_required(VERSION 3.6.0)
 if(UNIX)
-	add_subdirectory(${PROJECT_SOURCE_DIR}/proto)
+	add_subdirectory(${PROJECT_SOURCE_DIR}/../dependency ./proto)
 
 	set(CMAKE_BUILD_TYPE Release)
 	add_compile_options(-std=c++11)
 	
 	aux_source_directory(${PROJECT_SOURCE_DIR}/src DIR_SRC)
 
-	set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -o3 -Wall -Wextra")
+	set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -o3 -Wall -Wextra ")
 	include_directories(${PROJECT_SOURCE_DIR}/include)
 	include_directories(${PROJECT_SOURCE_DIR}/linux_only/include)
 

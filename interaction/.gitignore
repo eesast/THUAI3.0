@@ -17,8 +17,13 @@
 /[Ll]ogs/
 /[Mm]emoryCaptures/
 
-# Never ignore Asset meta data
+
+# Ignore all assets except scripts, scenes, plugins and meta data
+!/[Aa]ssets/[Ss]cripts/
+!/[Aa]ssets/[Ss]cenes/
 !/[Aa]ssets/**/*.meta
+
+/[Aa]ssets/
 
 # Uncomment this line if you wish to ignore the asset store tools plugin
 # /[Aa]ssets/AssetStoreTools*

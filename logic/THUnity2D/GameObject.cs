@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using static THUnity2D.Tools;
@@ -292,8 +292,8 @@ namespace THUnity2D
         //Height end
 
         //Layer
-        protected internal int _layer = 0;
-        public int Layer
+        protected internal Layer _layer;
+        public Layer Layer
         {
             get { lock (privateLock) { return _layer; } }
             set
@@ -301,28 +301,28 @@ namespace THUnity2D
                 lock (privateLock)
                 {
                     Debug(this, "Prompt to change layer from " + this._layer + " to " + value);
-                    LayerChange(new LayerChangedEventArgs(this._layer, value));
+                    LayerChange(new LayerChangeEventArgs(this._layer, value));
                     Debug(this, "Change layer to " + this._layer);
                 }
             }
         }
-        public class LayerChangedEventArgs : EventArgs
+        public class LayerChangeEventArgs : EventArgs
         {
-            public readonly int previousLayer;
-            public readonly int layer;
-            public LayerChangedEventArgs(int previousLayer, int layer)
+            public readonly Layer previousLayer;
+            public readonly Layer targetLayer;
+            public LayerChangeEventArgs(Layer previousLayer, Layer targetLayer)
             {
                 this.previousLayer = previousLayer;
-                this.layer = layer;
+                this.targetLayer = targetLayer;
             }
         }
-        public delegate void LayerChangeHandler(GameObject sender, LayerChangedEventArgs e);
+        public delegate void LayerChangeHandler(GameObject sender, LayerChangeEventArgs e);
         public event LayerChangeHandler? OnLayerChange;
-        protected virtual void LayerChange(LayerChangedEventArgs e)
+        protected virtual void LayerChange(LayerChangeEventArgs e)
         {
             lock (privateLock)
             {
-                _layer = e.layer;
+                _layer = e.targetLayer;
                 OnLayerChange?.Invoke(this, e);
             }
         }
@@ -375,16 +375,17 @@ namespace THUnity2D
                 return;
             lock (privateLock)
             {
+                if (!this._movable)
+                {
+                    return;
+                }
                 if ((DateTime.Now - lastMoveTime).TotalSeconds < 1 / _frameRate)
                     return;
                 MoveStart?.Invoke(this);
                 XYPosition previousPosition = _position;
                 _position = _position + new XYPosition(e.distance * Math.Cos(e.angle), e.distance * Math.Sin(e.angle));
                 Debug(this, "Move from " + previousPosition.ToString() + " angle : " + e.angle + " distance : " + e.distance + " aim : " + _position.ToString());
-                if (this._movable)
-                {
-                    OnMove?.Invoke(this, e, previousPosition);
-                }
+                OnMove?.Invoke(this, e, previousPosition);
                 Debug(this, "Move result poition : " + this._position.ToString());
                 MoveComplete?.Invoke(this);
             }

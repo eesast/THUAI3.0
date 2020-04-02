@@ -8,3 +8,4 @@ RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v3.8.0-rc
 	&& LD_LIBRARY_PATH=/usr/local/protobuf/lib \
 	&& rm -rf /usr/local/protobuf-3.8.0-rc-1
 ENV Protobuf_INCLUDE_DIR=/usr/local/protobuf/include
+RUN apt-get remove -y libprotobuf-dev && cp -r /usr/local/protobuf/include/* /usr/include/ && cp -r /usr/local/protobuf/lib/*.* /usr/lib/x86_64-linux-gnu/

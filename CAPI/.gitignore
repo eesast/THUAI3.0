@@ -1,9 +1,16 @@
 ## Yours
-linux_only/
 windows_only/
 proto/*.proto
-include/common
 !.gitkeep
+# Cmake Generate
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.cmake
+CMakeCache.txt
+CmakeFiles/
+build/
+!.
 
 ## VsCode
 .vscode/

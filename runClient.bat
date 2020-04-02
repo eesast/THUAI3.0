@@ -1,1 +1,1 @@
-@dotnet logic/Logic.Client/bin/Debug/netcoreapp3.0/Logic.Client.dll
+@dotnet logic/Logic.Client/bin/Release/netcoreapp3.0/Logic.Client.dll -p 30000 -d 1 -t 2

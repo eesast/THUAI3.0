@@ -1,4 +1,4 @@
-﻿using Communication.Proto;
+using Communication.Proto;
 using Logic.Constant;
 using System;
 using System.Collections.Concurrent;
@@ -10,52 +10,44 @@ namespace Logic.Server
 {
     public class Block : Obj
     {
-        public int RefreshTime;//食物刷新点的食物刷新速率，毫秒
+        public BlockType blockType;
 
         public Block(double x_t, double y_t, BlockType type_t) : base(x_t, y_t, ObjType.Block)
         {
             if (type_t == BlockType.Wall || type_t == BlockType.FoodPoint || type_t == BlockType.TaskPoint)
-                Layer = (int)MapLayer.WallLayer;
+                Layer = WallLayer;
             else
-                Layer = (int)MapLayer.BlockLayer;
+                Layer = BlockLayer;
             Movable = false;
             blockType = type_t;
-            Movable = false;
-
-            switch (blockType)
-            {
-                case BlockType.FoodPoint:
-                    AddToMessage();
-                    Dish = (DishType)Program.Random.Next(1, (int)DishType.Size1 - 1);
-                    lock (Program.MessageToClientLock)
-                        Program.MessageToClient.GameObjectMessageList[ID].BlockType = BlockTypeMessage.FoodPoint;
-                    RefreshTime = (int)Configs["FoodPointInitRefreshTime"];
-                    Console.WriteLine("食品刷新：地点（" + Position.x + "," + Position.y + "）, 种类 : " + Dish);
-                    break;
-                case BlockType.Cooker:
-                    AddToMessage();
-                    Dish = DishType.Empty;
-                    lock (Program.MessageToClientLock)
-                        Program.MessageToClient.GameObjectMessageList[ID].BlockType = BlockTypeMessage.Cooker;
-                    break;
-            }
         }
+
         public override DishType GetDish(DishType t)
         {
             DishType temp = Dish;
-            Dish = DishType.Empty;
-            switch (blockType)
-            {
-                case BlockType.FoodPoint:
-                    RefreshTimer.Change(RefreshTime, 0);
-                    break;
-                case BlockType.Cooker:
-                    cookingResult = "Empty";
-                    Cooking = false;
-                    ProtectTimer.Change(0, 0);
-                    break;
-            }
+            Dish = DishType.DishEmpty;
             return temp;
+        }
+    }
+
+    public class FoodPoint : Block
+    {
+        public int RefreshTime = (int)Configs["FoodPointInitRefreshTime"];//食物刷新点的食物刷新速率，毫秒
+
+        public FoodPoint(double x_t, double y_t) : base(x_t, y_t, BlockType.FoodPoint)
+        {
+            Layer = WallLayer;
+            AddToMessage();
+            Dish = (DishType)Program.Random.Next(1, (int)DishType.DishSize1 - 1);
+            lock (Program.MessageToClientLock)
+                Program.MessageToClient.GameObjectList[ID].BlockType = BlockType.FoodPoint;
+            Server.ServerDebug("食品刷新：地点（" + Position.x + "," + Position.y + "）, 种类 : " + Dish);
+        }
+
+        public override DishType GetDish(DishType t)
+        {
+            RefreshTimer.Change(RefreshTime, 0);
+            return base.GetDish(t);
         }
 
         //Refresh
@@ -70,10 +62,31 @@ namespace Logic.Server
         }
         public void Refresh(object i)
         {
-            Dish = (DishType)Program.Random.Next(1, (int)DishType.Size1 - 1);
-            Console.WriteLine("食品刷新：地点（" + Position.x + "," + Position.y + "）, 种类 : " + Dish);
+            Dish = (DishType)Program.Random.Next(1, (int)DishType.DishSize1 - 1);
+            Server.ServerDebug("食品刷新：地点（" + Position.x + "," + Position.y + "）, 种类 : " + Dish);
         }
         //Refresh End
+    }
+
+    public class Cooker : Block
+    {
+        public Cooker(double x_t, double y_t) : base(x_t, y_t, BlockType.Cooker)
+        {
+            Layer = BlockLayer;
+            AddToMessage();
+            Dish = DishType.DishEmpty;
+            lock (Program.MessageToClientLock)
+                Program.MessageToClient.GameObjectList[ID].BlockType = BlockType.Cooker;
+
+        }
+
+        public override DishType GetDish(DishType t)
+        {
+            cookingResult = "DishEmpty";
+            isCooking = false;
+            ProtectTimer.Change(0, 0);
+            return base.GetDish(t);
+        }
 
         //Cook
         protected System.Threading.Timer _cookingTimer;
@@ -87,16 +100,19 @@ namespace Logic.Server
         }
         protected void Cook(object o)
         {
+            isCooking = false;
             Dish = (DishType)Enum.Parse(typeof(DishType), cookingResult);
-            if (Dish > DishType.Empty && Dish < DishType.Size2 && Dish != DishType.Size1)
+            if (Dish > DishType.DishEmpty && Dish < DishType.DishSize2 && Dish != DishType.DishSize1)
             {
-                if(Dish<DishType.SpicedPot) CookingTimer.Change((int)(0.5*(double)Configs[cookingResult]["CookTime"]), 0);
-                else CookingTimer.Change((int)(0.5 * (double)Configs["SpicedPot"]["CookTime"]), 0);
+                if (Dish < DishType.SpicedPot)
+                    CookingTimer.Change((int)(0.5 * (double)Configs[cookingResult]["CookTime"]), 0);//0.5倍CookTime是保鲜时间
+                else
+                    CookingTimer.Change((int)(0.5 * (double)Configs["SpicedPot"]["CookTime"]), 0);
                 cookingResult = "OverCookedDish";
             }
         }
         protected string cookingResult;
-        public bool Cooking = false;
+        public bool isCooking = false;
 
         public int ProtectedTeam = -1;
         protected System.Threading.Timer _protectTimer;
@@ -104,38 +120,41 @@ namespace Logic.Server
         {
             get
             {
-                _protectTimer = _protectTimer ?? new System.Threading.Timer((i)=> { ProtectedTeam = -1; });
+                _protectTimer = _protectTimer ?? new System.Threading.Timer((i) => { ProtectedTeam = -1; });
                 return _protectTimer;
             }
         }
 
-        public override void UseCooker(int TeamNumber,TALENT t)
+        public override void UseCooker(int TeamNumber, Talent t)
         {
+            if (isCooking)
+                return;
             string Material = "";
 
             SortedSet<DishType> dishTypeSet = new SortedSet<DishType>();
-            bool XiangGuo = false;
-            if(WorldMap.Grid[(int)Position.x, (int)Position.y].ContainsType(typeof(Tool)))
+            bool isSpicedPot = false;
+            if (WorldMap.Grid[(int)Position.x, (int)Position.y].ContainsType(typeof(Tool)))
             {
-                foreach (Tool GameObject in WorldMap.Grid[(int)Position.x, (int)Position.y].GetType(typeof(Tool)))
+                foreach (Tool GameObject in WorldMap.Grid[(int)Position.x, (int)Position.y].GetObjects(typeof(Tool)))
                 {
                     if (GameObject.Tool == ToolType.Condiment)
                     {
                         GameObject.Parent = null;
-                        XiangGuo = true;
+                        isSpicedPot = true;
                         break;
                     }
                 }
             }
-            foreach (Dish GameObject in WorldMap.Grid[(int)Position.x, (int)Position.y].GetType(typeof(Dish)))
-            {
-                dishTypeSet.Add(GameObject.Dish);
-                GameObject.Parent = null;
-            }
+            if (WorldMap.Grid[(int)Position.x, (int)Position.y].ContainsType(typeof(Dish)))
+                foreach (Dish GameObject in WorldMap.Grid[(int)Position.x, (int)Position.y].GetObjects(typeof(Dish)))
+                {
+                    dishTypeSet.Add(GameObject.Dish);
+                    GameObject.Parent = null;
+                }
             if (dishTypeSet.Count == 0) return;
-            if (!XiangGuo)
+            if (!isSpicedPot)
             {
-                Cooking = true;
+                isCooking = true;
                 ProtectedTeam = TeamNumber;
                 Dish = DishType.DarkDish;//未煮熟之前都是黑暗料理
                 foreach (var dishType in dishTypeSet)
@@ -155,7 +174,7 @@ namespace Logic.Server
                     score += (int)Configs[dishType.ToString()]["Score"];
                 }
                 if (score < 60) return;
-                Cooking = true;
+                isCooking = true;
                 ProtectedTeam = TeamNumber;
                 Dish = DishType.DarkDish;
                 cookingResult = "SpicedPot_" + (score / 20).ToString();
@@ -165,95 +184,43 @@ namespace Logic.Server
         }
         //Cook End
 
+    }
+
+    public class TaskPoint : Block
+    {
+        public TaskPoint(double x_t, double y_t) : base(x_t, y_t, BlockType.TaskPoint)
+        {
+            Layer = WallLayer;
+        }
+
         public override int HandIn(DishType dish_t)
         {
             return TaskSystem.HandIn(dish_t);
         }
     }
 
-    public static class TaskSystem
+    public class Wall : Block
     {
-        public static ConcurrentDictionary<DishType, uint> TaskQueue = new ConcurrentDictionary<DishType, uint>();
-        private static Timer.MultiTaskTimer _removeTaskTimer;
-        public static Timer.MultiTaskTimer RemoveTaskTimer
+        public Wall(double x_t, double y_t) : base(x_t, y_t, BlockType.Wall)
         {
-            get
-            {
-                _removeTaskTimer = _removeTaskTimer ?? new Timer.MultiTaskTimer();
-                return _removeTaskTimer;
-            }
-        }
-        private static void AddTask(DishType task)
-        {
-            if (!TaskQueue.ContainsKey(task))
-                TaskQueue.TryAdd(task, 0);
-            TaskQueue[task]++;
-            Program.MessageToClient.Tasks.Add((DishTypeMessage)task);
-            Console.WriteLine("Add task : " + task);
-            //PrintAllTask();
-        }
-        private static void RemoveTask(DishType task)
-        {
-            TaskQueue[task]--;
-            if (TaskQueue[task] <= 0)
-            {
-                uint i = 0;
-                TaskQueue.TryRemove(task, out i);
-            }
-            Program.MessageToClient.Tasks.Remove((DishTypeMessage)task);
-            Console.WriteLine("Remove task : " + task);
-            //PrintAllTask();
-        }
-        public static System.Threading.Timer _refreshTimer;
-        public static System.Threading.Timer RefreshTimer
-        {
-            get
-            {
-                _refreshTimer = _refreshTimer ?? new System.Threading.Timer(TaskProduce);
-                return _refreshTimer;
-            }
-        }
-        public static void TaskProduce(object i)
-        {
-            DishType temp=DishType.Empty;
-            for (; ; )
-            {
-                if (Timer.Time.GameTime() < TimeSpan.FromMinutes(10)) temp = (DishType)Program.Random.Next((int)DishType.TomatoFriedEgg, (int)DishType.SpicedPot);
-                else temp = (DishType)Program.Random.Next((int)DishType.TomatoFriedEgg, (int)DishType.SpicedPot + 1);
-                if (temp == DishType.Size1)
-                    continue;
-                break;
-            }
-            AddTask(temp);
-            RemoveTaskTimer.Add((o, e) => { RemoveTask(temp); }, (uint)Configs[temp.ToString()]["TaskTime"]);
-            //需要广播产生的任务
-            //感觉只需要广播任务的产生，而任务被完成以及任务因过时而gg都不用广播，需要玩家自己把握？
-        }
-        public static int HandIn(DishType dish_t)
-        {
-            int score = 0;
-            if (dish_t < DishType.SpicedPot && TaskQueue.ContainsKey(dish_t))
-            {
-                score = (int)Configs[dish_t.ToString()]["Score"];//菜品名+Score，在App.config里加
-                RemoveTask(dish_t);
-            }
-            else if(dish_t>=DishType.SpicedPot&& dish_t<=DishType.SpicedPot_8 && TaskQueue.ContainsKey(DishType.SpicedPot))
-            {
-                string[] i = (Convert.ToString(dish_t)).Split('_');
-                double temp = Convert.ToDouble(i[1]);
-                score = (int)((1 + temp / 8) * temp * 20);
-                RemoveTask(DishType.SpicedPot);
-            }
-            //PrintAllTask();
-            return score;
-        }
-        public static void PrintAllTask()
-        {
-            Console.WriteLine("Tasks : ");
-            foreach (var task in TaskQueue)
-            {
-                Console.WriteLine("\t" + task);
-            }
+            Layer = WallLayer;
         }
     }
+
+    public class Table : Block
+    {
+        public Table(double x_t, double y_t) : base(x_t, y_t, BlockType.Table)
+        {
+            Layer = BlockLayer;
+        }
+    }
+
+    public class RubbishBin : Block
+    {
+        public RubbishBin(double x_t, double y_t) : base(x_t, y_t, BlockType.RubbishBin)
+        {
+            Layer = BlockLayer;
+        }
+    }
+
 }
