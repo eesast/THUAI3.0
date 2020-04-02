@@ -39,8 +39,8 @@ namespace Logic.Server
             Layer = WallLayer;
             AddToMessage();
             Dish = (DishType)Program.Random.Next(1, (int)DishType.DishSize1 - 1);
-            lock (Program.MessageToClientLock)
-                Program.MessageToClient.GameObjectList[ID].BlockType = BlockType.FoodPoint;
+            //lock (Program.MessageToClientLock)
+            Program.MessageToClient.GameObjectList[ID].BlockType = BlockType.FoodPoint;
             Server.ServerDebug("食品刷新：地点（" + Position.x + "," + Position.y + "）, 种类 : " + Dish);
         }
 
@@ -75,8 +75,8 @@ namespace Logic.Server
             Layer = BlockLayer;
             AddToMessage();
             Dish = DishType.DishEmpty;
-            lock (Program.MessageToClientLock)
-                Program.MessageToClient.GameObjectList[ID].BlockType = BlockType.Cooker;
+            //lock (Program.MessageToClientLock)
+            Program.MessageToClient.GameObjectList[ID].BlockType = BlockType.Cooker;
 
         }
 

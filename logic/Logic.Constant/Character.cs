@@ -12,10 +12,10 @@ namespace Logic.Constant
     {
         public Tuple<int, int> CommunicationID = new Tuple<int, int>(0, 0);//第一个数表示Agent，第二个数表示Client
         //public int team = 0;
-        protected double GlueExtraMoveSpeed = 0;
-        protected double SpeedBuffExtraMoveSpeed = 0;
-        protected double moveSpeed = (double)Configs["Player"]["InitMoveSpeed"];
-        protected double MoveSpeed { get { return moveSpeed + GlueExtraMoveSpeed + SpeedBuffExtraMoveSpeed; } }
+        //protected double GlueExtraMoveSpeed = 0;
+        //protected double SpeedBuffExtraMoveSpeed = 0;
+        protected double _moveSpeed = (double)Configs["Player"]["InitMoveSpeed"];
+        protected double MoveSpeed { get => _moveSpeed; }
         protected THUnity2D.Direction _facingDirection;
         public THUnity2D.Direction FacingDirection { get => _facingDirection; }
         protected int StrenthBuffThrowDistance = 0;
