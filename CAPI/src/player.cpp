@@ -25,12 +25,12 @@ void play()
 	default:
 		break;
 	}
-	cout << "Input two interger to print a map cell :" << endl;
-	int x, y;
-	cin.clear();
-	cin.ignore();
-	cin >> x >> y;
-	MapInfo::print_map(x, y);
+	//cout << "Input two interger to print a map cell :" << endl;
+	//int x, y;
+	//cin.clear();
+	//cin.ignore();
+	//cin >> x >> y;
+	//MapInfo::print_map(x, y);
 
 	/*  玩家在这里写代码  */
 }
