@@ -16,6 +16,7 @@
 #include "CAPI.h"
 #include <thread>
 #include "structures.h"
+#include "player.h"
 #pragma comment(lib, "HPSocket.lib")
 
 #include <sys/timeb.h>
@@ -205,14 +206,18 @@ void CAPI::UpdateInfo(Protobuf::MessageToClient* message)
 		mesC2S.set_issettalent(true);
 		mesC2S.set_talent(initTalent);
 		SendCommandMessage(&mesC2S);
+		GameRunning = true;
+		std::cout << "Game start" << std::endl;
 	}
-	PlayerInfo._position.x = PlayerInfo.position.x = message->gameobjectlist().at(PlayerInfo._id).positionx();
-	PlayerInfo._position.y = PlayerInfo.position.y = message->gameobjectlist().at(PlayerInfo._id).positiony();
-	PlayerInfo.facingDirection = message->gameobjectlist().at(PlayerInfo._id).direction();
-	PlayerInfo.sightRange = PlayerInfo._sightRange = message->gameobjectlist().at(PlayerInfo._id).sightrange();
-	PlayerInfo.dish = message->gameobjectlist().at(PlayerInfo._id).dishtype();
-	PlayerInfo.tool = message->gameobjectlist().at(PlayerInfo._id).tooltype();
-	PlayerInfo.recieveText = message->gameobjectlist().at(PlayerInfo._id).speaktext();
+	Protobuf::GameObject self = message->gameobjectlist().at(PlayerInfo._id);
+	PlayerInfo._position.x = PlayerInfo.position.x = self.positionx();
+	PlayerInfo._position.y = PlayerInfo.position.y = self.positiony();
+	PlayerInfo.facingDirection = self.direction();
+	PlayerInfo.moveSpeed = self.movespeed();
+	PlayerInfo.sightRange = PlayerInfo._sightRange = self.sightrange();
+	PlayerInfo.dish = self.dishtype();
+	PlayerInfo.tool = self.tooltype();
+	PlayerInfo.recieveText = self.speaktext();
 	if (message->scores().contains(PlayerInfo._team))
 		PlayerInfo.score = message->scores().at(PlayerInfo._team);
 

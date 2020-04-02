@@ -45,8 +45,8 @@ namespace Logic.Server
             }
             this.StopMoving += new StopMovingHandler(o => { Parent = null; });
             AddToMessage();
-            lock (Program.MessageToClientLock)
-                Program.MessageToClient.GameObjectList[ID].TriggerType = triggerType;
+            //lock (Program.MessageToClientLock)
+            Program.MessageToClient.GameObjectList[ID].TriggerType = triggerType;
             this.MoveComplete += new MoveCompleteHandler(ChangePositionInMessage);
             this.OnParentDelete += new ParentDeleteHandler(DeleteFromMessage);
             Server.ServerDebug("Create trigger : " + triggerType.ToString());

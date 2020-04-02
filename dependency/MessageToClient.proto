@@ -106,12 +106,6 @@ enum TriggerType {
   Hammer = 5; //锤子，被砸中后眩晕一段时间并掉落身上的食材和道具
   TriggerSize = 6;
 }
-enum Buff {
-  Frozen = 0;
-  Stunned = 1;
-  SpeedUp = 2;
-  SlowDown = 3;
-}
 enum Direction {
   Right = 0;
   RightUp = 1;
@@ -137,20 +131,17 @@ enum Talent {
 message GameObject {
   double PositionX = 1;
   double PositionY = 2;
-  int32 Width = 3;
-  int32 Height = 4;
-  Direction Direction = 5;
-  ObjType ObjType = 6;
-  BlockType BlockType = 7;
-  DishType DishType = 8;
-  ToolType ToolType = 9;
-  TriggerType TriggerType = 10;
-  bool isMoving = 11;
-  repeated Buff Buff = 12;
-  // int32 Score = 13;
-  string SpeakText = 13;
-  int32 team = 14;
-  int32 SightRange = 15;
+  Direction Direction = 3;
+  ObjType ObjType = 4;
+  BlockType BlockType = 5;
+  DishType DishType = 6;
+  ToolType ToolType = 7;
+  TriggerType TriggerType = 8;
+  bool isMoving = 9;
+  string SpeakText = 10;
+  int32 team = 11;
+  int32 SightRange = 12;
+  double MoveSpeed = 13;
 }
 message MessageToClient {
   map<int64, GameObject> GameObjectList = 1;

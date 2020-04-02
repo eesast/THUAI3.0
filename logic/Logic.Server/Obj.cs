@@ -15,10 +15,8 @@ namespace Logic.Server
             set
             {
                 _dish = value;
-                lock (Program.MessageToClientLock)
-                {
-                    Program.MessageToClient.GameObjectList[ID].DishType = _dish;
-                }
+                //lock (Program.MessageToClientLock)
+                Program.MessageToClient.GameObjectList[ID].DishType = _dish;
             }
         }
         protected ToolType _tool;
@@ -28,10 +26,8 @@ namespace Logic.Server
             set
             {
                 _tool = value;
-                lock (Program.MessageToClientLock)
-                {
-                    Program.MessageToClient.GameObjectList[ID].ToolType = _tool;
-                }
+                //lock (Program.MessageToClientLock)
+                Program.MessageToClient.GameObjectList[ID].ToolType = _tool;
             }
         }
 
@@ -85,11 +81,11 @@ namespace Logic.Server
         }
         protected void ChangePositionInMessage(THUnity2D.GameObject thisGameObject)
         {
-            lock (Program.MessageToClientLock)
-            {
-                Program.MessageToClient.GameObjectList[thisGameObject.ID].PositionX = thisGameObject.Position.x;
-                Program.MessageToClient.GameObjectList[thisGameObject.ID].PositionY = thisGameObject.Position.y;
-            }
+            //lock (Program.MessageToClientLock)
+            //{
+            Program.MessageToClient.GameObjectList[thisGameObject.ID].PositionX = thisGameObject.Position.x;
+            Program.MessageToClient.GameObjectList[thisGameObject.ID].PositionY = thisGameObject.Position.y;
+            //}
         }
     }
 }

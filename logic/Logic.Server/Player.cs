@@ -17,6 +17,7 @@ namespace Logic.Server
         protected System.Threading.Timer StrengthBuffTimer;
         protected System.Threading.Timer LuckTalentTimer;
         public CommandType status = CommandType.Stop;
+        protected bool tempIsStepOnGlue = false;
         protected bool isStepOnGlue = false;
 
         protected int _isStun = 0;
@@ -40,8 +41,8 @@ namespace Logic.Server
             set
             {
                 dish = value;
-                lock (Program.MessageToClientLock)
-                    Program.MessageToClient.GameObjectList[this.ID].DishType = dish;
+                //lock (Program.MessageToClientLock)
+                Program.MessageToClient.GameObjectList[this.ID].DishType = dish;
             }
         }
 
@@ -53,8 +54,8 @@ namespace Logic.Server
                 DeFunction(tool);
                 tool = value;
                 Function(tool);
-                lock (Program.MessageToClientLock)
-                    Program.MessageToClient.GameObjectList[this.ID].ToolType = tool;
+                //lock (Program.MessageToClientLock)
+                Program.MessageToClient.GameObjectList[this.ID].ToolType = tool;
             }
         }
         public Talent Talent
@@ -65,7 +66,7 @@ namespace Logic.Server
                 _talent = value;
                 switch (_talent)
                 {
-                    case Talent.Runner: moveSpeed += (double)Configs["Talent"]["Runner"]["ExtraMoveSpeed"]; break;
+                    case Talent.Runner: _moveSpeed += (double)Configs["Talent"]["Runner"]["ExtraMoveSpeed"]; break;
                     case Talent.StrongMan: MaxThrowDistance += (int)Configs["Talent"]["StrongMan"]["ExtraThrowDistance"]; break;
                     case Talent.LuckyBoy:
                         LuckTalentTimer = new System.Threading.Timer(Item, null, 30000, (int)Configs["Talent"]["LuckyBoy"]["RefreshTime"]);
@@ -84,8 +85,8 @@ namespace Logic.Server
             set
             {
                 _sightRange = value;
-                lock (Program.MessageToClientLock)
-                    Program.MessageToClient.GameObjectList[this.ID].SightRange = value;
+                //lock (Program.MessageToClientLock)
+                Program.MessageToClient.GameObjectList[this.ID].SightRange = value;
             }
         }
         protected int Score
@@ -100,8 +101,18 @@ namespace Logic.Server
                         continue;
                     Program.PlayerList[new Tuple<int, int>(CommunicationID.Item1, i)]._score = value;
                 }
-                lock (Program.MessageToClientLock)
-                    Program.MessageToClient.Scores[CommunicationID.Item1] = base._score;
+                //lock (Program.MessageToClientLock)
+                Program.MessageToClient.Scores[CommunicationID.Item1] = base._score;
+            }
+        }
+        protected new double MoveSpeed
+        {
+            get => _moveSpeed;
+            set
+            {
+                _moveSpeed = value;
+                //lock (Program.MessageToClientLock)
+                Program.MessageToClient.GameObjectList[this.ID].MoveSpeed = _moveSpeed;
             }
         }
 
@@ -111,7 +122,7 @@ namespace Logic.Server
             Parent = WorldMap;
             MoveStopTimer = new System.Threading.Timer((i) => { Velocity = new Vector(Velocity.angle, 0); status = CommandType.Stop; Program.MessageToClient.GameObjectList[this.ID].IsMoving = false; });
             StunTimer = new System.Threading.Timer((i) => { _isStun = 0; });
-            SpeedBuffTimer = new System.Threading.Timer((i) => { SpeedBuffExtraMoveSpeed = 0; });
+            SpeedBuffTimer = new System.Threading.Timer((i) => { MoveSpeed -= (double)Configs["Tool"]["SpeedBuff"]["ExtraMoveSpeed"]; });
             StrengthBuffTimer = new System.Threading.Timer((i) => { StrenthBuffThrowDistance = 0; });
             PositionChangeComplete += new PositionChangeCompleteHandler(ChangePositionInMessage);
 
@@ -126,28 +137,43 @@ namespace Logic.Server
                         PositionX = this.Position.x,
                         PositionY = this.Position.y,
                         Direction = (Direction)this.FacingDirection,
+                        MoveSpeed = this.MoveSpeed,
                         DishType = dish,
                         ToolType = tool,
                         Team = CommunicationID.Item1
                     });
             }
-            this.MoveStart += new MoveStartHandler(
+            MoveStart += new MoveStartHandler(
                 (thisGameObject) =>
                 {
-                    GlueExtraMoveSpeed = (isStepOnGlue) ? (int)Configs["Trigger"]["WaveGlue"]["ExtraMoveSpeed"] : 0;
-                    if (Math.Abs(Velocity.length - MoveSpeed) > 0.001)
-                        this.Velocity = new Vector(Velocity.angle, MoveSpeed);
-                    isStepOnGlue = false;
+                    tempIsStepOnGlue = false;
                 });
-            this.MoveComplete += new MoveCompleteHandler(ChangePositionInMessage);
-            this.OnTrigger += new TriggerHandler(
+            MoveComplete += new MoveCompleteHandler(ChangePositionInMessage);
+            MoveComplete += new MoveCompleteHandler(
+                (thisGameObject) =>
+                {
+                    if (!isStepOnGlue && tempIsStepOnGlue)
+                    {
+                        MoveSpeed += (double)Configs["Trigger"]["WaveGlue"]["ExtraMoveSpeed"];
+                        Velocity = new Vector(Velocity.angle, MoveSpeed);
+                        isStepOnGlue = true;
+                    }
+                    else if (isStepOnGlue && !tempIsStepOnGlue)
+                    {
+                        MoveSpeed -= (double)Configs["Trigger"]["WaveGlue"]["ExtraMoveSpeed"];
+                        Velocity = new Vector(Velocity.angle, MoveSpeed);
+                        isStepOnGlue = false;
+                    }
+                }
+                );
+            OnTrigger += new TriggerHandler(
                 (triggerGameObjects) =>
                 {
                     foreach (Trigger trigger in triggerGameObjects)
                         this.TouchTrigger(trigger);
                 });
         }
-        public void ExecuteMessage(CommunicationImpl communication, MessageToServer msg)
+        public void ExecuteMessage(MessageToServer msg)
         {
             if (IsStun > 0) return;
             if (msg.CommandType < 0 || msg.CommandType >= CommandType.Size)
@@ -201,19 +227,19 @@ namespace Logic.Server
             this._facingDirection = direction;
             this.Velocity = new Vector((int)direction * Math.PI / 4, MoveSpeed);
             this.status = CommandType.Move;
-            lock (Program.MessageToClientLock)
-                Program.MessageToClient.GameObjectList[this.ID].IsMoving = true;
-            MoveStopTimer.Change(durationMilliseconds, 0);
+            //lock (Program.MessageToClientLock)
+            Program.MessageToClient.GameObjectList[this.ID].IsMoving = true;
+            MoveStopTimer.Change(durationMilliseconds - (int)HalfTimeIntervalInMillisecond, 0);
         }
 
         void ChangePositionInMessage(THUnity2D.GameObject thisGameObject)
         {
-            lock (Program.MessageToClientLock)
-            {
-                Program.MessageToClient.GameObjectList[thisGameObject.ID].PositionX = thisGameObject.Position.x;
-                Program.MessageToClient.GameObjectList[thisGameObject.ID].PositionY = thisGameObject.Position.y;
-                Program.MessageToClient.GameObjectList[thisGameObject.ID].Direction = (Direction)((Player)thisGameObject).FacingDirection;
-            }
+            //lock (Program.MessageToClientLock)
+            //{
+            Program.MessageToClient.GameObjectList[thisGameObject.ID].PositionX = thisGameObject.Position.x;
+            Program.MessageToClient.GameObjectList[thisGameObject.ID].PositionY = thisGameObject.Position.y;
+            Program.MessageToClient.GameObjectList[thisGameObject.ID].Direction = (Direction)((Player)thisGameObject).FacingDirection;
+            //}
         }
 
         public override void Pick()
@@ -328,7 +354,7 @@ namespace Logic.Server
         {
             switch (type)
             {
-                case ToolType.TigerShoes: moveSpeed += (double)Configs["Tool"]["TigerShoe"]["ExtraMoveSpeed"]; break;
+                case ToolType.TigerShoes: MoveSpeed += (double)Configs["Tool"]["TigerShoe"]["ExtraMoveSpeed"]; break;
                 case ToolType.TeleScope: SightRange += (int)Configs["Tool"]["TeleScope"]["ExtraSightRange"]; break;
             }
         }
@@ -336,7 +362,7 @@ namespace Logic.Server
         {
             switch (type)
             {
-                case ToolType.TigerShoes: moveSpeed -= (double)Configs["Tool"]["TigerShoe"]["ExtraMoveSpeed"]; break;
+                case ToolType.TigerShoes: MoveSpeed -= (double)Configs["Tool"]["TigerShoe"]["ExtraMoveSpeed"]; break;
                 case ToolType.TeleScope: SightRange -= (int)Configs["Tool"]["TeleScope"]["ExtraSightRange"]; break;
             }
         }
@@ -373,7 +399,7 @@ namespace Logic.Server
                     break;
                 case ToolType.SpeedBuff:
                     {
-                        SpeedBuffExtraMoveSpeed = (double)Configs["Tool"]["SpeedBuff"]["ExtraMoveSpeed"];
+                        MoveSpeed += (double)Configs["Tool"]["SpeedBuff"]["ExtraMoveSpeed"];
                         if (Talent != Talent.Technician) SpeedBuffTimer.Change((int)Configs["Tool"]["SpeedBuff"]["Duration"], 0);
                         else SpeedBuffTimer.Change((int)Configs["Talent"]["Technician"]["SpeedBuff"]["Duration"], 0);
                         if (Velocity.length > 0)
@@ -459,12 +485,13 @@ namespace Logic.Server
                         double maxDistance = (Talent == Talent.StrongMan) ? (double)Configs["Talent"]["StrongMan"]["ThrowHammer"]["MaxDistance"] : (double)Configs["Tool"]["ThrowHammer"]["MaxDistance"];
                         if (parameter1 < 0) parameter1 = 0;
                         else if (parameter1 > maxDistance) parameter1 = maxDistance;
-                        int dueTime = (int)((double)1000 * parameter1 / (double)Configs["ItemMoveSpeed"]) - (int)TimeIntervalInMillisecond + 10;
+                        int dueTime = (int)((double)1000 * parameter1 / (double)Configs["ItemMoveSpeed"]) - (int)HalfTimeIntervalInMillisecond;
                         //XYPosition aim = Position + new XYPosition(parameter1 * Math.Cos(parameter2), parameter1 * Math.Sin(parameter2));
                         Trigger triggerToThrow = new Trigger(Position.x, Position.y, TriggerType.Hammer, CommunicationID.Item1, Talent);
                         triggerToThrow.Parent = WorldMap;
                         triggerToThrow.Velocity = new Vector(parameter2, (int)Configs["ItemMoveSpeed"]);
-                        triggerToThrow.StopMovingTimer.Change(dueTime, 0);
+                        if (dueTime > 0)
+                            triggerToThrow.StopMovingTimer.Change(dueTime, 0);
                         Tool = ToolType.ToolEmpty;
                     }
                     break;
@@ -474,12 +501,13 @@ namespace Logic.Server
                         double maxDistance = (Talent == Talent.StrongMan) ? (double)Configs["Talent"]["StrongMan"]["Bow"]["MaxDistance"] : (double)Configs["Tool"]["Bow"]["MaxDistance"];
                         if (parameter1 < 0) parameter1 = 0;
                         else if (parameter1 > maxDistance) parameter1 = maxDistance;
-                        int dueTime = (int)((double)1000 * parameter1 / (double)Configs["Trigger"]["Arrow"]["Speed"]) - (int)TimeIntervalInMillisecond + 10;
+                        int dueTime = (int)((double)1000 * parameter1 / (double)Configs["Trigger"]["Arrow"]["Speed"]) - (int)HalfTimeIntervalInMillisecond;
                         //XYPosition aim = Position + new XYPosition(parameter1 * Math.Cos(parameter2), parameter1 * Math.Sin(parameter2));
                         Trigger triggerToThrow = new Trigger(Position.x, Position.y, TriggerType.Arrow, CommunicationID.Item1, Talent);
                         triggerToThrow.Parent = WorldMap;
                         triggerToThrow.Velocity = new Vector(parameter2, (int)Configs["Trigger"]["Arrow"]["Speed"]);
-                        triggerToThrow.StopMovingTimer.Change(dueTime, 0);
+                        if (dueTime > 0)
+                            triggerToThrow.StopMovingTimer.Change(dueTime, 0);
                         Tool = ToolType.ToolEmpty;
                     }
                     break;
@@ -505,7 +533,7 @@ namespace Logic.Server
             switch (trigger.triggerType)
             {
                 case TriggerType.WaveGlue:
-                    isStepOnGlue = true;
+                    tempIsStepOnGlue = true;
                     break;
                 case TriggerType.Mine:
                     if (Tool != ToolType.BreastPlate)
@@ -587,8 +615,8 @@ namespace Logic.Server
             {
                 if (i == CommunicationID.Item2)
                     continue;
-                lock (Program.MessageToClientLock)
-                    Program.MessageToClient.GameObjectList[Program.PlayerList[new Tuple<int, int>(CommunicationID.Item1, i)].ID].SpeakText = speakText;
+                //lock (Program.MessageToClientLock)
+                Program.MessageToClient.GameObjectList[Program.PlayerList[new Tuple<int, int>(CommunicationID.Item1, i)].ID].SpeakText = speakText;
             }
         }
     }
