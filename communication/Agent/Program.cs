@@ -70,12 +70,17 @@ namespace Communication.Agent
             };
             server.OnReceive += delegate (Message message)
             {
-                var now = Environment.TickCount;
-                lock (LastSpam)
+                if (!(((message.Content as Message)?.Content as Message)?.Content is PingPacket))
                 {
-                    if (now <= (int)LastSpam + Constants.TimeLimit) return;
-                    LastSpam = now;
+                    var now = Environment.TickCount;
+                    lock (LastSpam)
+                    {
+                        if (now <= (int)LastSpam + Constants.TimeLimit) return;
+                        LastSpam = now;
+                    }
                 }
+                else
+                    Constants.Debug("Ignoring PingPacket");
 
                 client.Send(message.Content as Message);
             };
