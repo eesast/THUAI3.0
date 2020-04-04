@@ -74,14 +74,14 @@ namespace Communication.Server
             if (IsOffline) return;
             if (token == null)
             {
-                await HttpAsync($"http://localhost:28888/v1/rooms/{roomID}", this.token, "PUT", new JObject
+                await HttpAsync($"https://api.eesast.com/v1/rooms/{roomID}", this.token, "PUT", new JObject
                 {
                     ["status"] = (int)status
                 });
             }
             else
             {
-                await HttpAsync($"http://localhost:28888/v1/rooms/{roomID}/join", token, "GET", null);
+                await HttpAsync($"https://api.eesast.com/v1/rooms/{roomID}/join", token, "GET", null);
             }
         }
 
