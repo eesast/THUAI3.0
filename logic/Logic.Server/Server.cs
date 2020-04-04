@@ -19,12 +19,16 @@ namespace Logic.Server
         System.Threading.Timer WatchInputTimer = null;
         Thread ServerRunThread = null;
 
-        public Server(ushort serverPort, ushort playerCount, ushort agentCount, uint MaxGameTimeSeconds)
+        public Server(ushort serverPort, ushort playerCount, ushort agentCount, uint MaxGameTimeSeconds, string token)
         {
             Communication.Proto.Constants.PlayerCount = playerCount;
             Communication.Proto.Constants.AgentCount = agentCount;
             MaxRunTimeInSecond = MaxGameTimeSeconds;
-            ServerCommunication = new CommunicationImpl { ServerPort = serverPort };
+            ServerCommunication = new CommunicationImpl
+            {
+                ServerPort = serverPort,
+                Token = token
+            };
             ServerCommunication.Initialize();
             ServerCommunication.MsgProcess += OnRecieve;
             ServerCommunication.GameStart();
@@ -113,18 +117,20 @@ namespace Logic.Server
 
         protected void WatchInput(object o)
         {
-            while (true)
+            try
             {
-                /*
-                这里应该放定时、刷新物品等代码。
-                */
-                char key = Console.ReadKey().KeyChar;
-                switch (key)
+                while (true)
                 {
-                    case '`': GodMode(); break;
-                }
+                    char key = Console.ReadKey().KeyChar;
+                    switch (key)
+                    {
+                        case '`': GodMode(); break;
+                    }
 
+                }
             }
+            catch (InvalidOperationException)
+            { }
         }
 
         protected void GodMode()
@@ -174,38 +180,31 @@ namespace Logic.Server
 
         protected void OnRecieve(Object communication, EventArgs e)
         {
-            CommunicationImpl communicationImpl = communication as CommunicationImpl;
-            MessageEventArgs messageEventArgs = e as MessageEventArgs;
-            Tuple<int, int> playerCommunitionID = new Tuple<int, int>(messageEventArgs.message.Agent, messageEventArgs.message.Client);
-            if (((MessageToServer)messageEventArgs.message.Message).IsSetTalent)
+            //CommunicationImpl communicationImpl = communication as CommunicationImpl;
+            MessageToServer msg2svr = (MessageToServer)((MessageEventArgs)e).message.Message;
+            Tuple<int, int> playerCommunitionID = new Tuple<int, int>(((MessageEventArgs)e).message.Agent, ((MessageEventArgs)e).message.Client);
+            if (msg2svr.IsSetTalent)
             {
                 while (!Program.PlayerList.ContainsKey(playerCommunitionID))
                 {
-                    Thread.Sleep(100);
+                    Thread.Sleep(20);
                 }
-                if (((MessageToServer)messageEventArgs.message.Message).Talent < Talent.None || ((MessageToServer)messageEventArgs.message.Message).Talent >= Talent.Size)
+                if (msg2svr.Talent < Talent.None || msg2svr.Talent >= Talent.Size)
                 {
-                    ((MessageToServer)messageEventArgs.message.Message).Talent = Talent.None;
+                    msg2svr.Talent = Talent.None;
                 }
-                Program.PlayerList[playerCommunitionID].Talent = ((MessageToServer)messageEventArgs.message.Message).Talent;
+                Program.PlayerList[playerCommunitionID].Talent = msg2svr.Talent;
                 Server.ServerDebug("Player " + playerCommunitionID.Item1 + "." + playerCommunitionID.Item2 + " has chose talent " + Program.PlayerList[playerCommunitionID].Talent);
                 return;
             }
 
             //Server.ServerDebug("GameTime : " + Time.GameTime().TotalSeconds.ToString("F3") + "s");
-            Program.PlayerList[playerCommunitionID].ExecuteMessage(communicationImpl, (MessageToServer)messageEventArgs.message.Message);
+            Program.PlayerList[playerCommunitionID].ExecuteMessage(msg2svr);
         }
 
         //向所有Client发送消息，按照帧率定时发送，严禁在其他地方调用此函数
         protected void SendMessageToAllClient()
         {
-            //for (int i = 0; i < 20; i++)
-            //{
-            //    Console.Write("Send");
-            //    for (int k = 0; k < i; k++)
-            //        Console.Write(" ");
-            //    Console.WriteLine(i);
-            //}
             lock (Program.MessageToClientLock)
             {
                 ServerCommunication.SendMessage(new ServerMessage
