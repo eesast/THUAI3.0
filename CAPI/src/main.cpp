@@ -14,6 +14,7 @@
 #include <mutex>
 #include "player.h"
 #include "API.h"
+#include "OS_related.h"
 
 using namespace std;
 
@@ -50,7 +51,7 @@ int main(int argc, char* argv[])
 
 	while (!GameRunning)
 	{
-		_sleep(10);
+		Sleep(10);
 	}
 	while (GameRunning)
 	{
