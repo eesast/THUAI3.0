@@ -36,10 +36,17 @@ namespace Communication.Server
             }
             set
             {
-                var json = JObject.Parse(decoder.Decode(value));
-                Constants.Debug($"Parsing roomID from {json}");
-                roomID = (string)json["roomID"];
-                Constants.Debug($"roomID = {roomID}");
+                if (string.IsNullOrEmpty(value))
+                {
+                    Constants.Debug("Enable offline mode.");
+                }
+                else
+                {
+                    var json = JObject.Parse(decoder.Decode(value));
+                    Constants.Debug($"Parsing roomID from {json}");
+                    roomID = (string)json["roomID"];
+                    Constants.Debug($"roomID = {roomID}");
+                }
                 token = value;
             }
         }
@@ -71,7 +78,6 @@ namespace Communication.Server
 
         private async Task NoticeServer(string token, DockerGameStatus status)
         {
-            if (IsOffline) return;
             if (token == null)
             {
                 await HttpAsync($"http://localhost:28888/v1/rooms/{roomID}", this.token, "PUT", new JObject
@@ -100,7 +106,6 @@ namespace Communication.Server
             get => server.Port;
             set => server.Port = value;
         }
-        public bool IsOffline { get; set; }
 
         public event MessageHandler MsgProcess;
 
