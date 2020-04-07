@@ -23,45 +23,37 @@ namespace Logic.Server
         protected int _isStun = 0;
         protected int IsStun
         {
-            get { return _isStun; }
-            set
+            get => _isStun;
+            private set
             {
                 _isStun = value;
                 if (value > 0)
-                {
                     StunTimer.Change(value, 0);
-                }
             }
         }
         protected System.Threading.Timer StunTimer;
 
         protected DishType Dish
         {
-            get { return dish; }
-            set
-            {
-                dish = value;
-                //lock (Program.MessageToClientLock)
-                Program.MessageToClient.GameObjectList[this.ID].DishType = dish;
-            }
+            get => dish;
+            private set => Program.MessageToClient.GameObjectList[this.ID].DishType = dish = value;
         }
 
         protected ToolType Tool
         {
             get { return tool; }
-            set
+            private set
             {
                 DeFunction(tool);
                 tool = value;
                 Function(tool);
-                //lock (Program.MessageToClientLock)
                 Program.MessageToClient.GameObjectList[this.ID].ToolType = tool;
             }
         }
         public Talent Talent
         {
             get { return _talent; }
-            set
+            internal set
             {
                 _talent = value;
                 switch (_talent)
@@ -82,38 +74,23 @@ namespace Logic.Server
         public new int SightRange
         {
             get => _sightRange;
-            set
-            {
-                _sightRange = value;
-                //lock (Program.MessageToClientLock)
-                Program.MessageToClient.GameObjectList[this.ID].SightRange = value;
-            }
+            private set => Program.MessageToClient.GameObjectList[this.ID].SightRange = _sightRange = value;
         }
         protected int Score
         {
-            get { return base._score; }
-            set
-            {
-                base._score = value;
-                for (int i = 0; i < Communication.Proto.Constants.PlayerCount; i++)
-                {
-                    if (i == CommunicationID.Item2)
-                        continue;
-                    Program.PlayerList[new Tuple<int, int>(CommunicationID.Item1, i)]._score = value;
-                }
-                //lock (Program.MessageToClientLock)
-                Program.MessageToClient.Scores[CommunicationID.Item1] = base._score;
-            }
+            get => Program.MessageToClient.Scores[CommunicationID.Item1];
+            private set => Program.MessageToClient.Scores[CommunicationID.Item1] = value;
         }
         protected new double MoveSpeed
         {
             get => _moveSpeed;
-            set
-            {
-                _moveSpeed = value;
-                //lock (Program.MessageToClientLock)
-                Program.MessageToClient.GameObjectList[this.ID].MoveSpeed = _moveSpeed;
-            }
+            private set => Program.MessageToClient.GameObjectList[this.ID].MoveSpeed = _moveSpeed = value;
+
+        }
+        protected new THUnity2D.Direction FacingDirection
+        {
+            get => _facingDirection;
+            private set => Program.MessageToClient.GameObjectList[this.ID].Direction = (Direction)(_facingDirection = value);
         }
 
         public Player(double x, double y) :
@@ -136,6 +113,7 @@ namespace Logic.Server
                         IsMoving = false,
                         PositionX = this.Position.x,
                         PositionY = this.Position.y,
+                        SightRange = this.SightRange,
                         Direction = (Direction)this.FacingDirection,
                         MoveSpeed = this.MoveSpeed,
                         DishType = dish,
@@ -218,13 +196,13 @@ namespace Logic.Server
 
         public void Move(THUnity2D.Direction direction)
         {
-            this._facingDirection = direction;
+            this.FacingDirection = direction;
             Move(new MoveEventArgs((int)direction * Math.PI / 4, MoveSpeed / Constant.Constant.FrameRate));
         }
 
         public override void Move(THUnity2D.Direction direction, int durationMilliseconds)
         {
-            this._facingDirection = direction;
+            this.FacingDirection = direction;
             this.Velocity = new Vector((int)direction * Math.PI / 4, MoveSpeed);
             this.status = CommandType.Move;
             //lock (Program.MessageToClientLock)
@@ -337,8 +315,8 @@ namespace Logic.Server
                 }
                 else if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].ContainsType(typeof(TaskPoint)))
                 {
-                    int tempScore = ((TaskPoint)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetFirstObject(typeof(TaskPoint))).HandIn(Dish);
-                    Score += tempScore;
+                    lock (Program.ScoreLocks[CommunicationID.Item1])
+                        Score += ((TaskPoint)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetFirstObject(typeof(TaskPoint))).HandIn(Dish);
                     Dish = DishType.DishEmpty;
                 }
             }
@@ -388,8 +366,9 @@ namespace Logic.Server
                             int temp = ((TaskPoint)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetFirstObject(typeof(TaskPoint))).HandIn(Dish);
                             if (temp > 0)
                             {
-                                if (Talent == Talent.Cook) Score += (int)(temp * (1 + (double)Configs["Talent"]["Cook"]["Condiment"]["ScoreParameter"]));
-                                Score += (int)(temp * (1 + (double)Configs["Tool"]["Condiment"]["ScoreParameter"]));
+                                lock (Program.ScoreLocks[CommunicationID.Item1])
+                                    Score += (int)(temp * (1 + (double)((Talent == Talent.Cook) ?
+                                                                        Configs["Talent"]["Cook"]["Condiment"]["ScoreParameter"] : Configs["Tool"]["Condiment"]["ScoreParameter"])));
                                 Dish = DishType.DishEmpty;
                             }
                             else Server.ServerDebug("物品使用失败（提交任务失败）！");
@@ -538,7 +517,8 @@ namespace Logic.Server
                 case TriggerType.Mine:
                     if (Tool != ToolType.BreastPlate)
                     {
-                        Score += trigger.hitScore;
+                        lock (Program.ScoreLocks[CommunicationID.Item1])
+                            Score += trigger.hitScore;
                         IsStun = trigger.stunTime;
                         Velocity = new Vector(Velocity.angle, Velocity.length);
                     }
@@ -576,7 +556,8 @@ namespace Logic.Server
                 case TriggerType.Arrow:
                     if (Tool != ToolType.BreastPlate)
                     {
-                        Score += trigger.hitScore;
+                        lock (Program.ScoreLocks[CommunicationID.Item1])
+                            Score += trigger.hitScore;
                         IsStun = trigger.stunTime;
                         Velocity = new Vector(Velocity.angle, 0);
                     }

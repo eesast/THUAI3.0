@@ -24,7 +24,7 @@ namespace Logic.Constant
         public int SightRange { get => _sightRange; }
         protected Talent _talent = Talent.None;
 
-        protected int _score = 0;
+        //protected int _score = 0;
 
         public DishType dish = DishType.DishEmpty;
         public ToolType tool = ToolType.ToolEmpty;
