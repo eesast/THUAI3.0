@@ -58,14 +58,14 @@ namespace Logic.Server
                 _talent = value;
                 switch (_talent)
                 {
-                    case Talent.Runner: _moveSpeed += (double)Configs["Talent"]["Runner"]["ExtraMoveSpeed"]; break;
+                    case Talent.Runner: MoveSpeed += (double)Configs["Talent"]["Runner"]["ExtraMoveSpeed"]; break;
                     case Talent.StrongMan: MaxThrowDistance += (int)Configs["Talent"]["StrongMan"]["ExtraThrowDistance"]; break;
                     case Talent.LuckyBoy:
                         LuckTalentTimer = new System.Threading.Timer(Item, null, 30000, (int)Configs["Talent"]["LuckyBoy"]["RefreshTime"]);
                         void Item(object i)
                         {
-                            if (Tool == ToolType.ToolEmpty) Tool = (ToolType)Program.Random.Next(0, (int)ToolType.ToolSize - 1);
-                            else new Tool(Position.x, Position.y, (ToolType)Program.Random.Next(0, (int)ToolType.ToolSize - 1)).Parent = WorldMap;
+                            if (Tool == ToolType.ToolEmpty) Tool = (ToolType)Program.Random.Next(1, (int)ToolType.ToolSize - 1);
+                            else new Tool(Position.x, Position.y, (ToolType)Program.Random.Next(1, (int)ToolType.ToolSize - 1)).Parent = WorldMap;
                         }
                         break;
                 }
@@ -203,11 +203,15 @@ namespace Logic.Server
         public override void Move(THUnity2D.Direction direction, int durationMilliseconds)
         {
             this.FacingDirection = direction;
-            this.Velocity = new Vector((int)direction * Math.PI / 4, MoveSpeed);
             this.status = CommandType.Move;
             //lock (Program.MessageToClientLock)
             Program.MessageToClient.GameObjectList[this.ID].IsMoving = true;
-            MoveStopTimer.Change(durationMilliseconds - (int)HalfTimeIntervalInMillisecond, 0);
+            int dueTime = durationMilliseconds - (int)HalfTimeIntervalInMillisecond;
+            if (dueTime > 0)
+            {
+                this.Velocity = new Vector((int)direction * Math.PI / 4, MoveSpeed);
+                MoveStopTimer.Change(dueTime, 0);
+            }
         }
 
         void ChangePositionInMessage(THUnity2D.GameObject thisGameObject)
