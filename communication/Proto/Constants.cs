@@ -24,5 +24,14 @@ namespace Communication.Proto
             var method = stack.GetFrame(1).GetMethod();
             Console.WriteLine($"[{method.DeclaringType.Name}/{method.Name}] {DebugMessage}");
         };
+
+        public static DebugFunc Error = delegate (string DebugMessage) //这里应该另外加一个debug level
+        {
+            var stack = new StackTrace();
+            var method = stack.GetFrame(1).GetMethod();
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"[{method.DeclaringType.Name}/{method.Name}] {DebugMessage}");
+            Console.ResetColor();
+        };
     }
 }

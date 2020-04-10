@@ -39,6 +39,7 @@ namespace ServerChatTest
             //Console.WriteLine(args[0]);
             //comm.EndPoint = new IPEndPoint(IPAddress.Parse(t[0]), ushort.Parse(t[1]));
             //comm.ID = args[1];
+            Constants.ServerPort = 20000;
             comm.IsOffline = false;
             comm.ServerPort = Constants.ServerPort;
             comm.Token = new JwtEncoder(new HMACSHA256Algorithm(), new JsonNetSerializer(), new JwtBase64UrlEncoder())
