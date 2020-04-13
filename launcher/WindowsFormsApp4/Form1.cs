@@ -69,7 +69,7 @@ namespace WindowsFormsApp4
                     label4.Visible = true;
                     label5.Visible = true;
                     label6.Visible = true;
-
+                    checkBox1.Visible = true;
                     serverPort.Visible = true;
                     clientPort.Visible = true;
                     agentNumber.Visible = true;
@@ -92,7 +92,7 @@ namespace WindowsFormsApp4
                         Rooms roooms = JsonConvert.DeserializeObject<Rooms>(rooms_0);
                         foreach (RoomObject rp in roooms.room)
                         {
-                            string roomInfo = "ID:" + rp.id + " Port:" + rp.port + " 创建者:" + rp.createdBy + "状态:等待中";
+                            string roomInfo = "ID:" + rp.id + "  Port:" + rp.port + "  创建者:" + rp.createdBy + "  状态:等待中";
                             this.listRoom.Items.Add(roomInfo);
                         }
 
@@ -222,14 +222,18 @@ namespace WindowsFormsApp4
             string clientPort = this.clientPort.Text;
             string argumentsServer, argumentsAgent, argumentsClient;
 
-
-            System.Diagnostics.Process processServer = new System.Diagnostics.Process();
-            processServer.StartInfo.FileName = ".\\THUAI3.0\\Logic.Server.exe";
-            //传递进exe的参数
-            argumentsServer = "-p " + serverPort + " -d 1 -c 2 -a 1 -t 600";
-            processServer.StartInfo.Arguments = argumentsServer;
-            processServer.Start();
-            Console.WriteLine("进程Server");
+            if (checkBox1.Checked)
+            {
+                System.Diagnostics.Process processServer = new System.Diagnostics.Process();
+                processServer.StartInfo.FileName = ".\\THUAI3.0\\Logic.Server.exe";
+                //传递进exe的参数
+                argumentsServer = "-p " + serverPort + " -d 1 -c 2 -a 1 -t 600";
+                processServer.StartInfo.Arguments = argumentsServer;
+                processServer.Start();
+                Console.WriteLine("进程Server");
+            }
+            
+            
 
             System.Diagnostics.Process processAgent = new System.Diagnostics.Process();
             processAgent.StartInfo.FileName = ".\\THUAI3.0\\Communication.Agent.exe";
@@ -253,7 +257,7 @@ namespace WindowsFormsApp4
             }
 
 
-            processServer.WaitForExit();
+
             processAgent.WaitForExit();
             //processClient.WaitForExit();
             Console.WriteLine("进程全部退出");
@@ -300,7 +304,7 @@ namespace WindowsFormsApp4
                 Rooms roooms = JsonConvert.DeserializeObject<Rooms>(rooms_0);
                 foreach (RoomObject rp in roooms.room)
                 {
-                    string roomInfo = "ID:" + rp.id + " Port:" + rp.port + " 创建者:" + rp.createdBy + "状态:等待中";
+                    string roomInfo = "ID:" + rp.id + "  Port:" + rp.port + "  创建者:" + rp.createdBy + "  状态:等待中";
                     this.listRoom.Items.Add(roomInfo);
                 }
 
@@ -313,7 +317,6 @@ namespace WindowsFormsApp4
             else
             {
                 rooms_1 = "{\"room\":" + rooms_1 + "}";
-                Console.WriteLine(rooms_1);
                 Rooms roooms = JsonConvert.DeserializeObject<Rooms>(rooms_1);
                 foreach (RoomObject rp in roooms.room)
                 {
@@ -322,6 +325,20 @@ namespace WindowsFormsApp4
                 }
 
             }
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox1.Checked)
+            {
+                this.serverPort.Enabled = true;
+            }
+            else this.serverPort.Enabled = false;
         }
     }
 }

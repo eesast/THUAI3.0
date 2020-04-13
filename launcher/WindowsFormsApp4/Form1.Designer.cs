@@ -45,6 +45,7 @@
             this.listRoom = new System.Windows.Forms.ListBox();
             this.labelRoom = new System.Windows.Forms.Label();
             this.button4 = new System.Windows.Forms.Button();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // label1
@@ -72,9 +73,8 @@
             // 
             this.textBox1.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.textBox1.Location = new System.Drawing.Point(200, 117);
-            this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(224, 21);
+            this.textBox1.Size = new System.Drawing.Size(224, 26);
             this.textBox1.TabIndex = 2;
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
@@ -82,11 +82,12 @@
             // 
             this.textBox2.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.textBox2.Location = new System.Drawing.Point(200, 174);
-            this.textBox2.Multiline = true;
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(224, 21);
+            this.textBox2.PasswordChar = '*';
+            this.textBox2.Size = new System.Drawing.Size(224, 26);
             this.textBox2.TabIndex = 3;
             this.textBox2.UseSystemPasswordChar = true;
+            this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
             // 
             // button1
             // 
@@ -144,11 +145,11 @@
             // 
             // serverPort
             // 
+            this.serverPort.Enabled = false;
             this.serverPort.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.serverPort.Location = new System.Drawing.Point(246, 107);
-            this.serverPort.Multiline = true;
             this.serverPort.Name = "serverPort";
-            this.serverPort.Size = new System.Drawing.Size(80, 21);
+            this.serverPort.Size = new System.Drawing.Size(80, 26);
             this.serverPort.TabIndex = 8;
             this.serverPort.Text = "20000";
             this.serverPort.Visible = false;
@@ -157,9 +158,8 @@
             // 
             this.agentNumber.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.agentNumber.Location = new System.Drawing.Point(246, 185);
-            this.agentNumber.Multiline = true;
             this.agentNumber.Name = "agentNumber";
-            this.agentNumber.Size = new System.Drawing.Size(80, 21);
+            this.agentNumber.Size = new System.Drawing.Size(80, 26);
             this.agentNumber.TabIndex = 9;
             this.agentNumber.Text = "0";
             this.agentNumber.Visible = false;
@@ -168,9 +168,8 @@
             // 
             this.clientPort.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.clientPort.Location = new System.Drawing.Point(246, 147);
-            this.clientPort.Multiline = true;
             this.clientPort.Name = "clientPort";
-            this.clientPort.Size = new System.Drawing.Size(80, 21);
+            this.clientPort.Size = new System.Drawing.Size(80, 26);
             this.clientPort.TabIndex = 10;
             this.clientPort.Text = "30000";
             this.clientPort.Visible = false;
@@ -180,7 +179,7 @@
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("等线", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.label4.Location = new System.Drawing.Point(115, 107);
+            this.label4.Location = new System.Drawing.Point(107, 107);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(107, 22);
             this.label4.TabIndex = 11;
@@ -193,7 +192,7 @@
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("等线", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label5.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.label5.Location = new System.Drawing.Point(115, 146);
+            this.label5.Location = new System.Drawing.Point(107, 146);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(102, 22);
             this.label5.TabIndex = 12;
@@ -206,11 +205,11 @@
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("等线", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.label6.Location = new System.Drawing.Point(115, 185);
+            this.label6.Location = new System.Drawing.Point(107, 185);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(105, 22);
+            this.label6.Size = new System.Drawing.Size(130, 22);
             this.label6.TabIndex = 13;
-            this.label6.Text = "agent数量";
+            this.label6.Text = "2DClient数量";
             this.label6.Visible = false;
             this.label6.Click += new System.EventHandler(this.label6_Click);
             // 
@@ -218,20 +217,20 @@
             // 
             this.listRoom.FormattingEnabled = true;
             this.listRoom.ItemHeight = 12;
-            this.listRoom.Location = new System.Drawing.Point(367, 119);
+            this.listRoom.Location = new System.Drawing.Point(367, 107);
             this.listRoom.Name = "listRoom";
-            this.listRoom.Size = new System.Drawing.Size(314, 88);
+            this.listRoom.Size = new System.Drawing.Size(314, 100);
             this.listRoom.TabIndex = 14;
             this.listRoom.Visible = false;
             // 
             // labelRoom
             // 
             this.labelRoom.AutoSize = true;
-            this.labelRoom.Font = new System.Drawing.Font("等线", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.labelRoom.Font = new System.Drawing.Font("等线", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.labelRoom.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.labelRoom.Location = new System.Drawing.Point(364, 99);
+            this.labelRoom.Location = new System.Drawing.Point(362, 88);
             this.labelRoom.Name = "labelRoom";
-            this.labelRoom.Size = new System.Drawing.Size(72, 17);
+            this.labelRoom.Size = new System.Drawing.Size(63, 14);
             this.labelRoom.TabIndex = 15;
             this.labelRoom.Text = "可用房间";
             this.labelRoom.Visible = false;
@@ -251,6 +250,19 @@
             this.button4.Visible = false;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Font = new System.Drawing.Font("等线", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.checkBox1.Location = new System.Drawing.Point(111, 87);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(82, 18);
+            this.checkBox1.TabIndex = 17;
+            this.checkBox1.Text = "离线模式";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.Visible = false;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -258,6 +270,7 @@
             this.BackColor = System.Drawing.Color.Gainsboro;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.ClientSize = new System.Drawing.Size(574, 351);
+            this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.labelRoom);
             this.Controls.Add(this.listRoom);
@@ -304,6 +317,7 @@
         private System.Windows.Forms.ListBox listRoom;
         private System.Windows.Forms.Label labelRoom;
         private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.CheckBox checkBox1;
     }
 }
 
