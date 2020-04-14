@@ -55,7 +55,7 @@
             // 
             // create
             // 
-            this.create.Font = new System.Drawing.Font("等线", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.create.Font = new System.Drawing.Font("等线", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.create.Location = new System.Drawing.Point(62, 131);
             this.create.Name = "create";
             this.create.Size = new System.Drawing.Size(64, 38);
@@ -66,7 +66,7 @@
             // 
             // Cancel2
             // 
-            this.Cancel2.Font = new System.Drawing.Font("等线", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.Cancel2.Font = new System.Drawing.Font("等线", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Cancel2.Location = new System.Drawing.Point(156, 131);
             this.Cancel2.Name = "Cancel2";
             this.Cancel2.Size = new System.Drawing.Size(64, 38);

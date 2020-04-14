@@ -73,6 +73,8 @@ namespace WindowsFormsApp4
                     {
                         updateRoom("1");
                     });
+                    Token tokenJson = JsonConvert.DeserializeObject<Token>(token);
+                    token = tokenJson.token;
                 }
             }
             
@@ -141,7 +143,16 @@ namespace WindowsFormsApp4
                 System.Diagnostics.Process processAgent = new System.Diagnostics.Process();
                 processAgent.StartInfo.FileName = ".\\THUAI3.0\\Communication.Agent.exe";
 
-                argumentsAgent = "--server 127.0.0.1:" + serverPort + " --port " + clientPort + " -t THUAI/offline -d 0";
+                argumentsAgent = "--server 127.0.0.1:" + serverPort + " --port " + clientPort + " -d 0 ";
+                if (checkBox1.Checked)
+                {
+                    argumentsAgent += "-t THUAI/offline";
+                }
+                else
+                {
+                    argumentsAgent += "-t ";
+                    argumentsAgent += token;
+                }
                 processAgent.StartInfo.Arguments = argumentsAgent;
                 processAgent.Start();
                 Console.WriteLine("进程Agent");
@@ -312,8 +323,8 @@ namespace WindowsFormsApp4
         {
             {
                 Form2 form2 = new Form2();
-                Token tokenJson = JsonConvert.DeserializeObject<Token>(token);
-                form2.token = tokenJson.token;
+                
+                form2.token = token;
                 form2.ShowDialog();
             }
         }

@@ -54,7 +54,7 @@ namespace WindowsFormsApp4
             //参数类型，这里是json类型
             httpWebRequest.ContentType = "application/json";
             //参数数据长度
-            httpWebRequest.ContentLength = bs.Length;
+            //httpWebRequest.ContentLength = bs.Length;
             //设置请求类型
             httpWebRequest.Method = "POST";
             //设置超时时间
@@ -62,13 +62,15 @@ namespace WindowsFormsApp4
             //将参数写入请求地址中
             httpWebRequest.GetRequestStream().Write(bs, 0, bs.Length);
 
-            httpWebRequest.Accept="*/*";
-            //httpWebRequest.Headers["authorization"] = "Bearer " + token;
-            httpWebRequest.Headers.Add("Authorization", (" Bearer " + token));
+            httpWebRequest.Accept = "*/*";
+            
+            string token2 = "Bearer " + token;
+            httpWebRequest.Headers.Add("Authorization", token2);
+            //httpWebRequest.Headers["Authorization"] = "Bearer " + token;
             //发送请求
-            //try
-            //{
-            HttpWebResponse httpWebResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+            try
+            {
+                HttpWebResponse httpWebResponse = (HttpWebResponse)httpWebRequest.GetResponse();
                 System.IO.Stream getStream = httpWebResponse.GetResponseStream();
                 System.IO.StreamReader streamreader = new System.IO.StreamReader(getStream);
                 String result = streamreader.ReadToEnd();
@@ -78,17 +80,28 @@ namespace WindowsFormsApp4
                 Console.WriteLine(result);
                 httpWebRequest.Abort();
                 return true;
-            //}
-            //catch
-            //{
-            //    //这后面的代码是登录失败后执行的
-            //    MessageBox.Show("创建失败");
-            //    httpWebRequest.Abort();
-            //    return false;
-
-            //}
+            }
+            catch (WebException ex)
+            {
+                //这后面的代码是登录失败后执行的
+                if (((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    MessageBox.Show("token错误，请重新登录");
+                }
+                else
+                {
+                    MessageBox.Show("服务器错误，可能是端口已被占用");
+                }
+                
+                //HttpWebResponse httpWebResponse = (HttpWebResponse)ex.Response;
+                //System.IO.Stream getStream = httpWebResponse.GetResponseStream();
+                //System.IO.StreamReader streamreader = new System.IO.StreamReader(getStream);
+                //String result = streamreader.ReadToEnd();
+                //Console.WriteLine(result);
+                httpWebRequest.Abort();
+                return false;
+            }
         }
-
         public static bool IsNumberic(string str)
         {
             int vsNum;
