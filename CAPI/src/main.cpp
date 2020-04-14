@@ -14,13 +14,14 @@
 #include <mutex>
 #include "player.h"
 #include "API.h"
+#include "OS_related.h"
 
 using namespace std;
 
 CAPI API;
-bool GameFinished = false;
+bool GameRunning = false;
 
-void *Ping(void *param)
+void* Ping(void* param)
 {
 	while (API.IsConnected())
 	{
@@ -33,29 +34,32 @@ void *Ping(void *param)
 	}
 	return NULL;
 }
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
 	MapInfo::initialize_map();
 
-	char *agent_ip = (argv[1]);
+	char* agent_ip = (argv[1]);
 	int agent_port = atoi(argv[2]);
 	API.Initialize();
 	API.ConnectServer(agent_ip, agent_port);
-	pthread_t pt;
-	pthread_create(&pt, NULL, Ping, NULL);
-	pthread_detach(pt);
+	//pthread_t pt;
+	//pthread_create(&pt, NULL, Ping, NULL);
+	//pthread_detach(pt);
 	string message = "Connected!";
 
 	DebugFunc = DebugSilently;
-	//死循环执行玩家程序
-	while (!GameFinished) 
+
+	while (!GameRunning)
+	{
+		Sleep(10);
+	}
+	while (GameRunning)
 	{
 		play();
 	}
 	getchar();
 	API.Quit();
 
-	// client聊天室测试
 	/*
 	while (API.IsConnected())
 	{

@@ -1,1 +1,1 @@
-@dotnet exec ServerChatTest/bin/Debug/netcoreapp3.0/Communication.ServerChatTest.dll
+@dotnet exec ServerChatTest/bin/Release/netcoreapp3.0/Communication.ServerChatTest.dll

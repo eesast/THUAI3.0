@@ -215,14 +215,14 @@ namespace THUnity2D
                 {
                     if (value.length < MinSpeed)
                     {
-                        this._velocity = new Vector(value.angle, 0);
+                        _velocity = new Vector(value.angle, 0);
                         MovingTimer.Change(-1, -1);
                         return;
                     }
-                    if (value == this._velocity)
-                        return;
+                    bool isStartMovingTimer = (_velocity.length < MinSpeed) ? true : false;
                     this._velocity = value;
-                    MovingTimer.Change(TimeSpan.FromSeconds(0), TimeSpan.FromSeconds(1 / this.FrameRate));
+                    if (isStartMovingTimer)
+                        MovingTimer.Change(0, (int)(1000.0 / this.FrameRate));
                 }
             }
         }
