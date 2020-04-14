@@ -297,9 +297,11 @@ namespace Client
             messageToServer.Parameter2 = parameter_2;
             ClientCommunication.SendMessage(messageToServer);
         }
-        public override void Pick()
+        public override void Pick(bool isPickDish,int type)
         {
             messageToServer.CommandType = CommandType.Pick;
+            messageToServer.IsThrowDish = isPickDish;
+            messageToServer.Parameter2 = type;
             ClientCommunication.SendMessage(messageToServer);
         }
         public void SpeakToFriend(string speakText)

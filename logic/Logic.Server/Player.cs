@@ -166,7 +166,7 @@ namespace Logic.Server
                     Move((THUnity2D.Direction)msg.MoveDirection, msg.MoveDuration);
                     break;
                 case CommandType.Pick:
-                    Pick();
+                    Pick(msg.IsThrowDish, (int)msg.Parameter2);
                     break;
                 case CommandType.Put:
                     if (msg.ThrowDistance < 0)
@@ -216,7 +216,7 @@ namespace Logic.Server
             }
         }
 
-        public override void Pick()
+        public override void Pick(bool isPickDish, int type)
         {
             XYPosition[] toCheckPositions = new XYPosition[] { Position, Position + 2 * EightCornerVector[FacingDirection] };
             foreach (var xypos in toCheckPositions)
@@ -230,7 +230,7 @@ namespace Logic.Server
                     if (((Cooker)block).ProtectedTeam != CommunicationID.Item1 && ((Cooker)block).ProtectedTeam >= 0)
                         block = null;
                 }
-                if (block != null && block.Dish != DishType.DishEmpty)
+                if (block != null && block.Dish != DishType.DishEmpty && isPickDish && ((int)block.Dish == type || type == 0))
                 {
                     DishType temp = Dish;
                     Dish = block.GetDish(Dish);
@@ -246,20 +246,27 @@ namespace Logic.Server
                 if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].ContainsLayer(ItemLayer))
                     foreach (var item in WorldMap.Grid[(int)xypos.x, (int)xypos.y].GetObjects(ItemLayer))
                     {
-                        if (item is Dish)
+                        if (item is Dish && isPickDish)
                         {
-                            Dish = ((Dish)item).GetDish(Dish);
-                            Server.ServerDebug("Player : " + ID + " Get Dish " + Dish.ToString());
-                            return;
+                            if ((int)((Dish)item).Dish == type || type == 0)
+                            {
+                                Dish = ((Dish)item).GetDish(Dish);
+                                Server.ServerDebug("Player : " + ID + " Get Dish " + Dish.ToString());
+                                return;
+                            }
                         }
-                        else if (item is Tool)
+                        else if (item is Tool && !isPickDish)
                         {
-                            Tool = ((Tool)item).GetTool(tool);
-                            Server.ServerDebug("Player : " + ID + " Get Tool " + tool.ToString());
-                            return;
+                            if ((int)((Tool)item).Tool == type || type == 0)
+                            {
+                                Tool = ((Tool)item).GetTool(tool);
+                                Server.ServerDebug("Player : " + ID + " Get Tool " + tool.ToString());
+                                return;
+                            }
                         }
                     }
             }
+
             //Server.ServerDebug("没东西捡");
             status = CommandType.Stop;
             Velocity = new Vector(0, 0);
@@ -492,6 +499,7 @@ namespace Logic.Server
                             new Dish(Position.x, Position.y, Dish).Parent = WorldMap;
                             Dish = playerToSteal.Dish;
                             playerToSteal.Dish = DishType.DishEmpty;
+                            Tool = ToolType.ToolEmpty;
                         }
                     }
                     break;
