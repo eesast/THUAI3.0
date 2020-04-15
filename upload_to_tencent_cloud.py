@@ -49,6 +49,10 @@ url = client.get_presigned_url(
     Bucket=bucket_upload, Key='md5list.json', Method='GET')
 cloud_list = json.loads(request.urlopen(url).read())
 
+for item in cloud_list:
+    if("CAPI/windows_only" in item):
+        md5list[item] = cloud_list[item]
+
 
 def upload_local_file(client, src, archivename):
     if os.path.isfile(src):
