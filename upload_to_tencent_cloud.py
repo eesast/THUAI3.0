@@ -7,6 +7,7 @@ import logging
 import hashlib
 import json
 import getopt
+import urllib.request as request
 from qcloud_cos import CosConfig
 from qcloud_cos import CosS3Client
 from fnmatch import fnmatch
@@ -44,14 +45,21 @@ client = CosS3Client(config)
 
 md5list = {}
 
+url = client.get_presigned_url(
+    Bucket=bucket_upload, Key='md5list.json', Method='GET')
+cloud_list = json.loads(request.urlopen(url).read())
+
 
 def upload_local_file(client, src, archivename):
-    logger.info("uploading "+src)
     if os.path.isfile(src):
         with open(src, 'rb') as f:
             md5 = hashlib.md5()
             md5.update(f.read())
             md5list[src] = md5.hexdigest()
+        if md5list[src] == cloud_list[archivename]:
+            logger.info("skip "+src)
+            return
+        logger.info("uploading "+src)
         logger.info("filename is [%s]", src)
         response = client.put_object_from_local_file(
             Bucket=bucket_upload,
