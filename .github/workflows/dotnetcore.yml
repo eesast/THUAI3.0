@@ -30,8 +30,8 @@ jobs:
           ls
           ./build_logic.ps1 -Dir ../THUAI3.0
           cd ..
-          python ./download_windows_only.py --id ${{ secrets.TENCENT_DOWNLOAD_ID }} --key ${{ secrets.TENCENT_DOWNLOAD_KEY }}
-          python ./upload_to_tencent_cloud.py --id ${{ secrets.TENCENT_UPLOAD_ID }} --key ${{ secrets.TENCENT_UP_KEY }} CAPI THUAI3.0 Config
+          python ./download_windows_only.py --id ${{ secrets.TENCENT_DOWNLOAD_ID }} --key ${{ secrets.TNCENT_DOWNLOAD_KEY }}
+          python ./upload_to_tencent_cloud.py --id ${{ secrets.TENCENT_UPLOAD_ID }} --key ${{ secrets.TENCENT_UPLOAD_KEY }} CAPI THUAI3.0 Config
   deploy:
     runs-on: ubuntu-latest
 #     needs: build
