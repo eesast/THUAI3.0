@@ -84,7 +84,7 @@ namespace Logic.Server
                       else if (o.totalGameTimeSeconds > 3600)
                           o.totalGameTimeSeconds = 3600;
                       InitializeMap();
-                      server = new Server(o.serverPort, o.playerCount, o.agentCount, o.totalGameTimeSeconds);
+                      server = new Server(o.serverPort, o.playerCount, o.agentCount, o.totalGameTimeSeconds, o.token);
                   });
         }
     }

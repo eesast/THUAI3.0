@@ -19,12 +19,16 @@ namespace Logic.Server
         System.Threading.Timer WatchInputTimer = null;
         Thread ServerRunThread = null;
 
-        public Server(ushort serverPort, ushort playerCount, ushort agentCount, uint MaxGameTimeSeconds)
+        public Server(ushort serverPort, ushort playerCount, ushort agentCount, uint MaxGameTimeSeconds, string token)
         {
             Communication.Proto.Constants.PlayerCount = playerCount;
             Communication.Proto.Constants.AgentCount = agentCount;
             MaxRunTimeInSecond = MaxGameTimeSeconds;
-            ServerCommunication = new CommunicationImpl { ServerPort = serverPort };
+            ServerCommunication = new CommunicationImpl
+            {
+                ServerPort = serverPort,
+                Token = token
+            };
             ServerCommunication.Initialize();
             ServerCommunication.MsgProcess += OnRecieve;
             ServerCommunication.GameStart();

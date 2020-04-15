@@ -48,11 +48,11 @@ namespace Communication.Agent
         private static int MainInternal(string ep, ushort port, string token, int debugLevel)
         {
             string[] t = ep.Split(':');
-            Console.WriteLine("Server endpoint: " + t);
+            Constants.Debug("Server endpoint: " + t);
             Server = new IPEndPoint(IPAddress.Parse(t[0]), int.Parse(t[1]));
             server.Port = port;
-            Console.WriteLine("Agent Listen Port: " + server.Port.ToString());
-            Console.WriteLine("Client Token: " + (token ?? "<offline>"));
+            Constants.Debug("Agent Listen Port: " + server.Port.ToString());
+            Constants.Debug("Client Token: " + (token ?? "<offline>"));
             LastSpam = Environment.TickCount;
 
             //init timer
@@ -70,12 +70,17 @@ namespace Communication.Agent
             };
             server.OnReceive += delegate (Message message)
             {
-                var now = Environment.TickCount;
-                lock (LastSpam)
+                if (!(((message.Content as Message)?.Content as Message)?.Content is PingPacket))
                 {
-                    if (now <= (int)LastSpam + Constants.TimeLimit) return;
-                    LastSpam = now;
+                    var now = Environment.TickCount;
+                    lock (LastSpam)
+                    {
+                        if (now <= (int)LastSpam + Constants.TimeLimit) return;
+                        LastSpam = now;
+                    }
                 }
+                else
+                    Constants.Debug("Ignoring PingPacket");
 
                 client.Send(message.Content as Message);
             };
@@ -97,17 +102,15 @@ namespace Communication.Agent
                 {
                     server.Pause();
                     client.Connect(Server); //客户端满人后再向Server发送连接请求，可以省略GameStart包
-                    if (token != "offline")
+
+                    client.Send(new Message //发送token
                     {
-                        client.Send(new Message //发送token
+                        Address = -1,
+                        Content = new PlayerToken
                         {
-                            Address = -1,
-                            Content = new PlayerToken
-                            {
-                                Token = token
-                            }
-                        });
-                    }
+                            Token = token ?? "" //空token代表离线
+                        }
+                    });
                 }
             };
 
