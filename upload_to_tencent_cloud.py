@@ -60,9 +60,10 @@ def upload_local_file(client, src, archivename):
             md5 = hashlib.md5()
             md5.update(f.read())
             md5list[src] = md5.hexdigest()
-        if md5list[src] == cloud_list[archivename]:
-            logger.info("skip "+src)
-            return
+        if archivename in cloud_list:
+            if md5list[src] == cloud_list[archivename]:
+                logger.info("skip "+src)
+                return
         logger.info("uploading "+src)
         logger.info("filename is [%s]", src)
         response = client.put_object_from_local_file(
