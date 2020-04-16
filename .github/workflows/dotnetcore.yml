@@ -40,7 +40,6 @@ jobs:
           # python ./delete_files_not_in_md5list.py --id ${{ secrets.TENCENT_UPLOAD_ID }} --key ${{ secrets.TENCENT_UPLOAD_KEY }}
   deploy:
     runs-on: ubuntu-latest
-#     needs: build
     steps:
       - uses: actions/checkout@v1
       - name: Log in to DockerHub
@@ -51,21 +50,29 @@ jobs:
           dotnet-version: 3.0.100
       - name: Publish server
         run: dotnet publish "logic/Logic.Server/Logic.Server.csproj" -c Release -r linux-x64 --self-contained true
-      - name: Publish agent
-        run: dotnet publish "communication/Agent/Communication.Agent.csproj" -c Release -r linux-x64 -f netcoreapp3.0 --self-contained true
       - name: Build docker image of server
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/thuai_server:latest -f logic/ServerDockerfile .
-      - name: Build docker image of agent
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/thuai_agent:latest -f logic/AgentDockerfile .
-      - name: Build CAPI_compile docker image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/thuai_compiler:latest -f CAPI/Dockerfile_compile .
-      - name: Build CAPI_run docker image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/thuai_client:latest -f CAPI/Dockerfile_run .
       - name: Push server image to DockerHub
         run: docker push ${{ secrets.DOCKER_USERNAME }}/thuai_server:latest
-      - name: Push agent image to DockerHub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/thuai_agent:latest
+
+      - name: Build CAPI_compile docker image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/thuai_compiler:latest -f CAPI/Dockerfile_compile .
       - name: Push CAPI_compile image to DockerHub
         run: docker push ${{ secrets.DOCKER_USERNAME }}/thuai_compiler:latest
-      - name: Push CAPI_runtime image to DockerHub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/thuai_client:latest
+      - name: Get Protobuf and libprotos.so from Compiler
+        run: |
+          mkdir temp
+          cd temp
+          docker run -d --name compiler ${{ secrets.DOCKER_USERNAME }}/thuai_compiler:latest bash /usr/local/CAPI/compile.sh
+          docker cp compiler:/usr/local/CAPI/build/proto/lib/libprotos.so .
+          docker cp compiler:/usr/local/protobuf .
+          ls
+          cd ..
+
+      - name: Publish agent
+        run: dotnet publish "communication/Agent/Communication.Agent.csproj" -c Release -r linux-x64 -f netcoreapp3.0 --self-contained true
+      - name: Build docker image of agent
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/thuai_agentclient:latest -f CAPI/Dockerfile_run .
+
+      - name: Push agent image to DockerHub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/thuai_agentclient:latest
