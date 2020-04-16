@@ -25,22 +25,23 @@ namespace Communication.Proto {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "ChVNZXNzYWdlVG9TZXJ2ZXIucHJvdG8SCFByb3RvYnVmGhVNZXNzYWdlVG9D",
-            "bGllbnQucHJvdG8i8gIKD01lc3NhZ2VUb1NlcnZlchIKCgJJRBgBIAEoAxIq",
+            "bGllbnQucHJvdG8iqwMKD01lc3NhZ2VUb1NlcnZlchIKCgJJRBgBIAEoAxIq",
             "CgtDb21tYW5kVHlwZRgCIAEoDjIVLlByb3RvYnVmLkNvbW1hbmRUeXBlEioK",
             "DU1vdmVEaXJlY3Rpb24YAyABKA4yEy5Qcm90b2J1Zi5EaXJlY3Rpb24SFAoM",
             "TW92ZUR1cmF0aW9uGAQgASgFEhUKDVRocm93RGlzdGFuY2UYBSABKAESEgoK",
             "VGhyb3dBbmdsZRgGIAEoARITCgtJc1Rocm93RGlzaBgHIAEoCBIPCgdVc2VU",
             "eXBlGAggASgFEhEKCVNwZWFrVGV4dBgJIAEoCRISCgpQYXJhbWV0ZXIxGAog",
             "ASgBEhIKClBhcmFtZXRlcjIYCyABKAESEwoLSXNTZXRUYWxlbnQYDCABKAgS",
-            "IgoaSXNQaWNrU2VsZlBvc2l0aW9uUHJpb3JpdHkYDSABKAgSIAoGVGFsZW50",
-            "GA4gASgOMhAuUHJvdG9idWYuVGFsZW50Kl0KC0NvbW1hbmRUeXBlEggKBE1v",
-            "dmUQABIICgRQaWNrEAESBwoDUHV0EAISBwoDVXNlEAMSCAoEU3RvcBAEEgkK",
-            "BVNwZWFrEAUSEwoPQ29tbWFuZFR5cGVTaXplEAZCFqoCE0NvbW11bmljYXRp",
-            "b24uUHJvdG9iBnByb3RvMw=="));
+            "GgoSSXNQaWNrU2VsZlBvc2l0aW9uGA0gASgIEiMKCFBpY2tUeXBlGA4gASgO",
+            "MhEuUHJvdG9idWYuT2JqVHlwZRIaChJQaWNrRGlzaE9yVG9vbFR5cGUYDyAB",
+            "KAUSIAoGVGFsZW50GBAgASgOMhAuUHJvdG9idWYuVGFsZW50Kl0KC0NvbW1h",
+            "bmRUeXBlEggKBE1vdmUQABIICgRQaWNrEAESBwoDUHV0EAISBwoDVXNlEAMS",
+            "CAoEU3RvcBAEEgkKBVNwZWFrEAUSEwoPQ29tbWFuZFR5cGVTaXplEAZCFqoC",
+            "E0NvbW11bmljYXRpb24uUHJvdG9iBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Communication.Proto.MessageToClientReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Communication.Proto.CommandType), }, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.MessageToServer), global::Communication.Proto.MessageToServer.Parser, new[]{ "ID", "CommandType", "MoveDirection", "MoveDuration", "ThrowDistance", "ThrowAngle", "IsThrowDish", "UseType", "SpeakText", "Parameter1", "Parameter2", "IsSetTalent", "IsPickSelfPositionPriority", "Talent" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.MessageToServer), global::Communication.Proto.MessageToServer.Parser, new[]{ "ID", "CommandType", "MoveDirection", "MoveDuration", "ThrowDistance", "ThrowAngle", "IsThrowDish", "UseType", "SpeakText", "Parameter1", "Parameter2", "IsSetTalent", "IsPickSelfPosition", "PickType", "PickDishOrToolType", "Talent" }, null, null, null)
           }));
     }
     #endregion
@@ -97,7 +98,9 @@ namespace Communication.Proto {
       parameter1_ = other.parameter1_;
       parameter2_ = other.parameter2_;
       isSetTalent_ = other.isSetTalent_;
-      isPickSelfPositionPriority_ = other.isPickSelfPositionPriority_;
+      isPickSelfPosition_ = other.isPickSelfPosition_;
+      pickType_ = other.pickType_;
+      pickDishOrToolType_ = other.pickDishOrToolType_;
       talent_ = other.talent_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -239,19 +242,41 @@ namespace Communication.Proto {
       }
     }
 
-    /// <summary>Field number for the "IsPickSelfPositionPriority" field.</summary>
-    public const int IsPickSelfPositionPriorityFieldNumber = 13;
-    private bool isPickSelfPositionPriority_;
+    /// <summary>Field number for the "IsPickSelfPosition" field.</summary>
+    public const int IsPickSelfPositionFieldNumber = 13;
+    private bool isPickSelfPosition_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool IsPickSelfPositionPriority {
-      get { return isPickSelfPositionPriority_; }
+    public bool IsPickSelfPosition {
+      get { return isPickSelfPosition_; }
       set {
-        isPickSelfPositionPriority_ = value;
+        isPickSelfPosition_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "PickType" field.</summary>
+    public const int PickTypeFieldNumber = 14;
+    private global::Communication.Proto.ObjType pickType_ = 0;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Communication.Proto.ObjType PickType {
+      get { return pickType_; }
+      set {
+        pickType_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "PickDishOrToolType" field.</summary>
+    public const int PickDishOrToolTypeFieldNumber = 15;
+    private int pickDishOrToolType_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int PickDishOrToolType {
+      get { return pickDishOrToolType_; }
+      set {
+        pickDishOrToolType_ = value;
       }
     }
 
     /// <summary>Field number for the "Talent" field.</summary>
-    public const int TalentFieldNumber = 14;
+    public const int TalentFieldNumber = 16;
     private global::Communication.Proto.Talent talent_ = 0;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Communication.Proto.Talent Talent {
@@ -286,7 +311,9 @@ namespace Communication.Proto {
       if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(Parameter1, other.Parameter1)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(Parameter2, other.Parameter2)) return false;
       if (IsSetTalent != other.IsSetTalent) return false;
-      if (IsPickSelfPositionPriority != other.IsPickSelfPositionPriority) return false;
+      if (IsPickSelfPosition != other.IsPickSelfPosition) return false;
+      if (PickType != other.PickType) return false;
+      if (PickDishOrToolType != other.PickDishOrToolType) return false;
       if (Talent != other.Talent) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -306,7 +333,9 @@ namespace Communication.Proto {
       if (Parameter1 != 0D) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(Parameter1);
       if (Parameter2 != 0D) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(Parameter2);
       if (IsSetTalent != false) hash ^= IsSetTalent.GetHashCode();
-      if (IsPickSelfPositionPriority != false) hash ^= IsPickSelfPositionPriority.GetHashCode();
+      if (IsPickSelfPosition != false) hash ^= IsPickSelfPosition.GetHashCode();
+      if (PickType != 0) hash ^= PickType.GetHashCode();
+      if (PickDishOrToolType != 0) hash ^= PickDishOrToolType.GetHashCode();
       if (Talent != 0) hash ^= Talent.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -369,12 +398,20 @@ namespace Communication.Proto {
         output.WriteRawTag(96);
         output.WriteBool(IsSetTalent);
       }
-      if (IsPickSelfPositionPriority != false) {
+      if (IsPickSelfPosition != false) {
         output.WriteRawTag(104);
-        output.WriteBool(IsPickSelfPositionPriority);
+        output.WriteBool(IsPickSelfPosition);
+      }
+      if (PickType != 0) {
+        output.WriteRawTag(112);
+        output.WriteEnum((int) PickType);
+      }
+      if (PickDishOrToolType != 0) {
+        output.WriteRawTag(120);
+        output.WriteInt32(PickDishOrToolType);
       }
       if (Talent != 0) {
-        output.WriteRawTag(112);
+        output.WriteRawTag(128, 1);
         output.WriteEnum((int) Talent);
       }
       if (_unknownFields != null) {
@@ -421,11 +458,17 @@ namespace Communication.Proto {
       if (IsSetTalent != false) {
         size += 1 + 1;
       }
-      if (IsPickSelfPositionPriority != false) {
+      if (IsPickSelfPosition != false) {
         size += 1 + 1;
       }
+      if (PickType != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) PickType);
+      }
+      if (PickDishOrToolType != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(PickDishOrToolType);
+      }
       if (Talent != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Talent);
+        size += 2 + pb::CodedOutputStream.ComputeEnumSize((int) Talent);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -474,8 +517,14 @@ namespace Communication.Proto {
       if (other.IsSetTalent != false) {
         IsSetTalent = other.IsSetTalent;
       }
-      if (other.IsPickSelfPositionPriority != false) {
-        IsPickSelfPositionPriority = other.IsPickSelfPositionPriority;
+      if (other.IsPickSelfPosition != false) {
+        IsPickSelfPosition = other.IsPickSelfPosition;
+      }
+      if (other.PickType != 0) {
+        PickType = other.PickType;
+      }
+      if (other.PickDishOrToolType != 0) {
+        PickDishOrToolType = other.PickDishOrToolType;
       }
       if (other.Talent != 0) {
         Talent = other.Talent;
@@ -540,10 +589,18 @@ namespace Communication.Proto {
             break;
           }
           case 104: {
-            IsPickSelfPositionPriority = input.ReadBool();
+            IsPickSelfPosition = input.ReadBool();
             break;
           }
           case 112: {
+            PickType = (global::Communication.Proto.ObjType) input.ReadEnum();
+            break;
+          }
+          case 120: {
+            PickDishOrToolType = input.ReadInt32();
+            break;
+          }
+          case 128: {
             Talent = (global::Communication.Proto.Talent) input.ReadEnum();
             break;
           }

@@ -57,7 +57,9 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_MessageToServer_2eproto::offse
   PROTOBUF_FIELD_OFFSET(::Protobuf::MessageToServer, parameter1_),
   PROTOBUF_FIELD_OFFSET(::Protobuf::MessageToServer, parameter2_),
   PROTOBUF_FIELD_OFFSET(::Protobuf::MessageToServer, issettalent_),
-  PROTOBUF_FIELD_OFFSET(::Protobuf::MessageToServer, ispickselfpositionpriority_),
+  PROTOBUF_FIELD_OFFSET(::Protobuf::MessageToServer, ispickselfposition_),
+  PROTOBUF_FIELD_OFFSET(::Protobuf::MessageToServer, picktype_),
+  PROTOBUF_FIELD_OFFSET(::Protobuf::MessageToServer, pickdishortooltype_),
   PROTOBUF_FIELD_OFFSET(::Protobuf::MessageToServer, talent_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
@@ -70,7 +72,7 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 
 const char descriptor_table_protodef_MessageToServer_2eproto[] =
   "\n\025MessageToServer.proto\022\010Protobuf\032\025Messa"
-  "geToClient.proto\"\362\002\n\017MessageToServer\022\n\n\002"
+  "geToClient.proto\"\253\003\n\017MessageToServer\022\n\n\002"
   "ID\030\001 \001(\003\022*\n\013CommandType\030\002 \001(\0162\025.Protobuf"
   ".CommandType\022*\n\rMoveDirection\030\003 \001(\0162\023.Pr"
   "otobuf.Direction\022\024\n\014MoveDuration\030\004 \001(\005\022\025"
@@ -78,11 +80,13 @@ const char descriptor_table_protodef_MessageToServer_2eproto[] =
   "\001\022\023\n\013IsThrowDish\030\007 \001(\010\022\017\n\007UseType\030\010 \001(\005\022"
   "\021\n\tSpeakText\030\t \001(\t\022\022\n\nParameter1\030\n \001(\001\022\022"
   "\n\nParameter2\030\013 \001(\001\022\023\n\013IsSetTalent\030\014 \001(\010\022"
-  "\"\n\032IsPickSelfPositionPriority\030\r \001(\010\022 \n\006T"
-  "alent\030\016 \001(\0162\020.Protobuf.Talent*]\n\013Command"
-  "Type\022\010\n\004Move\020\000\022\010\n\004Pick\020\001\022\007\n\003Put\020\002\022\007\n\003Use"
-  "\020\003\022\010\n\004Stop\020\004\022\t\n\005Speak\020\005\022\023\n\017CommandTypeSi"
-  "ze\020\006B\026\252\002\023Communication.Protob\006proto3"
+  "\032\n\022IsPickSelfPosition\030\r \001(\010\022#\n\010PickType\030"
+  "\016 \001(\0162\021.Protobuf.ObjType\022\032\n\022PickDishOrTo"
+  "olType\030\017 \001(\005\022 \n\006Talent\030\020 \001(\0162\020.Protobuf."
+  "Talent*]\n\013CommandType\022\010\n\004Move\020\000\022\010\n\004Pick\020"
+  "\001\022\007\n\003Put\020\002\022\007\n\003Use\020\003\022\010\n\004Stop\020\004\022\t\n\005Speak\020\005"
+  "\022\023\n\017CommandTypeSize\020\006B\026\252\002\023Communication."
+  "Protob\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_MessageToServer_2eproto_deps[1] = {
   &::descriptor_table_MessageToClient_2eproto,
@@ -93,7 +97,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_Mes
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_MessageToServer_2eproto_once;
 static bool descriptor_table_MessageToServer_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_MessageToServer_2eproto = {
-  &descriptor_table_MessageToServer_2eproto_initialized, descriptor_table_protodef_MessageToServer_2eproto, "MessageToServer.proto", 556,
+  &descriptor_table_MessageToServer_2eproto_initialized, descriptor_table_protodef_MessageToServer_2eproto, "MessageToServer.proto", 613,
   &descriptor_table_MessageToServer_2eproto_once, descriptor_table_MessageToServer_2eproto_sccs, descriptor_table_MessageToServer_2eproto_deps, 1, 1,
   schemas, file_default_instances, TableStruct_MessageToServer_2eproto::offsets,
   file_level_metadata_MessageToServer_2eproto, 1, file_level_enum_descriptors_MessageToServer_2eproto, file_level_service_descriptors_MessageToServer_2eproto,
@@ -143,7 +147,9 @@ const int MessageToServer::kSpeakTextFieldNumber;
 const int MessageToServer::kParameter1FieldNumber;
 const int MessageToServer::kParameter2FieldNumber;
 const int MessageToServer::kIsSetTalentFieldNumber;
-const int MessageToServer::kIsPickSelfPositionPriorityFieldNumber;
+const int MessageToServer::kIsPickSelfPositionFieldNumber;
+const int MessageToServer::kPickTypeFieldNumber;
+const int MessageToServer::kPickDishOrToolTypeFieldNumber;
 const int MessageToServer::kTalentFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -299,16 +305,31 @@ const char* MessageToServer::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPAC
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // bool IsPickSelfPositionPriority = 13;
+      // bool IsPickSelfPosition = 13;
       case 13:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 104)) {
-          ispickselfpositionpriority_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          ispickselfposition_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // .Protobuf.Talent Talent = 14;
+      // .Protobuf.ObjType PickType = 14;
       case 14:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 112)) {
+          ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
+          set_picktype(static_cast<::Protobuf::ObjType>(val));
+        } else goto handle_unusual;
+        continue;
+      // int32 PickDishOrToolType = 15;
+      case 15:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 120)) {
+          pickdishortooltype_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // .Protobuf.Talent Talent = 16;
+      case 16:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 128)) {
           ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
           CHK_(ptr);
           set_talent(static_cast<::Protobuf::Talent>(val));
@@ -340,7 +361,7 @@ bool MessageToServer::MergePartialFromCodedStream(
   ::PROTOBUF_NAMESPACE_ID::uint32 tag;
   // @@protoc_insertion_point(parse_start:Protobuf.MessageToServer)
   for (;;) {
-    ::std::pair<::PROTOBUF_NAMESPACE_ID::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    ::std::pair<::PROTOBUF_NAMESPACE_ID::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(16383u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::GetTagFieldNumber(tag)) {
@@ -504,22 +525,49 @@ bool MessageToServer::MergePartialFromCodedStream(
         break;
       }
 
-      // bool IsPickSelfPositionPriority = 13;
+      // bool IsPickSelfPosition = 13;
       case 13: {
         if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (104 & 0xFF)) {
 
           DO_((::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadPrimitive<
                    bool, ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &ispickselfpositionpriority_)));
+                 input, &ispickselfposition_)));
         } else {
           goto handle_unusual;
         }
         break;
       }
 
-      // .Protobuf.Talent Talent = 14;
+      // .Protobuf.ObjType PickType = 14;
       case 14: {
         if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (112 & 0xFF)) {
+          int value = 0;
+          DO_((::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadPrimitive<
+                   int, ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          set_picktype(static_cast< ::Protobuf::ObjType >(value));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // int32 PickDishOrToolType = 15;
+      case 15: {
+        if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (120 & 0xFF)) {
+
+          DO_((::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadPrimitive<
+                   ::PROTOBUF_NAMESPACE_ID::int32, ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_INT32>(
+                 input, &pickdishortooltype_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // .Protobuf.Talent Talent = 16;
+      case 16: {
+        if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (128 & 0xFF)) {
           int value = 0;
           DO_((::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadPrimitive<
                    int, ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_ENUM>(
@@ -625,15 +673,26 @@ void MessageToServer::SerializeWithCachedSizes(
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBool(12, this->issettalent(), output);
   }
 
-  // bool IsPickSelfPositionPriority = 13;
-  if (this->ispickselfpositionpriority() != 0) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBool(13, this->ispickselfpositionpriority(), output);
+  // bool IsPickSelfPosition = 13;
+  if (this->ispickselfposition() != 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBool(13, this->ispickselfposition(), output);
   }
 
-  // .Protobuf.Talent Talent = 14;
+  // .Protobuf.ObjType PickType = 14;
+  if (this->picktype() != 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnum(
+      14, this->picktype(), output);
+  }
+
+  // int32 PickDishOrToolType = 15;
+  if (this->pickdishortooltype() != 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32(15, this->pickdishortooltype(), output);
+  }
+
+  // .Protobuf.Talent Talent = 16;
   if (this->talent() != 0) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnum(
-      14, this->talent(), output);
+      16, this->talent(), output);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -717,15 +776,26 @@ void MessageToServer::SerializeWithCachedSizes(
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(12, this->issettalent(), target);
   }
 
-  // bool IsPickSelfPositionPriority = 13;
-  if (this->ispickselfpositionpriority() != 0) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(13, this->ispickselfpositionpriority(), target);
+  // bool IsPickSelfPosition = 13;
+  if (this->ispickselfposition() != 0) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(13, this->ispickselfposition(), target);
   }
 
-  // .Protobuf.Talent Talent = 14;
+  // .Protobuf.ObjType PickType = 14;
+  if (this->picktype() != 0) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
+      14, this->picktype(), target);
+  }
+
+  // int32 PickDishOrToolType = 15;
+  if (this->pickdishortooltype() != 0) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(15, this->pickdishortooltype(), target);
+  }
+
+  // .Protobuf.Talent Talent = 16;
   if (this->talent() != 0) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
-      14, this->talent(), target);
+      16, this->talent(), target);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -819,14 +889,27 @@ size_t MessageToServer::ByteSizeLong() const {
     total_size += 1 + 1;
   }
 
-  // bool IsPickSelfPositionPriority = 13;
-  if (this->ispickselfpositionpriority() != 0) {
+  // bool IsPickSelfPosition = 13;
+  if (this->ispickselfposition() != 0) {
     total_size += 1 + 1;
   }
 
-  // .Protobuf.Talent Talent = 14;
-  if (this->talent() != 0) {
+  // .Protobuf.ObjType PickType = 14;
+  if (this->picktype() != 0) {
     total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->picktype());
+  }
+
+  // int32 PickDishOrToolType = 15;
+  if (this->pickdishortooltype() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->pickdishortooltype());
+  }
+
+  // .Protobuf.Talent Talent = 16;
+  if (this->talent() != 0) {
+    total_size += 2 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->talent());
   }
 
@@ -894,8 +977,14 @@ void MessageToServer::MergeFrom(const MessageToServer& from) {
   if (from.issettalent() != 0) {
     set_issettalent(from.issettalent());
   }
-  if (from.ispickselfpositionpriority() != 0) {
-    set_ispickselfpositionpriority(from.ispickselfpositionpriority());
+  if (from.ispickselfposition() != 0) {
+    set_ispickselfposition(from.ispickselfposition());
+  }
+  if (from.picktype() != 0) {
+    set_picktype(from.picktype());
+  }
+  if (from.pickdishortooltype() != 0) {
+    set_pickdishortooltype(from.pickdishortooltype());
   }
   if (from.talent() != 0) {
     set_talent(from.talent());
@@ -940,7 +1029,9 @@ void MessageToServer::InternalSwap(MessageToServer* other) {
   swap(parameter2_, other->parameter2_);
   swap(isthrowdish_, other->isthrowdish_);
   swap(issettalent_, other->issettalent_);
-  swap(ispickselfpositionpriority_, other->ispickselfpositionpriority_);
+  swap(ispickselfposition_, other->ispickselfposition_);
+  swap(picktype_, other->picktype_);
+  swap(pickdishortooltype_, other->pickdishortooltype_);
   swap(talent_, other->talent_);
 }
 

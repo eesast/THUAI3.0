@@ -9,7 +9,7 @@ namespace THUAI3
 	extern unsigned long long initGameTime;
 	void move(Direction direction_t, int duration = 1000);
 	void put(double distance, double angle, bool isThrowDish);
-	void pick(bool isSelfPositionPriority);
+	void pick(bool isSelfPosition, ObjType pickType, int dishOrToolType);
 	void use(int type, double parameter1, double parameter2);
 	void speakToFriend(std::string speakText);
 	void initializeGameTime();

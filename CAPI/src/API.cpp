@@ -61,11 +61,13 @@ void THUAI3::use(int type, double parameter1, double parameter2)
 	API.SendCommandMessage(&mesC2S);
 }
 
-void THUAI3::pick(bool isSelfPositionPriority)
+void THUAI3::pick(bool isSelfPosition, ObjType pickType, int dishOrToolType)
 {
 	MessageToServer mesC2S;
 	mesC2S.set_commandtype(CommandType::Pick);
-	mesC2S.set_ispickselfpositionpriority(isSelfPositionPriority);
+	mesC2S.set_ispickselfposition(isSelfPosition);
+	mesC2S.set_picktype(pickType);
+	mesC2S.set_pickdishortooltype(dishOrToolType);
 	API.SendCommandMessage(&mesC2S);
 }
 

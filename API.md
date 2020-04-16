@@ -15,9 +15,9 @@
     
     使用物品，第一个参数为使用类型，0为使用厨具或提交菜品，非0为使用手中的物品。后两个参数仅在使用传送门、锤子、弓箭时有效，parameter1为使用的距离，parameter2为使用的角度。
 
-- void THUAI3::pick(bool isSelfPositionPriority)
+- void THUAI3::pick(bool isSelfPosition, ObjType pickType, int dishOrToolType);
     
-    捡起物品。参数为是否优先捡起自身所在方格的物品，若为true，则先检索自身所在方格，再检索自己面对方向的方格，若为false则相反。可以捡起操作台上的食材或食品生成点的食材。
+    捡起物品。第一个参数为是否捡起自身所在方格的物品，若为true，则先检索自身所在方格，否则检索自己面对方向的方格。第二个参数为捡起的物品类型，可以为Block、Dish、Tool；若为Block表示捡起食物生产点或灶台里的食物，若为Dish表示捡起食物，若为Tool表示捡起道具。第三个参数为捡起的Dish或Tool类型，如果第二个参数为Dish，则这个参数必须与有效的DishType相对应，如果第二个参数为Tool，则这个参数必须与有效的ToolType相对应。
 
 - void THUAI3::speakToFriend(string speakText)
     

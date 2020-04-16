@@ -288,15 +288,27 @@ class MessageToServer :
   bool issettalent() const;
   void set_issettalent(bool value);
 
-  // bool IsPickSelfPositionPriority = 13;
-  void clear_ispickselfpositionpriority();
-  static const int kIsPickSelfPositionPriorityFieldNumber = 13;
-  bool ispickselfpositionpriority() const;
-  void set_ispickselfpositionpriority(bool value);
+  // bool IsPickSelfPosition = 13;
+  void clear_ispickselfposition();
+  static const int kIsPickSelfPositionFieldNumber = 13;
+  bool ispickselfposition() const;
+  void set_ispickselfposition(bool value);
 
-  // .Protobuf.Talent Talent = 14;
+  // .Protobuf.ObjType PickType = 14;
+  void clear_picktype();
+  static const int kPickTypeFieldNumber = 14;
+  ::Protobuf::ObjType picktype() const;
+  void set_picktype(::Protobuf::ObjType value);
+
+  // int32 PickDishOrToolType = 15;
+  void clear_pickdishortooltype();
+  static const int kPickDishOrToolTypeFieldNumber = 15;
+  ::PROTOBUF_NAMESPACE_ID::int32 pickdishortooltype() const;
+  void set_pickdishortooltype(::PROTOBUF_NAMESPACE_ID::int32 value);
+
+  // .Protobuf.Talent Talent = 16;
   void clear_talent();
-  static const int kTalentFieldNumber = 14;
+  static const int kTalentFieldNumber = 16;
   ::Protobuf::Talent talent() const;
   void set_talent(::Protobuf::Talent value);
 
@@ -317,7 +329,9 @@ class MessageToServer :
   double parameter2_;
   bool isthrowdish_;
   bool issettalent_;
-  bool ispickselfpositionpriority_;
+  bool ispickselfposition_;
+  int picktype_;
+  ::PROTOBUF_NAMESPACE_ID::int32 pickdishortooltype_;
   int talent_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_MessageToServer_2eproto;
@@ -538,21 +552,49 @@ inline void MessageToServer::set_issettalent(bool value) {
   // @@protoc_insertion_point(field_set:Protobuf.MessageToServer.IsSetTalent)
 }
 
-// bool IsPickSelfPositionPriority = 13;
-inline void MessageToServer::clear_ispickselfpositionpriority() {
-  ispickselfpositionpriority_ = false;
+// bool IsPickSelfPosition = 13;
+inline void MessageToServer::clear_ispickselfposition() {
+  ispickselfposition_ = false;
 }
-inline bool MessageToServer::ispickselfpositionpriority() const {
-  // @@protoc_insertion_point(field_get:Protobuf.MessageToServer.IsPickSelfPositionPriority)
-  return ispickselfpositionpriority_;
+inline bool MessageToServer::ispickselfposition() const {
+  // @@protoc_insertion_point(field_get:Protobuf.MessageToServer.IsPickSelfPosition)
+  return ispickselfposition_;
 }
-inline void MessageToServer::set_ispickselfpositionpriority(bool value) {
+inline void MessageToServer::set_ispickselfposition(bool value) {
   
-  ispickselfpositionpriority_ = value;
-  // @@protoc_insertion_point(field_set:Protobuf.MessageToServer.IsPickSelfPositionPriority)
+  ispickselfposition_ = value;
+  // @@protoc_insertion_point(field_set:Protobuf.MessageToServer.IsPickSelfPosition)
 }
 
-// .Protobuf.Talent Talent = 14;
+// .Protobuf.ObjType PickType = 14;
+inline void MessageToServer::clear_picktype() {
+  picktype_ = 0;
+}
+inline ::Protobuf::ObjType MessageToServer::picktype() const {
+  // @@protoc_insertion_point(field_get:Protobuf.MessageToServer.PickType)
+  return static_cast< ::Protobuf::ObjType >(picktype_);
+}
+inline void MessageToServer::set_picktype(::Protobuf::ObjType value) {
+  
+  picktype_ = value;
+  // @@protoc_insertion_point(field_set:Protobuf.MessageToServer.PickType)
+}
+
+// int32 PickDishOrToolType = 15;
+inline void MessageToServer::clear_pickdishortooltype() {
+  pickdishortooltype_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 MessageToServer::pickdishortooltype() const {
+  // @@protoc_insertion_point(field_get:Protobuf.MessageToServer.PickDishOrToolType)
+  return pickdishortooltype_;
+}
+inline void MessageToServer::set_pickdishortooltype(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  pickdishortooltype_ = value;
+  // @@protoc_insertion_point(field_set:Protobuf.MessageToServer.PickDishOrToolType)
+}
+
+// .Protobuf.Talent Talent = 16;
 inline void MessageToServer::clear_talent() {
   talent_ = 0;
 }

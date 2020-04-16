@@ -243,7 +243,10 @@ namespace Client
                         case 'z': Move(THUnity2D.Direction.LeftDown); break;
                         case 'x': Move(THUnity2D.Direction.Down); break;
                         case 'c': Move(THUnity2D.Direction.RightDown); break;
-                        case 'f': Pick(true); break;
+                        case 'f':
+                            Console.WriteLine("Please Input 3 parameters : isSelfPosition, pickType, dishOrToolType");
+                            Pick(Convert.ToBoolean(int.Parse(Console.ReadLine())), (ObjType)int.Parse(Console.ReadLine()), int.Parse(Console.ReadLine()));
+                            break;
                         case 'u':
                             Console.WriteLine("Please Input 2 parameters : ");
                             Use(1, double.Parse(Console.ReadLine()), double.Parse(Console.ReadLine()));
@@ -303,9 +306,12 @@ namespace Client
             messageToServer.Parameter2 = parameter_2;
             ClientCommunication.SendMessage(messageToServer);
         }
-        public override void Pick(bool isSelfPositionPriority)
+        public override void Pick(bool isSelfPosition, ObjType pickType, int dishOrToolType)
         {
             messageToServer.CommandType = CommandType.Pick;
+            messageToServer.IsPickSelfPosition = isSelfPosition;
+            messageToServer.PickType = pickType;
+            messageToServer.PickDishOrToolType = dishOrToolType;
             ClientCommunication.SendMessage(messageToServer);
         }
         public void SpeakToFriend(string speakText)

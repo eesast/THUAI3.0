@@ -63,8 +63,20 @@ def upload_local_file(client, src, archivename):
             md5list[src] = md5.hexdigest()
         if archivename in cloud_list:
             if md5list[src] == cloud_list[archivename]:
-                logger.info("skip " + src)
+                logger.info(
+                    "existed in md5list and didnot change , skip " + src)
                 return
+        res = client.list_objects_versions(
+            Bucket=bucket_upload,
+            Prefix=archivename
+        )
+        if 'Version' in res:
+            for file in res['Version']:
+                if file['ETag'].strip('"') == md5list[src]:
+                    logger.info(
+                        "Not existed in md5list but in cloud , skip " + src)
+                    return
+                break
         logger.info("uploading file " + src)
         client.delete_object(
             Bucket=bucket_upload,
