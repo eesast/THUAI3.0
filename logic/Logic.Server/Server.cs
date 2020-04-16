@@ -38,6 +38,7 @@ namespace Logic.Server
             for (int a = 0; a < Constants.AgentCount; a++)
             {
                 Program.MessageToClient.Scores.Add(a, 0);
+                Program.ScoreLocks.TryAdd(a, new object());
                 for (int c = 0; c < Constants.PlayerCount; c++)
                 {
                     Tuple<int, int> playerIDTuple = new Tuple<int, int>(a, c);

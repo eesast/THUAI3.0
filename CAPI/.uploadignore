@@ -1,0 +1,14 @@
+.vs
+.vscode
+AI.dir
+build
+Debug
+Release
+.docker*
+.git*
+CMake*
+cmake*
+Docker*
+*.sh
+*.bat
+*.py

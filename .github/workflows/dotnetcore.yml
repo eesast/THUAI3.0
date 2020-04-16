@@ -7,6 +7,31 @@ on:
     - dev
 
 jobs:
+  build_upload:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.0.100
+      - name: Setup Python
+        uses: actions/setup-python@v1.2.0
+        with:
+          python-version:: 3.7.4
+      - name: Pip install cos-python
+        run: pip install -U cos-python-sdk-v5
+      - name: Publish
+        run: |
+          ls
+          New-Item -Path . -Name "THUAI3.0" -ItemType "directory"
+          ls
+          cd ./logic
+          ls
+          ./build_logic.ps1 -Dir ../THUAI3.0
+          cd ..
+          # python ./download_windows_only.py --id ${{ secrets.TENCENT_DOWNLOAD_ID }} --key ${{ secrets.TNCENT_DOWNLOAD_KEY }}
+          python ./upload_to_tencent_cloud.py --id ${{ secrets.TENCENT_UPLOAD_ID }} --key ${{ secrets.TENCENT_UPLOAD_KEY }} CAPI THUAI3.0 Config runServer.bat runAgent.bat runClientConsole.bat API.md README.md
   deploy:
     runs-on: ubuntu-latest
 #     needs: build
