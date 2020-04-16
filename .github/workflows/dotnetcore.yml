@@ -63,7 +63,7 @@ jobs:
         run: |
           mkdir temp
           cd temp
-          docker run -d --name compiler ${{ secrets.DOCKER_USERNAME }}/thuai_compiler:latest bash /usr/local/CAPI/compile.sh
+          docker run --name compiler ${{ secrets.DOCKER_USERNAME }}/thuai_compiler:latest bash /usr/local/CAPI/compile.sh
           docker cp compiler:/usr/local/CAPI/build/proto/lib/libprotos.so .
           docker cp compiler:/usr/local/protobuf .
           ls
