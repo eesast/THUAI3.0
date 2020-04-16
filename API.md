@@ -23,6 +23,10 @@
     
     向队友说话，每次最多只能发16个字符，多的截取前16个字符。
 
+- unsigned long long THUAI3::getGameTime()
+
+	获取目前距离游戏开始的时间，单位为毫秒。
+
 - void PauseCommunication(); 
 
 	暂停数据更新，用于Debug。
