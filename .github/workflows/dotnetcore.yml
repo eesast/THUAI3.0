@@ -35,7 +35,7 @@ jobs:
           (Get-Content "runClientConsole.ps1").replace("logic/Logic.Client/bin/Release/netcoreapp3.0","THUAI3.0") | Set-Content "runClientConsole.ps1"
           # python ./download_windows_only.py --id ${{ secrets.TENCENT_DOWNLOAD_ID }} --key ${{ secrets.TNCENT_DOWNLOAD_KEY }}
           python ./upload_to_tencent_cloud.py --id ${{ secrets.TENCENT_UPLOAD_ID }} --key ${{ secrets.TENCENT_UPLOAD_KEY }} CAPI THUAI3.0 Config runServer.ps1 runAgent.ps1 runClientConsole.ps1 API.md README.md
-          python ./delete_files_not_in_md5list.py --id ${{ secrets.TENCENT_UPLOAD_ID }} --key ${{ secrets.TENCENT_UPLOAD_KEY }}
+          # python ./delete_files_not_in_md5list.py --id ${{ secrets.TENCENT_UPLOAD_ID }} --key ${{ secrets.TENCENT_UPLOAD_KEY }}
   deploy:
     runs-on: ubuntu-latest
 #     needs: build
