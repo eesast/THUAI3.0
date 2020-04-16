@@ -19,3 +19,4 @@ then
 else
 	curl -X PUT -d '{"compileInfo":"compile success"}' -H 'Content-Type: application/json' -H "Authorization: Bearer ${THUAI_COMPILE_TOKEN}" https://api.eesast.com/v1/codes/${THUAI_CODEID}/compile
 fi
+exit 0

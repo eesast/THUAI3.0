@@ -4,7 +4,8 @@ COPY communication/Agent/bin/Release/netcoreapp3.0/linux-x64/ app/
 
 WORKDIR /usr/local
 ADD temp/protobuf/lib/ /usr/lib/
-ADD temp/libprotos.so /usr/lib
-
-# ENTRYPOINT ["dotnet", "app/Communication.Agent.dll"]
-# CMD ["--server", "127.0.0.1:20000", "--port", "30000", "-d", "0", "--playercount", "1", "--timelimit", "100"]
+ADD temp/libprotos.so /usr/lib/
+ADD CAPI/runtime.sh .
+RUN apt update && apt install procps
+ENTRYPOINT ["bash", "runtime.sh"]
+CMD ["127.0.0.1:20000", "1", "0", "100"]
