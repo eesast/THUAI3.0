@@ -1,5 +1,5 @@
 ## Yours
-windows_only/
+
 proto/*.proto
 !.gitkeep
 # Cmake Generate

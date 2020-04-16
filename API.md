@@ -7,17 +7,17 @@
     人物移动，第一个参数为移动方向，一共有8个方向，分别是右，右上，上，左上，左，左下，下，右下。
     第二个参数为移动的时间（以毫秒计算），本游戏帧率为20，选手初始移动速度为每秒5个单位，如设定移动时间为1000则会在接下来的1秒内每50毫秒移动一次，每次移动距离为0.05.
 
-- void THUAI3::put(double distance, bool isThrowDish)
+- void THUAI3::put(double distance, double angle, bool isThrowDish);
     
-    扔出物品，第一个参数为扔出的距离，物品的飞行速度是每秒10个单位。第二个参数为是否扔出食材，若为true则扔出手中食材，若为false则扔出道具。
+    扔出物品，第一个参数为扔出的距离，物品的飞行速度是每秒10个单位。第二个参数为扔出时的绝对角度，单位为弧度制。第三个参数为是否扔出食材，若为true则扔出手中食材，若为false则扔出道具。
 
 - void THUAI3::use(int type, double parameter1, double parameter2)
     
     使用物品，第一个参数为使用类型，0为使用厨具或提交菜品，非0为使用手中的物品。后两个参数仅在使用传送门、锤子、弓箭时有效，parameter1为使用的距离，parameter2为使用的角度。
 
-- void THUAI3::pick()
+- void THUAI3::pick(bool isSelfPositionPriority)
     
-    捡起物品，优先捡起自身所在方格的物品，若自身所在方格没有物品，则捡起自己面对方向的方格的物品，可以捡起操作台上的食材或食品生成点的食材。
+    捡起物品。参数为是否优先捡起自身所在方格的物品，若为true，则先检索自身所在方格，再检索自己面对方向的方格，若为false则相反。可以捡起操作台上的食材或食品生成点的食材。
 
 - void THUAI3::speakToFriend(string speakText)
     

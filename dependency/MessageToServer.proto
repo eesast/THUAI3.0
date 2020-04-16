@@ -25,5 +25,6 @@ message MessageToServer {
   double Parameter1 = 10;
   double Parameter2 = 11;
   bool IsSetTalent = 12;
-  Talent Talent = 13;
+  bool IsPickSelfPositionPriority = 13;
+  Talent Talent = 14;
 }

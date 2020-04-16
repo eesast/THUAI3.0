@@ -170,7 +170,7 @@ namespace Logic.Server
                     Move((THUnity2D.Direction)msg.MoveDirection, msg.MoveDuration);
                     break;
                 case CommandType.Pick:
-                    Pick();
+                    Pick(msg.IsPickSelfPositionPriority);
                     break;
                 case CommandType.Put:
                     if (msg.ThrowDistance < 0)
@@ -224,9 +224,9 @@ namespace Logic.Server
             //}
         }
 
-        public override void Pick()
+        public override void Pick(bool isSelfPositionPriority)
         {
-            XYPosition[] toCheckPositions = new XYPosition[] { Position, Position + 2 * EightCornerVector[FacingDirection] };
+            XYPosition[] toCheckPositions = isSelfPositionPriority ? new XYPosition[] { Position, Position + 2 * EightCornerVector[FacingDirection] } : new XYPosition[] { Position + 2 * EightCornerVector[FacingDirection], Position };
             foreach (var xypos in toCheckPositions)
             {
                 Block? block = null;
@@ -245,7 +245,6 @@ namespace Logic.Server
                     if (temp != DishType.DishEmpty)
                     {
                         new Dish(Position.x, Position.y, temp).Parent = WorldMap;
-                        //Server.ServerDebug(111.ToString());
                     }
                     Server.ServerDebug("Player : " + ID + " Get Dish " + Dish.ToString());
                     return;
@@ -472,9 +471,11 @@ namespace Logic.Server
                         //XYPosition aim = Position + new XYPosition(parameter1 * Math.Cos(parameter2), parameter1 * Math.Sin(parameter2));
                         Trigger triggerToThrow = new Trigger(Position.x, Position.y, TriggerType.Hammer, CommunicationID.Item1, Talent);
                         triggerToThrow.Parent = WorldMap;
-                        triggerToThrow.Velocity = new Vector(parameter2, (int)Configs["ItemMoveSpeed"]);
                         if (dueTime > 0)
+                        {
+                            triggerToThrow.Velocity = new Vector(parameter2, (int)Configs["ItemMoveSpeed"]);
                             triggerToThrow.StopMovingTimer.Change(dueTime, 0);
+                        }
                         Tool = ToolType.ToolEmpty;
                     }
                     break;
@@ -488,9 +489,11 @@ namespace Logic.Server
                         //XYPosition aim = Position + new XYPosition(parameter1 * Math.Cos(parameter2), parameter1 * Math.Sin(parameter2));
                         Trigger triggerToThrow = new Trigger(Position.x, Position.y, TriggerType.Arrow, CommunicationID.Item1, Talent);
                         triggerToThrow.Parent = WorldMap;
-                        triggerToThrow.Velocity = new Vector(parameter2, (int)Configs["Trigger"]["Arrow"]["Speed"]);
                         if (dueTime > 0)
+                        {
+                            triggerToThrow.Velocity = new Vector(parameter2, (int)Configs["Trigger"]["Arrow"]["Speed"]);
                             triggerToThrow.StopMovingTimer.Change(dueTime, 0);
+                        }
                         Tool = ToolType.ToolEmpty;
                     }
                     break;

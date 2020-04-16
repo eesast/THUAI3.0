@@ -14,7 +14,6 @@
 #include <mutex>
 #include "player.h"
 #include "API.h"
-#include "OS_related.h"
 
 using namespace std;
 
@@ -51,8 +50,9 @@ int main(int argc, char* argv[])
 
 	while (!GameRunning)
 	{
-		Sleep(10);
+		_sleep(1);
 	}
+	THUAI3::initializeGameTime();
 	while (GameRunning)
 	{
 		play();

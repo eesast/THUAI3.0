@@ -79,6 +79,7 @@ EnHandleResult CListenerImpl::OnReceive(ITcpClient* pSender, CONNID dwConnID, co
 		throw new domain_error("unknown Packet Type ID");
 		break;
 	}
+	delete message;
 	return HR_OK;
 }
 EnHandleResult CListenerImpl::OnPrepareListen(ITcpServer* pSender, SOCKET soListen)
@@ -104,7 +105,12 @@ EnHandleResult CListenerImpl::OnClose(ITcpClient* pSender, CONNID dwConnID, EnSo
 void CAPI::OnReceive(IMessage* message)
 {
 	hash_t typehash = hash2(get_type(typeid(*message).name()));
-	if (typehash == hash2(get_type(typeid(Message).name())))
+
+	if (typehash == hash2(get_type(typeid(Protobuf::MessageToClient).name())))
+	{
+		UpdateInfo((Protobuf::MessageToClient*)message);
+	}
+	else if (typehash == hash2(get_type(typeid(Message).name())))
 	{
 		if (((Message*)message)->content != NULL)
 			OnReceive(((Message*)message)->content);
@@ -123,10 +129,6 @@ void CAPI::OnReceive(IMessage* message)
 		io_mutex.lock();
 		buffer += ((Protobuf::ChatMessage*)message)->message();
 		io_mutex.unlock();
-	}
-	else if (typehash == hash2(get_type(typeid(Protobuf::MessageToClient).name())))
-	{
-		UpdateInfo((Protobuf::MessageToClient*)message);
 	}
 	else
 	{
@@ -162,6 +164,7 @@ void CAPI::SendCommandMessage(MessageToServer* message)
 
 void CAPI::CreateObj(int64_t id, Protobuf::MessageToClient* message)
 {
+	std::cout << "Create Obj " << id << std::endl;
 	MapInfo::obj_list.insert(std::pair<int64_t, shared_ptr< Obj>>(id, make_shared<Obj>(XYPosition(message->gameobjectlist().at(id).positionx(), message->gameobjectlist().at(id).positiony()), message->gameobjectlist().at(id).objtype())));
 	MapInfo::obj_list[id]->blockType = message->gameobjectlist().at(id).blocktype();
 	MapInfo::obj_list[id]->dish = message->gameobjectlist().at(id).dishtype();
@@ -231,6 +234,7 @@ void CAPI::UpdateInfo(Protobuf::MessageToClient* message)
 	{
 		std::cout << "Delete Obj" << std::endl;
 		MapInfo::obj_list.erase(i->first);
+		MapInfo::obj_map[i->second->position.x][i->second->position.y].erase(i->first);
 	}
 	task_list.resize(0);
 	for (google::protobuf::RepeatedField<google::protobuf::int32>::const_iterator i = message->tasks().begin(); i != message->tasks().end(); i++)

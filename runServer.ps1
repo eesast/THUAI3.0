@@ -1,0 +1,1 @@
+./logic/Logic.Server/bin/Release/netcoreapp3.0/Logic.Server.exe --port 20000 --debugLevel 1 --playerCount 2 --agentCount 4 --gameTime 600 --token eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb29tSUQiOiIxMjMifQ.QqPwA6pAWDWYb_0y3AOpUrWJxGHyl2RlB6-I1Fij05Y

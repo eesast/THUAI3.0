@@ -25,6 +25,7 @@ namespace Client
         protected MessageToServer messageToServer = new MessageToServer();
         protected Talent playerTalent;
         protected bool isStartedGame = false;
+        protected MessageToClient lastRecieveMessage = new MessageToClient();
 
         public void ChangeControlLabelText(string id, string str)
         {
@@ -194,6 +195,11 @@ namespace Client
                 //Console.WriteLine("Change Form");
             }
 
+            if (lastRecieveMessage.GameObjectList.ContainsKey(id_t) && gameObjectMessage.GetHashCode() == lastRecieveMessage.GameObjectList[id_t].GetHashCode())
+            {
+                //Console.WriteLine("Same " + id_t);
+                return;
+            }
             if (Program.form.playerLabels[id_t].InvokeRequired)
             {
                 Program.form.playerLabels[id_t].Invoke(new Action<Int64, Communication.Proto.GameObject>(RefreshFormLabelMethod), id_t, gameObjectMessage);
@@ -237,7 +243,7 @@ namespace Client
                         case 'z': Move(THUnity2D.Direction.LeftDown); break;
                         case 'x': Move(THUnity2D.Direction.Down); break;
                         case 'c': Move(THUnity2D.Direction.RightDown); break;
-                        case 'f': Pick(); break;
+                        case 'f': Pick(true); break;
                         case 'u':
                             Console.WriteLine("Please Input 2 parameters : ");
                             Use(1, double.Parse(Console.ReadLine()), double.Parse(Console.ReadLine()));
@@ -258,11 +264,11 @@ namespace Client
                     }
                     lastSendTime = DateTime.Now;
                 }
-                catch(ArgumentNullException)
+                catch (ArgumentNullException)
                 {
                     ClientDebug("Argument Null !!!");
                 }
-                catch(FormatException)
+                catch (FormatException)
                 {
                     ClientDebug("Format Incorrect !!!");
                 }
@@ -297,7 +303,7 @@ namespace Client
             messageToServer.Parameter2 = parameter_2;
             ClientCommunication.SendMessage(messageToServer);
         }
-        public override void Pick()
+        public override void Pick(bool isSelfPositionPriority)
         {
             messageToServer.CommandType = CommandType.Pick;
             ClientCommunication.SendMessage(messageToServer);
@@ -326,11 +332,11 @@ namespace Client
                     this.id = gameObject.Key;
                     this.team = gameObject.Value.Team;
                     Console.WriteLine("\nThis Player :\n" + "\t" + id.ToString() + "\n\tposition: " + Position.ToString());
-                    //ClientCommunication.SendMessage(new MessageToServer
-                    //{
-                    //    Talent = playerTalent,
-                    //    IsSetTalent = true
-                    //});
+                    ClientCommunication.SendMessage(new MessageToServer
+                    {
+                        Talent = playerTalent,
+                        IsSetTalent = true
+                    });
                     break;
                 }
                 messageToServer.ID = this.id;
@@ -340,11 +346,17 @@ namespace Client
             this._facingDirection = (THUnity2D.Direction)msg.GameObjectList[this.id].Direction;
 
             ChangeAllLabels(msg);
+            lastRecieveMessage = msg;
         }
 
         HashSet<Int64> IDsToDelete = new HashSet<long>();
         public void ChangeAllLabels(MessageToClient msg)
         {
+            if (lastRecieveMessage.GetHashCode() == msg.GetHashCode())
+            {
+                //Console.WriteLine("Same messageToClient");
+                return;
+            }
             IDsToDelete = new HashSet<long>(Program.form.playerLabels.Keys);
             foreach (var gameObject in msg.GameObjectList)
             {
@@ -365,6 +377,12 @@ namespace Client
                     Program.form.Controls.Remove(Program.form.playerLabels[number]);
                 }
                 Program.form.playerLabels.Remove(number);
+            }
+
+            if (lastRecieveMessage.Tasks.GetHashCode() == msg.Tasks.GetHashCode())
+            {
+                //Console.WriteLine("Same Tasks");
+                return;
             }
 
             if (Program.form.ControlLabels["Task"].InvokeRequired)

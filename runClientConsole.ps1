@@ -1,0 +1,1 @@
+./logic/Logic.Client/bin/Release/netcoreapp3.0/Logic.Client.exe --port 30003 --debugLevel 1 --talent 2

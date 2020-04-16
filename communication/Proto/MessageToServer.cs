@@ -25,21 +25,22 @@ namespace Communication.Proto {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "ChVNZXNzYWdlVG9TZXJ2ZXIucHJvdG8SCFByb3RvYnVmGhVNZXNzYWdlVG9D",
-            "bGllbnQucHJvdG8izgIKD01lc3NhZ2VUb1NlcnZlchIKCgJJRBgBIAEoAxIq",
+            "bGllbnQucHJvdG8i8gIKD01lc3NhZ2VUb1NlcnZlchIKCgJJRBgBIAEoAxIq",
             "CgtDb21tYW5kVHlwZRgCIAEoDjIVLlByb3RvYnVmLkNvbW1hbmRUeXBlEioK",
             "DU1vdmVEaXJlY3Rpb24YAyABKA4yEy5Qcm90b2J1Zi5EaXJlY3Rpb24SFAoM",
             "TW92ZUR1cmF0aW9uGAQgASgFEhUKDVRocm93RGlzdGFuY2UYBSABKAESEgoK",
             "VGhyb3dBbmdsZRgGIAEoARITCgtJc1Rocm93RGlzaBgHIAEoCBIPCgdVc2VU",
             "eXBlGAggASgFEhEKCVNwZWFrVGV4dBgJIAEoCRISCgpQYXJhbWV0ZXIxGAog",
             "ASgBEhIKClBhcmFtZXRlcjIYCyABKAESEwoLSXNTZXRUYWxlbnQYDCABKAgS",
-            "IAoGVGFsZW50GA0gASgOMhAuUHJvdG9idWYuVGFsZW50Kl0KC0NvbW1hbmRU",
-            "eXBlEggKBE1vdmUQABIICgRQaWNrEAESBwoDUHV0EAISBwoDVXNlEAMSCAoE",
-            "U3RvcBAEEgkKBVNwZWFrEAUSEwoPQ29tbWFuZFR5cGVTaXplEAZCFqoCE0Nv",
-            "bW11bmljYXRpb24uUHJvdG9iBnByb3RvMw=="));
+            "IgoaSXNQaWNrU2VsZlBvc2l0aW9uUHJpb3JpdHkYDSABKAgSIAoGVGFsZW50",
+            "GA4gASgOMhAuUHJvdG9idWYuVGFsZW50Kl0KC0NvbW1hbmRUeXBlEggKBE1v",
+            "dmUQABIICgRQaWNrEAESBwoDUHV0EAISBwoDVXNlEAMSCAoEU3RvcBAEEgkK",
+            "BVNwZWFrEAUSEwoPQ29tbWFuZFR5cGVTaXplEAZCFqoCE0NvbW11bmljYXRp",
+            "b24uUHJvdG9iBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Communication.Proto.MessageToClientReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Communication.Proto.CommandType), }, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.MessageToServer), global::Communication.Proto.MessageToServer.Parser, new[]{ "ID", "CommandType", "MoveDirection", "MoveDuration", "ThrowDistance", "ThrowAngle", "IsThrowDish", "UseType", "SpeakText", "Parameter1", "Parameter2", "IsSetTalent", "Talent" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.MessageToServer), global::Communication.Proto.MessageToServer.Parser, new[]{ "ID", "CommandType", "MoveDirection", "MoveDuration", "ThrowDistance", "ThrowAngle", "IsThrowDish", "UseType", "SpeakText", "Parameter1", "Parameter2", "IsSetTalent", "IsPickSelfPositionPriority", "Talent" }, null, null, null)
           }));
     }
     #endregion
@@ -96,6 +97,7 @@ namespace Communication.Proto {
       parameter1_ = other.parameter1_;
       parameter2_ = other.parameter2_;
       isSetTalent_ = other.isSetTalent_;
+      isPickSelfPositionPriority_ = other.isPickSelfPositionPriority_;
       talent_ = other.talent_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -237,8 +239,19 @@ namespace Communication.Proto {
       }
     }
 
+    /// <summary>Field number for the "IsPickSelfPositionPriority" field.</summary>
+    public const int IsPickSelfPositionPriorityFieldNumber = 13;
+    private bool isPickSelfPositionPriority_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool IsPickSelfPositionPriority {
+      get { return isPickSelfPositionPriority_; }
+      set {
+        isPickSelfPositionPriority_ = value;
+      }
+    }
+
     /// <summary>Field number for the "Talent" field.</summary>
-    public const int TalentFieldNumber = 13;
+    public const int TalentFieldNumber = 14;
     private global::Communication.Proto.Talent talent_ = 0;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Communication.Proto.Talent Talent {
@@ -273,6 +286,7 @@ namespace Communication.Proto {
       if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(Parameter1, other.Parameter1)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(Parameter2, other.Parameter2)) return false;
       if (IsSetTalent != other.IsSetTalent) return false;
+      if (IsPickSelfPositionPriority != other.IsPickSelfPositionPriority) return false;
       if (Talent != other.Talent) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -292,6 +306,7 @@ namespace Communication.Proto {
       if (Parameter1 != 0D) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(Parameter1);
       if (Parameter2 != 0D) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(Parameter2);
       if (IsSetTalent != false) hash ^= IsSetTalent.GetHashCode();
+      if (IsPickSelfPositionPriority != false) hash ^= IsPickSelfPositionPriority.GetHashCode();
       if (Talent != 0) hash ^= Talent.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -354,8 +369,12 @@ namespace Communication.Proto {
         output.WriteRawTag(96);
         output.WriteBool(IsSetTalent);
       }
-      if (Talent != 0) {
+      if (IsPickSelfPositionPriority != false) {
         output.WriteRawTag(104);
+        output.WriteBool(IsPickSelfPositionPriority);
+      }
+      if (Talent != 0) {
+        output.WriteRawTag(112);
         output.WriteEnum((int) Talent);
       }
       if (_unknownFields != null) {
@@ -400,6 +419,9 @@ namespace Communication.Proto {
         size += 1 + 8;
       }
       if (IsSetTalent != false) {
+        size += 1 + 1;
+      }
+      if (IsPickSelfPositionPriority != false) {
         size += 1 + 1;
       }
       if (Talent != 0) {
@@ -451,6 +473,9 @@ namespace Communication.Proto {
       }
       if (other.IsSetTalent != false) {
         IsSetTalent = other.IsSetTalent;
+      }
+      if (other.IsPickSelfPositionPriority != false) {
+        IsPickSelfPositionPriority = other.IsPickSelfPositionPriority;
       }
       if (other.Talent != 0) {
         Talent = other.Talent;
@@ -515,6 +540,10 @@ namespace Communication.Proto {
             break;
           }
           case 104: {
+            IsPickSelfPositionPriority = input.ReadBool();
+            break;
+          }
+          case 112: {
             Talent = (global::Communication.Proto.Talent) input.ReadEnum();
             break;
           }
