@@ -50,7 +50,8 @@ url = client.get_presigned_url(
 cloud_list = json.loads(request.urlopen(url).read())
 
 for item in cloud_list:
-    if("CAPI/windows_only" in item):
+    if (("CAPI/windows_only/include" in item) or ("CAPI/windows_only/dll" in item) or ("CAPI/windows_only/lib" in item)):
+        logger.info(item + " is not in local but in need to be in cloud")
         md5list[item] = cloud_list[item]
 
 
@@ -62,28 +63,46 @@ def upload_local_file(client, src, archivename):
             md5list[src] = md5.hexdigest()
         if archivename in cloud_list:
             if md5list[src] == cloud_list[archivename]:
-                logger.info("skip "+src)
+                logger.info(
+                    "existed in md5list and didnot change , skip " + src)
                 return
-        logger.info("uploading "+src)
-        logger.info("filename is [%s]", src)
+        res = client.list_objects_versions(
+            Bucket=bucket_upload,
+            Prefix=archivename
+        )
+        if 'Version' in res:
+            for file in res['Version']:
+                if file['ETag'].strip('"') == md5list[src]:
+                    logger.info(
+                        "Not existed in md5list but in cloud , skip " + src)
+                    return
+                break
+        logger.info("uploading file " + src)
+        client.delete_object(
+            Bucket=bucket_upload,
+            Key=archivename
+        )
         response = client.put_object_from_local_file(
             Bucket=bucket_upload,
             LocalFilePath=src,
             Key=archivename)
     elif os.path.isdir(src):
+        logger.info("uploading folder "+src)
         ignorelist = []
-        if(os.path.exists(src+"/.uploadignore")):
-            ignorelist = open(src+"/.uploadignore").readlines()
+        if (os.path.exists(src + "/.uploadignore")):
+            ignorelist = open(src + "/.uploadignore").read().splitlines()
+            logger.info(ignorelist)
         for filename in os.listdir(src):
             isContinue = False
             for ig in ignorelist:
                 if (fnmatch(filename, ig)):
+                    print("ignore list match : " + filename + " , " + ig)
                     isContinue = True
                     break
             if (isContinue):
                 continue
-            upload_local_file(client, src+"/"+filename,
-                              archivename+"/"+filename)
+            upload_local_file(client, src + "/" + filename,
+                              archivename + "/" + filename)
     else:
         logger.info("upload fail")
 

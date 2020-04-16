@@ -4,7 +4,7 @@
 #include <iostream>
 #include "OS_related.h"
 using namespace THUAI3;
-Protobuf::Talent initTalent = Protobuf::Talent::None;//指定人物天赋。选手代码必须定义此变量，否则报错
+Protobuf::Talent initTalent = Protobuf::Talent::Runner;//指定人物天赋。选手代码必须定义此变量，否则报错
 void play()
 {
 	char c;
@@ -25,12 +25,18 @@ void play()
 	default:
 		break;
 	}
-	//cout << "Input two interger to print a map cell :" << endl;
-	//int x, y;
-	//cin.clear();
-	//cin.ignore();
-	//cin >> x >> y;
-	//MapInfo::print_map(x, y);
+	cout << "Input two interger to print a map cell :" << endl;
+	int x, y;
+	cin.clear();
+	cin.ignore();
+	cin >> x >> y;
+	list<Obj> l = MapInfo::get_mapcell(x, y);
+	cout << "objs in map[" << x << "][" << y << "] :" << endl;
+	for (list<Obj>::iterator i = l.begin(); i != l.end(); i++)
+	{
+		cout << "\tblocktype : " << i->objType << endl;
+	}
 
+	cout << "Game Time : " << THUAI3::getGameTime() << endl;
 	/*  玩家在这里写代码  */
 }

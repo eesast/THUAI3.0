@@ -170,7 +170,7 @@ namespace Logic.Server
                     Move((THUnity2D.Direction)msg.MoveDirection, msg.MoveDuration);
                     break;
                 case CommandType.Pick:
-                    Pick();
+                    Pick(msg.IsPickSelfPosition, msg.PickType, msg.PickDishOrToolType);
                     break;
                 case CommandType.Put:
                     if (msg.ThrowDistance < 0)
@@ -224,49 +224,69 @@ namespace Logic.Server
             //}
         }
 
-        public override void Pick()
+        public override void Pick(bool isSelfPosition, ObjType pickType, int dishOrToolType)
         {
-            XYPosition[] toCheckPositions = new XYPosition[] { Position, Position + 2 * EightCornerVector[FacingDirection] };
-            foreach (var xypos in toCheckPositions)
-            {
-                Block? block = null;
-                if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].ContainsType(typeof(FoodPoint)))
-                    block = (Block)WorldMap.Grid[(int)xypos.x, (int)xypos.y].GetFirstObject(typeof(FoodPoint));
-                else if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].ContainsType(typeof(Cooker)))
-                {
-                    block = (Cooker)WorldMap.Grid[(int)xypos.x, (int)xypos.y].GetFirstObject(typeof(Cooker));
-                    if (((Cooker)block).ProtectedTeam != CommunicationID.Item1 && ((Cooker)block).ProtectedTeam >= 0)
-                        block = null;
-                }
-                if (block != null && block.Dish != DishType.DishEmpty)
-                {
-                    DishType temp = Dish;
-                    Dish = block.GetDish(Dish);
-                    if (temp != DishType.DishEmpty)
-                    {
-                        new Dish(Position.x, Position.y, temp).Parent = WorldMap;
-                        //Server.ServerDebug(111.ToString());
-                    }
-                    Server.ServerDebug("Player : " + ID + " Get Dish " + Dish.ToString());
-                    return;
-                }
+            XYPosition toCheckPosition = isSelfPosition ? Position : Position + 2 * EightCornerVector[FacingDirection];
 
-                if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].ContainsLayer(ItemLayer))
-                    foreach (var item in WorldMap.Grid[(int)xypos.x, (int)xypos.y].GetObjects(ItemLayer))
+            switch (pickType)
+            {
+                case ObjType.Block:
+                    Block? block = null;
+                    if (WorldMap.Grid[(int)toCheckPosition.x, (int)toCheckPosition.y].ContainsType(typeof(FoodPoint)))
+                        block = (Block)WorldMap.Grid[(int)toCheckPosition.x, (int)toCheckPosition.y].GetFirstObject(typeof(FoodPoint));
+                    else if (WorldMap.Grid[(int)toCheckPosition.x, (int)toCheckPosition.y].ContainsType(typeof(Cooker)))
                     {
-                        if (item is Dish)
+                        block = (Cooker)WorldMap.Grid[(int)toCheckPosition.x, (int)toCheckPosition.y].GetFirstObject(typeof(Cooker));
+                        if (((Cooker)block).ProtectedTeam != CommunicationID.Item1 && ((Cooker)block).ProtectedTeam >= 0)
+                            block = null;
+                    }
+                    if (block != null && block.Dish != DishType.DishEmpty)
+                    {
+                        DishType temp = Dish;
+                        Dish = block.GetDish(Dish);
+                        if (temp != DishType.DishEmpty)
                         {
-                            Dish = ((Dish)item).GetDish(Dish);
-                            Server.ServerDebug("Player : " + ID + " Get Dish " + Dish.ToString());
-                            return;
+                            new Dish(Position.x, Position.y, temp).Parent = WorldMap;
                         }
-                        else if (item is Tool)
+                        Server.ServerDebug("Player : " + ID + " Get Dish " + Dish.ToString());
+                        break;
+                    }
+                    break;
+                case ObjType.Dish:
+                    if (dishOrToolType <= (int)DishType.DishEmpty || dishOrToolType >= (int)DishType.DishSize3
+                        || dishOrToolType == (int)DishType.DishSize1 || dishOrToolType == (int)DishType.DishSize2)
+                        break;
+                    DishType toPickDish = (DishType)dishOrToolType;
+                    if (WorldMap.Grid[(int)toCheckPosition.x, (int)toCheckPosition.y].ContainsType(typeof(Dish)))
+                    {
+                        foreach (Dish dish in WorldMap.Grid[(int)toCheckPosition.x, (int)toCheckPosition.y].GetObjects(typeof(Dish)))
                         {
-                            Tool = ((Tool)item).GetTool(tool);
-                            Server.ServerDebug("Player : " + ID + " Get Tool " + tool.ToString());
-                            return;
+                            if (dish.Dish == toPickDish)
+                            {
+                                Dish = dish.GetDish(Dish);
+                                Server.ServerDebug("Player : " + ID + " Get Dish " + Dish.ToString());
+                                break;
+                            }
                         }
                     }
+                    break;
+                case ObjType.Tool:
+                    if (dishOrToolType <= (int)ToolType.ToolEmpty || dishOrToolType >= (int)ToolType.ToolSize)
+                        break;
+                    ToolType toPickTool = (ToolType)dishOrToolType;
+                    if (WorldMap.Grid[(int)toCheckPosition.x, (int)toCheckPosition.y].ContainsType(typeof(Tool)))
+                    {
+                        foreach (Tool tool in WorldMap.Grid[(int)toCheckPosition.x, (int)toCheckPosition.y].GetObjects(typeof(Tool)))
+                        {
+                            if (tool.Tool == toPickTool)
+                            {
+                                Tool = tool.GetTool(Tool);
+                                Server.ServerDebug("Player : " + ID + " Get Tool " + tool.ToString());
+                                break;
+                            }
+                        }
+                    }
+                    break;
             }
             //Server.ServerDebug("没东西捡");
             status = CommandType.Stop;
@@ -472,9 +492,11 @@ namespace Logic.Server
                         //XYPosition aim = Position + new XYPosition(parameter1 * Math.Cos(parameter2), parameter1 * Math.Sin(parameter2));
                         Trigger triggerToThrow = new Trigger(Position.x, Position.y, TriggerType.Hammer, CommunicationID.Item1, Talent);
                         triggerToThrow.Parent = WorldMap;
-                        triggerToThrow.Velocity = new Vector(parameter2, (int)Configs["ItemMoveSpeed"]);
                         if (dueTime > 0)
+                        {
+                            triggerToThrow.Velocity = new Vector(parameter2, (int)Configs["ItemMoveSpeed"]);
                             triggerToThrow.StopMovingTimer.Change(dueTime, 0);
+                        }
                         Tool = ToolType.ToolEmpty;
                     }
                     break;
@@ -488,9 +510,11 @@ namespace Logic.Server
                         //XYPosition aim = Position + new XYPosition(parameter1 * Math.Cos(parameter2), parameter1 * Math.Sin(parameter2));
                         Trigger triggerToThrow = new Trigger(Position.x, Position.y, TriggerType.Arrow, CommunicationID.Item1, Talent);
                         triggerToThrow.Parent = WorldMap;
-                        triggerToThrow.Velocity = new Vector(parameter2, (int)Configs["Trigger"]["Arrow"]["Speed"]);
                         if (dueTime > 0)
+                        {
+                            triggerToThrow.Velocity = new Vector(parameter2, (int)Configs["Trigger"]["Arrow"]["Speed"]);
                             triggerToThrow.StopMovingTimer.Change(dueTime, 0);
+                        }
                         Tool = ToolType.ToolEmpty;
                     }
                     break;
