@@ -50,7 +50,7 @@ url = client.get_presigned_url(
 cloud_list = json.loads(request.urlopen(url).read())
 
 for item in cloud_list:
-    if(("CAPI/windows_only/include" in item) or ("CAPI/windows_only/dll" in item) or ("CAPI/windows_only/lib" in item)):
+    if (("CAPI/windows_only/include" in item) or ("CAPI/windows_only/dll" in item) or ("CAPI/windows_only/lib" in item)):
         logger.info(item + " is not in local but in need to be in cloud")
         md5list[item] = cloud_list[item]
 
@@ -63,9 +63,13 @@ def upload_local_file(client, src, archivename):
             md5list[src] = md5.hexdigest()
         if archivename in cloud_list:
             if md5list[src] == cloud_list[archivename]:
-                logger.info("skip "+src)
+                logger.info("skip " + src)
                 return
-        logger.info("uploading file "+src)
+        logger.info("uploading file " + src)
+        client.delete_object(
+            Bucket=bucket_upload,
+            Key=archivename
+        )
         response = client.put_object_from_local_file(
             Bucket=bucket_upload,
             LocalFilePath=src,
