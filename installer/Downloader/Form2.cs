@@ -1,23 +1,37 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Downloader
 {
-    public partial class Form2 : Form
+    public partial class 文件列表 : Form
     {
         static List<string> SelectedNewFile = new List<string>();
         static List<string> SelectedUpdateFile = new List<string>();
         static bool warning = false;
-        public Form2()
+        public 文件列表()
         {
             InitializeComponent();
+        }
+        public class NodeSorter : IComparer
+        {
+            public int Compare(object x, object y)
+            {
+                TreeNode tx = x as TreeNode;
+                TreeNode ty = y as TreeNode;
+
+                // Compare the length of the strings, returning the difference.
+                if (tx.Nodes.Count != ty.Nodes.Count)
+                {
+                    if (tx.Nodes.Count == 0) return 1;
+                    else if (ty.Nodes.Count == 0) return -1;
+                }
+                // If they are the same length, call Compare.
+                return string.Compare(tx.Text, ty.Text);
+            }
         }
         private void cycleChild(TreeNode n, bool check)
         {
@@ -39,18 +53,41 @@ namespace Downloader
             return true;
         }
 
-        private void SelectAll(TreeNodeCollection Nodes)
+        private void SelectAll(TreeNodeCollection Nodes, bool flag)
         {
             foreach (TreeNode n in Nodes)
             {
                 if (n.Text != "player.cpp")
                     n.Checked = true;
-                if (n.Nodes != null)
-                    SelectAll(n.Nodes);
+                if (n.Text == "player.cpp")
+                    if (!flag)
+                    {
+                        TreeNode node = n;
+                        while (node.Parent != null)
+                        {
+                            node.Parent.Checked = false;
+                            node.Parent.ForeColor = Color.Blue;
+                            node = node.Parent;
+                        }
+                    }
+                    else n.Checked = true;
+                if (n.Nodes.Count != 0)
+                    SelectAll(n.Nodes, flag);
             }
         }
 
-        private void cycleParent(TreeNode n, bool check)
+        private void DeSelectAll(TreeNodeCollection Nodes)
+        {
+            foreach (TreeNode n in Nodes)
+            {
+                n.Checked = false;
+                n.ForeColor = Color.Black;
+                if (n.Nodes.Count != 0)
+                    DeSelectAll(n.Nodes);
+            }
+        }
+
+                private void cycleParent(TreeNode n, bool check)
         {
             if (n.Parent != null)
             {
@@ -99,14 +136,16 @@ namespace Downloader
             }
         }
 
-        public Form2(List<string> newFileName, List<string> updateFileName)
+        public 文件列表(List<string> newFileName, List<string> updateFileName)
         {
             InitializeComponent();
             ImageList myImageList = new ImageList();
-            myImageList.Images.Add(Image.FromFile(".\\folder.jpg"));
-            myImageList.Images.Add(Image.FromFile(".\\file.jpg"));
+            myImageList.Images.Add(Properties.Resources.folder);
+            myImageList.Images.Add(Properties.Resources.file);
             this.treeView1.ImageList = myImageList;
             this.treeView2.ImageList = myImageList;
+            this.treeView1.TreeViewNodeSorter = new NodeSorter();
+            this.treeView2.TreeViewNodeSorter = new NodeSorter();
             //this.treeView1.DrawMode = TreeViewDrawMode.OwnerDrawText;
             //this.treeView2.DrawMode = TreeViewDrawMode.OwnerDrawText;
             //this.treeView1.DrawMode+= new DrawTreeNodeEventHandler(TreeView_DrawNode);
@@ -123,14 +162,14 @@ namespace Downloader
                     foreach (string layer in path)
                     {
                         if (Nodes.Count == 0 || Nodes.Find(layer, false).Length == 0)
-                            if(layer==path[path.Length - 1])
-                                Nodes = Nodes.Add(layer, layer, 1).Nodes;
-                            else Nodes = Nodes.Add(layer, layer, 0).Nodes;
+                            if (layer == path[path.Length - 1])
+                                Nodes = Nodes.Add(layer, layer, 1, 1).Nodes;
+                            else Nodes = Nodes.Add(layer, layer, 0, 0).Nodes;
                         else
                             Nodes = Nodes.Find(layer, false)[0].Nodes;
                     }
                 }
-                SelectAll(treeView2.Nodes);
+                SelectAll(treeView1.Nodes, true);
 
             }
             if (updateFileName.Count() > 0)
@@ -151,7 +190,7 @@ namespace Downloader
                             Nodes = Nodes.Find(layer, false)[0].Nodes;
                     }
                 }
-                SelectAll(treeView2.Nodes);
+                SelectAll(treeView2.Nodes, false);
             }
 
 
@@ -225,6 +264,24 @@ namespace Downloader
             this.Close();
         }
 
-       
+        private void label4_Click(object sender, EventArgs e)
+        {
+            SelectAll(this.treeView1.Nodes, true);
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+            SelectAll(this.treeView2.Nodes, false);
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+            DeSelectAll(this.treeView2.Nodes);
+        }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+            DeSelectAll(this.treeView1.Nodes);
+        }
     }
 }
