@@ -29,12 +29,14 @@ jobs:
           cd ./logic
           ls
           ./build_logic.ps1 -Dir ../THUAI3.0
+          ls
           cd ..
-          (Get-Content "runServer.ps1").replace("logic/Logic.Server/bin/Release/netcoreapp3.0","THUAI3.0") | Set-Content "runServer.ps1"
-          (Get-Content "runAgent.ps1").replace("communication/Agent/bin/Release/netcoreapp3.0","THUAI3.0") | Set-Content "runAgent.ps1"
-          (Get-Content "runClientConsole.ps1").replace("logic/Logic.Client/bin/Release/netcoreapp3.0","THUAI3.0") | Set-Content "runClientConsole.ps1"
+          ls
+          (Get-Content "runServer.bat").replace("logic/Logic.Server/bin/Release/netcoreapp3.0","THUAI3.0") | Set-Content "runServer.bat"
+          (Get-Content "runAgent.bat").replace("communication/Agent/bin/Release/netcoreapp3.0","THUAI3.0") | Set-Content "runAgent.bat"
+          (Get-Content "runClientConsole.bat").replace("logic/Logic.Client/bin/Release/netcoreapp3.0","THUAI3.0") | Set-Content "runClientConsole.bat"
           # python ./download_windows_only.py --id ${{ secrets.TENCENT_DOWNLOAD_ID }} --key ${{ secrets.TNCENT_DOWNLOAD_KEY }}
-          python ./upload_to_tencent_cloud.py --id ${{ secrets.TENCENT_UPLOAD_ID }} --key ${{ secrets.TENCENT_UPLOAD_KEY }} CAPI THUAI3.0 Config runServer.ps1 runAgent.ps1 runClientConsole.ps1 API.md README.md
+          python ./upload_to_tencent_cloud.py --id ${{ secrets.TENCENT_UPLOAD_ID }} --key ${{ secrets.TENCENT_UPLOAD_KEY }} CAPI THUAI3.0 Config runServer.bat runAgent.bat runClientConsole.bat API.md README.md
           # python ./delete_files_not_in_md5list.py --id ${{ secrets.TENCENT_UPLOAD_ID }} --key ${{ secrets.TENCENT_UPLOAD_KEY }}
   deploy:
     runs-on: ubuntu-latest
