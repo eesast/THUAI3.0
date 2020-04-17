@@ -25,8 +25,8 @@ namespace Logic.Server
                 }
             });
             this.MoveComplete += new MoveCompleteHandler(ChangePositionInMessage);
+            this.PositionChangeComplete += new PositionChangeCompleteHandler(ChangePositionInMessage);
             this.OnParentDelete += new ParentDeleteHandler(DeleteFromMessage);
-
         }
         public override ToolType GetTool(ToolType t)
         {

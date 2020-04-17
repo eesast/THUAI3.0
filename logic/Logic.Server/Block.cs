@@ -32,7 +32,7 @@ namespace Logic.Server
 
     public class FoodPoint : Block
     {
-        public int RefreshTime = (int)Configs["FoodPointInitRefreshTime"];//食物刷新点的食物刷新速率，毫秒
+        public int RefreshTime = (int)Configs("FoodPointInitRefreshTime");//食物刷新点的食物刷新速率，毫秒
 
         public FoodPoint(double x_t, double y_t) : base(x_t, y_t, BlockType.FoodPoint)
         {
@@ -51,16 +51,16 @@ namespace Logic.Server
         }
 
         //Refresh
-        protected System.Threading.Timer _refreshTimer;
+        protected System.Threading.Timer? _refreshTimer;
         public System.Threading.Timer RefreshTimer
         {
             get
             {
-                if (this.blockType == BlockType.FoodPoint) _refreshTimer = _refreshTimer ?? new System.Threading.Timer(Refresh);
+                _refreshTimer = _refreshTimer ?? new System.Threading.Timer(Refresh);
                 return _refreshTimer;
             }
         }
-        public void Refresh(object i)
+        public void Refresh(object? i)
         {
             Dish = (DishType)Program.Random.Next(1, (int)DishType.DishSize1 - 1);
             Server.ServerDebug("食品刷新：地点（" + Position.x + "," + Position.y + "）, 种类 : " + Dish);
@@ -98,16 +98,16 @@ namespace Logic.Server
                 return _cookingTimer;
             }
         }
-        protected void Cook(object o)
+        protected void Cook(object? o)
         {
             isCooking = false;
             Dish = (DishType)Enum.Parse(typeof(DishType), cookingResult);
             if (Dish > DishType.DishEmpty && Dish < DishType.DishSize2 && Dish != DishType.DishSize1)
             {
                 if (Dish < DishType.SpicedPot)
-                    CookingTimer.Change((int)(0.5 * (double)Configs[cookingResult]["CookTime"]), 0);//0.5倍CookTime是保鲜时间
+                    CookingTimer.Change((int)(0.5 * (double)Configs(cookingResult, "CookTime")), 0);//0.5倍CookTime是保鲜时间
                 else
-                    CookingTimer.Change((int)(0.5 * (double)Configs["SpicedPot"]["CookTime"]), 0);
+                    CookingTimer.Change((int)(0.5 * (double)Configs("SpicedPot", "CookTime")), 0);
                 cookingResult = "OverCookedDish";
             }
         }
@@ -161,25 +161,25 @@ namespace Logic.Server
                 {
                     Material += dishType.ToString();
                 }
-                cookingResult = (string)Configs["CookingTable"][Material];
+                cookingResult = (string)Configs("CookingTable", Material);
                 if (cookingResult == null) cookingResult = "DarkDish";
-                CookingTimer.Change((int)Configs[cookingResult]["CookTime"], 0);
-                ProtectTimer.Change((int)(1.25 * (double)Configs[cookingResult]["CookTime"]), 0);
+                CookingTimer.Change((int)Configs(cookingResult, "CookTime"), 0);
+                ProtectTimer.Change((int)(1.25 * (double)Configs(cookingResult, "CookTime")), 0);
             }
             else
             {
                 int score = 0;
                 foreach (var dishType in dishTypeSet)
                 {
-                    score += (int)Configs[dishType.ToString()]["Score"];
+                    score += (int)Configs(dishType.ToString(), "Score");
                 }
                 if (score < 60) return;
                 isCooking = true;
                 ProtectedTeam = TeamNumber;
                 Dish = DishType.DarkDish;
                 cookingResult = "SpicedPot_" + (score / 20).ToString();
-                CookingTimer.Change((int)Configs["SpicedPot"]["CookTime"], 0);
-                ProtectTimer.Change((int)(1.25 * (double)Configs["SpicedPot"]["CookTime"]), 0);
+                CookingTimer.Change((int)Configs("SpicedPot", "CookTime"), 0);
+                ProtectTimer.Change((int)(1.25 * (double)Configs("SpicedPot", "CookTime")), 0);
             }
         }
         //Cook End

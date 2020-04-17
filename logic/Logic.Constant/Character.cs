@@ -14,13 +14,13 @@ namespace Logic.Constant
         //public int team = 0;
         //protected double GlueExtraMoveSpeed = 0;
         //protected double SpeedBuffExtraMoveSpeed = 0;
-        protected double _moveSpeed = (double)Configs["Player"]["InitMoveSpeed"];
+        protected double _moveSpeed = (double)Configs("Player", "InitMoveSpeed");
         protected double MoveSpeed { get => _moveSpeed; }
-        protected THUnity2D.Direction _facingDirection;
-        public THUnity2D.Direction FacingDirection { get => _facingDirection; }
+        protected new THUnity2D.Direction _facingDirection;
+        public new THUnity2D.Direction FacingDirection { get => _facingDirection; }
         protected int StrenthBuffThrowDistance = 0;
-        protected int MaxThrowDistance = (int)Configs["Player"]["InitThrowDistance"];
-        protected int _sightRange = (int)Configs["Player"]["InitSightRange"];
+        protected int MaxThrowDistance = (int)Configs("Player", "InitThrowDistance");
+        protected int _sightRange = (int)Configs("Player", "InitSightRange");
         public int SightRange { get => _sightRange; }
         protected Talent _talent = Talent.None;
 

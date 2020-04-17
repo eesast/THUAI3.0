@@ -152,7 +152,10 @@ void CAPI::SendChatMessage(string message)
 	Message* mes3 = new Message(-1, mes2);
 	Message* mes = new Message(-1, mes3);
 	Send(mes);
-	delete mes;
+	//delete mes1;
+	//delete mes2;
+	//delete mes3;
+	//delete mes;
 }
 
 void CAPI::SendCommandMessage(MessageToServer* message)
@@ -161,7 +164,9 @@ void CAPI::SendCommandMessage(MessageToServer* message)
 	Message* mes3 = new Message(-1, mes2);
 	Message* mes = new Message(-1, mes3);
 	Send(mes);
-	delete mes;
+	//delete mes2;
+	//delete mes3;
+	//delete mes;
 }
 
 void CAPI::CreateObj(int64_t id, Protobuf::MessageToClient* message)
@@ -308,7 +313,7 @@ void CAPI::Refresh()
 	Message* mes2 = new Message(AgentId, mes1);
 	Message* mes = new Message(-1, mes2);
 	Send(mes);
-	delete mes;
+	//delete mes;
 }
 
 bool CAPI::Send(const byte* pBuffer, int iLength, int iOffset)

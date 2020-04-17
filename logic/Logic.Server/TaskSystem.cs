@@ -9,7 +9,7 @@ namespace Logic.Server
     public static class TaskSystem
     {
         public static ConcurrentDictionary<DishType, uint> TaskQueue = new ConcurrentDictionary<DishType, uint>();
-        private static Timer.MultiTaskTimer _removeTaskTimer;
+        private static Timer.MultiTaskTimer? _removeTaskTimer;
         public static Timer.MultiTaskTimer RemoveTaskTimer
         {
             get
@@ -39,7 +39,7 @@ namespace Logic.Server
             Server.ServerDebug("Remove task : " + task);
             //PrintAllTask();
         }
-        public static System.Threading.Timer _refreshTimer;
+        public static System.Threading.Timer? _refreshTimer;
         public static System.Threading.Timer RefreshTimer
         {
             get
@@ -48,7 +48,7 @@ namespace Logic.Server
                 return _refreshTimer;
             }
         }
-        public static void TaskProduce(object i)
+        public static void TaskProduce(object? i)
         {
             DishType temp = DishType.DishEmpty;
             for (; ; )
@@ -60,7 +60,7 @@ namespace Logic.Server
                 break;
             }
             AddTask(temp);
-            RemoveTaskTimer.Add((o, e) => { RemoveTask(temp); }, (uint)Configs[temp.ToString()]["TaskTime"]);
+            RemoveTaskTimer.Add((o, e) => { RemoveTask(temp); }, (uint)Configs(temp.ToString(), "TaskTime"));
             //需要广播产生的任务
             //感觉只需要广播任务的产生，而任务被完成以及任务因过时而gg都不用广播，需要玩家自己把握？
         }
@@ -69,7 +69,7 @@ namespace Logic.Server
             int score = 0;
             if (dish_t < DishType.SpicedPot && TaskQueue.ContainsKey(dish_t))
             {
-                score = (int)Configs[dish_t.ToString()]["Score"];//菜品名+Score，在App.config里加
+                score = (int)Configs(dish_t.ToString(), "Score");//菜品名+Score，在App.config里加
                 RemoveTask(dish_t);
             }
             else if (dish_t >= DishType.SpicedPot && dish_t <= DishType.SpicedPot8 && TaskQueue.ContainsKey(DishType.SpicedPot))

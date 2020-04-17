@@ -31,14 +31,14 @@ namespace Logic.Server
             }
         }
 
-        public delegate void StopMovingHandler(object o);
+        public delegate void StopMovingHandler(object? o);
         public event StopMovingHandler? StopMoving = null;
-        protected void StopMovingMethod(object o)
+        protected void StopMovingMethod(object? o)
         {
             Velocity = new THUnity2D.Vector(Velocity.angle, 0);
             StopMoving?.Invoke(o);
         }
-        protected System.Threading.Timer _stopMovingTimer = null;
+        protected System.Threading.Timer? _stopMovingTimer = null;
         public System.Threading.Timer StopMovingTimer
         {
             get

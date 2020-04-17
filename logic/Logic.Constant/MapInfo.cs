@@ -88,6 +88,7 @@ namespace Logic.Constant
                     _worldMap.SetLayerCollisionTrue(PlayerLayer, PlayerLayer);
                     _worldMap.SetLayerCollisionTrue(BlockLayer, BlockLayer);
                     _worldMap.SetLayerCollisionTrue(WallLayer, FlyingLayer);
+                    _worldMap.SetLayerCollisionTrue(WallLayer, ItemLayer);
                     _worldMap.SetLayerCollisionTrue(PlayerLayer, WallLayer);
                     _worldMap.SetLayerTriggerTrue(PlayerLayer, TriggerLayer);
                     _worldMap.FrameRate = Constant.FrameRate;

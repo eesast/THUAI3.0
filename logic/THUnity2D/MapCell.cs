@@ -34,7 +34,7 @@ namespace THUnity2D
                 _layers[gameObject.Layer].TryRemove(gameObject, out temp);
                 if (_layers[gameObject.Layer].Count <= 0)
                 {
-                    ConcurrentDictionary<GameObject, byte> tmp;
+                    ConcurrentDictionary<GameObject, byte>? tmp;
                     _layers.TryRemove(gameObject.Layer, out tmp);
                 }
             }

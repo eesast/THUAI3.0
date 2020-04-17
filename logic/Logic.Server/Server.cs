@@ -13,11 +13,11 @@ namespace Logic.Server
     {
         protected ICommunication ServerCommunication;
         protected uint MaxRunTimeInSecond;
-        System.Threading.Timer SendMessageTimer = null;
-        System.Threading.Timer ToolRefreshTimer = null;
-        System.Threading.Timer ServerStopTimer = null;
-        System.Threading.Timer WatchInputTimer = null;
-        Thread ServerRunThread = null;
+        System.Threading.Timer? SendMessageTimer;
+        System.Threading.Timer? ToolRefreshTimer;
+        //System.Threading.Timer? ServerStopTimer;
+        System.Threading.Timer? WatchInputTimer;
+        Thread ServerRunThread;
 
         public Server(ushort serverPort, ushort playerCount, ushort agentCount, uint MaxGameTimeSeconds, string token)
         {
@@ -78,9 +78,9 @@ namespace Logic.Server
         {
             Time.InitializeTime();
             Server.ServerDebug("Server begin to run");
-            TaskSystem.RefreshTimer.Change(1000, (int)Configs["TaskRefreshTime"]);
+            TaskSystem.RefreshTimer.Change(1000, (int)Configs("TaskRefreshTime"));
             ToolRefreshTimer = new System.Threading.Timer(ToolRefresh, null,
-                0, (int)Configs["ToolRefreshTime"]);
+                0, (int)Configs("ToolRefreshTime"));
 
             SendMessageTimer = new System.Threading.Timer(
                 (o) =>
@@ -95,14 +95,12 @@ namespace Logic.Server
             Server.ServerDebug("Server stop running");
         }
 
-        void ToolRefresh(object o)
+        void ToolRefresh(object? o)
         {
-            THUnity2D.XYPosition tempPosition = null;
-            for (int i = 0; i < 10; i++)//加入次数限制，防止后期地图过满疯狂Random
+            THUnity2D.XYPosition tempPosition = new THUnity2D.XYPosition(Program.Random.Next(1, map.GetLength(0) - 1), Program.Random.Next(1, map.GetLength(1) - 1)); ;
+            for (int i = 0; i < 10 && !WorldMap.Grid[(int)tempPosition.x, (int)tempPosition.y].IsEmpty(); i++)//加入次数限制，防止后期地图过满疯狂Random
             {
                 tempPosition = new THUnity2D.XYPosition(Program.Random.Next(1, map.GetLength(0) - 1), Program.Random.Next(1, map.GetLength(1) - 1));
-                if (WorldMap.Grid[(int)tempPosition.x, (int)tempPosition.y].IsEmpty())
-                    break;
             }
             new Tool(tempPosition.x + 0.5, tempPosition.y + 0.5, (ToolType)Program.Random.Next(1, (int)ToolType.ToolSize - 1)).Parent = WorldMap;
         }
@@ -117,7 +115,7 @@ namespace Logic.Server
             Console.WriteLine("===============================");
         }
 
-        protected void WatchInput(object o)
+        protected void WatchInput(object? o)
         {
             try
             {
