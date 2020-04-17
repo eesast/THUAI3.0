@@ -65,7 +65,7 @@ if 'Version' in res:
         if (("CAPI/windows_only/include" in item['Key']) or ("CAPI/windows_only/dll" in item['Key']) or ("CAPI/windows_only/lib" in item['Key'])):
             logger.info(
                 item['Key'] + " is not in local but in need to be in cloud")
-            md5list[item['Key']] = item['ETag']
+            md5list[item['Key']] = item['ETag'].strip('"')
 
 
 def upload_local_file(client, src, archivename):
