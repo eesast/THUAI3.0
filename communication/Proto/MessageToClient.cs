@@ -402,15 +402,15 @@ namespace Communication.Proto {
     /// </summary>
     [pbr::OriginalName("WaveGlue")] WaveGlue = 0,
     /// <summary>
-    ///陷阱，踩上后有一段时间不能动弹
+    ///陷阱，踩上后有一段时间不能动弹，地图上不可见
     /// </summary>
     [pbr::OriginalName("Trap")] Trap = 1,
     /// <summary>
-    ///地雷，踩上后减分数并眩晕一段时间
+    ///地雷，踩上后减分数并眩晕一段时间，地图上不可见
     /// </summary>
     [pbr::OriginalName("Mine")] Mine = 2,
     /// <summary>
-    ///炸弹，踩上后眩晕一段时间，并掉落身上的食材和道具
+    ///炸弹，踩上后眩晕一段时间，并掉落身上的食材和道具，地图上不可见
     /// </summary>
     [pbr::OriginalName("Bomb")] Bomb = 3,
     /// <summary>

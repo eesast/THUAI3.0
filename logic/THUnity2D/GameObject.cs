@@ -39,7 +39,7 @@ namespace THUnity2D
         private GameObject? _parent;
         public GameObject? Parent
         {
-            get { lock (privateLock) { return _parent; } }
+            get => _parent;
             set
             {
                 lock (privateLock)
@@ -119,8 +119,8 @@ namespace THUnity2D
             }
         }
 
-        public delegate void PositionChangedHandler(GameObject sender, PositionChangedEventArgs e);
-        public event PositionChangedHandler? OnPositionChanged; // 声明事件
+        internal delegate void PositionChangedHandler(GameObject sender, PositionChangedEventArgs e);
+        internal event PositionChangedHandler? OnPositionChanged; // 声明事件
         public delegate void PositionChangeCompleteHandler(GameObject sender);
         public event PositionChangeCompleteHandler? PositionChangeComplete;
         protected virtual void PositionChanged(PositionChangedEventArgs e)
@@ -295,7 +295,7 @@ namespace THUnity2D
         protected internal Layer _layer;
         public Layer Layer
         {
-            get { lock (privateLock) { return _layer; } }
+            get => _layer;
             set
             {
                 lock (privateLock)
@@ -332,7 +332,7 @@ namespace THUnity2D
         private bool _movable;
         public bool Movable
         {
-            get { lock (privateLock) { return this._movable; } }
+            get => this._movable;
             set { lock (privateLock) { this._movable = value; } }
         }
         //Movable end
@@ -435,20 +435,19 @@ namespace THUnity2D
         //Collision
 
         //Trigger
-        public delegate void TriggerHandler(HashSet<GameObject>? triggerGameObjects);
+        public delegate void TriggerHandler(HashSet<GameObject> triggerGameObjects);
         public event TriggerHandler? OnTrigger;
-        protected internal void Trigger(HashSet<GameObject>? triggerGameObjects)
+        protected internal void Trigger(HashSet<GameObject> triggerGameObjects)
         {
             if (triggerGameObjects == null || triggerGameObjects.Count == 0)
                 return;
             lock (privateLock)
             {
                 DebugWithoutEndline(this, "Trigger with : ");
-                if (triggerGameObjects != null)
-                    foreach (var gameObject in triggerGameObjects)
-                    {
-                        DebugWithoutIDEndline(this, gameObject.ID + "  ");
-                    }
+                foreach (var gameObject in triggerGameObjects)
+                {
+                    DebugWithoutIDEndline(this, gameObject.ID + "  ");
+                }
                 DebugWithoutID(this, "");
                 OnTrigger?.Invoke(triggerGameObjects);
             }

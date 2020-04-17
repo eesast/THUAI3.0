@@ -36,7 +36,9 @@ namespace THUnity2D
 
         protected override void OnChildrenAdded(GameObject childrenGameObject)
         {
-            childrenGameObject._position = CorrectPosition(childrenGameObject.Position, childrenGameObject.Width, childrenGameObject.Height, childrenGameObject.Layer);
+            if (!this._layerSet.ContainsKey(childrenGameObject.Layer))
+                throw new Exception("Map does not contains layer !");
+            childrenGameObject.Position = CorrectPosition(childrenGameObject.Position, childrenGameObject.Width, childrenGameObject.Height, childrenGameObject.Layer);
             base.OnChildrenAdded(childrenGameObject);
             childrenGameObject.OnLayerChange += this.OnChildrenLayerChange;
             //AddToGameObjectListByLayer(childrenObject);
@@ -487,7 +489,7 @@ namespace THUnity2D
             //调整位置 End
 
             //解除锁的占用
-            for (; lockList.Count != 0;)
+            while (lockList.First != null)
             {
                 object o = lockList.First.Value;
                 lockList.RemoveFirst();
@@ -622,23 +624,6 @@ namespace THUnity2D
             layer2.TriggerLayers.TryRemove(layer1, out temp);
         }
 
-        //protected ConcurrentDictionary<Layer, ConcurrentDictionary<GameObject, byte>> _gameObjectListByLayer = new ConcurrentDictionary<Layer, ConcurrentDictionary<GameObject, byte>>();
-        //protected void AddToGameObjectListByLayer(GameObject gameObject)
-        //{
-        //    if (!_gameObjectListByLayer.ContainsKey(gameObject.Layer))
-        //        _gameObjectListByLayer.TryAdd(gameObject.Layer, new ConcurrentDictionary<GameObject, byte>());
-        //    _gameObjectListByLayer[gameObject.Layer].TryAdd(gameObject, 0);
-        //}
-        //protected void DeleteFromGameObjectListByLayer(GameObject gameObject)
-        //{
-        //    byte temp = 0;
-        //    _gameObjectListByLayer[gameObject.Layer].TryRemove(gameObject, out temp);
-        //    if (_gameObjectListByLayer[gameObject.Layer].Count <= 0)
-        //    {
-        //        ConcurrentDictionary<GameObject, byte>? tmp;
-        //        _gameObjectListByLayer.TryRemove(gameObject.Layer, out tmp);
-        //    }
-        //}
         protected void OnChildrenLayerChange(GameObject childrenGameObject, LayerChangeEventArgs e)
         {
             childrenGameObject._layer = e.previousLayer;

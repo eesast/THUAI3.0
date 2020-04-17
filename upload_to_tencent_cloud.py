@@ -17,7 +17,7 @@ logger = logging.getLogger()
 
 secret_id = ''      # 替换为用户的 secretId
 secret_key = ''      # 替换为用户的 secretKey
-region = 'ap-beijing'     # 替换为用户的 Region
+region = 'accelerate'     # 替换为用户的 Region
 token = None
 scheme = 'https'
 dirs = []   # 替换为需要上传的文件夹
@@ -43,16 +43,29 @@ config = CosConfig(Region=region, SecretId=secret_id,
 
 client = CosS3Client(config)
 
+clientNative = CosS3Client(CosConfig(
+    Region="ap-beijing", SecretId=secret_id, SecretKey=secret_key, Token=token, Scheme=scheme))
+
 md5list = {}
 
-url = client.get_presigned_url(
-    Bucket=bucket_upload, Key='md5list.json', Method='GET')
-cloud_list = json.loads(request.urlopen(url).read())
+try:
+    url = client.get_presigned_url(
+        Bucket=bucket_upload, Key='md5list.json', Method='GET')
+    cloud_list = json.loads(request.urlopen(url).read())
+except:
+    logger.info("cloud_list could not be load !")
+    cloud_list = None
 
-for item in cloud_list:
-    if (("CAPI/windows_only/include" in item) or ("CAPI/windows_only/dll" in item) or ("CAPI/windows_only/lib" in item)):
-        logger.info(item + " is not in local but in need to be in cloud")
-        md5list[item] = cloud_list[item]
+res = clientNative.list_objects_versions(
+    Bucket=bucket_upload,
+    Prefix="CAPI/windows_only/"
+)
+if 'Version' in res:
+    for item in res['Version']:
+        if (("CAPI/windows_only/include" in item['Key']) or ("CAPI/windows_only/dll" in item['Key']) or ("CAPI/windows_only/lib" in item['Key'])):
+            logger.info(
+                item['Key'] + " is not in local but in need to be in cloud")
+            md5list[item['Key']] = item['ETag']
 
 
 def upload_local_file(client, src, archivename):
@@ -61,12 +74,13 @@ def upload_local_file(client, src, archivename):
             md5 = hashlib.md5()
             md5.update(f.read())
             md5list[src] = md5.hexdigest()
-        if archivename in cloud_list:
-            if md5list[src] == cloud_list[archivename]:
-                logger.info(
-                    "existed in md5list and didnot change , skip " + src)
-                return
-        res = client.list_objects_versions(
+        if cloud_list != None:
+            if archivename in cloud_list:
+                if md5list[src] == cloud_list[archivename]:
+                    logger.info(
+                        "existed in md5list and didnot change , skip " + src)
+                    return
+        res = clientNative.list_objects_versions(
             Bucket=bucket_upload,
             Prefix=archivename
         )
@@ -78,10 +92,6 @@ def upload_local_file(client, src, archivename):
                     return
                 break
         logger.info("uploading file " + src)
-        client.delete_object(
-            Bucket=bucket_upload,
-            Key=archivename
-        )
         response = client.put_object_from_local_file(
             Bucket=bucket_upload,
             LocalFilePath=src,
@@ -115,10 +125,6 @@ md5list_path = 'md5list.json'
 with open(md5list_path, 'w') as f:
     json.dump(md5list, f, indent=4)
 
-client.delete_object(
-    Bucket=bucket_upload,
-    Key=md5list_path
-)
 client.put_object_from_local_file(
     Bucket=bucket_upload,
     LocalFilePath=md5list_path,
