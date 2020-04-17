@@ -191,7 +191,8 @@ namespace Downloader
                                     {
                                         if (token.IsCancellationRequested)
                                         { cancelled = true; tokenSource = new CancellationTokenSource(); token = tokenSource.Token; return; }
-                                        this.textBox2.AppendText(updateFile + 1 + totalupdate + ": 开始更新" + Filename + Environment.NewLine);
+                                        this.textBox2.AppendText(updateFile + 1 + "/" + totalupdate + ": 开始更新" + Filename + Environment.NewLine);
+                                        File.Delete(System.IO.Path.Combine(this.textBox1.Text, "THUAI3.0", Filename));
                                         await Task.Run(() => { Downloader.download(System.IO.Path.Combine(this.textBox1.Text, "THUAI3.0", Filename), Filename); });
                                         this.textBox2.AppendText(Filename + "更新完毕!" + Environment.NewLine); updateFile++;
                                     }
@@ -220,12 +221,11 @@ namespace Downloader
                         cancelled = false;
                     }
                     else this.textBox2.AppendText("当前平台已是最新版本！" + Environment.NewLine);
+                    SelectedNewFile.Clear(); SelectedUpdateFile.Clear();
+                    newFileName.Clear(); updateFileName.Clear();
                 }
-                else
-                {
-                    SelectedNewFile.Clear();
-                    SelectedUpdateFile.Clear();
-                }
+                
+                
             }
         }
 
@@ -239,8 +239,11 @@ namespace Downloader
         {
             FolderBrowserDialog folder = new FolderBrowserDialog();
             folder.ShowDialog();
-            this.textBox1.Text = folder.SelectedPath;
-            Data.ChangeData(this.textBox1.Text);
+            if (folder.SelectedPath != "")
+            {
+                this.textBox1.Text = folder.SelectedPath;
+                Data.ChangeData(this.textBox1.Text);
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -269,6 +272,8 @@ namespace Downloader
         {
             string json, MD5;
             int newFile = 0, updateFile = 0;
+            newFileName.Clear();
+            updateFileName.Clear();
             Tencent_cos_download Downloader = new Tencent_cos_download();
             await Task.Run(() => { Downloader.download(System.IO.Path.Combine(this.textBox1.Text, "THUAI3.0", "md5list.json")); });
             using (StreamReader r = new StreamReader(System.IO.Path.Combine(this.textBox1.Text, "THUAI3.0", "md5list.json")))
@@ -278,20 +283,17 @@ namespace Downloader
 
             foreach (KeyValuePair<string, string> pair in jsonDict)
             {
-                MD5 = GetFileMd5Hash(System.IO.Path.Combine(this.textBox1.Text, pair.Key));
+                MD5 = GetFileMd5Hash(System.IO.Path.Combine(this.textBox1.Text, "THUAI3.0", pair.Key));
                 if (MD5.Length == 0)
-                {
-                    if (!newFileName.Exists(t => t == pair.Key))
-                        newFileName.Add(pair.Key);
-                }
+                    newFileName.Add(pair.Key);
                 else if (MD5 != pair.Value)
-                {
-                    if (!updateFileName.Exists(t => t == pair.Key))
-                        updateFileName.Add(pair.Key);
-                }
+                    updateFileName.Add(pair.Key);
             }
             newFile = newFileName.Count();
             updateFile = updateFileName.Count();
+            if(this.textBox2.Text.Length!=0)
+                this.textBox2.AppendText("----------------------" + Environment.NewLine);
+
             if (newFile + updateFile == 0)
             {
                 this.textBox2.AppendText("当前平台已是最新版本！" + Environment.NewLine);
@@ -305,7 +307,7 @@ namespace Downloader
                 this.textBox2.AppendText(Environment.NewLine + $"发现{updateFile}个文件更新：" + Environment.NewLine);
                 foreach (string filename in updateFileName)
                     this.textBox2.AppendText(filename + Environment.NewLine);
-                this.textBox2.AppendText(Environment.NewLine + "请点击下载按钮选择文件" + Environment.NewLine);
+                this.textBox2.AppendText(Environment.NewLine + "请点击下载按钮选择文件" + Environment.NewLine + Environment.NewLine);
             }
             Checked = true;
         }
