@@ -65,6 +65,7 @@ public:
 	int GetCachedSize() const;
 	const byte *ParseFromArray(const byte *bytes, int size);
 	byte *SerializeToArray(byte *bytes, int size);
+	~Message();
 
 protected:
 	virtual google::protobuf::Metadata GetMetadata() const;
