@@ -152,6 +152,7 @@ void CAPI::SendChatMessage(string message)
 	Message* mes3 = new Message(-1, mes2);
 	Message* mes = new Message(-1, mes3);
 	Send(mes);
+	delete mes;
 }
 
 void CAPI::SendCommandMessage(MessageToServer* message)
@@ -160,6 +161,7 @@ void CAPI::SendCommandMessage(MessageToServer* message)
 	Message* mes3 = new Message(-1, mes2);
 	Message* mes = new Message(-1, mes3);
 	Send(mes);
+	delete mes;
 }
 
 void CAPI::CreateObj(int64_t id, Protobuf::MessageToClient* message)
@@ -269,6 +271,7 @@ void CAPI::Initialize()
 bool CAPI::ConnectServer(const char* address, USHORT port)
 {
 	ip = address;
+	this->port = port;
 	while (!pclient->IsConnected())
 	{
 		Debug(1, "ClientSide: Connecting to server ");
@@ -305,6 +308,7 @@ void CAPI::Refresh()
 	Message* mes2 = new Message(AgentId, mes1);
 	Message* mes = new Message(-1, mes2);
 	Send(mes);
+	delete mes;
 }
 
 bool CAPI::Send(const byte* pBuffer, int iLength, int iOffset)

@@ -79,7 +79,10 @@ Message *Message::New() const
 	Message *mes = new Message();
 	return mes;
 }
-
+Message::~Message()
+{
+	if (this->content != NULL)delete this->content;
+}
 int Message::GetCachedSize() const
 {
 	// 尚未加入类型名字符串长.暂时用不到该函数
