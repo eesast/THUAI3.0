@@ -35,13 +35,15 @@ namespace Logic.Server
 
             //初始化playerList
             //向所有Client发送他们自己的ID
+            XYPosition[] bornPoints = { new XYPosition(2.5, 1.5), new XYPosition(48.5, 2.5), new XYPosition(48.5, 48.5), new XYPosition(2.5, 48.5) };
             for (int a = 0; a < Constants.AgentCount; a++)
             {
                 Program.MessageToClient.Scores.Add(a, 0);
+                Program.ScoreLocks.TryAdd(a, new object());
                 for (int c = 0; c < Constants.PlayerCount; c++)
                 {
                     Tuple<int, int> playerIDTuple = new Tuple<int, int>(a, c);
-                    Program.PlayerList.TryAdd(playerIDTuple, new Player(2.5, 1.5));//new Random().Next(2, WORLD_MAP_WIDTH - 2), new Random().Next(2, WORLD_MAP_HEIGHT - 2)));
+                    Program.PlayerList.TryAdd(playerIDTuple, new Player(bornPoints[a].x, bornPoints[a].y));//new Random().Next(2, WORLD_MAP_WIDTH - 2), new Random().Next(2, WORLD_MAP_HEIGHT - 2)));
                     Program.PlayerList[playerIDTuple].CommunicationID = playerIDTuple;
                     MessageToClient msg = new MessageToClient();
                     msg.GameObjectList.Add(

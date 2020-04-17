@@ -24,7 +24,7 @@ namespace Logic.Constant
         public int SightRange { get => _sightRange; }
         protected Talent _talent = Talent.None;
 
-        protected int _score = 0;
+        //protected int _score = 0;
 
         public DishType dish = DishType.DishEmpty;
         public ToolType tool = ToolType.ToolEmpty;
@@ -37,7 +37,7 @@ namespace Logic.Constant
         { }
         public virtual void Put(double distance, double angle, bool isThrowDish)
         { }
-        public virtual void Pick()
+        public virtual void Pick(bool isSelfPosition, ObjType pickType, int dishOrToolType)
         { }
         public virtual void Use(int type, double parameter_1, double parameter_2)
         { }

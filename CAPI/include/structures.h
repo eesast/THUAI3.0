@@ -42,13 +42,13 @@ private:
 	static std::vector<std::vector<std::unordered_map<int64_t, std::shared_ptr<Obj>>>> obj_map;
 	static std::vector<std::vector<std::mutex*>> mutex_map;
 	static std::unordered_map<int64_t, std::shared_ptr<Obj>> obj_list;
+	static void print_map();
+	static void print_map(int x, int y);
+	static void print_obj_list();
 	static void initialize_map();
 public:
 	friend class CAPI;
 	friend int main(int argc, char* argv[]);
-	static void print_map();
-	static void print_map(int x, int y);
-	static void print_obj_list();
 	static std::list<Obj> get_mapcell(int x, int y);
 };
 

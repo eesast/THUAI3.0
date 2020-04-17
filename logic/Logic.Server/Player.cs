@@ -23,57 +23,49 @@ namespace Logic.Server
         protected int _isStun = 0;
         protected int IsStun
         {
-            get { return _isStun; }
-            set
+            get => _isStun;
+            private set
             {
                 _isStun = value;
                 if (value > 0)
-                {
                     StunTimer.Change(value, 0);
-                }
             }
         }
         protected System.Threading.Timer StunTimer;
 
         protected DishType Dish
         {
-            get { return dish; }
-            set
-            {
-                dish = value;
-                //lock (Program.MessageToClientLock)
-                Program.MessageToClient.GameObjectList[this.ID].DishType = dish;
-            }
+            get => dish;
+            private set => Program.MessageToClient.GameObjectList[this.ID].DishType = dish = value;
         }
 
         protected ToolType Tool
         {
             get { return tool; }
-            set
+            private set
             {
                 DeFunction(tool);
                 tool = value;
                 Function(tool);
-                //lock (Program.MessageToClientLock)
                 Program.MessageToClient.GameObjectList[this.ID].ToolType = tool;
             }
         }
         public Talent Talent
         {
             get { return _talent; }
-            set
+            internal set
             {
                 _talent = value;
                 switch (_talent)
                 {
-                    case Talent.Runner: _moveSpeed += (double)Configs["Talent"]["Runner"]["ExtraMoveSpeed"]; break;
+                    case Talent.Runner: MoveSpeed += (double)Configs["Talent"]["Runner"]["ExtraMoveSpeed"]; break;
                     case Talent.StrongMan: MaxThrowDistance += (int)Configs["Talent"]["StrongMan"]["ExtraThrowDistance"]; break;
                     case Talent.LuckyBoy:
                         LuckTalentTimer = new System.Threading.Timer(Item, null, 30000, (int)Configs["Talent"]["LuckyBoy"]["RefreshTime"]);
                         void Item(object i)
                         {
-                            if (Tool == ToolType.ToolEmpty) Tool = (ToolType)Program.Random.Next(0, (int)ToolType.ToolSize - 1);
-                            else new Tool(Position.x, Position.y, (ToolType)Program.Random.Next(0, (int)ToolType.ToolSize - 1)).Parent = WorldMap;
+                            if (Tool == ToolType.ToolEmpty) Tool = (ToolType)Program.Random.Next(1, (int)ToolType.ToolSize - 1);
+                            else new Tool(Position.x, Position.y, (ToolType)Program.Random.Next(1, (int)ToolType.ToolSize - 1)).Parent = WorldMap;
                         }
                         break;
                 }
@@ -82,38 +74,23 @@ namespace Logic.Server
         public new int SightRange
         {
             get => _sightRange;
-            set
-            {
-                _sightRange = value;
-                //lock (Program.MessageToClientLock)
-                Program.MessageToClient.GameObjectList[this.ID].SightRange = value;
-            }
+            private set => Program.MessageToClient.GameObjectList[this.ID].SightRange = _sightRange = value;
         }
         protected int Score
         {
-            get { return base._score; }
-            set
-            {
-                base._score = value;
-                for (int i = 0; i < Communication.Proto.Constants.PlayerCount; i++)
-                {
-                    if (i == CommunicationID.Item2)
-                        continue;
-                    Program.PlayerList[new Tuple<int, int>(CommunicationID.Item1, i)]._score = value;
-                }
-                //lock (Program.MessageToClientLock)
-                Program.MessageToClient.Scores[CommunicationID.Item1] = base._score;
-            }
+            get => Program.MessageToClient.Scores[CommunicationID.Item1];
+            private set => Program.MessageToClient.Scores[CommunicationID.Item1] = value;
         }
         protected new double MoveSpeed
         {
             get => _moveSpeed;
-            set
-            {
-                _moveSpeed = value;
-                //lock (Program.MessageToClientLock)
-                Program.MessageToClient.GameObjectList[this.ID].MoveSpeed = _moveSpeed;
-            }
+            private set => Program.MessageToClient.GameObjectList[this.ID].MoveSpeed = _moveSpeed = value;
+
+        }
+        protected new THUnity2D.Direction FacingDirection
+        {
+            get => _facingDirection;
+            private set => Program.MessageToClient.GameObjectList[this.ID].Direction = (Direction)(_facingDirection = value);
         }
 
         public Player(double x, double y) :
@@ -136,6 +113,7 @@ namespace Logic.Server
                         IsMoving = false,
                         PositionX = this.Position.x,
                         PositionY = this.Position.y,
+                        SightRange = this.SightRange,
                         Direction = (Direction)this.FacingDirection,
                         MoveSpeed = this.MoveSpeed,
                         DishType = dish,
@@ -192,7 +170,7 @@ namespace Logic.Server
                     Move((THUnity2D.Direction)msg.MoveDirection, msg.MoveDuration);
                     break;
                 case CommandType.Pick:
-                    Pick();
+                    Pick(msg.IsPickSelfPosition, msg.PickType, msg.PickDishOrToolType);
                     break;
                 case CommandType.Put:
                     if (msg.ThrowDistance < 0)
@@ -218,18 +196,22 @@ namespace Logic.Server
 
         public void Move(THUnity2D.Direction direction)
         {
-            this._facingDirection = direction;
+            this.FacingDirection = direction;
             Move(new MoveEventArgs((int)direction * Math.PI / 4, MoveSpeed / Constant.Constant.FrameRate));
         }
 
         public override void Move(THUnity2D.Direction direction, int durationMilliseconds)
         {
-            this._facingDirection = direction;
-            this.Velocity = new Vector((int)direction * Math.PI / 4, MoveSpeed);
+            this.FacingDirection = direction;
             this.status = CommandType.Move;
             //lock (Program.MessageToClientLock)
             Program.MessageToClient.GameObjectList[this.ID].IsMoving = true;
-            MoveStopTimer.Change(durationMilliseconds - (int)HalfTimeIntervalInMillisecond, 0);
+            int dueTime = durationMilliseconds - (int)HalfTimeIntervalInMillisecond;
+            if (dueTime > 0)
+            {
+                this.Velocity = new Vector((int)direction * Math.PI / 4, MoveSpeed);
+                MoveStopTimer.Change(dueTime, 0);
+            }
         }
 
         void ChangePositionInMessage(THUnity2D.GameObject thisGameObject)
@@ -242,49 +224,69 @@ namespace Logic.Server
             //}
         }
 
-        public override void Pick()
+        public override void Pick(bool isSelfPosition, ObjType pickType, int dishOrToolType)
         {
-            XYPosition[] toCheckPositions = new XYPosition[] { Position, Position + 2 * EightCornerVector[FacingDirection] };
-            foreach (var xypos in toCheckPositions)
-            {
-                Block? block = null;
-                if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].ContainsType(typeof(FoodPoint)))
-                    block = (Block)WorldMap.Grid[(int)xypos.x, (int)xypos.y].GetFirstObject(typeof(FoodPoint));
-                else if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].ContainsType(typeof(Cooker)))
-                {
-                    block = (Cooker)WorldMap.Grid[(int)xypos.x, (int)xypos.y].GetFirstObject(typeof(Cooker));
-                    if (((Cooker)block).ProtectedTeam != CommunicationID.Item1 && ((Cooker)block).ProtectedTeam >= 0)
-                        block = null;
-                }
-                if (block != null && block.Dish != DishType.DishEmpty)
-                {
-                    DishType temp = Dish;
-                    Dish = block.GetDish(Dish);
-                    if (temp != DishType.DishEmpty)
-                    {
-                        new Dish(Position.x, Position.y, temp).Parent = WorldMap;
-                        //Server.ServerDebug(111.ToString());
-                    }
-                    Server.ServerDebug("Player : " + ID + " Get Dish " + Dish.ToString());
-                    return;
-                }
+            XYPosition toCheckPosition = isSelfPosition ? Position : Position + 2 * EightCornerVector[FacingDirection];
 
-                if (WorldMap.Grid[(int)xypos.x, (int)xypos.y].ContainsLayer(ItemLayer))
-                    foreach (var item in WorldMap.Grid[(int)xypos.x, (int)xypos.y].GetObjects(ItemLayer))
+            switch (pickType)
+            {
+                case ObjType.Block:
+                    Block? block = null;
+                    if (WorldMap.Grid[(int)toCheckPosition.x, (int)toCheckPosition.y].ContainsType(typeof(FoodPoint)))
+                        block = (Block)WorldMap.Grid[(int)toCheckPosition.x, (int)toCheckPosition.y].GetFirstObject(typeof(FoodPoint));
+                    else if (WorldMap.Grid[(int)toCheckPosition.x, (int)toCheckPosition.y].ContainsType(typeof(Cooker)))
                     {
-                        if (item is Dish)
+                        block = (Cooker)WorldMap.Grid[(int)toCheckPosition.x, (int)toCheckPosition.y].GetFirstObject(typeof(Cooker));
+                        if (((Cooker)block).ProtectedTeam != CommunicationID.Item1 && ((Cooker)block).ProtectedTeam >= 0)
+                            block = null;
+                    }
+                    if (block != null && block.Dish != DishType.DishEmpty)
+                    {
+                        DishType temp = Dish;
+                        Dish = block.GetDish(Dish);
+                        if (temp != DishType.DishEmpty)
                         {
-                            Dish = ((Dish)item).GetDish(Dish);
-                            Server.ServerDebug("Player : " + ID + " Get Dish " + Dish.ToString());
-                            return;
+                            new Dish(Position.x, Position.y, temp).Parent = WorldMap;
                         }
-                        else if (item is Tool)
+                        Server.ServerDebug("Player : " + ID + " Get Dish " + Dish.ToString());
+                        break;
+                    }
+                    break;
+                case ObjType.Dish:
+                    if (dishOrToolType <= (int)DishType.DishEmpty || dishOrToolType >= (int)DishType.DishSize3
+                        || dishOrToolType == (int)DishType.DishSize1 || dishOrToolType == (int)DishType.DishSize2)
+                        break;
+                    DishType toPickDish = (DishType)dishOrToolType;
+                    if (WorldMap.Grid[(int)toCheckPosition.x, (int)toCheckPosition.y].ContainsType(typeof(Dish)))
+                    {
+                        foreach (Dish dish in WorldMap.Grid[(int)toCheckPosition.x, (int)toCheckPosition.y].GetObjects(typeof(Dish)))
                         {
-                            Tool = ((Tool)item).GetTool(tool);
-                            Server.ServerDebug("Player : " + ID + " Get Tool " + tool.ToString());
-                            return;
+                            if (dish.Dish == toPickDish)
+                            {
+                                Dish = dish.GetDish(Dish);
+                                Server.ServerDebug("Player : " + ID + " Get Dish " + Dish.ToString());
+                                break;
+                            }
                         }
                     }
+                    break;
+                case ObjType.Tool:
+                    if (dishOrToolType <= (int)ToolType.ToolEmpty || dishOrToolType >= (int)ToolType.ToolSize)
+                        break;
+                    ToolType toPickTool = (ToolType)dishOrToolType;
+                    if (WorldMap.Grid[(int)toCheckPosition.x, (int)toCheckPosition.y].ContainsType(typeof(Tool)))
+                    {
+                        foreach (Tool tool in WorldMap.Grid[(int)toCheckPosition.x, (int)toCheckPosition.y].GetObjects(typeof(Tool)))
+                        {
+                            if (tool.Tool == toPickTool)
+                            {
+                                Tool = tool.GetTool(Tool);
+                                Server.ServerDebug("Player : " + ID + " Get Tool " + tool.ToString());
+                                break;
+                            }
+                        }
+                    }
+                    break;
             }
             //Server.ServerDebug("没东西捡");
             status = CommandType.Stop;
@@ -337,8 +339,8 @@ namespace Logic.Server
                 }
                 else if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].ContainsType(typeof(TaskPoint)))
                 {
-                    int tempScore = ((TaskPoint)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetFirstObject(typeof(TaskPoint))).HandIn(Dish);
-                    Score += tempScore;
+                    lock (Program.ScoreLocks[CommunicationID.Item1])
+                        Score += ((TaskPoint)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetFirstObject(typeof(TaskPoint))).HandIn(Dish);
                     Dish = DishType.DishEmpty;
                 }
             }
@@ -388,8 +390,9 @@ namespace Logic.Server
                             int temp = ((TaskPoint)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetFirstObject(typeof(TaskPoint))).HandIn(Dish);
                             if (temp > 0)
                             {
-                                if (Talent == Talent.Cook) Score += (int)(temp * (1 + (double)Configs["Talent"]["Cook"]["Condiment"]["ScoreParameter"]));
-                                Score += (int)(temp * (1 + (double)Configs["Tool"]["Condiment"]["ScoreParameter"]));
+                                lock (Program.ScoreLocks[CommunicationID.Item1])
+                                    Score += (int)(temp * (1 + (double)((Talent == Talent.Cook) ?
+                                                                        Configs["Talent"]["Cook"]["Condiment"]["ScoreParameter"] : Configs["Tool"]["Condiment"]["ScoreParameter"])));
                                 Dish = DishType.DishEmpty;
                             }
                             else Server.ServerDebug("物品使用失败（提交任务失败）！");
@@ -489,9 +492,11 @@ namespace Logic.Server
                         //XYPosition aim = Position + new XYPosition(parameter1 * Math.Cos(parameter2), parameter1 * Math.Sin(parameter2));
                         Trigger triggerToThrow = new Trigger(Position.x, Position.y, TriggerType.Hammer, CommunicationID.Item1, Talent);
                         triggerToThrow.Parent = WorldMap;
-                        triggerToThrow.Velocity = new Vector(parameter2, (int)Configs["ItemMoveSpeed"]);
                         if (dueTime > 0)
+                        {
+                            triggerToThrow.Velocity = new Vector(parameter2, (int)Configs["ItemMoveSpeed"]);
                             triggerToThrow.StopMovingTimer.Change(dueTime, 0);
+                        }
                         Tool = ToolType.ToolEmpty;
                     }
                     break;
@@ -505,9 +510,11 @@ namespace Logic.Server
                         //XYPosition aim = Position + new XYPosition(parameter1 * Math.Cos(parameter2), parameter1 * Math.Sin(parameter2));
                         Trigger triggerToThrow = new Trigger(Position.x, Position.y, TriggerType.Arrow, CommunicationID.Item1, Talent);
                         triggerToThrow.Parent = WorldMap;
-                        triggerToThrow.Velocity = new Vector(parameter2, (int)Configs["Trigger"]["Arrow"]["Speed"]);
                         if (dueTime > 0)
+                        {
+                            triggerToThrow.Velocity = new Vector(parameter2, (int)Configs["Trigger"]["Arrow"]["Speed"]);
                             triggerToThrow.StopMovingTimer.Change(dueTime, 0);
+                        }
                         Tool = ToolType.ToolEmpty;
                     }
                     break;
@@ -538,7 +545,8 @@ namespace Logic.Server
                 case TriggerType.Mine:
                     if (Tool != ToolType.BreastPlate)
                     {
-                        Score += trigger.hitScore;
+                        lock (Program.ScoreLocks[CommunicationID.Item1])
+                            Score += trigger.hitScore;
                         IsStun = trigger.stunTime;
                         Velocity = new Vector(Velocity.angle, Velocity.length);
                     }
@@ -576,7 +584,8 @@ namespace Logic.Server
                 case TriggerType.Arrow:
                     if (Tool != ToolType.BreastPlate)
                     {
-                        Score += trigger.hitScore;
+                        lock (Program.ScoreLocks[CommunicationID.Item1])
+                            Score += trigger.hitScore;
                         IsStun = trigger.stunTime;
                         Velocity = new Vector(Velocity.angle, 0);
                     }

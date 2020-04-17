@@ -52,7 +52,8 @@ namespace Logic.Server
             }
         }
 
-        public static Dictionary<Tuple<int, int>, Player> PlayerList = new Dictionary<Tuple<int, int>, Player>();
+        public static ConcurrentDictionary<Tuple<int, int>, Player> PlayerList = new ConcurrentDictionary<Tuple<int, int>, Player>();
+        public static ConcurrentDictionary<int, object> ScoreLocks = new ConcurrentDictionary<int, object>();
         private static Server server;
         public static void Main(string[] args)
         {
