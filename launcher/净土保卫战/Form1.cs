@@ -53,13 +53,16 @@ namespace WindowsFormsApp4
                     label4.Visible = true;
                     label5.Visible = true;
                     label6.Visible = true;
+                    label7.Visible = true;
                     checkBox1.Visible = true;
                     serverPort.Visible = true;
                     clientPort.Visible = true;
                     agentNumber.Visible = true;
+                    serverIP.Visible = true;
                     button3.Visible = true;
                     button4.Visible = true;
                     button5.Visible = true;
+                    offLine.Visible = false;
                     this.Text = "启动器";
                     this.Width = 750;
                     listRoom.Visible = true;
@@ -143,15 +146,18 @@ namespace WindowsFormsApp4
                 System.Diagnostics.Process processAgent = new System.Diagnostics.Process();
                 processAgent.StartInfo.FileName = ".\\THUAI3.0\\Communication.Agent.exe";
 
-                argumentsAgent = "--server 127.0.0.1:" + serverPort + " --port " + clientPort + " -d 0 ";
+                argumentsAgent =  " --port " + clientPort + " -d 0 --playercount 2 --timelimit 600 ";
                 if (checkBox1.Checked)
                 {
-                    argumentsAgent += "-t THUAI/offline";
+                    argumentsAgent += "--server 127.0.0.1:";
+                    argumentsAgent += serverPort;
                 }
                 else
                 {
-                    argumentsAgent += "-t ";
+                    argumentsAgent += "--token ";
                     argumentsAgent += token;
+                    argumentsAgent += " --server 49.232.56.14:";
+                    argumentsAgent += serverPort;
                 }
                 processAgent.StartInfo.Arguments = argumentsAgent;
                 processAgent.Start();
@@ -223,7 +229,15 @@ namespace WindowsFormsApp4
         }
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-
+            if (checkBox1.Checked) {
+                serverIP.Text = "127.0.0.1";
+                
+            }
+            else
+            {
+                serverIP.Text = "49.232.56.14"; 
+            }
+            
 
         }
         public void updateRoom(string status)
@@ -359,6 +373,37 @@ namespace WindowsFormsApp4
         private void label7_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void offLine_Click(object sender, EventArgs e)
+        {
+            button1.Visible = false;
+            textBox1.Visible = false;
+            textBox2.Visible = false;
+            label1.Visible = false;
+            label2.Visible = false;
+            label4.Visible = true;
+            label5.Visible = true;
+            label6.Visible = true;
+            label7.Visible = true;
+            checkBox1.Visible = true;
+            serverPort.Visible = true;
+            clientPort.Visible = true;
+            agentNumber.Visible = true;
+            serverIP.Visible = true;
+            button3.Visible = true;
+            button4.Visible = false;
+            button5.Visible = false;
+            offLine.Visible = false;
+            this.Text = "启动器";
+            this.Width = 750;
+            listRoom.Visible = true;
+            this.listRoom.Items.Clear();
+            labelRoom.Visible = true;
+
+            token = "";
+            checkBox1.Checked = true;
+            checkBox1.Enabled = false;
         }
     }
 }
