@@ -58,11 +58,11 @@ namespace Logic.Server
                 _talent = value;
                 switch (_talent)
                 {
-                    case Talent.Runner: MoveSpeed += (double)Configs["Talent"]["Runner"]["ExtraMoveSpeed"]; break;
-                    case Talent.StrongMan: MaxThrowDistance += (int)Configs["Talent"]["StrongMan"]["ExtraThrowDistance"]; break;
+                    case Talent.Runner: MoveSpeed += (double)Configs("Talent", "Runner", "ExtraMoveSpeed"); break;
+                    case Talent.StrongMan: MaxThrowDistance += (int)Configs("Talent", "StrongMan", "ExtraThrowDistance"); break;
                     case Talent.LuckyBoy:
-                        LuckTalentTimer = new System.Threading.Timer(Item, null, 30000, (int)Configs["Talent"]["LuckyBoy"]["RefreshTime"]);
-                        void Item(object i)
+                        LuckTalentTimer = new System.Threading.Timer(Item, null, 30000, (int)Configs("Talent", "LuckyBoy", "RefreshTime"));
+                        void Item(object? i)
                         {
                             if (Tool == ToolType.ToolEmpty) Tool = (ToolType)Program.Random.Next(1, (int)ToolType.ToolSize - 1);
                             else new Tool(Position.x, Position.y, (ToolType)Program.Random.Next(1, (int)ToolType.ToolSize - 1)).Parent = WorldMap;
@@ -99,7 +99,7 @@ namespace Logic.Server
             Parent = WorldMap;
             MoveStopTimer = new System.Threading.Timer((i) => { Velocity = new Vector(Velocity.angle, 0); status = CommandType.Stop; Program.MessageToClient.GameObjectList[this.ID].IsMoving = false; });
             StunTimer = new System.Threading.Timer((i) => { _isStun = 0; });
-            SpeedBuffTimer = new System.Threading.Timer((i) => { MoveSpeed -= (double)Configs["Tool"]["SpeedBuff"]["ExtraMoveSpeed"]; });
+            SpeedBuffTimer = new System.Threading.Timer((i) => { MoveSpeed -= (double)Configs("Tool", "SpeedBuff", "ExtraMoveSpeed"); });
             StrengthBuffTimer = new System.Threading.Timer((i) => { StrenthBuffThrowDistance = 0; });
             PositionChangeComplete += new PositionChangeCompleteHandler(ChangePositionInMessage);
 
@@ -132,13 +132,13 @@ namespace Logic.Server
                 {
                     if (!isStepOnGlue && tempIsStepOnGlue)
                     {
-                        MoveSpeed += (double)Configs["Trigger"]["WaveGlue"]["ExtraMoveSpeed"];
+                        MoveSpeed += (double)Configs("Trigger", "WaveGlue", "ExtraMoveSpeed");
                         Velocity = new Vector(Velocity.angle, MoveSpeed);
                         isStepOnGlue = true;
                     }
                     else if (isStepOnGlue && !tempIsStepOnGlue)
                     {
-                        MoveSpeed -= (double)Configs["Trigger"]["WaveGlue"]["ExtraMoveSpeed"];
+                        MoveSpeed -= (double)Configs("Trigger", "WaveGlue", "ExtraMoveSpeed");
                         Velocity = new Vector(Velocity.angle, MoveSpeed);
                         isStepOnGlue = false;
                     }
@@ -295,9 +295,9 @@ namespace Logic.Server
         public override void Put(double distance, double angle, bool isThrowDish)
         {
             if (distance > MaxThrowDistance) distance = MaxThrowDistance;
-            int dueTime = (int)((double)1000 * distance / (double)Configs["ItemMoveSpeed"]) - (int)HalfTimeIntervalInMillisecond;//注意到如果直接用 distance / ItemMoveSpeed 会在最后多走一步，所以必须做一些数值处理
+            int dueTime = (int)((double)1000 * distance / (double)Configs("ItemMoveSpeed")) - (int)HalfTimeIntervalInMillisecond;//注意到如果直接用 distance / ItemMoveSpeed 会在最后多走一步，所以必须做一些数值处理
 
-            Obj ItemToThrow = null;
+            Obj ItemToThrow;
             if (Dish != DishType.DishEmpty && isThrowDish)
             {
                 ItemToThrow = new Dish(Position.x, Position.y, Dish);
@@ -317,7 +317,7 @@ namespace Logic.Server
             {
                 ItemToThrow.Layer = FlyingLayer;
                 ItemToThrow.Parent = WorldMap;
-                ItemToThrow.Velocity = new Vector(angle, (int)Configs["ItemMoveSpeed"]);
+                ItemToThrow.Velocity = new Vector(angle, (int)Configs("ItemMoveSpeed"));
                 ItemToThrow.StopMovingTimer.Change(dueTime, 0);
             }
             else
@@ -356,16 +356,16 @@ namespace Logic.Server
         {
             switch (type)
             {
-                case ToolType.TigerShoes: MoveSpeed += (double)Configs["Tool"]["TigerShoe"]["ExtraMoveSpeed"]; break;
-                case ToolType.TeleScope: SightRange += (int)Configs["Tool"]["TeleScope"]["ExtraSightRange"]; break;
+                case ToolType.TigerShoes: MoveSpeed += (double)Configs("Tool", "TigerShoe", "ExtraMoveSpeed"); break;
+                case ToolType.TeleScope: SightRange += (int)Configs("Tool", "TeleScope", "ExtraSightRange"); break;
             }
         }
         public void DeFunction(ToolType type)//在丢弃装备时生效
         {
             switch (type)
             {
-                case ToolType.TigerShoes: MoveSpeed -= (double)Configs["Tool"]["TigerShoe"]["ExtraMoveSpeed"]; break;
-                case ToolType.TeleScope: SightRange -= (int)Configs["Tool"]["TeleScope"]["ExtraSightRange"]; break;
+                case ToolType.TigerShoes: MoveSpeed -= (double)Configs("Tool", "TigerShoe", "ExtraMoveSpeed"); break;
+                case ToolType.TeleScope: SightRange -= (int)Configs("Tool", "TeleScope", "ExtraSightRange"); break;
             }
         }
 
@@ -385,14 +385,15 @@ namespace Logic.Server
                 case ToolType.Condiment:
                     {
                         XYPosition xyPosition1 = Position + 2 * EightCornerVector[FacingDirection];
-                        if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].ContainsType(typeof(TaskPoint)))
+                        TaskPoint? taskPoint = (TaskPoint?)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetFirstObject(typeof(TaskPoint));
+                        if (taskPoint != null)
                         {
-                            int temp = ((TaskPoint)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetFirstObject(typeof(TaskPoint))).HandIn(Dish);
+                            int temp = taskPoint.HandIn(Dish);
                             if (temp > 0)
                             {
                                 lock (Program.ScoreLocks[CommunicationID.Item1])
                                     Score += (int)(temp * (1 + (double)((Talent == Talent.Cook) ?
-                                                                        Configs["Talent"]["Cook"]["Condiment"]["ScoreParameter"] : Configs["Tool"]["Condiment"]["ScoreParameter"])));
+                                                                        Configs("Talent", "Cook", "Condiment", "ScoreParameter") : Configs("Tool", "Condiment", "ScoreParameter"))));
                                 Dish = DishType.DishEmpty;
                             }
                             else Server.ServerDebug("物品使用失败（提交任务失败）！");
@@ -402,9 +403,9 @@ namespace Logic.Server
                     break;
                 case ToolType.SpeedBuff:
                     {
-                        MoveSpeed += (double)Configs["Tool"]["SpeedBuff"]["ExtraMoveSpeed"];
-                        if (Talent != Talent.Technician) SpeedBuffTimer.Change((int)Configs["Tool"]["SpeedBuff"]["Duration"], 0);
-                        else SpeedBuffTimer.Change((int)Configs["Talent"]["Technician"]["SpeedBuff"]["Duration"], 0);
+                        MoveSpeed += (double)Configs("Tool", "SpeedBuff", "ExtraMoveSpeed");
+                        if (Talent != Talent.Technician) SpeedBuffTimer.Change((int)Configs("Tool", "SpeedBuff", "Duration"), 0);
+                        else SpeedBuffTimer.Change((int)Configs("Talent", "Technician", "SpeedBuff", "Duration"), 0);
                         if (Velocity.length > 0)
                             Velocity = new Vector(Velocity.angle, MoveSpeed);
                         Tool = ToolType.ToolEmpty;
@@ -412,19 +413,18 @@ namespace Logic.Server
                     break;
                 case ToolType.StrengthBuff:
                     {
-                        StrenthBuffThrowDistance = (int)Configs["Tool"]["StrengthBuff"]["ExtraThrowDistance"];
-                        if (Talent != Talent.Technician) StrengthBuffTimer.Change((int)Configs["Tool"]["StrengthBuff"]["Duration"], 0);
-                        else StrengthBuffTimer.Change((int)Configs["Talent"]["Technician"]["StrengthBuff"]["Duration"], 0);
+                        StrenthBuffThrowDistance = (int)Configs("Tool", "StrengthBuff", "ExtraThrowDistance");
+                        if (Talent != Talent.Technician) StrengthBuffTimer.Change((int)Configs("Tool", "StrengthBuff", "Duration"), 0);
+                        else StrengthBuffTimer.Change((int)Configs("Talent", "Technician", "StrengthBuff", "Duration"), 0);
                         Tool = ToolType.ToolEmpty;
                     }
                     break;
                 case ToolType.Fertilizer:
                     {
                         XYPosition xyPosition1 = Position.GetMid() + 2 * EightCornerVector[FacingDirection];
-                        if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].ContainsType(typeof(FoodPoint)))
-                        {
-                            ((FoodPoint)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetFirstObject(typeof(FoodPoint))).RefreshTime /= 2;
-                        }
+                        FoodPoint? foodPoint = (FoodPoint?)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetFirstObject(typeof(FoodPoint));
+                        if (foodPoint != null)
+                            foodPoint.RefreshTime /= 2;
                         Tool = ToolType.ToolEmpty;
                     }
                     break;
@@ -464,7 +464,7 @@ namespace Logic.Server
                 case ToolType.SpaceGate:
                     {
                         //parameter1是距离，paameter2是角度
-                        double maxDistance = (Talent == Talent.Technician) ? (double)Configs["Talent"]["Technician"]["SpaceGate"]["MaxDistance"] : (double)Configs["Tool"]["SpaceGate"]["MaxDistance"];
+                        double maxDistance = (Talent == Talent.Technician) ? (double)Configs("Talent", "Technician", "SpaceGate", "MaxDistance") : (double)Configs("Tool", "SpaceGate", "MaxDistance");
                         if (parameter1 < 0) parameter1 = 0;
                         else if (parameter1 > maxDistance) parameter1 = maxDistance;
                         XYPosition aim = Position + new XYPosition(parameter1 * Math.Cos(parameter2), parameter1 * Math.Sin(parameter2));
@@ -485,16 +485,16 @@ namespace Logic.Server
                 case ToolType.ThrowHammer:
                     {
                         //parameter1是距离，paameter2是角度
-                        double maxDistance = (Talent == Talent.StrongMan) ? (double)Configs["Talent"]["StrongMan"]["ThrowHammer"]["MaxDistance"] : (double)Configs["Tool"]["ThrowHammer"]["MaxDistance"];
+                        double maxDistance = (Talent == Talent.StrongMan) ? (double)Configs("Talent", "StrongMan", "ThrowHammer", "MaxDistance") : (double)Configs("Tool", "ThrowHammer", "MaxDistance");
                         if (parameter1 < 0) parameter1 = 0;
                         else if (parameter1 > maxDistance) parameter1 = maxDistance;
-                        int dueTime = (int)((double)1000 * parameter1 / (double)Configs["ItemMoveSpeed"]) - (int)HalfTimeIntervalInMillisecond;
+                        int dueTime = (int)((double)1000 * parameter1 / (double)Configs("ItemMoveSpeed")) - (int)HalfTimeIntervalInMillisecond;
                         //XYPosition aim = Position + new XYPosition(parameter1 * Math.Cos(parameter2), parameter1 * Math.Sin(parameter2));
                         Trigger triggerToThrow = new Trigger(Position.x, Position.y, TriggerType.Hammer, CommunicationID.Item1, Talent);
                         triggerToThrow.Parent = WorldMap;
                         if (dueTime > 0)
                         {
-                            triggerToThrow.Velocity = new Vector(parameter2, (int)Configs["ItemMoveSpeed"]);
+                            triggerToThrow.Velocity = new Vector(parameter2, (int)Configs("ItemMoveSpeed"));
                             triggerToThrow.StopMovingTimer.Change(dueTime, 0);
                         }
                         Tool = ToolType.ToolEmpty;
@@ -503,16 +503,16 @@ namespace Logic.Server
                 case ToolType.Bow:
                     {
                         //parameter1是距离，parameter2是角度
-                        double maxDistance = (Talent == Talent.StrongMan) ? (double)Configs["Talent"]["StrongMan"]["Bow"]["MaxDistance"] : (double)Configs["Tool"]["Bow"]["MaxDistance"];
+                        double maxDistance = (Talent == Talent.StrongMan) ? (double)Configs(nameof(Talent), Talent.ToString(), tool.ToString(), "MaxDistance") : (double)Configs(nameof(Tool), tool.ToString(), "MaxDistance");
                         if (parameter1 < 0) parameter1 = 0;
                         else if (parameter1 > maxDistance) parameter1 = maxDistance;
-                        int dueTime = (int)((double)1000 * parameter1 / (double)Configs["Trigger"]["Arrow"]["Speed"]) - (int)HalfTimeIntervalInMillisecond;
+                        int dueTime = (int)((double)1000 * parameter1 / (double)Configs("Trigger", "Arrow", "Speed")) - (int)HalfTimeIntervalInMillisecond;
                         //XYPosition aim = Position + new XYPosition(parameter1 * Math.Cos(parameter2), parameter1 * Math.Sin(parameter2));
                         Trigger triggerToThrow = new Trigger(Position.x, Position.y, TriggerType.Arrow, CommunicationID.Item1, Talent);
                         triggerToThrow.Parent = WorldMap;
                         if (dueTime > 0)
                         {
-                            triggerToThrow.Velocity = new Vector(parameter2, (int)Configs["Trigger"]["Arrow"]["Speed"]);
+                            triggerToThrow.Velocity = new Vector(parameter2, (int)Configs("Trigger", "Arrow", "Speed"));
                             triggerToThrow.StopMovingTimer.Change(dueTime, 0);
                         }
                         Tool = ToolType.ToolEmpty;
@@ -569,12 +569,12 @@ namespace Logic.Server
                         Velocity = new Vector(Velocity.angle, 0);
                         if (Dish != DishType.DishEmpty)
                         {
-                            new Dish(3 * Math.Cos(Program.Random.NextDouble() * 2 * Math.PI), 3 * Math.Sin(Program.Random.NextDouble() * 2 * Math.PI), Dish).Parent = WorldMap;
+                            new Dish(Position.x + 3 * Math.Cos(Program.Random.NextDouble() * 2 * Math.PI), Position.y + 3 * Math.Sin(Program.Random.NextDouble() * 2 * Math.PI), Dish).Parent = WorldMap;
                             Dish = DishType.DishEmpty;
                         }
                         if (Tool != ToolType.ToolEmpty)
                         {
-                            new Tool(3 * Math.Cos(Program.Random.NextDouble() * 2 * Math.PI), 3 * Math.Sin(Program.Random.NextDouble() * 2 * Math.PI), Tool).Parent = WorldMap;
+                            new Tool(Position.x + 3 * Math.Cos(Program.Random.NextDouble() * 2 * Math.PI), Position.y + 3 * Math.Sin(Program.Random.NextDouble() * 2 * Math.PI), Tool).Parent = WorldMap;
                             Tool = ToolType.ToolEmpty;
                         }
                     }
@@ -599,12 +599,12 @@ namespace Logic.Server
                         Velocity = new Vector(Velocity.angle, 0);
                         if (Dish != DishType.DishEmpty)
                         {
-                            new Dish(1 * Math.Cos(Program.Random.NextDouble() * 2 * Math.PI), 1 * Math.Sin(Program.Random.NextDouble() * 2 * Math.PI), Dish).Parent = WorldMap;
+                            new Dish(Position.x + 1 * Math.Cos(Program.Random.NextDouble() * 2 * Math.PI), Position.y + 1 * Math.Sin(Program.Random.NextDouble() * 2 * Math.PI), Dish).Parent = WorldMap;
                             Dish = DishType.DishEmpty;
                         }
                         if (Tool != ToolType.ToolEmpty)
                         {
-                            new Tool(1 * Math.Cos(Program.Random.NextDouble() * 2 * Math.PI), 1 * Math.Sin(Program.Random.NextDouble() * 2 * Math.PI), Tool).Parent = WorldMap;
+                            new Tool(Position.x + 1 * Math.Cos(Program.Random.NextDouble() * 2 * Math.PI), Position.y + 1 * Math.Sin(Program.Random.NextDouble() * 2 * Math.PI), Tool).Parent = WorldMap;
                             Tool = ToolType.ToolEmpty;
                         }
                     }

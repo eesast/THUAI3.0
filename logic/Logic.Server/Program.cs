@@ -10,7 +10,7 @@ namespace Logic.Server
 {
     static class Program
     {
-        private static Random _random;
+        private static Random? _random;
         public static Random Random
         {
             get
@@ -20,7 +20,7 @@ namespace Logic.Server
             }
         }
 
-        private static MessageToClient _messageToClient;
+        private static MessageToClient? _messageToClient;
         public static MessageToClient MessageToClient
         {
             get
