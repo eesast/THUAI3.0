@@ -20,6 +20,7 @@
 #pragma comment(lib, "HPSocket.lib")
 
 #include <sys/timeb.h>
+#include<memory>
 
 using namespace std;
 mutex io_mutex;
@@ -58,7 +59,7 @@ EnHandleResult CListenerImpl::OnReceive(ITcpClient* pSender, CONNID dwConnID, co
 	const byte* p = pData;
 	INT32 type = *(INT32*)p;
 	p += 4;
-	Message* message = new Message();
+	shared_ptr<Message> message = make_shared<Message>();
 	switch (type)
 	{
 	case (INT32)PacketType::IdAllocate:
@@ -79,7 +80,6 @@ EnHandleResult CListenerImpl::OnReceive(ITcpClient* pSender, CONNID dwConnID, co
 		throw new domain_error("unknown Packet Type ID");
 		break;
 	}
-	delete message;
 	return HR_OK;
 }
 EnHandleResult CListenerImpl::OnPrepareListen(ITcpServer* pSender, SOCKET soListen)
@@ -136,6 +136,12 @@ void CAPI::OnReceive(IMessage* message)
 	}
 }
 
+void CAPI::OnReceive(shared_ptr<Message> message)
+{
+	this->OnReceive(message.get());
+	return;
+}
+
 void CAPI::Quit()
 {
 	byte bytes[4];
@@ -150,23 +156,16 @@ void CAPI::SendChatMessage(string message)
 	mes1->set_message(message);
 	Message* mes2 = new Message(PlayerId, mes1);
 	Message* mes3 = new Message(-1, mes2);
-	Message* mes = new Message(-1, mes3);
+	shared_ptr<Message> mes=make_shared<Message>(-1, mes3);
 	Send(mes);
-	//delete mes1;
-	//delete mes2;
-	//delete mes3;
-	//delete mes;
 }
 
 void CAPI::SendCommandMessage(MessageToServer* message)
 {
 	Message* mes2 = new Message(PlayerId, message);
 	Message* mes3 = new Message(-1, mes2);
-	Message* mes = new Message(-1, mes3);
+	shared_ptr<Message> mes = make_shared<Message>(-1, mes3);
 	Send(mes);
-	//delete mes2;
-	//delete mes3;
-	//delete mes;
 }
 
 void CAPI::CreateObj(int64_t id, Protobuf::MessageToClient* message)
@@ -303,6 +302,16 @@ void CAPI::Send(Message* mes) //发送Message
 	DebugFunc(2, "ClientSide: Data sent ", get_type(typeid(*(mes->content)).name()).c_str());
 }
 
+void CAPI::Send(shared_ptr<Message> mes) //发送Message
+{
+	byte bytes[maxl];
+	byte* p = bytes;
+	p = WriteInt32((int)PacketType::ProtoPacket, p);
+	p = mes->SerializeToArray(p, maxl - 4);
+	pclient->Send(bytes, p - bytes);
+	DebugFunc(2, "ClientSide: Data sent ", get_type(typeid(*(mes->content)).name()).c_str());
+}
+
 void CAPI::Refresh()
 {
 	if (AgentId == -1 || PlayerId == -1)
@@ -311,9 +320,8 @@ void CAPI::Refresh()
 	ping->set_ticks(currentTimeMillisec());
 	Message* mes1 = new Message(PlayerId, ping);
 	Message* mes2 = new Message(AgentId, mes1);
-	Message* mes = new Message(-1, mes2);
+	shared_ptr<Message> mes = make_shared<Message>(-1, mes2);
 	Send(mes);
-	//delete mes;
 }
 
 bool CAPI::Send(const byte* pBuffer, int iLength, int iOffset)

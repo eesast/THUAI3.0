@@ -61,7 +61,9 @@ public:
 	void Disconnect();
 	bool PrintBuffer();
 	void Send(Message *mes);
+	void Send(shared_ptr<Message> mes);
 	void OnReceive(IMessage *message);
+	void OnReceive(shared_ptr<Message> message);
 	void Quit();
 	void SendChatMessage(string message);
 	void SendCommandMessage(Protobuf::MessageToServer *message);
