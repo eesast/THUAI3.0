@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Downloader.Properties
+namespace 净土保卫战.Properties
 {
 
 

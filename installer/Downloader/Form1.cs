@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Text;
+using System.Linq;
 using System.Windows.Forms;
 using System.IO;
 using COSXML;
@@ -16,35 +17,43 @@ namespace Downloader
     {
         static List<string> newFileName = new List<string>();
         static List<string> updateFileName = new List<string>();
+        static List<string> SelectedNewFile = new List<string>();
+        static List<string> SelectedUpdateFile = new List<string>();
         static CancellationTokenSource tokenSource = new CancellationTokenSource();
         static CancellationToken token = tokenSource.Token;
         static bool Checked = false;
 
+        public class Data
+        {
+            static string Path;
+            public static string FilePath = "";
+
+            public Data(string Path)
+            {
+                Data.Path = Path + "/THUAI3.0.dat";
+                if (File.Exists(Data.Path))
+                    using (StreamReader r = new StreamReader(Data.Path))
+                        Data.FilePath = r.ReadLine();
+                else Data.FilePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            }
+            public static void ChangeData(string newLine)
+            {
+                using (StreamWriter w = new StreamWriter(Data.Path))
+                    w.WriteLine(newLine.Trim('\r').Trim('\n'));
+            }
+        }
         public Form1()
         {
             InitializeComponent();
-            if (File.Exists("./data.dat"))
-                using (StreamReader r = new StreamReader("./data.dat"))
-                {
-                    this.textBox1.Text = r.ReadLine();
-                }
-                //this.skinEngine1 = new Sunisoft.IrisSkin.SkinEngine(((System.ComponentModel.Component)(this)));
-                //this.skinEngine1.SkinFile = Application.StartupPath + "//Eighteen.ssk";
-                Control.CheckForIllegalCrossThreadCalls = false;
-            
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            Data Filedata = new Data(path);
+            this.textBox1.Text = Data.FilePath;
+            //this.skinEngine1 = new Sunisoft.IrisSkin.SkinEngine(((System.ComponentModel.Component)(this)));
+            //this.skinEngine1.SkinFile = Application.StartupPath + "//Eighteen.ssk";
+            Control.CheckForIllegalCrossThreadCalls = false;
+
         }
-        private void txt_GotFocus(object sender, EventArgs e)
-        {
-            var source = new AutoCompleteStringCollection();
-            if (File.Exists("./data.dat"))
-            {
-                string nextline;
-                StreamReader r = new StreamReader("./data.dat");
-                while ((nextline = r.ReadLine()) != null)
-                    source.Add(nextline);
-                r.Close();
-            }
-        }
+
         private void btnDown_Click(object sender, EventArgs e)
         {
 
@@ -65,8 +74,8 @@ namespace Downloader
 
 
                 //方式1， 永久密钥
-                string secretId = "AKIDRn0ygI5kmY4IYYLDfaF7nDNGtFK9KYrt"; //"云 API 密钥 SecretId";
-                string secretKey = "ue8LI2XmtkLfwxg9LHvKSWKaaLp2zfz3"; //"云 API 密钥 SecretKey";
+                string secretId = Properties.Resources.TencentID; //"云 API 密钥 SecretId";
+                string secretKey = Properties.Resources.TencentKey; //"云 API 密钥 SecretKey";
                 long durationSecond = 1000;  //每次请求签名有效时长，单位为秒
                 QCloudCredentialProvider cosCredentialProvider = new DefaultQCloudCredentialProvider(secretId, secretKey, durationSecond);
 
@@ -91,15 +100,9 @@ namespace Downloader
                     //请求成功
                     Console.WriteLine(result.GetResultInfo());
                 }
-                catch (COSXML.CosException.CosClientException clientEx)
+                catch (System.Exception)
                 {
-                    //请求失败
-                    Console.WriteLine("CosClientException: " + clientEx);
-                }
-                catch (COSXML.CosException.CosServerException serverEx)
-                {
-                    //请求失败
-                    Console.WriteLine("CosServerException: " + serverEx.GetInfo());
+                    throw;
                 }
             }
         }
@@ -149,49 +152,80 @@ namespace Downloader
                 await Task.Run(() => { this.button3_Click(sender, e); });
             else
             {
-                Tencent_cos_download Downloader = new Tencent_cos_download();
-
-                bool cancelled = false;
-                int newFile = 0, updateFile = 0;
-                int totalnew = newFileName.Count, totalupdate = updateFileName.Count;
-                MessageBoxButtons mes = MessageBoxButtons.OKCancel;
-                if (newFileName.Count > 0 || updateFileName.Count > 0)
+                文件列表 f2 = new 文件列表(newFileName, updateFileName);
+                f2.StartPosition = FormStartPosition.CenterParent;
+                f2.ShowDialog();
+                if (f2.DialogResult == DialogResult.Yes)
                 {
-                    DialogResult dialogResult = MessageBox.Show("有新的更新可用，是否下载?", "提示", mes);
-                    if (dialogResult != DialogResult.OK) return;
-                    try
+                    List<string>[] FileNames = (List<string>[])f2.Tag;
+                    SelectedNewFile = FileNames[0];
+                    SelectedUpdateFile = FileNames[1];
+                    Tencent_cos_download Downloader = new Tencent_cos_download();
+
+                    bool cancelled = false;
+                    int newFile = 0, updateFile = 0;
+                    int totalnew = SelectedNewFile.Count, totalupdate = SelectedUpdateFile.Count;
+                    MessageBoxButtons mes = MessageBoxButtons.OKCancel;
+                    if (SelectedNewFile.Count > 0 || SelectedUpdateFile.Count > 0)
                     {
-                        await Task.Run(async () =>
-                            {
-                                foreach (string Filename in newFileName)
+                        DialogResult dialogResult = MessageBox.Show($"共有{SelectedNewFile.Count}个新文件，{SelectedUpdateFile.Count}个更新", "提示", mes);
+                        if (dialogResult != DialogResult.OK)
+                        {
+                            SelectedNewFile.Clear();
+                            SelectedUpdateFile.Clear();
+                            return;
+                        }
+                        try
+                        {
+                            await Task.Run(async () =>
                                 {
-                                    if (token.IsCancellationRequested)
-                                    { cancelled = true; tokenSource = new CancellationTokenSource(); token = tokenSource.Token; return; }
-                                    this.textBox2.AppendText(newFile+1 + "/" + totalnew + ": 开始下载" + Filename + Environment.NewLine);
-                                    await Task.Run(() => { Downloader.download(System.IO.Path.Combine(this.textBox1.Text, Filename), Filename); });
-                                    this.textBox2.AppendText(Filename + "下载完毕!" + Environment.NewLine); newFile++;
-                                }
-                                foreach (string Filename in updateFileName)
-                                {
-                                    if (token.IsCancellationRequested)
-                                    { cancelled = true; tokenSource = new CancellationTokenSource(); token = tokenSource.Token; return; }
-                                    this.textBox2.AppendText(updateFile+1 + totalupdate + ": 开始更新" + Filename + Environment.NewLine);
-                                    await Task.Run(() => { Downloader.download(System.IO.Path.Combine(this.textBox1.Text, Filename), Filename); });
-                                    this.textBox2.AppendText(Filename + "更新完毕!" + Environment.NewLine); updateFile++;
-                                }
-                            }, token);
+                                    foreach (string Filename in SelectedNewFile)
+                                    {
+                                        if (token.IsCancellationRequested)
+                                        { cancelled = true; tokenSource = new CancellationTokenSource(); token = tokenSource.Token; return; }
+                                        this.textBox2.AppendText(newFile + 1 + "/" + totalnew + ": 开始下载" + Filename + Environment.NewLine);
+                                        await Task.Run(() => { Downloader.download(System.IO.Path.Combine(this.textBox1.Text, "THUAI3.0", Filename), Filename); });
+                                        this.textBox2.AppendText(Filename + "下载完毕!" + Environment.NewLine); newFile++;
+                                    }
+                                    foreach (string Filename in SelectedUpdateFile)
+                                    {
+                                        if (token.IsCancellationRequested)
+                                        { cancelled = true; tokenSource = new CancellationTokenSource(); token = tokenSource.Token; return; }
+                                        this.textBox2.AppendText(updateFile + 1 + "/" + totalupdate + ": 开始更新" + Filename + Environment.NewLine);
+                                        File.Delete(System.IO.Path.Combine(this.textBox1.Text, "THUAI3.0", Filename));
+                                        await Task.Run(() => { Downloader.download(System.IO.Path.Combine(this.textBox1.Text, "THUAI3.0", Filename), Filename); });
+                                        this.textBox2.AppendText(Filename + "更新完毕!" + Environment.NewLine); updateFile++;
+                                    }
+                                }, token);
+                        }
+                        catch (COSXML.CosException.CosClientException clientEx)
+                        {
+                            //请求失败
+                            this.textBox2.AppendText("CosClientException: " + clientEx.ToString() + Environment.NewLine);
+                            return;
+                        }
+                        catch (COSXML.CosException.CosServerException serverEx)
+                        {
+                            //请求失败
+                            this.textBox2.AppendText("CosClientException: " + serverEx.ToString() + Environment.NewLine);
+                            return;
+                        }
+                        catch (System.Exception)
+                        {
+                            throw;
+                        }
+                        if (!cancelled)
+                            this.textBox2.AppendText($"下载成功！共下载{newFile}个新文件，更新{updateFile}个文件" + Environment.NewLine);
+                        else
+                            this.textBox2.AppendText($"下载取消，共下载{newFile}个新文件，更新{updateFile}个文件" + Environment.NewLine);
+                        cancelled = false;
                     }
-                    catch (System.Exception)
-                    {
-                        throw;
-                    }
-                    if (!cancelled)
-                        this.textBox2.AppendText($"下载成功！共下载{newFile}个新文件，更新{updateFile}个文件" + Environment.NewLine);
-                    else
-                        this.textBox2.AppendText($"下载取消，共下载{newFile}个新文件，更新{updateFile}个文件" + Environment.NewLine);
-                    cancelled = false;
+                    else this.textBox2.AppendText("当前平台已是最新版本！" + Environment.NewLine);
+                    SelectedNewFile.Clear(); SelectedUpdateFile.Clear();
+                    newFileName.Clear(); updateFileName.Clear();
                 }
-                else this.textBox2.AppendText("当前平台已是最新版本！" + Environment.NewLine);
+                
+                
             }
         }
 
@@ -205,19 +239,28 @@ namespace Downloader
         {
             FolderBrowserDialog folder = new FolderBrowserDialog();
             folder.ShowDialog();
-            this.textBox1.Text = folder.SelectedPath;
-            using (StreamWriter w = new StreamWriter("./data.dat"))
-                w.WriteLine(folder.SelectedPath);
+            if (folder.SelectedPath != "")
+            {
+                this.textBox1.Text = folder.SelectedPath;
+                Data.ChangeData(this.textBox1.Text);
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             tokenSource.Cancel();
+            SelectedNewFile = new List<string>();
+            SelectedUpdateFile = new List<string>();
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            
+
+        }
+
+        private void textBox1_LostFocus(object sender, EventArgs e)
+        {
+            Data.ChangeData(this.textBox1.Text);
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
@@ -229,29 +272,28 @@ namespace Downloader
         {
             string json, MD5;
             int newFile = 0, updateFile = 0;
+            newFileName.Clear();
+            updateFileName.Clear();
             Tencent_cos_download Downloader = new Tencent_cos_download();
-            await Task.Run(() => { Downloader.download(System.IO.Path.Combine(this.textBox1.Text, "md5list.json")); });
-            using (StreamReader r = new StreamReader(System.IO.Path.Combine(this.textBox1.Text, "md5list.json")))
-            {
+            await Task.Run(() => { Downloader.download(System.IO.Path.Combine(this.textBox1.Text, "THUAI3.0", "md5list.json")); });
+            using (StreamReader r = new StreamReader(System.IO.Path.Combine(this.textBox1.Text, "THUAI3.0", "md5list.json")))
                 json = r.ReadToEnd();
-            }
             json = json.Replace("\r", string.Empty).Replace("\n", string.Empty);
             Dictionary<string, string> jsonDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
 
             foreach (KeyValuePair<string, string> pair in jsonDict)
             {
-                MD5 = GetFileMd5Hash(System.IO.Path.Combine(this.textBox1.Text, pair.Key));
-                if (MD5.Length == 0 && !newFileName.Exists(t => t == pair.Key))
-                {
-                    newFile++;
+                MD5 = GetFileMd5Hash(System.IO.Path.Combine(this.textBox1.Text, "THUAI3.0", pair.Key));
+                if (MD5.Length == 0)
                     newFileName.Add(pair.Key);
-                }
-                else if (MD5 != pair.Value && !newFileName.Exists(t => t == pair.Key))
-                {
-                    updateFile++;
+                else if (MD5 != pair.Value)
                     updateFileName.Add(pair.Key);
-                }
             }
+            newFile = newFileName.Count();
+            updateFile = updateFileName.Count();
+            if(this.textBox2.Text.Length!=0)
+                this.textBox2.AppendText("----------------------" + Environment.NewLine);
+
             if (newFile + updateFile == 0)
             {
                 this.textBox2.AppendText("当前平台已是最新版本！" + Environment.NewLine);
@@ -259,13 +301,13 @@ namespace Downloader
             }
             else
             {
-                this.textBox2.AppendText($"将下载以下{newFile}个文件：" + Environment.NewLine);
+                this.textBox2.AppendText($"发现{newFile}个新文件：" + Environment.NewLine);
                 foreach (string filename in newFileName)
                     this.textBox2.AppendText(filename + Environment.NewLine);
-                this.textBox2.AppendText(Environment.NewLine + $"将更新以下{updateFile}个文件：" + Environment.NewLine);
+                this.textBox2.AppendText(Environment.NewLine + $"发现{updateFile}个文件更新：" + Environment.NewLine);
                 foreach (string filename in updateFileName)
                     this.textBox2.AppendText(filename + Environment.NewLine);
-                this.textBox2.AppendText(Environment.NewLine + "请点击下载按钮获取更新" + Environment.NewLine);
+                this.textBox2.AppendText(Environment.NewLine + "请点击下载按钮选择文件" + Environment.NewLine + Environment.NewLine);
             }
             Checked = true;
         }

@@ -1,7 +1,6 @@
 ## Yours
 
-
-
+installer/Downloader/Properties/
 ## VsCode
 .vscode/
 
@@ -45,6 +44,8 @@ bld/
 # Visual Studio 2017 auto generated files
 Generated\ Files/
 
+FodyWeavers.xml
+FodyWeavers.xsd
 # MSTest test Results
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*

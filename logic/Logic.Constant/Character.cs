@@ -14,17 +14,17 @@ namespace Logic.Constant
         //public int team = 0;
         //protected double GlueExtraMoveSpeed = 0;
         //protected double SpeedBuffExtraMoveSpeed = 0;
-        protected double _moveSpeed = (double)Configs["Player"]["InitMoveSpeed"];
+        protected double _moveSpeed = (double)Configs("Player", "InitMoveSpeed");
         protected double MoveSpeed { get => _moveSpeed; }
-        protected THUnity2D.Direction _facingDirection;
-        public THUnity2D.Direction FacingDirection { get => _facingDirection; }
+        protected new THUnity2D.Direction _facingDirection;
+        public new THUnity2D.Direction FacingDirection { get => _facingDirection; }
         protected int StrenthBuffThrowDistance = 0;
-        protected int MaxThrowDistance = (int)Configs["Player"]["InitThrowDistance"];
-        protected int _sightRange = (int)Configs["Player"]["InitSightRange"];
+        protected int MaxThrowDistance = (int)Configs("Player", "InitThrowDistance");
+        protected int _sightRange = (int)Configs("Player", "InitSightRange");
         public int SightRange { get => _sightRange; }
         protected Talent _talent = Talent.None;
 
-        protected int _score = 0;
+        //protected int _score = 0;
 
         public DishType dish = DishType.DishEmpty;
         public ToolType tool = ToolType.ToolEmpty;
@@ -37,7 +37,7 @@ namespace Logic.Constant
         { }
         public virtual void Put(double distance, double angle, bool isThrowDish)
         { }
-        public virtual void Pick(bool isPickDish, int type)
+        public virtual void Pick(bool isSelfPosition, ObjType pickType, int dishOrToolType)
         { }
         public virtual void Use(int type, double parameter_1, double parameter_2)
         { }

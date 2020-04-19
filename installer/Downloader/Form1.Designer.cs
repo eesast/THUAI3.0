@@ -40,7 +40,7 @@
             // 
             // download
             // 
-            this.download.Location = new System.Drawing.Point(635, 205);
+            this.download.Location = new System.Drawing.Point(635, 164);
             this.download.Margin = new System.Windows.Forms.Padding(4);
             this.download.Name = "download";
             this.download.Size = new System.Drawing.Size(176, 45);
@@ -69,7 +69,7 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(558, 38);
             this.textBox1.TabIndex = 3;
-            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.textBox1.Leave += new System.EventHandler(this.textBox1_LostFocus);
             // 
             // button1
             // 

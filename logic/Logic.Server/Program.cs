@@ -10,7 +10,7 @@ namespace Logic.Server
 {
     static class Program
     {
-        private static Random _random;
+        private static Random? _random;
         public static Random Random
         {
             get
@@ -20,7 +20,7 @@ namespace Logic.Server
             }
         }
 
-        private static MessageToClient _messageToClient;
+        private static MessageToClient? _messageToClient;
         public static MessageToClient MessageToClient
         {
             get
@@ -52,7 +52,8 @@ namespace Logic.Server
             }
         }
 
-        public static Dictionary<Tuple<int, int>, Player> PlayerList = new Dictionary<Tuple<int, int>, Player>();
+        public static ConcurrentDictionary<Tuple<int, int>, Player> PlayerList = new ConcurrentDictionary<Tuple<int, int>, Player>();
+        public static ConcurrentDictionary<int, object> ScoreLocks = new ConcurrentDictionary<int, object>();
         private static Server server;
         public static void Main(string[] args)
         {
