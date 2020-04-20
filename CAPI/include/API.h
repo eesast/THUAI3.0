@@ -10,7 +10,7 @@ namespace THUAI3
 	void move(Direction direction_t, int duration = 1000);
 	void put(double distance, double angle, bool isThrowDish);
 	void pick(bool isSelfPosition, ObjType pickType, int dishOrToolType);
-	void use(int type, double parameter1, double parameter2);
+	void use(int type, double parameter1 = 0, double parameter2 = 0);
 	void speakToFriend(std::string speakText);
 	void initializeGameTime();
 	unsigned long long getGameTime();
