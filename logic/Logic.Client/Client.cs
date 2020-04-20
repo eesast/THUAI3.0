@@ -235,33 +235,57 @@ namespace Client
                         continue;
                     switch (key)
                     {
-                        case 'd': Move(THUnity2D.Direction.Right); break;
-                        case 'e': Move(THUnity2D.Direction.RightUp); break;
-                        case 'w': Move(THUnity2D.Direction.Up); break;
-                        case 'q': Move(THUnity2D.Direction.LeftUp); break;
-                        case 'a': Move(THUnity2D.Direction.Left); break;
-                        case 'z': Move(THUnity2D.Direction.LeftDown); break;
-                        case 'x': Move(THUnity2D.Direction.Down); break;
-                        case 'c': Move(THUnity2D.Direction.RightDown); break;
+                        case 'd':
+                            Console.WriteLine("\nPlease Input distance : ");
+                            Move(THUnity2D.Direction.Right, (int)(1000 * double.Parse(Console.ReadLine()) / MoveSpeed));
+                            break;
+                        case 'e':
+                            Console.WriteLine("\nPlease Input distance : ");
+                            Move(THUnity2D.Direction.RightUp, (int)(1000 * double.Parse(Console.ReadLine()) / MoveSpeed));
+                            break;
+                        case 'w':
+                            Console.WriteLine("\nPlease Input distance : ");
+                            Move(THUnity2D.Direction.Up, (int)(1000 * double.Parse(Console.ReadLine()) / MoveSpeed));
+                            break;
+                        case 'q':
+                            Console.WriteLine("\nPlease Input distance : ");
+                            Move(THUnity2D.Direction.LeftUp, (int)(1000 * double.Parse(Console.ReadLine()) / MoveSpeed));
+                            break;
+                        case 'a':
+                            Console.WriteLine("\nPlease Input distance : ");
+                            Move(THUnity2D.Direction.Left, (int)(1000 * double.Parse(Console.ReadLine()) / MoveSpeed));
+                            break;
+                        case 'z':
+                            Console.WriteLine("\nPlease Input distance : ");
+                            Move(THUnity2D.Direction.LeftDown, (int)(1000 * double.Parse(Console.ReadLine()) / MoveSpeed));
+                            break;
+                        case 'x':
+                            Console.WriteLine("\nPlease Input distance : ");
+                            Move(THUnity2D.Direction.Down, (int)(1000 * double.Parse(Console.ReadLine()) / MoveSpeed));
+                            break;
+                        case 'c':
+                            Console.WriteLine("\nPlease Input distance : ");
+                            Move(THUnity2D.Direction.RightDown, (int)(1000 * double.Parse(Console.ReadLine()) / MoveSpeed));
+                            break;
                         case 'f':
-                            Console.WriteLine("Please Input 3 parameters : isSelfPosition, pickType, dishOrToolType");
+                            Console.WriteLine("\nPlease Input 3 parameters : isSelfPosition, pickType, dishOrToolType");
                             Pick(Convert.ToBoolean(int.Parse(Console.ReadLine())), (ObjType)int.Parse(Console.ReadLine()), int.Parse(Console.ReadLine()));
                             break;
                         case 'u':
-                            Console.WriteLine("Please Input 2 parameters : ");
+                            Console.WriteLine("\nPlease Input 2 parameters : ");
                             Use(1, double.Parse(Console.ReadLine()), double.Parse(Console.ReadLine()));
                             break;
                         case 'i': Use(0, 0); break;
                         case 'r':
-                            Console.WriteLine("Please Input 2 parameters : ");
+                            Console.WriteLine("\nPlease Input 2 parameters : ");
                             Put(double.Parse(Console.ReadLine()), double.Parse(Console.ReadLine()), true);
                             break;
                         case 't':
-                            Console.WriteLine("Please Input 2 parameters : ");
+                            Console.WriteLine("\nPlease Input 2 parameters : ");
                             Put(double.Parse(Console.ReadLine()), double.Parse(Console.ReadLine()), false);
                             break;
                         case ':':
-                            Console.WriteLine("Please Input your text to speak : ");
+                            Console.WriteLine("\nPlease Input your text to speak : ");
                             SpeakToFriend(Console.ReadLine());
                             break;
                     }
@@ -269,11 +293,11 @@ namespace Client
                 }
                 catch (ArgumentNullException)
                 {
-                    ClientDebug("Argument Null !!!");
+                    ClientDebug("\nArgument Null !!!");
                 }
                 catch (FormatException)
                 {
-                    ClientDebug("Format Incorrect !!!");
+                    ClientDebug("\nFormat Incorrect !!!");
                 }
             }
         }
