@@ -40,11 +40,11 @@
 
 	enum ObjType { //可能出现在地图上的各种物品
       People = 0;  //人
-    Block = 1;   //墙体
-    Dish = 2;    //食材
-    Tool = 3;    //道具
-    Trigger = 4; //触发器
-    ObjTypeSize = 5;
+      Block = 1;   //墙体
+      Dish = 2;    //食材
+      Tool = 3;    //道具
+      Trigger = 4; //触发器
+      ObjTypeSize = 5;
     }
 	enum BlockType {  //标1的物品扔出碰到会反弹，标0的会穿过去
 	  Wall = 0;       // 1

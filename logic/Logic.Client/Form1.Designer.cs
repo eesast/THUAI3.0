@@ -73,17 +73,18 @@ namespace GameForm
             ControlLabels.Add("Dish", new System.Windows.Forms.Label());
             ControlLabels.Add("Tool", new System.Windows.Forms.Label());
             ControlLabels.Add("Task", new System.Windows.Forms.Label());
-            int i = 0;
+            ControlLabels.Add("RecieveText", new System.Windows.Forms.Label());
+            int heightPoint = 0;
             foreach (var label in ControlLabels)
             {
                 label.Value.BackColor = System.Drawing.Color.Black;
                 label.Value.Text = label.Key;
                 label.Value.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
                 label.Value.ForeColor = System.Drawing.Color.White;
-                label.Value.Location = new System.Drawing.Point(FORM_WIDTH, i * CONTROL_LABELS_HEIGHT);
-                label.Value.Size = new System.Drawing.Size(CONTROL_LABELS_WIDTH, CONTROL_LABELS_HEIGHT);
+                label.Value.Location = new System.Drawing.Point(FORM_WIDTH, heightPoint);
+                label.Value.Size = new System.Drawing.Size(CONTROL_LABELS_WIDTH, label.Key == "Task" ? 120 : CONTROL_LABELS_HEIGHT);
                 this.Controls.Add(label.Value);
-                i++;
+                heightPoint += label.Value.Size.Height;
             }
 
             // 

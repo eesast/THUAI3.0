@@ -1,10 +1,15 @@
 using Communication.Proto;
+using Communication.Server;
 using Logic.Constant;
 using System;
 using System.Collections.Generic;
 using static Logic.Constant.MapInfo;
 using CommandLine;
 using System.Collections.Concurrent;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using Google.Protobuf;
 
 namespace Logic.Server
 {
@@ -25,12 +30,23 @@ namespace Logic.Server
         {
             get
             {
-                _messageToClient = _messageToClient ?? new MessageToClient();
+                if (_messageToClient == null)
+                    _messageToClient = new MessageToClient();
                 return _messageToClient;
             }
         }
         public static readonly object MessageToClientLock = new object();
 
+        private static ServerMessage? _serverMessage;
+        public static ServerMessage ServerMessage
+        {
+            get
+            {
+                if (_serverMessage == null)
+                    _serverMessage = new ServerMessage { Agent = -2, Client = -2 };
+                return _serverMessage;
+            }
+        }
 
         public static void InitializeMap()
         {
@@ -57,6 +73,29 @@ namespace Logic.Server
         private static Server server;
         public static void Main(string[] args)
         {
+
+            //PlayBack.Reader reader = new PlayBack.Reader("test.bin");
+            //IMessage<MessageToClient> message = new MessageToClient();
+            //Console.WriteLine(reader.Read(ref message));
+            //Console.WriteLine("=============");
+            //foreach (var item in ((MessageToClient)message).Scores)
+            //    Console.WriteLine(item.Key + " , " + item.Value);
+            //foreach (var item in ((MessageToClient)message).GameObjectList)
+            //    Console.WriteLine(item.Key + " , " + item.Value.ObjType);
+            //message = new MessageToClient();
+            //Console.WriteLine(reader.Read(ref message));
+            //Console.WriteLine("=============");
+            //foreach (var item in ((MessageToClient)message).Scores)
+            //    Console.WriteLine(item.Key + " , " + item.Value);
+            //foreach (var item in ((MessageToClient)message).GameObjectList)
+            //    Console.WriteLine(item.Key + " , " + item.Value.ObjType);
+            //Console.WriteLine(reader.Read(ref message));
+            //Console.WriteLine("=============");
+            //foreach (var item in ((MessageToClient)message).Scores)
+            //    Console.WriteLine(item.Key + " , " + item.Value);
+            //foreach (var item in ((MessageToClient)message).GameObjectList)
+            //    Console.WriteLine(item.Key + " , " + item.Value.ObjType);
+
             Parser.Default.ParseArguments<AugmentOptions>(args)
                   .WithParsed<AugmentOptions>(o =>
                   {

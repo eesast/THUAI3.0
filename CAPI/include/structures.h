@@ -26,13 +26,14 @@ struct XYPosition
 class Obj
 {
 public:
-	XYPosition position;
-	ObjType objType;
-	BlockType blockType;
-	DishType dish;
-	ToolType tool;
-	TriggerType trigger;
-	Direction facingDiretion;
+	XYPosition position;		//Obj位置
+	ObjType objType;			//Obj所属类型
+	BlockType blockType;		//如果objType为Block，所属的墙体类型
+	DishType dish;				//如果objType为Dish，所属的食材类型；如果objType为People，拥有的食材类型
+	ToolType tool;				//如果objType为Tool，所属的道具类型；如果objType为People，拥有的道具类型
+	TriggerType trigger;		//如果objType为Trigger，所属的触发器类型
+	Direction facingDiretion;	//如果objType为People，面朝的方向
+	int team;					//如果objType为People，所属的队伍
 	Obj(const XYPosition& pos, ObjType objType);
 };
 

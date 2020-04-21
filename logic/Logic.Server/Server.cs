@@ -18,6 +18,7 @@ namespace Logic.Server
         //System.Threading.Timer? ServerStopTimer;
         System.Threading.Timer? WatchInputTimer;
         Thread ServerRunThread;
+        PlayBack.Writer writer = new PlayBack.Writer("server.playback");
 
         public Server(ushort serverPort, ushort playerCount, ushort agentCount, uint MaxGameTimeSeconds, string token)
         {
@@ -207,15 +208,13 @@ namespace Logic.Server
         {
             lock (Program.MessageToClientLock)
             {
-                ServerCommunication.SendMessage(new ServerMessage
-                {
-                    Agent = -2,
-                    Client = -2,
-                    Message = Program.MessageToClient
-                });
+                Program.ServerMessage.Message = Program.MessageToClient;
+                ServerCommunication.SendMessage(Program.ServerMessage);
+                //Program.MessageToClient.WriteTo(
+                //Google.Protobuf.CodedOutputStream codedOutputStream = new Google.Protobuf.CodedOutputStream(;
+                writer.Write(Program.MessageToClient);
             }
         }
-
         public static Action<string> ServerDebug = (str) => { Console.WriteLine(str); };
     }
 }

@@ -38,7 +38,7 @@ namespace GameForm
                         }
                         Application.EnableVisualStyles();
                         Application.SetCompatibleTextRenderingDefault(false);
-                        form = new Form1(o.agentPort, (Talent)o.talent);
+                        form = new Form1(o.agentPort, (Talent)o.talent, Convert.ToBoolean(o.isPlayBack));
                         Application.Run(form);
                     });
 

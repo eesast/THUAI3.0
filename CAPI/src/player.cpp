@@ -144,6 +144,7 @@ void play()
 		std::cout << "\tposition : " << PlayerInfo.position.x << "," << PlayerInfo.position.y << endl;
 		std::cout << "\tdish : " << PlayerInfo.dish << endl;
 		std::cout << "\ttool : " << PlayerInfo.tool << endl;
+		std::cout << "\trecieveText : " << PlayerInfo.recieveText << endl;
 	}
 
 	default:

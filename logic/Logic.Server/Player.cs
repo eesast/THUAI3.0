@@ -625,7 +625,7 @@ namespace Logic.Server
                 if (i == CommunicationID.Item2)
                     continue;
                 //lock (Program.MessageToClientLock)
-                Program.MessageToClient.GameObjectList[Program.PlayerList[new Tuple<int, int>(CommunicationID.Item1, i)].ID].SpeakText = speakText;
+                Program.MessageToClient.GameObjectList[Program.PlayerList[new Tuple<int, int>(CommunicationID.Item1, i)].ID].RecieveText = speakText;
             }
         }
     }

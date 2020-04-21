@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\communication\Client\Communication.CAPI.csproj" />
+    <ProjectReference Include="..\..\playBack\PlayBack\PlayBack.csproj" />
     <ProjectReference Include="..\Logic.Constant\Logic.Constant.csproj" />
   </ItemGroup>
 

@@ -138,7 +138,7 @@ message GameObject {
   ToolType ToolType = 7;
   TriggerType TriggerType = 8;
   bool isMoving = 9;
-  string SpeakText = 10;
+  string RecieveText = 10;
   int32 team = 11;
   int32 SightRange = 12;
   double MoveSpeed = 13;
