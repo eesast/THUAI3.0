@@ -224,6 +224,9 @@ namespace Logic.Server
             //}
         }
 
+        //isSelfPosition参数表示是不是捡起自己所在方格的物品
+        //pickType表示捡起类型
+        //dishOrToolType表示捡起的Dish或Tool类型，-1为随缘
         public override void Pick(bool isSelfPosition, ObjType pickType, int dishOrToolType)
         {
             XYPosition toCheckPosition = isSelfPosition ? Position : Position + 2 * EightCornerVector[FacingDirection];
@@ -253,6 +256,16 @@ namespace Logic.Server
                     }
                     break;
                 case ObjType.Dish:
+                    if(dishOrToolType == -1)
+                    {
+                        Dish? dishToPick = (Dish?)WorldMap.Grid[(int)toCheckPosition.x, (int)toCheckPosition.y].GetFirstObject(typeof(Dish));
+                        if(dishToPick != null)
+                        {
+                            Dish = dishToPick.GetDish(Dish);
+                            Server.ServerDebug("Player : " + ID + " Get Dish " + Dish.ToString());
+                        }
+                        break;
+                    }
                     if (dishOrToolType <= (int)DishType.DishEmpty || dishOrToolType >= (int)DishType.DishSize3
                         || dishOrToolType == (int)DishType.DishSize1 || dishOrToolType == (int)DishType.DishSize2)
                         break;
@@ -271,6 +284,16 @@ namespace Logic.Server
                     }
                     break;
                 case ObjType.Tool:
+                    if (dishOrToolType == -1)
+                    {
+                        Tool? toolToPick = (Tool?)WorldMap.Grid[(int)toCheckPosition.x, (int)toCheckPosition.y].GetFirstObject(typeof(Tool));
+                        if (toolToPick != null)
+                        {
+                            Tool = toolToPick.GetTool(Tool);
+                            Server.ServerDebug("Player : " + ID + " Get Tool " + Tool.ToString());
+                        }
+                        break;
+                    }
                     if (dishOrToolType <= (int)ToolType.ToolEmpty || dishOrToolType >= (int)ToolType.ToolSize)
                         break;
                     ToolType toPickTool = (ToolType)dishOrToolType;
