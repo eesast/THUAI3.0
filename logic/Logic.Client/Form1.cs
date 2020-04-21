@@ -24,14 +24,16 @@ namespace GameForm
         public static readonly int FORM_WIDTH = WorldMap.Width * LABEL_WIDTH;
         public static readonly int FORM_HEIGHT = WorldMap.Height * LABEL_WIDTH;
         public static readonly int CONTROL_LABELS_WIDTH = 200;
-        public static readonly int CONTROL_LABELS_HEIGHT = 120;
+        public static readonly int CONTROL_LABELS_HEIGHT = 50;
         private readonly ushort agentPort;
         private readonly Talent playerTalent;
+        private readonly bool isPlayBack;
 
-        public Form1(ushort agentPort, Talent talent)
+        public Form1(ushort agentPort, Talent talent, bool isPlayBack)
         {
             this.agentPort = agentPort;
             this.playerTalent = talent;
+            this.isPlayBack = isPlayBack;
             InitializeComponent();
             Console.WriteLine("Start console output");
         }
@@ -47,18 +49,18 @@ namespace GameForm
                     this.mapLabels[x, y].Size = new System.Drawing.Size(LABEL_WIDTH - LABEL_INTERVAL, LABEL_WIDTH - LABEL_INTERVAL);
                 }
 
-            int i = 0;
+            int heightPoint = 0;
             foreach (var label in ControlLabels)
             {
-                label.Value.Location = new System.Drawing.Point(FORM_WIDTH, i * CONTROL_LABELS_HEIGHT);
-                label.Value.Size = new System.Drawing.Size(CONTROL_LABELS_WIDTH, CONTROL_LABELS_HEIGHT);
-                i++;
+                label.Value.Location = new System.Drawing.Point(FORM_WIDTH, heightPoint);
+                label.Value.Size = new System.Drawing.Size(CONTROL_LABELS_WIDTH, label.Key == "Task" ? 120 : CONTROL_LABELS_HEIGHT);
+                heightPoint += label.Value.Size.Height;
             }
-            ControlLabels["Task"].Size = new System.Drawing.Size(CONTROL_LABELS_WIDTH, 3 * CONTROL_LABELS_HEIGHT);
+            //ControlLabels["Task"].Size = new System.Drawing.Size(CONTROL_LABELS_WIDTH, 3 * CONTROL_LABELS_HEIGHT);
 
             this.ClientSize = new System.Drawing.Size(FORM_WIDTH + CONTROL_LABELS_WIDTH, FORM_HEIGHT);
 
-            new Player(15, 12, this.agentPort, this.playerTalent);
+            new Player(15, 12, this.agentPort, this.playerTalent, this.isPlayBack);
         }
     }
 }

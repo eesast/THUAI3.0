@@ -40,11 +40,11 @@
 
 	enum ObjType { //可能出现在地图上的各种物品
       People = 0;  //人
-    Block = 1;   //墙体
-    Dish = 2;    //食材
-    Tool = 3;    //道具
-    Trigger = 4; //触发器
-    ObjTypeSize = 5;
+      Block = 1;   //墙体
+      Dish = 2;    //食材
+      Tool = 3;    //道具
+      Trigger = 4; //触发器
+      ObjTypeSize = 5;
     }
 	enum BlockType {  //标1的物品扔出碰到会反弹，标0的会穿过去
 	  Wall = 0;       // 1
@@ -191,13 +191,14 @@
 
 	class Obj
 	{
-	XYPosition position;//物品位置
-	ObjType objType;//物品所属类型
-	BlockType blockType;//如果物品为墙体，所属的墙体类型
-	DishType dish;//如果物品为食材，所属的食材类型；如果物品为人，拥有的食材类型
-	ToolType tool;//如果物品为道具，所属的道具类型；如果物品为人，拥有的道具类型
-	TriggerType trigger;//如果物品为触发器，所属的触发器类型
-	Direction facingDiretion;//如果物品为人，面朝的方向
+	XYPosition position;		//Obj位置
+	ObjType objType;			//Obj所属类型
+	BlockType blockType;		//如果objType为Block，所属的墙体类型
+	DishType dish;				//如果objType为Dish，所属的食材类型；如果objType为People，拥有的食材类型
+	ToolType tool;				//如果objType为Tool，所属的道具类型；如果objType为People，拥有的道具类型
+	TriggerType trigger;		//如果objType为Trigger，所属的触发器类型
+	Direction facingDiretion;	//如果objType为People，面朝的方向
+	int team;					//如果objType为People，所属的队伍
 	};
 
 ## 任务列表

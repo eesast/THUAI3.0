@@ -101,6 +101,8 @@ void play()
 		double angle = 0;
 		cin >> angle;
 		put(distance, angle, true);
+		_sleep(26);
+		move(Left, 1000);
 	}
 	break;
 	case 't':
@@ -123,7 +125,7 @@ void play()
 	break;
 	case 'm':
 	{
-		std::cout << "Input two interger to print a map cell :" << endl;
+		std::cout << endl << "Input two interger to print a map cell :" << endl;
 		int x, y;
 		cin.clear();
 		cin.ignore();
@@ -136,6 +138,15 @@ void play()
 		}
 	}
 	break;
+	case 's':
+	{
+		std::cout << endl << "Self info :" << endl;
+		std::cout << "\tposition : " << PlayerInfo.position.x << "," << PlayerInfo.position.y << endl;
+		std::cout << "\tdish : " << PlayerInfo.dish << endl;
+		std::cout << "\ttool : " << PlayerInfo.tool << endl;
+		std::cout << "\trecieveText : " << PlayerInfo.recieveText << endl;
+	}
+
 	default:
 		break;
 	}

@@ -198,6 +198,7 @@ void CAPI::MoveObj(int64_t id, Protobuf::MessageToClient* message, std::unordere
 	MapInfo::obj_list[id]->position.x = message->gameobjectlist().at(id).positionx();
 	MapInfo::obj_list[id]->position.y = message->gameobjectlist().at(id).positiony();
 	MapInfo::obj_list[id]->facingDiretion = message->gameobjectlist().at(id).direction();
+	MapInfo::obj_list[id]->team = message->gameobjectlist().at(id).team();
 
 	MapInfo::mutex_map[(int)MapInfo::obj_list[id]->position.x][(int)MapInfo::obj_list[id]->position.y]->lock();
 	MapInfo::obj_map[(int)MapInfo::obj_list[id]->position.x][(int)MapInfo::obj_list[id]->position.y].insert(std::pair<int64_t, shared_ptr< Obj>>(id, MapInfo::obj_list[id]));
@@ -226,7 +227,7 @@ void CAPI::UpdateInfo(Protobuf::MessageToClient* message)
 	PlayerInfo.sightRange = PlayerInfo._sightRange = self.sightrange();
 	PlayerInfo.dish = self.dishtype();
 	PlayerInfo.tool = self.tooltype();
-	PlayerInfo.recieveText = self.speaktext();
+	PlayerInfo.recieveText = self.recievetext();
 	if (message->scores().contains(PlayerInfo._team))
 		PlayerInfo.score = message->scores().at(PlayerInfo._team);
 

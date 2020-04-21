@@ -14,7 +14,7 @@ namespace Logic.Server
 
         public Dish(double x_t, double y_t, DishType type_t) : base(x_t, y_t, ObjType.Dish)
         {
-            Server.ServerDebug("Create Dish : " + type_t);
+            Server.ServerDebug("Create Dish : " + type_t + " at " + Position.ToString());
             Layer = ItemLayer;
             Movable = true;
             Bouncable = true;

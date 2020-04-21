@@ -9,7 +9,7 @@ namespace Logic.Server
 
         public Tool(double x_t, double y_t, ToolType type_t) : base(x_t, y_t, ObjType.Tool)
         {
-            Server.ServerDebug("Create Tool : " + type_t);
+            Server.ServerDebug("Create Tool : " + type_t + " at " + Position.ToString());
             Layer = ItemLayer;
             Movable = true;
             Bouncable = true;

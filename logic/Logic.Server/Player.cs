@@ -187,7 +187,7 @@ namespace Logic.Server
                     Use(msg.UseType, msg.Parameter1, msg.Parameter2);
                     break;
                 case CommandType.Speak:
-                    SpeakToFriend(msg.SpeakText.Substring(0, 15));
+                    SpeakToFriend(msg.SpeakText.Length > 16 ? msg.SpeakText.Substring(0, 16) : msg.SpeakText);
                     break;
                 default:
                     break;
@@ -625,7 +625,7 @@ namespace Logic.Server
                 if (i == CommunicationID.Item2)
                     continue;
                 //lock (Program.MessageToClientLock)
-                Program.MessageToClient.GameObjectList[Program.PlayerList[new Tuple<int, int>(CommunicationID.Item1, i)].ID].SpeakText = speakText;
+                Program.MessageToClient.GameObjectList[Program.PlayerList[new Tuple<int, int>(CommunicationID.Item1, i)].ID].RecieveText = speakText;
             }
         }
     }
