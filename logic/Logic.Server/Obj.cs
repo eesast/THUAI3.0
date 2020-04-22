@@ -76,7 +76,7 @@ namespace Logic.Server
             lock (Program.MessageToClientLock)
             {
                 Program.MessageToClient.GameObjectList.Remove(ID);
-                //Server.ServerDebug("Delete " + objType + " From Message List");
+                Server.ServerDebug("Delete " + this.ToString() + " From Message List");
             }
         }
         protected void ChangePositionInMessage(THUnity2D.GameObject thisGameObject)
@@ -86,6 +86,10 @@ namespace Logic.Server
             Program.MessageToClient.GameObjectList[thisGameObject.ID].PositionX = thisGameObject.Position.x;
             Program.MessageToClient.GameObjectList[thisGameObject.ID].PositionY = thisGameObject.Position.y;
             //}
+        }
+        public override string ToString()
+        {
+            return objType + ":" + ID + ", " + Position.ToString() + " ";
         }
     }
 }

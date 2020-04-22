@@ -26,8 +26,8 @@ namespace Logic.Constant
 
         //protected int _score = 0;
 
-        public DishType dish = DishType.DishEmpty;
-        public ToolType tool = ToolType.ToolEmpty;
+        public DishType _dish = DishType.DishEmpty;
+        public ToolType _tool = ToolType.ToolEmpty;
         public Character(double x, double y) : base(new THUnity2D.XYPosition(x, y))
         {
             Layer = PlayerLayer;
