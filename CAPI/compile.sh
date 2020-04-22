@@ -11,7 +11,7 @@ cd build
 cmake ..
 make >error.txt 2>&1
 cp AI /usr/local/mnt/AI${THUAI_CODEROLE}
-if [ $? -ne 0]
+if [ $? -ne 0 ]
 then
 	# compile fail
 	cp error.txt /usr/local/mnt/error.txt
