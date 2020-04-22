@@ -130,8 +130,9 @@ void play()
 		cin.clear();
 		cin.ignore();
 		cin >> x >> y;
-		list<Obj> l = MapInfo::get_mapcell(x, y);
-		std::cout << "objs in map[" << x << "][" << y << "] :" << endl;
+		list<Obj> l = MapInfo::get_mapcell(PlayerInfo.position.x, PlayerInfo.position.y);
+		if (l.empty()) cout << "empty" << endl;
+		std::cout << "objs in map[" << PlayerInfo.position.x << "][" << PlayerInfo.position.y << "] :" << endl;
 		for (list<Obj>::iterator i = l.begin(); i != l.end(); i++)
 		{
 			std::cout << "\tblocktype : " << i->objType << endl;

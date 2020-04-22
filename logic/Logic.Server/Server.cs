@@ -114,6 +114,12 @@ namespace Logic.Server
                 Console.WriteLine("Team " + i + " : " + Program.MessageToClient.Scores[i]);
             }
             Console.WriteLine("===============================");
+            Newtonsoft.Json.Linq.JToken scores = new Newtonsoft.Json.Linq.JObject();
+            foreach(var item in Program.MessageToClient.Scores)
+            {
+                scores[item.Key.ToString()] = item.Value;
+            }
+            System.IO.File.WriteAllText("scores.json", Newtonsoft.Json.JsonConvert.SerializeObject(scores));
         }
 
         protected void WatchInput(object? o)

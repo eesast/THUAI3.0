@@ -73,29 +73,6 @@ namespace Logic.Server
         private static Server server;
         public static void Main(string[] args)
         {
-
-            //PlayBack.Reader reader = new PlayBack.Reader("test.bin");
-            //IMessage<MessageToClient> message = new MessageToClient();
-            //Console.WriteLine(reader.Read(ref message));
-            //Console.WriteLine("=============");
-            //foreach (var item in ((MessageToClient)message).Scores)
-            //    Console.WriteLine(item.Key + " , " + item.Value);
-            //foreach (var item in ((MessageToClient)message).GameObjectList)
-            //    Console.WriteLine(item.Key + " , " + item.Value.ObjType);
-            //message = new MessageToClient();
-            //Console.WriteLine(reader.Read(ref message));
-            //Console.WriteLine("=============");
-            //foreach (var item in ((MessageToClient)message).Scores)
-            //    Console.WriteLine(item.Key + " , " + item.Value);
-            //foreach (var item in ((MessageToClient)message).GameObjectList)
-            //    Console.WriteLine(item.Key + " , " + item.Value.ObjType);
-            //Console.WriteLine(reader.Read(ref message));
-            //Console.WriteLine("=============");
-            //foreach (var item in ((MessageToClient)message).Scores)
-            //    Console.WriteLine(item.Key + " , " + item.Value);
-            //foreach (var item in ((MessageToClient)message).GameObjectList)
-            //    Console.WriteLine(item.Key + " , " + item.Value.ObjType);
-
             Parser.Default.ParseArguments<AugmentOptions>(args)
                   .WithParsed<AugmentOptions>(o =>
                   {

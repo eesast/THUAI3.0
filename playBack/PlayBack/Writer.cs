@@ -12,7 +12,10 @@ namespace PlayBack
 
         public Writer(string path)
         {
-            FileStream = new FileStream(path, FileMode.OpenOrCreate);
+            if (File.Exists(path))
+                FileStream = new FileStream(path, FileMode.Truncate);
+            else
+                FileStream = new FileStream(path, FileMode.OpenOrCreate);
             BinaryWriter = new BinaryWriter(FileStream);
         }
 
