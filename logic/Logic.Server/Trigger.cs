@@ -49,10 +49,15 @@ namespace Logic.Server
                 AddToMessage();
                 //lock (Program.MessageToClientLock)
                 Program.MessageToClient.GameObjectList[ID].TriggerType = triggerType;
-                this.MoveComplete += new MoveCompleteHandler(ChangePositionInMessage);
-                this.OnParentDelete += new ParentDeleteHandler(DeleteFromMessage);
+                MoveComplete += ChangePositionInMessage;
+                OnParentDelete += DeleteFromMessage;
+                OnParentDelete += () => { MoveComplete -= ChangePositionInMessage; };
             }
-            Server.ServerDebug("Create trigger : " + triggerType.ToString());
+            Server.ServerDebug("Create " + this);
+        }
+        public override string ToString()
+        {
+            return objType + ":" + triggerType + ", " + ID + ", " + Position.ToString() + " ";
         }
     }
 

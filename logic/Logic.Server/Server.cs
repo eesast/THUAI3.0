@@ -7,6 +7,11 @@ using Timer;
 using THUnity2D;
 using static Logic.Constant.Constant;
 using static Logic.Constant.MapInfo;
+using Newtonsoft.Json.Linq;
+using System.Net.Http;
+using System.Net;
+using System.Text;
+
 namespace Logic.Server
 {
     class Server
@@ -93,6 +98,12 @@ namespace Logic.Server
 
             Thread.Sleep((int)MaxRunTimeInSecond * 1000);
             PrintScore();
+            SaveScore();
+            SendHttpRequest($"https://api.eesast.com/v1/teams/scores", ServerCommunication.Token, "PUT", new JObject
+            {
+                ["scores"] = new JArray(Program.MessageToClient.Scores.Values)
+            });
+            ServerCommunication.GameOver();
             Server.ServerDebug("Server stop running");
         }
 
@@ -114,8 +125,12 @@ namespace Logic.Server
                 Console.WriteLine("Team " + i + " : " + Program.MessageToClient.Scores[i]);
             }
             Console.WriteLine("===============================");
-            Newtonsoft.Json.Linq.JToken scores = new Newtonsoft.Json.Linq.JObject();
-            foreach(var item in Program.MessageToClient.Scores)
+        }
+
+        protected void SaveScore()
+        {
+            JToken scores = new JObject();
+            foreach (var item in Program.MessageToClient.Scores)
             {
                 scores[item.Key.ToString()] = item.Value;
             }
@@ -216,11 +231,31 @@ namespace Logic.Server
             {
                 Program.ServerMessage.Message = Program.MessageToClient;
                 ServerCommunication.SendMessage(Program.ServerMessage);
-                //Program.MessageToClient.WriteTo(
-                //Google.Protobuf.CodedOutputStream codedOutputStream = new Google.Protobuf.CodedOutputStream(;
                 writer.Write(Program.MessageToClient);
             }
         }
         public static Action<string> ServerDebug = (str) => { Console.WriteLine(str); };
+
+        protected void SendHttpRequest(string url, string token, string method, JObject data)
+        {
+            if (string.IsNullOrEmpty(token)) return;
+            try
+            {
+                var request = WebRequest.CreateHttp(url);
+                request.Method = method;
+                request.Headers.Add("Authorization", $"bearer {token}");
+                if (data != null)
+                {
+                    request.ContentType = "application/json";
+                    var raw = Encoding.UTF8.GetBytes(data.ToString());
+                    request.GetRequestStream().Write(raw, 0, raw.Length);
+                    request.GetResponse();
+                }
+            }
+            catch (Exception e)
+            {
+                Server.ServerDebug(e.ToString());
+            }
+        }
     }
 }
