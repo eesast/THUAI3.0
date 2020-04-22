@@ -220,15 +220,28 @@ void CAPI::UpdateInfo(Protobuf::MessageToClient* message)
 		GameRunning = true;
 		std::cout << "Game start" << std::endl;
 	}
-	Protobuf::GameObject self = message->gameobjectlist().at(PlayerInfo._id);
-	PlayerInfo._position.x = PlayerInfo.position.x = self.positionx();
-	PlayerInfo._position.y = PlayerInfo.position.y = self.positiony();
-	PlayerInfo.facingDirection = self.direction();
-	PlayerInfo.moveSpeed = self.movespeed();
-	PlayerInfo.sightRange = PlayerInfo._sightRange = self.sightrange();
-	PlayerInfo.dish = self.dishtype();
-	PlayerInfo.tool = self.tooltype();
-	PlayerInfo.recieveText = self.recievetext();
+	google::protobuf::Map<int64_t, Protobuf::GameObject>::const_iterator self_iter = message->gameobjectlist().find(PlayerInfo._id);
+	if (self_iter != message->gameobjectlist().end())
+	{
+
+		PlayerInfo._position.x = PlayerInfo.position.x = self_iter->second.positionx();
+		PlayerInfo._position.y = PlayerInfo.position.y = self_iter->second.positiony();
+		PlayerInfo.facingDirection = self_iter->second.direction();
+		PlayerInfo.moveSpeed = self_iter->second.movespeed();
+		PlayerInfo.sightRange = PlayerInfo._sightRange = self_iter->second.sightrange();
+		PlayerInfo.dish = self_iter->second.dishtype();
+		PlayerInfo.tool = self_iter->second.tooltype();
+		PlayerInfo.recieveText = self_iter->second.recievetext();
+	}
+	//Protobuf::GameObject self = message->gameobjectlist().at(PlayerInfo._id);
+	//PlayerInfo._position.x = PlayerInfo.position.x = self.positionx();
+	//PlayerInfo._position.y = PlayerInfo.position.y = self.positiony();
+	//PlayerInfo.facingDirection = self.direction();
+	//PlayerInfo.moveSpeed = self.movespeed();
+	//PlayerInfo.sightRange = PlayerInfo._sightRange = self.sightrange();
+	//PlayerInfo.dish = self.dishtype();
+	//PlayerInfo.tool = self.tooltype();
+	//PlayerInfo.recieveText = self.recievetext();
 	if (message->scores().contains(PlayerInfo._team))
 		PlayerInfo.score = message->scores().at(PlayerInfo._team);
 
