@@ -32,9 +32,9 @@ jobs:
           ls
           cd ..
           ls
-          (Get-Content "runServer.bat").replace("logic/Logic.Server/bin/Release/netcoreapp3.0","THUAI3.0") | Set-Content "runServer.bat"
-          (Get-Content "runAgent.bat").replace("communication/Agent/bin/Release/netcoreapp3.0","THUAI3.0") | Set-Content "runAgent.bat"
-          (Get-Content "runClientConsole.bat").replace("logic/Logic.Client/bin/Release/netcoreapp3.0","THUAI3.0") | Set-Content "runClientConsole.bat"
+          (Get-Content "runServer.bat").replace("logic\Logic.Server\bin\Release\netcoreapp3.0","THUAI3.0") | Set-Content "runServer.bat"
+          (Get-Content "runAgent.bat").replace("communication\Agent\bin\Release\netcoreapp3.0","THUAI3.0") | Set-Content "runAgent.bat"
+          (Get-Content "runClientConsole.bat").replace("logic\Logic.Client\bin\Release\netcoreapp3.0","THUAI3.0") | Set-Content "runClientConsole.bat"
           python ./upload_to_tencent_cloud.py --id ${{ secrets.TENCENT_CLOUD_ID }} --key ${{ secrets.TENCENT_CLOUD_KEY }} CAPI THUAI3.0 Config runServer.bat runAgent.bat runClientConsole.bat API.md README.md
   deploy:
     runs-on: ubuntu-latest
