@@ -160,9 +160,10 @@ void CAPI::SendChatMessage(string message)
 	Send(mes);
 }
 
-void CAPI::SendCommandMessage(MessageToServer* message)
+void CAPI::SendCommandMessage(MessageToServer message)
 {
-	Message* mes2 = new Message(PlayerId, message);
+	MessageToServer* mes0 = new MessageToServer(message);
+	Message* mes2 = new Message(PlayerId, mes0);
 	Message* mes3 = new Message(-1, mes2);
 	shared_ptr<Message> mes = make_shared<Message>(-1, mes3);
 	Send(mes);
@@ -215,7 +216,7 @@ void CAPI::UpdateInfo(Protobuf::MessageToClient* message)
 		MessageToServer mesC2S;
 		mesC2S.set_issettalent(true);
 		mesC2S.set_talent(initTalent);
-		SendCommandMessage(&mesC2S);
+		SendCommandMessage(mesC2S);
 		GameRunning = true;
 		std::cout << "Game start" << std::endl;
 	}
