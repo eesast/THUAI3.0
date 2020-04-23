@@ -38,7 +38,7 @@ void THUAI3::move(Direction direction_t, int duration)
 	mesC2S.set_commandtype(CommandType::Move);
 	mesC2S.set_movedirection(direction_t);
 	mesC2S.set_moveduration(duration);
-	API.SendCommandMessage(&mesC2S);
+	API.SendCommandMessage(mesC2S);
 }
 
 void THUAI3::put(double distance, double angle, bool isThrowDish)
@@ -48,7 +48,7 @@ void THUAI3::put(double distance, double angle, bool isThrowDish)
 	mesC2S.set_throwangle(angle);
 	mesC2S.set_isthrowdish(isThrowDish);
 	mesC2S.set_commandtype(CommandType::Put);
-	API.SendCommandMessage(&mesC2S);
+	API.SendCommandMessage(mesC2S);
 }
 
 void THUAI3::use(int type, double parameter1, double parameter2)
@@ -58,7 +58,7 @@ void THUAI3::use(int type, double parameter1, double parameter2)
 	mesC2S.set_parameter1(parameter1);
 	mesC2S.set_parameter2(parameter2);
 	mesC2S.set_usetype(type);
-	API.SendCommandMessage(&mesC2S);
+	API.SendCommandMessage(mesC2S);
 }
 
 void THUAI3::pick(bool isSelfPosition, ObjType pickType, int dishOrToolType)
@@ -68,7 +68,7 @@ void THUAI3::pick(bool isSelfPosition, ObjType pickType, int dishOrToolType)
 	mesC2S.set_ispickselfposition(isSelfPosition);
 	mesC2S.set_picktype(pickType);
 	mesC2S.set_pickdishortooltype(dishOrToolType);
-	API.SendCommandMessage(&mesC2S);
+	API.SendCommandMessage(mesC2S);
 }
 
 void THUAI3::speakToFriend(string speakText)
@@ -78,7 +78,7 @@ void THUAI3::speakToFriend(string speakText)
 	if (speakText.length() > 16)
 		speakText = speakText.substr(0, 15);
 	mesC2S.set_speaktext(speakText);
-	API.SendCommandMessage(&mesC2S);
+	API.SendCommandMessage(mesC2S);
 }
 
 void THUAI3::initializeGameTime()
