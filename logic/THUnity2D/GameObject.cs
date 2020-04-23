@@ -89,9 +89,9 @@ namespace THUnity2D
                 childrenObject.OnMove -= this.OnChildrenMove;
             }
         }
-        protected virtual void OnChildrenPositionChanged(GameObject gameObject, PositionChangedEventArgs e)
+        protected virtual void OnChildrenPositionChanged(GameObject gameObject, XYPosition previousPosition, XYPosition targetPosition)
         { }
-        protected virtual void OnChildrenMove(GameObject gameObject, MoveEventArgs e, XYPosition previousPosition)
+        protected virtual void OnChildrenMove(GameObject gameObject, double angle, double distance, XYPosition previousPosition)
         { }
         //Children end
 
@@ -105,7 +105,7 @@ namespace THUnity2D
                 lock (privateLock)
                 {
                     Debug(this, "Prompt to change position to : " + value.ToString());
-                    PositionChanged(new PositionChangedEventArgs(this._position, value));
+                    PositionChanged(_position, value);
                     Debug(this, "change position to : " + this._position.ToString());
                 }
             }
@@ -121,16 +121,16 @@ namespace THUnity2D
             }
         }
 
-        internal delegate void PositionChangedHandler(GameObject sender, PositionChangedEventArgs e);
+        internal delegate void PositionChangedHandler(GameObject sender, XYPosition previousPosition, XYPosition targetPosition);
         internal event PositionChangedHandler? OnPositionChanged; // 声明事件
         public delegate void PositionChangeCompleteHandler(GameObject sender);
         public event PositionChangeCompleteHandler? PositionChangeComplete;
-        protected virtual void PositionChanged(PositionChangedEventArgs e)
+        protected virtual void PositionChanged(XYPosition previousPosition, XYPosition targetPosition)
         {
             lock (privateLock)
             {
-                _position = e.position;
-                OnPositionChanged?.Invoke(this, e);
+                _position = targetPosition;
+                OnPositionChanged?.Invoke(this, previousPosition, targetPosition);
             }
             PositionChangeComplete?.Invoke(this);
         }
@@ -199,7 +199,7 @@ namespace THUnity2D
                         {
                             lock (privateLock)
                             {
-                                Move(new MoveEventArgs(_velocity.angle, _velocity.length / _frameRate));
+                                Move(_velocity.angle, _velocity.length / _frameRate);
                             }
                         });
                 }
@@ -302,30 +302,20 @@ namespace THUnity2D
             {
                 lock (privateLock)
                 {
-                    Debug(this, "Prompt to change layer from " + this._layer + " to " + value);
-                    LayerChange(new LayerChangeEventArgs(this._layer, value));
-                    Debug(this, "Change layer to " + this._layer);
+                    Debug(this, "Prompt to change layer from " + _layer + " to " + value);
+                    LayerChange(_layer, value);
+                    Debug(this, "Change layer to " + _layer);
                 }
             }
         }
-        public class LayerChangeEventArgs : EventArgs
-        {
-            public readonly Layer previousLayer;
-            public readonly Layer targetLayer;
-            public LayerChangeEventArgs(Layer previousLayer, Layer targetLayer)
-            {
-                this.previousLayer = previousLayer;
-                this.targetLayer = targetLayer;
-            }
-        }
-        public delegate void LayerChangeHandler(GameObject sender, LayerChangeEventArgs e);
-        public event LayerChangeHandler? OnLayerChange;
-        protected virtual void LayerChange(LayerChangeEventArgs e)
+        protected internal delegate void LayerChangeHandler(GameObject sender, Layer previousLayer, Layer targetLayer);
+        protected internal event LayerChangeHandler? OnLayerChange;
+        protected internal virtual void LayerChange(Layer previousLayer, Layer targetLayer)
         {
             lock (privateLock)
             {
-                _layer = e.targetLayer;
-                OnLayerChange?.Invoke(this, e);
+                _layer = targetLayer;
+                OnLayerChange?.Invoke(this, previousLayer, targetLayer);
             }
         }
         //Layer
@@ -352,28 +342,19 @@ namespace THUnity2D
         }
 
         //Move
-        public class MoveEventArgs
-        {
-            public readonly double angle;
-            public readonly double distance;
-            public MoveEventArgs(double angle_t, double distance_t) // angle is radian
-            {
-                this.angle = CorrectAngle(angle_t);
-                if (double.IsNaN(distance_t))
-                    distance_t = 0;
-                this.distance = distance_t;
-            }
-        }
-        public delegate void MoveHandler(GameObject sender, MoveEventArgs e, XYPosition previousPosition);
+        public delegate void MoveHandler(GameObject sender, double angle, double distance, XYPosition previousPosition);
         public event MoveHandler? OnMove;
         public delegate void MoveCompleteHandler(GameObject sender);
         public event MoveCompleteHandler? MoveComplete;
         public delegate void MoveStartHandler(GameObject sender);
         public event MoveStartHandler? MoveStart;
         protected DateTime lastMoveTime = DateTime.MinValue;
-        public virtual void Move(MoveEventArgs e)
+        public virtual void Move(double angle, double distance)
         {
-            if (e.distance == 0)
+            angle = CorrectAngle(angle);
+            if (double.IsNaN(distance))
+                distance = 0;
+            if (distance == 0)
                 return;
             lock (privateLock)
             {
@@ -383,11 +364,12 @@ namespace THUnity2D
                 }
                 if ((DateTime.Now - lastMoveTime).TotalSeconds < 1 / _frameRate)
                     return;
+                lastMoveTime = DateTime.Now;
                 MoveStart?.Invoke(this);
                 XYPosition previousPosition = _position;
-                _position = _position + new XYPosition(e.distance * Math.Cos(e.angle), e.distance * Math.Sin(e.angle));
-                Debug(this, "Move from " + previousPosition.ToString() + " angle : " + e.angle + " distance : " + e.distance + " aim : " + _position.ToString());
-                OnMove?.Invoke(this, e, previousPosition);
+                _position = _position + new XYPosition(distance * Math.Cos(angle), distance * Math.Sin(angle));
+                Debug(this, "Move from " + previousPosition.ToString() + " angle : " + angle + " distance : " + distance + " aim : " + _position.ToString());
+                OnMove?.Invoke(this, angle, distance, previousPosition);
                 Debug(this, "Move result poition : " + this._position.ToString());
                 MoveComplete?.Invoke(this);
             }
@@ -408,30 +390,20 @@ namespace THUnity2D
         //Bouncable
 
         //Collision
-        public class CollisionEventArgs : EventArgs
-        {
-            public readonly Direction collisionDirection;
-            public readonly HashSet<GameObject>? collisionGameObjects;
-            public CollisionEventArgs(Direction collisionDirection, HashSet<GameObject>? collisionGameObjects)
-            {
-                this.collisionDirection = collisionDirection;
-                this.collisionGameObjects = collisionGameObjects;
-            }
-        }
-        public delegate void CollisionHandler(CollisionEventArgs e);
+        public delegate void CollisionHandler(Direction collisionDirection, HashSet<GameObject>? collisionGameObjects);
         public event CollisionHandler? OnCollision;
-        protected internal void Collide(CollisionEventArgs e)
+        protected internal void Collide(Direction collisionDirection, HashSet<GameObject>? collisionGameObjects)
         {
             lock (privateLock)
             {
                 DebugWithoutEndline(this, "Collide with : ");
-                if (e.collisionGameObjects != null)
-                    foreach (var gameObject in e.collisionGameObjects)
+                if (collisionGameObjects != null)
+                    foreach (var gameObject in collisionGameObjects)
                     {
                         DebugWithoutIDEndline(this, gameObject.ID + "  ");
                     }
-                DebugWithoutID(this, " Direction : " + e.collisionDirection);
-                OnCollision?.Invoke(e);
+                DebugWithoutID(this, " Direction : " + collisionDirection);
+                OnCollision?.Invoke(collisionDirection, collisionGameObjects);
             }
         }
         //Collision

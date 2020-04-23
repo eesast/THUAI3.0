@@ -19,7 +19,7 @@ namespace Client
     class Player : Character
     {
         protected Int64 id = -1;//注意！！！在这个类里基类的ID已被弃用
-        protected new int team = 0;
+        protected int team = 0;
         protected static DateTime lastSendTime = new DateTime();
         protected Communication.CAPI.API ClientCommunication = new Communication.CAPI.API();
         protected MessageToServer messageToServer = new MessageToServer();
@@ -250,28 +250,28 @@ namespace Client
                     switch (key)
                     {
                         case 'd':
-                            Move(THUnity2D.Direction.Right, 200);
+                            Move(THUnity2D.Direction.Right, 400);
                             break;
                         case 'e':
-                            Move(THUnity2D.Direction.RightUp, 200);
+                            Move(THUnity2D.Direction.RightUp, 400);
                             break;
                         case 'w':
-                            Move(THUnity2D.Direction.Up, 200);
+                            Move(THUnity2D.Direction.Up, 400);
                             break;
                         case 'q':
-                            Move(THUnity2D.Direction.LeftUp, 200);
+                            Move(THUnity2D.Direction.LeftUp, 400);
                             break;
                         case 'a':
-                            Move(THUnity2D.Direction.Left, 200);
+                            Move(THUnity2D.Direction.Left, 400);
                             break;
                         case 'z':
-                            Move(THUnity2D.Direction.LeftDown, 200);
+                            Move(THUnity2D.Direction.LeftDown, 400);
                             break;
                         case 'x':
-                            Move(THUnity2D.Direction.Down, 200);
+                            Move(THUnity2D.Direction.Down, 400);
                             break;
                         case 'c':
-                            Move(THUnity2D.Direction.RightDown, 200);
+                            Move(THUnity2D.Direction.RightDown, 400);
                             break;
                         case 'f':
                             Console.WriteLine("\nPlease Input 3 parameters : isSelfPosition, pickType, dishOrToolType");
