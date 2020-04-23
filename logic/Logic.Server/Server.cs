@@ -7,6 +7,11 @@ using Timer;
 using THUnity2D;
 using static Logic.Constant.Constant;
 using static Logic.Constant.MapInfo;
+using Newtonsoft.Json.Linq;
+using System.Net.Http;
+using System.Net;
+using System.Text;
+
 namespace Logic.Server
 {
     class Server
@@ -18,6 +23,7 @@ namespace Logic.Server
         //System.Threading.Timer? ServerStopTimer;
         System.Threading.Timer? WatchInputTimer;
         Thread ServerRunThread;
+        PlayBack.Writer writer = new PlayBack.Writer("server.playback");
 
         public Server(ushort serverPort, ushort playerCount, ushort agentCount, uint MaxGameTimeSeconds, string token)
         {
@@ -92,6 +98,12 @@ namespace Logic.Server
 
             Thread.Sleep((int)MaxRunTimeInSecond * 1000);
             PrintScore();
+            SaveScore();
+            SendHttpRequest($"https://api.eesast.com/v1/teams/scores", ServerCommunication.Token, "PUT", new JObject
+            {
+                ["scores"] = new JArray(Program.MessageToClient.Scores.Values)
+            });
+            ServerCommunication.GameOver();
             Server.ServerDebug("Server stop running");
         }
 
@@ -113,6 +125,16 @@ namespace Logic.Server
                 Console.WriteLine("Team " + i + " : " + Program.MessageToClient.Scores[i]);
             }
             Console.WriteLine("===============================");
+        }
+
+        protected void SaveScore()
+        {
+            JToken scores = new JObject();
+            foreach (var item in Program.MessageToClient.Scores)
+            {
+                scores[item.Key.ToString()] = item.Value;
+            }
+            System.IO.File.WriteAllText("scores.json", Newtonsoft.Json.JsonConvert.SerializeObject(scores));
         }
 
         protected void WatchInput(object? o)
@@ -207,15 +229,33 @@ namespace Logic.Server
         {
             lock (Program.MessageToClientLock)
             {
-                ServerCommunication.SendMessage(new ServerMessage
-                {
-                    Agent = -2,
-                    Client = -2,
-                    Message = Program.MessageToClient
-                });
+                Program.ServerMessage.Message = Program.MessageToClient;
+                ServerCommunication.SendMessage(Program.ServerMessage);
+                writer.Write(Program.MessageToClient);
             }
         }
-
         public static Action<string> ServerDebug = (str) => { Console.WriteLine(str); };
+
+        protected void SendHttpRequest(string url, string token, string method, JObject data)
+        {
+            if (string.IsNullOrEmpty(token)) return;
+            try
+            {
+                var request = WebRequest.CreateHttp(url);
+                request.Method = method;
+                request.Headers.Add("Authorization", $"bearer {token}");
+                if (data != null)
+                {
+                    request.ContentType = "application/json";
+                    var raw = Encoding.UTF8.GetBytes(data.ToString());
+                    request.GetRequestStream().Write(raw, 0, raw.Length);
+                    request.GetResponse();
+                }
+            }
+            catch (Exception e)
+            {
+                Server.ServerDebug(e.ToString());
+            }
+        }
     }
 }

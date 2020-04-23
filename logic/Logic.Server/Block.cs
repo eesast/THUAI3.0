@@ -111,7 +111,7 @@ namespace Logic.Server
                 cookingResult = "OverCookedDish";
             }
         }
-        protected string cookingResult;
+        protected string cookingResult = "";
         public bool isCooking = false;
 
         public int ProtectedTeam = -1;
@@ -133,23 +133,25 @@ namespace Logic.Server
 
             SortedSet<DishType> dishTypeSet = new SortedSet<DishType>();
             bool isSpicedPot = false;
-            if (WorldMap.Grid[(int)Position.x, (int)Position.y].ContainsType(typeof(Tool)))
+            var toolObjects = WorldMap.Grid[(int)Position.x, (int)Position.y].GetObjects(typeof(Tool));
+            if (toolObjects != null)
             {
-                foreach (Tool GameObject in WorldMap.Grid[(int)Position.x, (int)Position.y].GetObjects(typeof(Tool)))
+                foreach (Tool tool in toolObjects)
                 {
-                    if (GameObject.Tool == ToolType.Condiment)
+                    if (tool.Tool == ToolType.Condiment)
                     {
-                        GameObject.Parent = null;
+                        tool.Parent = null;
                         isSpicedPot = true;
                         break;
                     }
                 }
             }
-            if (WorldMap.Grid[(int)Position.x, (int)Position.y].ContainsType(typeof(Dish)))
-                foreach (Dish GameObject in WorldMap.Grid[(int)Position.x, (int)Position.y].GetObjects(typeof(Dish)))
+            var dishObjects = WorldMap.Grid[(int)Position.x, (int)Position.y].GetObjects(typeof(Dish));
+            if (dishObjects != null)
+                foreach (Dish dish in dishObjects)
                 {
-                    dishTypeSet.Add(GameObject.Dish);
-                    GameObject.Parent = null;
+                    dishTypeSet.Add(dish.Dish);
+                    dish.Parent = null;
                 }
             if (dishTypeSet.Count == 0) return;
             if (!isSpicedPot)

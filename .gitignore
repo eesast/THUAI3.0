@@ -1,2 +1,8 @@
 .vs/
 .vscode/
+server.playback
+scores.json
+runServer.bat
+runAgent*.bat
+runClientConsole*.bat
+log*

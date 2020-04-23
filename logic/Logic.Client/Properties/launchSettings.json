@@ -2,7 +2,7 @@
   "profiles": {
     "Logic.Client": {
       "commandName": "Project",
-      "commandLineArgs": "-p 30050 -d 1 -t 2"
+      "commandLineArgs": "--port 30000 --debugLevel 1 --talent 2 --isPlayBack 1"
     }
   }
 }

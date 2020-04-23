@@ -14,7 +14,6 @@ namespace Logic.Server
 
         public Dish(double x_t, double y_t, DishType type_t) : base(x_t, y_t, ObjType.Dish)
         {
-            Server.ServerDebug("Create Dish : " + type_t);
             Layer = ItemLayer;
             Movable = true;
             Bouncable = true;
@@ -22,15 +21,23 @@ namespace Logic.Server
             Dish = type_t;
             this.StopMoving += new StopMovingHandler((o) =>
             {
+                Server.ServerDebug(this + "has stopped moving");
                 Layer = ItemLayer;
                 if (WorldMap.Grid[(int)Position.x, (int)Position.y].ContainsType(typeof(RubbishBin)))
                 {
                     Parent = null;
                 }
             });
-            this.MoveComplete += new MoveCompleteHandler(ChangePositionInMessage);
-            this.PositionChangeComplete += new PositionChangeCompleteHandler(ChangePositionInMessage);
-            this.OnParentDelete += new ParentDeleteHandler(DeleteFromMessage);
+            MoveComplete += ChangePositionInMessage;
+            PositionChangeComplete += ChangePositionInMessage;
+            OnParentDelete += DeleteFromMessage;
+            OnParentDelete += () =>
+            {
+                MoveComplete -= ChangePositionInMessage;
+                PositionChangeComplete -= ChangePositionInMessage;
+
+            };
+            Server.ServerDebug("Create " + this);
         }
 
         public override DishType GetDish(DishType t)
@@ -42,6 +49,11 @@ namespace Logic.Server
                 Dish = t;
             }
             return temp;
+        }
+
+        public override string ToString()
+        {
+            return objType + ":" + Dish + ", " + ID + ", " + Position.ToString() + " ";
         }
     }
 }

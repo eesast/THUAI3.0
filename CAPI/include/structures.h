@@ -26,13 +26,14 @@ struct XYPosition
 class Obj
 {
 public:
-	XYPosition position;
-	ObjType objType;
-	BlockType blockType;
-	DishType dish;
-	ToolType tool;
-	TriggerType trigger;
-	Direction facingDiretion;
+	XYPosition position;		//Obj位置
+	ObjType objType;			//Obj所属类型
+	BlockType blockType;		//如果objType为Block，所属的墙体类型
+	DishType dish;				//如果objType为Dish，所属的食材类型；如果objType为People，拥有的食材类型
+	ToolType tool;				//如果objType为Tool，所属的道具类型；如果objType为People，拥有的道具类型
+	TriggerType trigger;		//如果objType为Trigger，所属的触发器类型
+	Direction facingDiretion;	//如果objType为People，面朝的方向
+	int team;					//如果objType为People，所属的队伍
 	Obj(const XYPosition& pos, ObjType objType);
 };
 
@@ -130,17 +131,17 @@ private:
 public:
 	friend class CAPI;
 	friend class MapInfo;
-	XYPosition position = XYPosition(0, 0);//玩家自身位置
-	int64_t id = -1;//玩家自身id
-	int team = 0;//玩家所属队伍
-	Direction facingDirection;//玩家当前面朝的方向
-	double moveSpeed;//玩家当前移动速度
-	int sightRange = Constant::Player::InitSightRange;//玩家的视野半径
-	Talent talent = initTalent;//玩家的天赋
-	int score = 0;//玩家所在队伍当前的分数
-	DishType dish = DishType::DishEmpty;//玩家手上拿的食材，只能同时拿一个
-	ToolType tool = ToolType::ToolEmpty; //玩家手上拿的道具，只能同时拿一个
-	std::string recieveText; //玩家接受到的同一队伍的其他玩家发的消息，若另一玩家没有再次发消息，则一直保持上一次接收到的消息
+	XYPosition position = XYPosition(0, 0);					//玩家自身位置
+	int64_t id = -1;										//玩家自身id
+	int team = 0;											//玩家所属队伍
+	Direction facingDirection;								//玩家当前面朝的方向
+	double moveSpeed;										//玩家当前移动速度
+	int sightRange = Constant::Player::InitSightRange;		//玩家的视野半径
+	Talent talent = initTalent;								//玩家的天赋
+	int score = 0;											//玩家所在队伍当前的分数
+	DishType dish = DishType::DishEmpty;					//玩家手上拿的食材，只能同时拿一个
+	ToolType tool = ToolType::ToolEmpty; 					//玩家手上拿的道具，只能同时拿一个
+	std::string recieveText; 								//玩家接受到的同一队伍的其他玩家发的消息，若另一玩家没有再次发消息，则一直保持上一次接收到的消息
 };
 extern player_info PlayerInfo;
 

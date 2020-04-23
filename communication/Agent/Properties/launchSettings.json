@@ -2,7 +2,7 @@
   "profiles": {
     "Communication.Agent": {
       "commandName": "Project",
-      "commandLineArgs": "--server 127.0.0.1:20000 --port 30000 -t fuck/offline -d 0 --playercount 1 --timelimit 100"
+      "commandLineArgs": "--server 127.0.0.1:20000 --port 30000 -t fuck/offline -d 0 --playercount 2 --timelimit 25"
     }
   }
 }
