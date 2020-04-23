@@ -74,7 +74,7 @@ namespace Logic.Server
             }
             else if (dish_t >= DishType.SpicedPot && dish_t <= DishType.SpicedPot8 && TaskQueue.ContainsKey(DishType.SpicedPot))
             {
-                string[] i = Convert.ToString(dish_t).Split('_');
+                string[] i = dish_t.ToString().Split('_');
                 double temp = Convert.ToDouble(i[1]);
                 score = (int)((1 + temp / 8) * temp * 20);
                 RemoveTask(DishType.SpicedPot);

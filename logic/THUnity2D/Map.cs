@@ -58,14 +58,14 @@ namespace THUnity2D
             lock (_grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].publicLock)
                 _grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].DeleteGameObject(childrenGameObject);
         }
-        protected override void OnChildrenPositionChanged(GameObject childrenGameObject, PositionChangedEventArgs e)
+        protected override void OnChildrenPositionChanged(GameObject childrenGameObject, XYPosition previousPosition, XYPosition targetPosition)
         {
-            Debug(this, "Children object " + childrenGameObject.ID + " position change. from : " + e.previousPosition.ToString() + " aim : " + e.position.ToString());
+            Debug(this, "Children object " + childrenGameObject.ID + " position change. from : " + previousPosition.ToString() + " aim : " + targetPosition.ToString());
             //base.OnChildrenPositionChanged(childrenGameObject, e, out eOut);
 
-            if (XIsLegal((int)e.previousPosition.x) && YIsLegal((int)e.previousPosition.y))
-                this._grid[(int)e.previousPosition.x, (int)e.previousPosition.y].DeleteGameObject(childrenGameObject);//如果需要把childrenGameObject从Grid上拿掉且可以拿掉
-            childrenGameObject._position = CorrectPosition(e.position, childrenGameObject.Width, childrenGameObject.Height, childrenGameObject.Layer);
+            if (XIsLegal((int)previousPosition.x) && YIsLegal((int)previousPosition.y))
+                this._grid[(int)previousPosition.x, (int)previousPosition.y].DeleteGameObject(childrenGameObject);//如果需要把childrenGameObject从Grid上拿掉且可以拿掉
+            childrenGameObject._position = CorrectPosition(targetPosition, childrenGameObject.Width, childrenGameObject.Height, childrenGameObject.Layer);
             _grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].AddGameObject(childrenGameObject);
             TryToTrigger(childrenGameObject);
         }
@@ -198,17 +198,17 @@ namespace THUnity2D
         }
 
         //为提高代码复用性，此函数内大量采用长度为2的数组表示X和Y，0表示X，1表示Y
-        protected override void OnChildrenMove(GameObject childrenGameObject, MoveEventArgs e, XYPosition previousPosition)
+        protected override void OnChildrenMove(GameObject childrenGameObject, double angle, double distance, XYPosition previousPosition)
         {
             Debug(this, "Attempting to move Children : " + childrenGameObject.ID);
             //base.OnChildrenMove(childrenGameObject, e, out eOut);
             //XYPosition aim;
-            double resultDistance = e.distance;
+            double resultDistance = distance;
             double[] delta = new double[2];
-            delta[0] = e.distance * Math.Cos(e.angle);
+            delta[0] = distance * Math.Cos(angle);
             if (Math.Abs(delta[0]) < 1E-8)
                 delta[0] = 0;
-            delta[1] = e.distance * Math.Sin(e.angle);
+            delta[1] = distance * Math.Sin(angle);
             if (Math.Abs(delta[1]) < 1E-8)
                 delta[1] = 0;
             bool[] IsDirectionPositive = { (delta[0] < 0) ? false : true, (delta[1] < 0) ? false : true };
@@ -473,7 +473,7 @@ namespace THUnity2D
 
             //调整位置
             Debug(this, "Moving " + childrenGameObject.ID + " resultDistance : " + resultDistance);
-            childrenGameObject._position = previousPosition + new XYPosition(resultDistance * Math.Cos(e.angle), resultDistance * Math.Sin(e.angle));
+            childrenGameObject._position = previousPosition + new XYPosition(resultDistance * Math.Cos(angle), resultDistance * Math.Sin(angle));
             this._grid[(int)previousPosition.x, (int)previousPosition.y].DeleteGameObject(childrenGameObject);
             this._grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].AddGameObject(childrenGameObject);
             //调整位置 End
@@ -505,13 +505,13 @@ namespace THUnity2D
             //Trigger End
 
             //Collide
-            if (resultDistance < e.distance)
+            if (resultDistance < distance)
             {
-                childrenGameObject.Collide(new CollisionEventArgs(collisionDirection, CollisionGameObjects));
+                childrenGameObject.Collide(collisionDirection, CollisionGameObjects);
                 if (CollisionGameObjects != null)
                     foreach (var gameObject in CollisionGameObjects)
                     {
-                        gameObject.Collide(new CollisionEventArgs((Direction)(((int)collisionDirection + 4) % 8), new HashSet<GameObject> { childrenGameObject }));
+                        gameObject.Collide((Direction)(((int)collisionDirection + 4) % 8), new HashSet<GameObject> { childrenGameObject });
                     }
 
                 //Check Bouncable
@@ -522,18 +522,18 @@ namespace THUnity2D
                     switch (collisionDirection)
                     {
                         case Direction.Left:
-                        case Direction.Right: bounceAngle = Math.PI - e.angle; break;
+                        case Direction.Right: bounceAngle = Math.PI - angle; break;
                         case Direction.Up:
-                        case Direction.Down: bounceAngle = -e.angle; break;
-                        default: bounceAngle = Math.PI + e.angle; break;
+                        case Direction.Down: bounceAngle = -angle; break;
+                        default: bounceAngle = Math.PI + angle; break;
                     }
-                    childrenGameObject.Move(new MoveEventArgs(bounceAngle, e.distance - resultDistance));
+                    childrenGameObject.Move(bounceAngle, distance - resultDistance);
                     childrenGameObject.Velocity = new Vector(bounceAngle, childrenGameObject.Velocity.length);
                 }
                 else
                 {
                     if (childrenGameObject.Velocity.length > 0)
-                        childrenGameObject.Velocity = new Vector(e.angle, 0);
+                        childrenGameObject.Velocity = new Vector(angle, 0);
                 }
                 //Check Bouncable End
 
@@ -616,17 +616,17 @@ namespace THUnity2D
             layer2.TriggerLayers.TryRemove(layer1, out temp);
         }
 
-        protected void OnChildrenLayerChange(GameObject childrenGameObject, LayerChangeEventArgs e)
+        protected void OnChildrenLayerChange(GameObject childrenGameObject, Layer previousLayer, Layer targetLayer)
         {
-            childrenGameObject._layer = e.previousLayer;
+            childrenGameObject._layer = previousLayer;
             byte temp = 0;
             childrenGameObject.Layer.GameObjectList.TryRemove(childrenGameObject, out temp);
             //DeleteFromGameObjectListByLayer(childrenGameObject);
             Monitor.Enter(_grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].publicLock);
             _grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].DeleteGameObject(childrenGameObject);
             Monitor.Exit(_grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].publicLock);
-            childrenGameObject._layer = e.targetLayer;
-            childrenGameObject._position = CorrectPosition(childrenGameObject.Position, childrenGameObject.Width, childrenGameObject.Height, e.targetLayer);
+            childrenGameObject._layer = targetLayer;
+            childrenGameObject._position = CorrectPosition(childrenGameObject.Position, childrenGameObject.Width, childrenGameObject.Height, targetLayer);
             childrenGameObject.Layer.GameObjectList.TryAdd(childrenGameObject, 0);
             //AddToGameObjectListByLayer(childrenGameObject);
             Monitor.Enter(_grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].publicLock);

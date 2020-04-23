@@ -20,7 +20,7 @@ namespace Logic.Server
         protected bool tempIsStepOnGlue = false;
         protected bool isStepOnGlue = false;
 
-        public Tuple<int ,int> CommunicationID
+        public Tuple<int, int> CommunicationID
         {
             get => _communicationID;
             set => Program.MessageToClient.GameObjectList[this.ID].Team = (_communicationID = value).Item1;
@@ -203,14 +203,13 @@ namespace Logic.Server
         public void Move(THUnity2D.Direction direction)
         {
             this.FacingDirection = direction;
-            Move(new MoveEventArgs((int)direction * Math.PI / 4, MoveSpeed / Constant.Constant.FrameRate));
+            Move((int)direction * Math.PI / 4, MoveSpeed / Constant.Constant.FrameRate);
         }
 
         public override void Move(THUnity2D.Direction direction, int durationMilliseconds)
         {
             this.FacingDirection = direction;
             this.status = CommandType.Move;
-            //lock (Program.MessageToClientLock)
             Program.MessageToClient.GameObjectList[this.ID].IsMoving = true;
             int dueTime = durationMilliseconds - (int)HalfTimeIntervalInMillisecond;
             if (dueTime > 0)
@@ -222,12 +221,9 @@ namespace Logic.Server
 
         void ChangePositionInMessage(THUnity2D.GameObject thisGameObject)
         {
-            //lock (Program.MessageToClientLock)
-            //{
             Program.MessageToClient.GameObjectList[thisGameObject.ID].PositionX = thisGameObject.Position.x;
             Program.MessageToClient.GameObjectList[thisGameObject.ID].PositionY = thisGameObject.Position.y;
             Program.MessageToClient.GameObjectList[thisGameObject.ID].Direction = (Direction)((Player)thisGameObject).FacingDirection;
-            //}
         }
 
         //isSelfPosition参数表示是不是捡起自己所在方格的物品
@@ -240,19 +236,20 @@ namespace Logic.Server
             switch (pickType)
             {
                 case ObjType.Block:
-                    Block? block = null;
-                    if (WorldMap.Grid[(int)toCheckPosition.x, (int)toCheckPosition.y].ContainsType(typeof(FoodPoint)))
-                        block = (Block)WorldMap.Grid[(int)toCheckPosition.x, (int)toCheckPosition.y].GetFirstObject(typeof(FoodPoint));
-                    else if (WorldMap.Grid[(int)toCheckPosition.x, (int)toCheckPosition.y].ContainsType(typeof(Cooker)))
+                    var block = WorldMap.Grid[(int)toCheckPosition.x, (int)toCheckPosition.y].GetFirstObject(typeof(FoodPoint));
+                    if (block == null)
                     {
-                        block = (Cooker)WorldMap.Grid[(int)toCheckPosition.x, (int)toCheckPosition.y].GetFirstObject(typeof(Cooker));
-                        if (((Cooker)block).ProtectedTeam != CommunicationID.Item1 && ((Cooker)block).ProtectedTeam >= 0)
-                            block = null;
+                        block = WorldMap.Grid[(int)toCheckPosition.x, (int)toCheckPosition.y].GetFirstObject(typeof(Cooker));
+                        if (block != null)
+                        {
+                            if (((Cooker)block).ProtectedTeam != CommunicationID.Item1 && ((Cooker)block).ProtectedTeam >= 0)
+                                block = null;
+                        }
                     }
-                    if (block != null && block.Dish != DishType.DishEmpty)
+                    if (block != null && ((Block)block).Dish != DishType.DishEmpty)
                     {
                         DishType temp = Dish;
-                        Dish = block.GetDish(Dish);
+                        Dish = ((Block)block).GetDish(Dish);
                         if (temp != DishType.DishEmpty)
                         {
                             new Dish(Position.x, Position.y, temp).Parent = WorldMap;
@@ -364,21 +361,22 @@ namespace Logic.Server
             if (type == 0)//type为0表示使用厨具做菜和提交菜品
             {
                 XYPosition xyPosition1 = Position + 2 * EightCornerVector[FacingDirection];
-                if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].ContainsType(typeof(Cooker)))
+                var cooker = WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetFirstObject(typeof(Cooker));
+                if (cooker != null && ((Cooker)cooker).isCooking == false)
                 {
-                    Cooker? cooker = (Cooker?)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetFirstObject(typeof(Cooker));
-                    if (cooker != null && cooker.isCooking == false)
-                    {
-                        Server.ServerDebug(this + " use cooker at " + cooker.Position);
-                        cooker.UseCooker(CommunicationID.Item1, Talent);
-                    }
+                    Server.ServerDebug(this + " use cooker at " + cooker.Position);
+                    ((Cooker)cooker).UseCooker(CommunicationID.Item1, Talent);
                 }
-                else if (WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].ContainsType(typeof(TaskPoint)))
+                else
                 {
-                    Server.ServerDebug(this + " hand in task: " + Dish);
-                    lock (Program.ScoreLocks[CommunicationID.Item1])
-                        Score += ((TaskPoint)WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetFirstObject(typeof(TaskPoint))).HandIn(Dish);
-                    Dish = DishType.DishEmpty;
+                    var taskPoint = WorldMap.Grid[(int)xyPosition1.x, (int)xyPosition1.y].GetFirstObject(typeof(TaskPoint));
+                    if (taskPoint != null)
+                    {
+                        Server.ServerDebug(this + " hand in task: " + Dish);
+                        lock (Program.ScoreLocks[CommunicationID.Item1])
+                            Score += ((TaskPoint)taskPoint).HandIn(Dish);
+                        Dish = DishType.DishEmpty;
+                    }
                 }
             }
             else//否则为使用手中道具
@@ -673,7 +671,6 @@ namespace Logic.Server
             {
                 if (i == CommunicationID.Item2)
                     continue;
-                //lock (Program.MessageToClientLock)
                 Program.MessageToClient.GameObjectList[Program.PlayerList[new Tuple<int, int>(CommunicationID.Item1, i)].ID].RecieveText = speakText;
             }
         }
