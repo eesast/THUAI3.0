@@ -20,6 +20,13 @@ namespace Logic.Server
         protected bool tempIsStepOnGlue = false;
         protected bool isStepOnGlue = false;
 
+        public Tuple<int ,int> CommunicationID
+        {
+            get => _communicationID;
+            set => Program.MessageToClient.GameObjectList[this.ID].Team = (_communicationID = value).Item1;
+        }
+
+
         protected int _isStun = 0;
         protected int IsStun
         {
@@ -118,7 +125,6 @@ namespace Logic.Server
                         MoveSpeed = this.MoveSpeed,
                         DishType = Dish,
                         ToolType = Tool,
-                        Team = CommunicationID.Item1
                     });
             }
             MoveStart += new MoveStartHandler(

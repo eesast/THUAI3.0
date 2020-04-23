@@ -10,7 +10,7 @@ namespace Logic.Constant
 {
     public class Character : THUnity2D.GameObject
     {
-        public Tuple<int, int> CommunicationID = new Tuple<int, int>(0, 0);//第一个数表示Agent，第二个数表示Client
+        protected Tuple<int, int> _communicationID = new Tuple<int, int>(0, 0);//第一个数表示Agent，第二个数表示Client
         //public int team = 0;
         //protected double GlueExtraMoveSpeed = 0;
         //protected double SpeedBuffExtraMoveSpeed = 0;
