@@ -15,7 +15,7 @@ if [ $? -ne 0 ]
 then
 	# compile fail
 	cp error.txt /usr/local/mnt/error.txt
-	curl -X PUT -d "{\"compileInfo\":$(cat error.txt)}" -H 'Content-Type: application/json' -H "Authorization: Bearer ${THUAI_COMPILE_TOKEN}" https://api.eesast.com/v1/codes/${THUAI_CODEID}/compile
+	curl -X PUT -d "{\"compileInfo\":\"$(cat error.txt | tr \" \' | tr '\n' '#')\"}" -H 'Content-Type: application/json' -H "Authorization: Bearer ${THUAI_COMPILE_TOKEN}" https://api.eesast.com/v1/codes/${THUAI_CODEID}/compile
 else
 	curl -X PUT -d '{"compileInfo":"compile success"}' -H 'Content-Type: application/json' -H "Authorization: Bearer ${THUAI_COMPILE_TOKEN}" https://api.eesast.com/v1/codes/${THUAI_CODEID}/compile
 fi
