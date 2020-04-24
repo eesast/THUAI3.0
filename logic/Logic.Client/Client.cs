@@ -411,8 +411,8 @@ namespace Client
                 messageToServer.ID = this.id;
             }
 
-            this.Position = new XYPosition(msg.GameObjectList[this.id].PositionX, msg.GameObjectList[this.id].PositionY);
-            this._facingDirection = (THUnity2D.Direction)msg.GameObjectList[this.id].Direction;
+            //this.Position = new XYPosition(msg.GameObjectList[this.id].PositionX, msg.GameObjectList[this.id].PositionY);
+            //this._facingDirection = (THUnity2D.Direction)msg.GameObjectList[this.id].Direction;
 
             ChangeAllLabels(msg);
             lastRecieveMessage = msg;
