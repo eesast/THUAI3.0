@@ -14,6 +14,7 @@ namespace Communication.Proto
         private ConcurrentDictionary<int, IntPtr> clientList;
         private readonly TcpServer server;
         private bool isListening;
+        private object idLock = new object();
 
         public ushort Port
         {
@@ -55,29 +56,32 @@ namespace Communication.Proto
                         Constants.Debug($"ServerSide: Using Pre-Allocated ID #{id}");
                         break;
                     case PacketType.IdRequest: //客户端请求ID
-                        if (!isListening)
+                        lock (idLock)
                         {
-                            server.Disconnect(connId);
-                            break;
-                        }
-                        id = -1;
-                        for(int i=0; ;i++)
-                        {
-                            if(!clientList.ContainsKey(i))
+                            if (!isListening)
                             {
-                                id = i;
+                                server.Disconnect(connId);
                                 break;
                             }
+                            id = -1;
+                            for (int i = 0; ; i++)
+                            {
+                                if (!clientList.ContainsKey(i))
+                                {
+                                    id = i;
+                                    break;
+                                }
+                            }
+                            clientList.TryAdd(id, connId);
+                            MemoryStream ostream = new MemoryStream();
+                            BinaryWriter bw = new BinaryWriter(ostream);
+                            bw.Write((int)PacketType.IdAllocate);
+                            bw.Write(id);
+                            byte[] raw = ostream.ToArray();
+                            server.Send(connId, raw, raw.Length);
+                            OnAccept?.Invoke();
+                            Constants.Debug($"ServerSide: Allocate ID #{id}");
                         }
-                        clientList.TryAdd(id,connId);
-                        MemoryStream ostream = new MemoryStream();
-                        BinaryWriter bw = new BinaryWriter(ostream);
-                        bw.Write((int)PacketType.IdAllocate);
-                        bw.Write(id);
-                        byte[] raw = ostream.ToArray();
-                        server.Send(connId, raw, raw.Length);
-                        OnAccept?.Invoke();
-                        Constants.Debug($"ServerSide: Allocate ID #{id}");
                         break;
                     case PacketType.ProtoPacket: //接收到包
                         Message message = new Message();
