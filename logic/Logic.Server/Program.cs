@@ -57,6 +57,8 @@ namespace Logic.Server
         private static Server server;
         public static void Main(string[] args)
         {
+            foreach (string i in args)
+                Console.WriteLine(i);
             Parser.Default.ParseArguments<AugmentOptions>(args)
                   .WithParsed<AugmentOptions>(o =>
                   {
