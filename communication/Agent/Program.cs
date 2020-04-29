@@ -38,8 +38,7 @@ namespace Communication.Agent
                 else if (Constants.PlayerCount > 2) Constants.PlayerCount = 2;
                 //Constants.MaxMessage = int.Parse(messagelmt.Value());
                 Constants.TimeLimit = double.Parse(timelmt.Value());
-                if (Constants.TimeLimit < 20) Constants.TimeLimit = 20;
-                else if (Constants.TimeLimit > 100) Constants.TimeLimit = 100;
+                if (Constants.TimeLimit < 10) Constants.TimeLimit = 10;
                 return MainInternal(server.Value(), ushort.Parse(port.Value()), token.Value(), int.Parse(debugLevel.Value()));
             });
             app.Execute(args);

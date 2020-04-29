@@ -460,17 +460,17 @@ class GameObject :
 
   // accessors -------------------------------------------------------
 
-  // string SpeakText = 10;
-  void clear_speaktext();
-  static const int kSpeakTextFieldNumber = 10;
-  const std::string& speaktext() const;
-  void set_speaktext(const std::string& value);
-  void set_speaktext(std::string&& value);
-  void set_speaktext(const char* value);
-  void set_speaktext(const char* value, size_t size);
-  std::string* mutable_speaktext();
-  std::string* release_speaktext();
-  void set_allocated_speaktext(std::string* speaktext);
+  // string RecieveText = 10;
+  void clear_recievetext();
+  static const int kRecieveTextFieldNumber = 10;
+  const std::string& recievetext() const;
+  void set_recievetext(const std::string& value);
+  void set_recievetext(std::string&& value);
+  void set_recievetext(const char* value);
+  void set_recievetext(const char* value, size_t size);
+  std::string* mutable_recievetext();
+  std::string* release_recievetext();
+  void set_allocated_recievetext(std::string* recievetext);
 
   // double PositionX = 1;
   void clear_positionx();
@@ -549,7 +549,7 @@ class GameObject :
   class HasBitSetters;
 
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr speaktext_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr recievetext_;
   double positionx_;
   double positiony_;
   int direction_;
@@ -924,55 +924,55 @@ inline void GameObject::set_ismoving(bool value) {
   // @@protoc_insertion_point(field_set:Protobuf.GameObject.isMoving)
 }
 
-// string SpeakText = 10;
-inline void GameObject::clear_speaktext() {
-  speaktext_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+// string RecieveText = 10;
+inline void GameObject::clear_recievetext() {
+  recievetext_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline const std::string& GameObject::speaktext() const {
-  // @@protoc_insertion_point(field_get:Protobuf.GameObject.SpeakText)
-  return speaktext_.GetNoArena();
+inline const std::string& GameObject::recievetext() const {
+  // @@protoc_insertion_point(field_get:Protobuf.GameObject.RecieveText)
+  return recievetext_.GetNoArena();
 }
-inline void GameObject::set_speaktext(const std::string& value) {
+inline void GameObject::set_recievetext(const std::string& value) {
   
-  speaktext_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:Protobuf.GameObject.SpeakText)
+  recievetext_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Protobuf.GameObject.RecieveText)
 }
-inline void GameObject::set_speaktext(std::string&& value) {
+inline void GameObject::set_recievetext(std::string&& value) {
   
-  speaktext_.SetNoArena(
+  recievetext_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:Protobuf.GameObject.SpeakText)
+  // @@protoc_insertion_point(field_set_rvalue:Protobuf.GameObject.RecieveText)
 }
-inline void GameObject::set_speaktext(const char* value) {
+inline void GameObject::set_recievetext(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
-  speaktext_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:Protobuf.GameObject.SpeakText)
+  recievetext_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Protobuf.GameObject.RecieveText)
 }
-inline void GameObject::set_speaktext(const char* value, size_t size) {
+inline void GameObject::set_recievetext(const char* value, size_t size) {
   
-  speaktext_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+  recievetext_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:Protobuf.GameObject.SpeakText)
+  // @@protoc_insertion_point(field_set_pointer:Protobuf.GameObject.RecieveText)
 }
-inline std::string* GameObject::mutable_speaktext() {
+inline std::string* GameObject::mutable_recievetext() {
   
-  // @@protoc_insertion_point(field_mutable:Protobuf.GameObject.SpeakText)
-  return speaktext_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  // @@protoc_insertion_point(field_mutable:Protobuf.GameObject.RecieveText)
+  return recievetext_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* GameObject::release_speaktext() {
-  // @@protoc_insertion_point(field_release:Protobuf.GameObject.SpeakText)
+inline std::string* GameObject::release_recievetext() {
+  // @@protoc_insertion_point(field_release:Protobuf.GameObject.RecieveText)
   
-  return speaktext_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  return recievetext_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void GameObject::set_allocated_speaktext(std::string* speaktext) {
-  if (speaktext != nullptr) {
+inline void GameObject::set_allocated_recievetext(std::string* recievetext) {
+  if (recievetext != nullptr) {
     
   } else {
     
   }
-  speaktext_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), speaktext);
-  // @@protoc_insertion_point(field_set_allocated:Protobuf.GameObject.SpeakText)
+  recievetext_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), recievetext);
+  // @@protoc_insertion_point(field_set_allocated:Protobuf.GameObject.RecieveText)
 }
 
 // int32 team = 11;

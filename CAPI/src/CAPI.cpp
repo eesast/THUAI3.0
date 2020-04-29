@@ -160,9 +160,10 @@ void CAPI::SendChatMessage(string message)
 	Send(mes);
 }
 
-void CAPI::SendCommandMessage(MessageToServer* message)
+void CAPI::SendCommandMessage(MessageToServer message)
 {
-	Message* mes2 = new Message(PlayerId, message);
+	MessageToServer* mes0 = new MessageToServer(message);
+	Message* mes2 = new Message(PlayerId, mes0);
 	Message* mes3 = new Message(-1, mes2);
 	shared_ptr<Message> mes = make_shared<Message>(-1, mes3);
 	Send(mes);
@@ -198,6 +199,7 @@ void CAPI::MoveObj(int64_t id, Protobuf::MessageToClient* message, std::unordere
 	MapInfo::obj_list[id]->position.x = message->gameobjectlist().at(id).positionx();
 	MapInfo::obj_list[id]->position.y = message->gameobjectlist().at(id).positiony();
 	MapInfo::obj_list[id]->facingDiretion = message->gameobjectlist().at(id).direction();
+	MapInfo::obj_list[id]->team = message->gameobjectlist().at(id).team();
 
 	MapInfo::mutex_map[(int)MapInfo::obj_list[id]->position.x][(int)MapInfo::obj_list[id]->position.y]->lock();
 	MapInfo::obj_map[(int)MapInfo::obj_list[id]->position.x][(int)MapInfo::obj_list[id]->position.y].insert(std::pair<int64_t, shared_ptr< Obj>>(id, MapInfo::obj_list[id]));
@@ -214,19 +216,32 @@ void CAPI::UpdateInfo(Protobuf::MessageToClient* message)
 		MessageToServer mesC2S;
 		mesC2S.set_issettalent(true);
 		mesC2S.set_talent(initTalent);
-		SendCommandMessage(&mesC2S);
+		SendCommandMessage(mesC2S);
 		GameRunning = true;
 		std::cout << "Game start" << std::endl;
 	}
-	Protobuf::GameObject self = message->gameobjectlist().at(PlayerInfo._id);
-	PlayerInfo._position.x = PlayerInfo.position.x = self.positionx();
-	PlayerInfo._position.y = PlayerInfo.position.y = self.positiony();
-	PlayerInfo.facingDirection = self.direction();
-	PlayerInfo.moveSpeed = self.movespeed();
-	PlayerInfo.sightRange = PlayerInfo._sightRange = self.sightrange();
-	PlayerInfo.dish = self.dishtype();
-	PlayerInfo.tool = self.tooltype();
-	PlayerInfo.recieveText = self.speaktext();
+	google::protobuf::Map<int64_t, Protobuf::GameObject>::const_iterator self_iter = message->gameobjectlist().find(PlayerInfo._id);
+	if (self_iter != message->gameobjectlist().end())
+	{
+
+		PlayerInfo._position.x = PlayerInfo.position.x = self_iter->second.positionx();
+		PlayerInfo._position.y = PlayerInfo.position.y = self_iter->second.positiony();
+		PlayerInfo.facingDirection = self_iter->second.direction();
+		PlayerInfo.moveSpeed = self_iter->second.movespeed();
+		PlayerInfo.sightRange = PlayerInfo._sightRange = self_iter->second.sightrange();
+		PlayerInfo.dish = self_iter->second.dishtype();
+		PlayerInfo.tool = self_iter->second.tooltype();
+		PlayerInfo.recieveText = self_iter->second.recievetext();
+	}
+	//Protobuf::GameObject self = message->gameobjectlist().at(PlayerInfo._id);
+	//PlayerInfo._position.x = PlayerInfo.position.x = self.positionx();
+	//PlayerInfo._position.y = PlayerInfo.position.y = self.positiony();
+	//PlayerInfo.facingDirection = self.direction();
+	//PlayerInfo.moveSpeed = self.movespeed();
+	//PlayerInfo.sightRange = PlayerInfo._sightRange = self.sightrange();
+	//PlayerInfo.dish = self.dishtype();
+	//PlayerInfo.tool = self.tooltype();
+	//PlayerInfo.recieveText = self.recievetext();
 	if (message->scores().contains(PlayerInfo._team))
 		PlayerInfo.score = message->scores().at(PlayerInfo._team);
 

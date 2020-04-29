@@ -112,7 +112,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_MessageToClient_2eproto::offse
   PROTOBUF_FIELD_OFFSET(::Protobuf::GameObject, tooltype_),
   PROTOBUF_FIELD_OFFSET(::Protobuf::GameObject, triggertype_),
   PROTOBUF_FIELD_OFFSET(::Protobuf::GameObject, ismoving_),
-  PROTOBUF_FIELD_OFFSET(::Protobuf::GameObject, speaktext_),
+  PROTOBUF_FIELD_OFFSET(::Protobuf::GameObject, recievetext_),
   PROTOBUF_FIELD_OFFSET(::Protobuf::GameObject, team_),
   PROTOBUF_FIELD_OFFSET(::Protobuf::GameObject, sightrange_),
   PROTOBUF_FIELD_OFFSET(::Protobuf::GameObject, movespeed_),
@@ -158,7 +158,7 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 };
 
 const char descriptor_table_protodef_MessageToClient_2eproto[] =
-  "\n\025MessageToClient.proto\022\010Protobuf\"\370\002\n\nGa"
+  "\n\025MessageToClient.proto\022\010Protobuf\"\372\002\n\nGa"
   "meObject\022\021\n\tPositionX\030\001 \001(\001\022\021\n\tPositionY"
   "\030\002 \001(\001\022&\n\tDirection\030\003 \001(\0162\023.Protobuf.Dir"
   "ection\022\"\n\007ObjType\030\004 \001(\0162\021.Protobuf.ObjTy"
@@ -166,57 +166,57 @@ const char descriptor_table_protodef_MessageToClient_2eproto[] =
   "pe\022$\n\010DishType\030\006 \001(\0162\022.Protobuf.DishType"
   "\022$\n\010ToolType\030\007 \001(\0162\022.Protobuf.ToolType\022*"
   "\n\013TriggerType\030\010 \001(\0162\025.Protobuf.TriggerTy"
-  "pe\022\020\n\010isMoving\030\t \001(\010\022\021\n\tSpeakText\030\n \001(\t\022"
-  "\014\n\004team\030\013 \001(\005\022\022\n\nSightRange\030\014 \001(\005\022\021\n\tMov"
-  "eSpeed\030\r \001(\001\"\256\002\n\017MessageToClient\022E\n\016Game"
-  "ObjectList\030\001 \003(\0132-.Protobuf.MessageToCli"
-  "ent.GameObjectListEntry\022!\n\005Tasks\030\002 \003(\0162\022"
-  ".Protobuf.DishType\0225\n\006Scores\030\003 \003(\0132%.Pro"
-  "tobuf.MessageToClient.ScoresEntry\032K\n\023Gam"
-  "eObjectListEntry\022\013\n\003key\030\001 \001(\003\022#\n\005value\030\002"
-  " \001(\0132\024.Protobuf.GameObject:\0028\001\032-\n\013Scores"
-  "Entry\022\013\n\003key\030\001 \001(\005\022\r\n\005value\030\002 \001(\005:\0028\001*R\n"
-  "\007ObjType\022\n\n\006People\020\000\022\t\n\005Block\020\001\022\010\n\004Dish\020"
-  "\002\022\010\n\004Tool\020\003\022\013\n\007Trigger\020\004\022\017\n\013ObjTypeSize\020"
-  "\005*m\n\tBlockType\022\010\n\004Wall\020\000\022\t\n\005Table\020\001\022\r\n\tF"
-  "oodPoint\020\002\022\n\n\006Cooker\020\003\022\016\n\nRubbishBin\020\004\022\r"
-  "\n\tTaskPoint\020\005\022\021\n\rBlockTypeSize\020\006*\217\006\n\010Dis"
-  "hType\022\r\n\tDishEmpty\020\000\022\t\n\005Wheat\020\001\022\010\n\004Rice\020"
-  "\002\022\n\n\006Tomato\020\003\022\007\n\003Egg\020\004\022\010\n\004Milk\020\005\022\t\n\005Appl"
-  "e\020\006\022\n\n\006Banana\020\007\022\014\n\010DarkPlum\020\010\022\014\n\010Hawthor"
-  "n\020\t\022\016\n\nStrawberry\020\n\022\010\n\004Beef\020\013\022\010\n\004Pork\020\014\022"
-  "\017\n\013ChickenMeat\020\r\022\n\n\006Potato\020\016\022\013\n\007Lettuce\020"
-  "\017\022\n\n\006Agaric\020\020\022\022\n\016NeedleMushroom\020\021\022\013\n\007Cab"
-  "bage\020\022\022\r\n\tDishSize1\020\023\022\t\n\005Flour\020\024\022\n\n\006Nood"
-  "le\020\025\022\t\n\005Bread\020\026\022\016\n\nCookedRice\020\027\022\013\n\007Ketch"
-  "up\020\030\022\t\n\005Cream\020\031\022\022\n\016TomatoFriedEgg\020\032\022\030\n\024T"
-  "omatoFriedEggNoodle\020\033\022\016\n\nBeefNoodle\020\034\022\014\n"
-  "\010OverRice\020\035\022\022\n\016YellowPheasant\020\036\022\014\n\010Barbe"
-  "cue\020\037\022\017\n\013FrenchFries\020 \022\r\n\tPlumJuice\020!\022\r\n"
-  "\tHamburger\020\"\022\026\n\022StrawberryIcecream\020#\022\022\n\016"
-  "PopcornChicken\020$\022\022\n\016AgaricFriedEgg\020%\022\010\n\004"
-  "Cake\020&\022\023\n\017SugarCoatedHaws\020\'\022\016\n\nFruitSala"
-  "d\020(\022\r\n\tSpicedPot\020)\022\016\n\nSpicedPot3\020*\022\016\n\nSp"
-  "icedPot4\020+\022\016\n\nSpicedPot5\020,\022\016\n\nSpicedPot6"
-  "\020-\022\016\n\nSpicedPot7\020.\022\016\n\nSpicedPot8\020/\022\r\n\tDi"
-  "shSize2\0200\022\022\n\016OverCookedDish\0201\022\014\n\010DarkDis"
-  "h\0202\022\r\n\tDishSize3\0203*\214\002\n\010ToolType\022\r\n\tToolE"
-  "mpty\020\000\022\016\n\nTigerShoes\020\001\022\r\n\tSpeedBuff\020\002\022\020\n"
-  "\014StrengthBuff\020\003\022\r\n\tTeleScope\020\004\022\r\n\tCondim"
-  "ent\020\005\022\016\n\nFertilizer\020\006\022\017\n\013BreastPlate\020\007\022\r"
-  "\n\tSpaceGate\020\010\022\022\n\016WaveGlueBottle\020\t\022\014\n\010Lan"
-  "dMine\020\n\022\014\n\010TrapTool\020\013\022\r\n\tFlashBomb\020\014\022\017\n\013"
-  "ThrowHammer\020\r\022\007\n\003Bow\020\016\022\013\n\007Stealer\020\017\022\014\n\010T"
-  "oolSize\020\020*a\n\013TriggerType\022\014\n\010WaveGlue\020\000\022\010"
-  "\n\004Trap\020\001\022\010\n\004Mine\020\002\022\010\n\004Bomb\020\003\022\t\n\005Arrow\020\004\022"
-  "\n\n\006Hammer\020\005\022\017\n\013TriggerSize\020\006*{\n\tDirectio"
-  "n\022\t\n\005Right\020\000\022\013\n\007RightUp\020\001\022\006\n\002Up\020\002\022\n\n\006Lef"
-  "tUp\020\003\022\010\n\004Left\020\004\022\014\n\010LeftDown\020\005\022\010\n\004Down\020\006\022"
-  "\r\n\tRightDown\020\007\022\021\n\rDirectionSize\020\010*e\n\006Tal"
-  "ent\022\010\n\004None\020\000\022\n\n\006Runner\020\001\022\r\n\tStrongMan\020\002"
-  "\022\010\n\004Cook\020\003\022\016\n\nTechnician\020\004\022\014\n\010LuckyBoy\020\005"
-  "\022\016\n\nTalentSize\020\006B\026\252\002\023Communication.Proto"
-  "b\006proto3"
+  "pe\022\020\n\010isMoving\030\t \001(\010\022\023\n\013RecieveText\030\n \001("
+  "\t\022\014\n\004team\030\013 \001(\005\022\022\n\nSightRange\030\014 \001(\005\022\021\n\tM"
+  "oveSpeed\030\r \001(\001\"\256\002\n\017MessageToClient\022E\n\016Ga"
+  "meObjectList\030\001 \003(\0132-.Protobuf.MessageToC"
+  "lient.GameObjectListEntry\022!\n\005Tasks\030\002 \003(\016"
+  "2\022.Protobuf.DishType\0225\n\006Scores\030\003 \003(\0132%.P"
+  "rotobuf.MessageToClient.ScoresEntry\032K\n\023G"
+  "ameObjectListEntry\022\013\n\003key\030\001 \001(\003\022#\n\005value"
+  "\030\002 \001(\0132\024.Protobuf.GameObject:\0028\001\032-\n\013Scor"
+  "esEntry\022\013\n\003key\030\001 \001(\005\022\r\n\005value\030\002 \001(\005:\0028\001*"
+  "R\n\007ObjType\022\n\n\006People\020\000\022\t\n\005Block\020\001\022\010\n\004Dis"
+  "h\020\002\022\010\n\004Tool\020\003\022\013\n\007Trigger\020\004\022\017\n\013ObjTypeSiz"
+  "e\020\005*m\n\tBlockType\022\010\n\004Wall\020\000\022\t\n\005Table\020\001\022\r\n"
+  "\tFoodPoint\020\002\022\n\n\006Cooker\020\003\022\016\n\nRubbishBin\020\004"
+  "\022\r\n\tTaskPoint\020\005\022\021\n\rBlockTypeSize\020\006*\217\006\n\010D"
+  "ishType\022\r\n\tDishEmpty\020\000\022\t\n\005Wheat\020\001\022\010\n\004Ric"
+  "e\020\002\022\n\n\006Tomato\020\003\022\007\n\003Egg\020\004\022\010\n\004Milk\020\005\022\t\n\005Ap"
+  "ple\020\006\022\n\n\006Banana\020\007\022\014\n\010DarkPlum\020\010\022\014\n\010Hawth"
+  "orn\020\t\022\016\n\nStrawberry\020\n\022\010\n\004Beef\020\013\022\010\n\004Pork\020"
+  "\014\022\017\n\013ChickenMeat\020\r\022\n\n\006Potato\020\016\022\013\n\007Lettuc"
+  "e\020\017\022\n\n\006Agaric\020\020\022\022\n\016NeedleMushroom\020\021\022\013\n\007C"
+  "abbage\020\022\022\r\n\tDishSize1\020\023\022\t\n\005Flour\020\024\022\n\n\006No"
+  "odle\020\025\022\t\n\005Bread\020\026\022\016\n\nCookedRice\020\027\022\013\n\007Ket"
+  "chup\020\030\022\t\n\005Cream\020\031\022\022\n\016TomatoFriedEgg\020\032\022\030\n"
+  "\024TomatoFriedEggNoodle\020\033\022\016\n\nBeefNoodle\020\034\022"
+  "\014\n\010OverRice\020\035\022\022\n\016YellowPheasant\020\036\022\014\n\010Bar"
+  "becue\020\037\022\017\n\013FrenchFries\020 \022\r\n\tPlumJuice\020!\022"
+  "\r\n\tHamburger\020\"\022\026\n\022StrawberryIcecream\020#\022\022"
+  "\n\016PopcornChicken\020$\022\022\n\016AgaricFriedEgg\020%\022\010"
+  "\n\004Cake\020&\022\023\n\017SugarCoatedHaws\020\'\022\016\n\nFruitSa"
+  "lad\020(\022\r\n\tSpicedPot\020)\022\016\n\nSpicedPot3\020*\022\016\n\n"
+  "SpicedPot4\020+\022\016\n\nSpicedPot5\020,\022\016\n\nSpicedPo"
+  "t6\020-\022\016\n\nSpicedPot7\020.\022\016\n\nSpicedPot8\020/\022\r\n\t"
+  "DishSize2\0200\022\022\n\016OverCookedDish\0201\022\014\n\010DarkD"
+  "ish\0202\022\r\n\tDishSize3\0203*\214\002\n\010ToolType\022\r\n\tToo"
+  "lEmpty\020\000\022\016\n\nTigerShoes\020\001\022\r\n\tSpeedBuff\020\002\022"
+  "\020\n\014StrengthBuff\020\003\022\r\n\tTeleScope\020\004\022\r\n\tCond"
+  "iment\020\005\022\016\n\nFertilizer\020\006\022\017\n\013BreastPlate\020\007"
+  "\022\r\n\tSpaceGate\020\010\022\022\n\016WaveGlueBottle\020\t\022\014\n\010L"
+  "andMine\020\n\022\014\n\010TrapTool\020\013\022\r\n\tFlashBomb\020\014\022\017"
+  "\n\013ThrowHammer\020\r\022\007\n\003Bow\020\016\022\013\n\007Stealer\020\017\022\014\n"
+  "\010ToolSize\020\020*a\n\013TriggerType\022\014\n\010WaveGlue\020\000"
+  "\022\010\n\004Trap\020\001\022\010\n\004Mine\020\002\022\010\n\004Bomb\020\003\022\t\n\005Arrow\020"
+  "\004\022\n\n\006Hammer\020\005\022\017\n\013TriggerSize\020\006*{\n\tDirect"
+  "ion\022\t\n\005Right\020\000\022\013\n\007RightUp\020\001\022\006\n\002Up\020\002\022\n\n\006L"
+  "eftUp\020\003\022\010\n\004Left\020\004\022\014\n\010LeftDown\020\005\022\010\n\004Down\020"
+  "\006\022\r\n\tRightDown\020\007\022\021\n\rDirectionSize\020\010*e\n\006T"
+  "alent\022\010\n\004None\020\000\022\n\n\006Runner\020\001\022\r\n\tStrongMan"
+  "\020\002\022\010\n\004Cook\020\003\022\016\n\nTechnician\020\004\022\014\n\010LuckyBoy"
+  "\020\005\022\016\n\nTalentSize\020\006B\026\252\002\023Communication.Pro"
+  "tob\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_MessageToClient_2eproto_deps[1] = {
 };
@@ -229,7 +229,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_Mes
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_MessageToClient_2eproto_once;
 static bool descriptor_table_MessageToClient_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_MessageToClient_2eproto = {
-  &descriptor_table_MessageToClient_2eproto_initialized, descriptor_table_protodef_MessageToClient_2eproto, "MessageToClient.proto", 2328,
+  &descriptor_table_MessageToClient_2eproto_initialized, descriptor_table_protodef_MessageToClient_2eproto, "MessageToClient.proto", 2330,
   &descriptor_table_MessageToClient_2eproto_once, descriptor_table_MessageToClient_2eproto_sccs, descriptor_table_MessageToClient_2eproto_deps, 4, 0,
   schemas, file_default_instances, TableStruct_MessageToClient_2eproto::offsets,
   file_level_metadata_MessageToClient_2eproto, 4, file_level_enum_descriptors_MessageToClient_2eproto, file_level_service_descriptors_MessageToClient_2eproto,
@@ -446,7 +446,7 @@ const int GameObject::kDishTypeFieldNumber;
 const int GameObject::kToolTypeFieldNumber;
 const int GameObject::kTriggerTypeFieldNumber;
 const int GameObject::kIsMovingFieldNumber;
-const int GameObject::kSpeakTextFieldNumber;
+const int GameObject::kRecieveTextFieldNumber;
 const int GameObject::kTeamFieldNumber;
 const int GameObject::kSightRangeFieldNumber;
 const int GameObject::kMoveSpeedFieldNumber;
@@ -461,9 +461,9 @@ GameObject::GameObject(const GameObject& from)
   : ::PROTOBUF_NAMESPACE_ID::Message(),
       _internal_metadata_(nullptr) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  speaktext_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  if (from.speaktext().size() > 0) {
-    speaktext_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.speaktext_);
+  recievetext_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (from.recievetext().size() > 0) {
+    recievetext_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.recievetext_);
   }
   ::memcpy(&positionx_, &from.positionx_,
     static_cast<size_t>(reinterpret_cast<char*>(&sightrange_) -
@@ -473,7 +473,7 @@ GameObject::GameObject(const GameObject& from)
 
 void GameObject::SharedCtor() {
   ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_GameObject_MessageToClient_2eproto.base);
-  speaktext_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  recievetext_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   ::memset(&positionx_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&sightrange_) -
       reinterpret_cast<char*>(&positionx_)) + sizeof(sightrange_));
@@ -485,7 +485,7 @@ GameObject::~GameObject() {
 }
 
 void GameObject::SharedDtor() {
-  speaktext_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  recievetext_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 void GameObject::SetCachedSize(int size) const {
@@ -503,7 +503,7 @@ void GameObject::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  speaktext_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  recievetext_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   ::memset(&positionx_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&sightrange_) -
       reinterpret_cast<char*>(&positionx_)) + sizeof(sightrange_));
@@ -587,10 +587,10 @@ const char* GameObject::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID:
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // string SpeakText = 10;
+      // string RecieveText = 10;
       case 10:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 82)) {
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParserUTF8(mutable_speaktext(), ptr, ctx, "Protobuf.GameObject.SpeakText");
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParserUTF8(mutable_recievetext(), ptr, ctx, "Protobuf.GameObject.RecieveText");
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -768,15 +768,15 @@ bool GameObject::MergePartialFromCodedStream(
         break;
       }
 
-      // string SpeakText = 10;
+      // string RecieveText = 10;
       case 10: {
         if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (82 & 0xFF)) {
           DO_(::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadString(
-                input, this->mutable_speaktext()));
+                input, this->mutable_recievetext()));
           DO_(::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-            this->speaktext().data(), static_cast<int>(this->speaktext().length()),
+            this->recievetext().data(), static_cast<int>(this->recievetext().length()),
             ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::PARSE,
-            "Protobuf.GameObject.SpeakText"));
+            "Protobuf.GameObject.RecieveText"));
         } else {
           goto handle_unusual;
         }
@@ -900,14 +900,14 @@ void GameObject::SerializeWithCachedSizes(
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBool(9, this->ismoving(), output);
   }
 
-  // string SpeakText = 10;
-  if (this->speaktext().size() > 0) {
+  // string RecieveText = 10;
+  if (this->recievetext().size() > 0) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->speaktext().data(), static_cast<int>(this->speaktext().length()),
+      this->recievetext().data(), static_cast<int>(this->recievetext().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "Protobuf.GameObject.SpeakText");
+      "Protobuf.GameObject.RecieveText");
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteStringMaybeAliased(
-      10, this->speaktext(), output);
+      10, this->recievetext(), output);
   }
 
   // int32 team = 11;
@@ -989,15 +989,15 @@ void GameObject::SerializeWithCachedSizes(
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(9, this->ismoving(), target);
   }
 
-  // string SpeakText = 10;
-  if (this->speaktext().size() > 0) {
+  // string RecieveText = 10;
+  if (this->recievetext().size() > 0) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->speaktext().data(), static_cast<int>(this->speaktext().length()),
+      this->recievetext().data(), static_cast<int>(this->recievetext().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "Protobuf.GameObject.SpeakText");
+      "Protobuf.GameObject.RecieveText");
     target =
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteStringToArray(
-        10, this->speaktext(), target);
+        10, this->recievetext(), target);
   }
 
   // int32 team = 11;
@@ -1036,11 +1036,11 @@ size_t GameObject::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string SpeakText = 10;
-  if (this->speaktext().size() > 0) {
+  // string RecieveText = 10;
+  if (this->recievetext().size() > 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->speaktext());
+        this->recievetext());
   }
 
   // double PositionX = 1;
@@ -1140,9 +1140,9 @@ void GameObject::MergeFrom(const GameObject& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from.speaktext().size() > 0) {
+  if (from.recievetext().size() > 0) {
 
-    speaktext_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.speaktext_);
+    recievetext_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.recievetext_);
   }
   if (!(from.positionx() <= 0 && from.positionx() >= 0)) {
     set_positionx(from.positionx());
@@ -1207,7 +1207,7 @@ void GameObject::Swap(GameObject* other) {
 void GameObject::InternalSwap(GameObject* other) {
   using std::swap;
   _internal_metadata_.Swap(&other->_internal_metadata_);
-  speaktext_.Swap(&other->speaktext_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+  recievetext_.Swap(&other->recievetext_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
   swap(positionx_, other->positionx_);
   swap(positiony_, other->positiony_);

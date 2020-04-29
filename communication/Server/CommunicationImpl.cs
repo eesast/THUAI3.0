@@ -27,7 +27,8 @@ namespace Communication.Server
         private static readonly IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
         private static readonly IDateTimeProvider provider = new UtcDateTimeProvider();
         private readonly JwtDecoder decoder = new JwtDecoder(serializer, new JwtValidator(serializer, provider), urlEncoder, algorithm);
-        
+        private object joinLock = new object();
+
         public string Token
         {
             get
@@ -65,7 +66,7 @@ namespace Communication.Server
                     var raw = Encoding.UTF8.GetBytes(data.ToString());
                     request.GetRequestStream().Write(raw, 0, raw.Length);
                 }
-                
+
                 var response = await request.GetResponseAsync() as HttpWebResponse;
                 if ((int)response.StatusCode / 100 != 2)
                     Constants.Debug(response.StatusDescription);
@@ -87,7 +88,10 @@ namespace Communication.Server
             }
             else
             {
-                await HttpAsync($"https://api.eesast.com/v1/rooms/{roomID}/join", token, "GET", null);
+                await HttpAsync($"https://api.eesast.com/v1/rooms/{roomID}/join", this.token, "POST", new JObject
+                {
+                    ["token"] = token
+                });
             }
         }
 
@@ -125,7 +129,10 @@ namespace Communication.Server
             {
                 if (message.Content is PlayerToken token)
                 {
-                    NoticeServer(token.Token, default).Wait();
+                    lock (joinLock)
+                    {
+                        NoticeServer(token.Token, default).Wait();
+                    }
                     Constants.Debug($"Agent Connected: {server.Count}/{Constants.AgentCount}");
                     if (server.Count == Constants.AgentCount)
                     {

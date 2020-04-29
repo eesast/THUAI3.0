@@ -17,7 +17,7 @@
 
 - void THUAI3::pick(bool isSelfPosition, ObjType pickType, int dishOrToolType);
     
-    捡起物品。第一个参数为是否捡起自身所在方格的物品，若为true，则先检索自身所在方格，否则检索自己面对方向的方格。第二个参数为捡起的物品类型，可以为Block、Dish、Tool；若为Block表示捡起食物生产点或灶台里的食物，若为Dish表示捡起食物，若为Tool表示捡起道具。第三个参数为捡起的Dish或Tool类型，如果第二个参数为Dish，则这个参数必须与有效的DishType相对应，如果第二个参数为Tool，则这个参数必须与有效的ToolType相对应。
+    捡起物品。第一个参数为是否捡起自身所在方格的物品，若为true，则先检索自身所在方格，否则检索自己面对方向的方格。第二个参数为捡起的物品类型，可以为Block、Dish、Tool；若为Block表示捡起食物生产点或灶台里的食物，若为Dish表示捡起食物，若为Tool表示捡起道具。第三个参数为捡起的Dish或Tool类型，如果第二个参数为Dish，则这个参数必须与有效的DishType相对应，如果第二个参数为Tool，则这个参数必须与有效的ToolType相对应。若第三个参数为-1，表示随缘瞎捡。
 
 - void THUAI3::speakToFriend(string speakText)
     
@@ -40,11 +40,11 @@
 
 	enum ObjType { //可能出现在地图上的各种物品
       People = 0;  //人
-    Block = 1;   //墙体
-    Dish = 2;    //食材
-    Tool = 3;    //道具
-    Trigger = 4; //触发器
-    ObjTypeSize = 5;
+      Block = 1;   //墙体
+      Dish = 2;    //食材
+      Tool = 3;    //道具
+      Trigger = 4; //触发器
+      ObjTypeSize = 5;
     }
 	enum BlockType {  //标1的物品扔出碰到会反弹，标0的会穿过去
 	  Wall = 0;       // 1
@@ -168,36 +168,37 @@
 
 	PlayerInfo
 	{
-	XYPosition position;//玩家自身位置
-	int64_t id;//玩家自身id
-	int team;//玩家所属队伍
-	Direction facingDirection;//玩家当前面朝的方向
-	double moveSpeed;//玩家当前移动速度
-	int sightRange;//玩家的视野半径
-	Talent talent;//玩家的天赋
-	int score;//玩家所在队伍当前的分数
-	DishType dish;//玩家手上拿的食材，只能同时拿一个
-	ToolType tool; //玩家手上拿的道具，只能同时拿一个
-	std::string recieveText; //玩家接受到的同一队伍的其他玩家发的消息，若另一玩家没有再次发消息，则一直保持上一次接收到的消息
+	XYPosition position = XYPosition(0, 0);					//玩家自身位置
+	int64_t id = -1;										//玩家自身id
+	int team = 0;											//玩家所属队伍
+	Direction facingDirection;								//玩家当前面朝的方向
+	double moveSpeed;										//玩家当前移动速度
+	int sightRange = Constant::Player::InitSightRange;		//玩家的视野半径
+	Talent talent = initTalent;								//玩家的天赋
+	int score = 0;											//玩家所在队伍当前的分数
+	DishType dish = DishType::DishEmpty;					//玩家手上拿的食材，只能同时拿一个
+	ToolType tool = ToolType::ToolEmpty; 					//玩家手上拿的道具，只能同时拿一个
+	std::string recieveText; 								//玩家接受到的同一队伍的其他玩家发的消息，若另一玩家没有再次发消息，则一直保持上一次接收到的消息
 	}
 
 ## 地图API
 
 	class MapInfo
 	{
-	static std::list<Obj> get_mapcell(int x, int y);//获取位于(x,y)位置的地图方格的所有物品，返回一个列表。
+	static std::list<Obj> get_mapcell(int x, int y);//获取位于(x,y)位置的地图方格的所有物品，返回一个列表。若尝试获取视野外的方块会返回一个空表
 	};
 
 
 	class Obj
 	{
-	XYPosition position;//物品位置
-	ObjType objType;//物品所属类型
-	BlockType blockType;//如果物品为墙体，所属的墙体类型
-	DishType dish;//如果物品为食材，所属的食材类型；如果物品为人，拥有的食材类型
-	ToolType tool;//如果物品为道具，所属的道具类型；如果物品为人，拥有的道具类型
-	TriggerType trigger;//如果物品为触发器，所属的触发器类型
-	Direction facingDiretion;//如果物品为人，面朝的方向
+	XYPosition position;		//Obj位置
+	ObjType objType;			//Obj所属类型
+	BlockType blockType;		//如果objType为Block，所属的墙体类型
+	DishType dish;				//如果objType为Dish，所属的食材类型；如果objType为People，拥有的食材类型
+	ToolType tool;				//如果objType为Tool，所属的道具类型；如果objType为People，拥有的道具类型
+	TriggerType trigger;		//如果objType为Trigger，所属的触发器类型
+	Direction facingDiretion;	//如果objType为People，面朝的方向
+	int team;					//如果objType为People，所属的队伍
 	};
 
 ## 任务列表

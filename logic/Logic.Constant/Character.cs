@@ -10,7 +10,7 @@ namespace Logic.Constant
 {
     public class Character : THUnity2D.GameObject
     {
-        public Tuple<int, int> CommunicationID = new Tuple<int, int>(0, 0);//第一个数表示Agent，第二个数表示Client
+        protected Tuple<int, int> _communicationID = new Tuple<int, int>(0, 0);//第一个数表示Agent，第二个数表示Client
         //public int team = 0;
         //protected double GlueExtraMoveSpeed = 0;
         //protected double SpeedBuffExtraMoveSpeed = 0;
@@ -26,8 +26,8 @@ namespace Logic.Constant
 
         //protected int _score = 0;
 
-        public DishType dish = DishType.DishEmpty;
-        public ToolType tool = ToolType.ToolEmpty;
+        public DishType _dish = DishType.DishEmpty;
+        public ToolType _tool = ToolType.ToolEmpty;
         public Character(double x, double y) : base(new THUnity2D.XYPosition(x, y))
         {
             Layer = PlayerLayer;
