@@ -165,7 +165,7 @@ void CAPI::SendCommandMessage(MessageToServer message)
 {
 	static long long lastSendTime = 0;
 	long long now = getSystemTime();
-	if (now < lastSendTime + 50)
+	if (now < lastSendTime + 40)
 		return;
 	lastSendTime = now;
 	MessageToServer* mes0 = new MessageToServer(message);
