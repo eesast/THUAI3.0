@@ -145,4 +145,6 @@ public:
 };
 extern player_info PlayerInfo;
 
+extern long long getSystemTime();
+
 #endif // !STRUCTURES_H

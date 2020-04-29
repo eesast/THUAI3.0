@@ -10,13 +10,6 @@ extern CAPI API;
 
 unsigned long long THUAI3::initGameTime;
 
-long long getSystemTime()
-{
-	timeb t;
-	ftime(&t);
-	return t.time * 1000 + t.millitm;
-}
-
 int THUAI3::GetPing()
 {
 	return API.Ping;

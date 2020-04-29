@@ -4,7 +4,7 @@
 #include <iostream>
 #include "OS_related.h"
 using namespace THUAI3;
-Protobuf::Talent initTalent = Protobuf::Talent::Runner;//指定人物天赋。选手代码必须定义此变量，否则报错
+Protobuf::Talent initTalent = Protobuf::Talent::None;//指定人物天赋。选手代码必须定义此变量，否则报错
 void play()
 {
 	char c;
@@ -18,6 +18,7 @@ void play()
 		int moveDistance = 0;
 		std::cout << endl << "Please Input your move distance" << endl;
 		cin >> moveDistance;
+		cout << moveDistance / PlayerInfo.moveSpeed * 1000 << endl;
 		move(Protobuf::Direction::Right, moveDistance / PlayerInfo.moveSpeed * 1000);
 	}break;
 	case 'e':

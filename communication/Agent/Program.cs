@@ -13,7 +13,7 @@ namespace Communication.Agent
         private static IDServer server = new IDServer();
         private static System.Timers.Timer myTimer = new System.Timers.Timer();
         private static IPEndPoint Server;
-        private static object LastSpam;// = Constants.MaxMessage;
+        private static object[] LastSpam;// = Constants.MaxMessage;
         /*
         private static void TimeCount(object source, System.Timers.ElapsedEventArgs e) //倒计时
         {
@@ -36,6 +36,7 @@ namespace Communication.Agent
                 Constants.PlayerCount = ushort.Parse(playercount.Value());
                 if (Constants.PlayerCount < 1) Constants.PlayerCount = 1;
                 else if (Constants.PlayerCount > 2) Constants.PlayerCount = 2;
+                LastSpam = new object[Constants.PlayerCount];
                 //Constants.MaxMessage = int.Parse(messagelmt.Value());
                 Constants.TimeLimit = double.Parse(timelmt.Value());
                 if (Constants.TimeLimit < 10) Constants.TimeLimit = 10;
@@ -52,7 +53,8 @@ namespace Communication.Agent
             server.Port = port;
             Constants.Debug("Agent Listen Port: " + server.Port.ToString());
             Constants.Debug("Client Token: " + (token ?? "<offline>"));
-            LastSpam = Environment.TickCount;
+            for (int i = 0; i < LastSpam.Length; i++)
+                LastSpam[i] = Environment.TickCount;
 
             //init timer
             myTimer.Interval = Interval;
@@ -74,8 +76,13 @@ namespace Communication.Agent
                     var now = Environment.TickCount;
                     lock (LastSpam)
                     {
-                        if (now <= (int)LastSpam + Constants.TimeLimit) return;
-                        LastSpam = now;
+                        if (now <= (int)LastSpam[0] + Constants.TimeLimit) return;
+                        for (int i = 1; i < Constants.PlayerCount; i++)
+                        {
+                            LastSpam[i - 1] = LastSpam[i];
+                        }
+                        LastSpam[Constants.PlayerCount - 1] = now;
+                        Console.WriteLine(now);
                     }
                 }
                 else

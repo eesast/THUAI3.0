@@ -121,3 +121,10 @@ std::list<Obj> MapInfo::get_mapcell(const int x, const int y)
 Obj::Obj(const XYPosition& pos, ObjType objType) : position(pos), objType(objType)
 { }
 player_info PlayerInfo;
+
+long long getSystemTime()
+{
+	timeb t;
+	ftime(&t);
+	return t.time * 1000 + t.millitm;
+}
