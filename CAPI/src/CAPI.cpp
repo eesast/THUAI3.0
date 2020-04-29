@@ -17,6 +17,7 @@
 #include <thread>
 #include "structures.h"
 #include "player.h"
+#include "Sema.h"
 #pragma comment(lib, "HPSocket.lib")
 
 #include <sys/timeb.h>
@@ -162,6 +163,11 @@ void CAPI::SendChatMessage(string message)
 
 void CAPI::SendCommandMessage(MessageToServer message)
 {
+	static long long lastSendTime = 0;
+	long long now = getSystemTime();
+	if (now < lastSendTime + 50)
+		return;
+	lastSendTime = now;
 	MessageToServer* mes0 = new MessageToServer(message);
 	Message* mes2 = new Message(PlayerId, mes0);
 	Message* mes3 = new Message(-1, mes2);
@@ -217,8 +223,9 @@ void CAPI::UpdateInfo(Protobuf::MessageToClient* message)
 		mesC2S.set_issettalent(true);
 		mesC2S.set_talent(initTalent);
 		SendCommandMessage(mesC2S);
-		GameRunning = true;
 		std::cout << "Game start" << std::endl;
+		GameRunning = true;
+		start_game_sema.notify();
 	}
 	google::protobuf::Map<int64_t, Protobuf::GameObject>::const_iterator self_iter = message->gameobjectlist().find(PlayerInfo._id);
 	if (self_iter != message->gameobjectlist().end())
@@ -233,15 +240,6 @@ void CAPI::UpdateInfo(Protobuf::MessageToClient* message)
 		PlayerInfo.tool = self_iter->second.tooltype();
 		PlayerInfo.recieveText = self_iter->second.recievetext();
 	}
-	//Protobuf::GameObject self = message->gameobjectlist().at(PlayerInfo._id);
-	//PlayerInfo._position.x = PlayerInfo.position.x = self.positionx();
-	//PlayerInfo._position.y = PlayerInfo.position.y = self.positiony();
-	//PlayerInfo.facingDirection = self.direction();
-	//PlayerInfo.moveSpeed = self.movespeed();
-	//PlayerInfo.sightRange = PlayerInfo._sightRange = self.sightrange();
-	//PlayerInfo.dish = self.dishtype();
-	//PlayerInfo.tool = self.tooltype();
-	//PlayerInfo.recieveText = self.recievetext();
 	if (message->scores().contains(PlayerInfo._team))
 		PlayerInfo.score = message->scores().at(PlayerInfo._team);
 
@@ -262,6 +260,7 @@ void CAPI::UpdateInfo(Protobuf::MessageToClient* message)
 	{
 		task_list.push_back((DishType)(*i));
 	}
+	sema.notify();
 }
 
 

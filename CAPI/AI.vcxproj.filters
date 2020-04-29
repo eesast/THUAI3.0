@@ -13,6 +13,9 @@
     <ClCompile Include=".\src\OS_related.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include=".\src\Sema.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include=".\src\debug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
