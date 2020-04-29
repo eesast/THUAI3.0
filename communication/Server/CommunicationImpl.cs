@@ -88,7 +88,10 @@ namespace Communication.Server
             }
             else
             {
-                await HttpAsync($"https://api.eesast.com/v1/rooms/{roomID}/join", token, "GET", null);
+                await HttpAsync($"https://api.eesast.com/v1/rooms/{roomID}/join", this.token, "POST", new JObject
+                {
+                    ["token"] = token
+                });
             }
         }
 
