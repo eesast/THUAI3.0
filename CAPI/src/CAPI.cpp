@@ -157,17 +157,27 @@ void CAPI::SendChatMessage(string message)
 	mes1->set_message(message);
 	Message* mes2 = new Message(PlayerId, mes1);
 	Message* mes3 = new Message(-1, mes2);
-	shared_ptr<Message> mes=make_shared<Message>(-1, mes3);
+	shared_ptr<Message> mes = make_shared<Message>(-1, mes3);
 	Send(mes);
 }
 
 void CAPI::SendCommandMessage(MessageToServer message)
 {
+	static const int timelimit = 45;
+	static long long deltaSendTime[] = { timelimit + 5,timelimit + 5 };
 	static long long lastSendTime = 0;
+
 	long long now = getSystemTime();
-	if (now < lastSendTime + 40)
+	//std::cout << "now : " << now << "  deltaSend : " << deltaSendTime[0] << "  ,  " << deltaSendTime[1] << std::endl;
+	long long deltaTime = now - lastSendTime;
+	if (((double)deltaTime + (double)deltaSendTime[0] + (double)deltaSendTime[1]) / 3.0 < timelimit)
+	{
+		std::cout << "skip sending" << std::endl;
 		return;
+	}
 	lastSendTime = now;
+	deltaSendTime[0] = deltaSendTime[1];
+	deltaSendTime[1] = deltaTime;
 	MessageToServer* mes0 = new MessageToServer(message);
 	Message* mes2 = new Message(PlayerId, mes0);
 	Message* mes3 = new Message(-1, mes2);
