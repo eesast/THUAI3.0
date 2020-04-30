@@ -153,7 +153,6 @@ void play()
 		break;
 	}
 
-
 	std::cout << "Game Time : " << THUAI3::getGameTime() << endl;
 	/*  玩家在这里写代码  */
 }

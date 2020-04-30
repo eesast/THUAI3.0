@@ -7,6 +7,7 @@
 
 namespace Constant
 {
+	const static int SendTimeLimit = 20;
 	struct Player
 	{
 		const static int InitMoveSpeed = 5;

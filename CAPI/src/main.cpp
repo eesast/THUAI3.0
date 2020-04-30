@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
 	THUAI3::initializeGameTime();
 	while (GameRunning)
 	{
-		API.sema.wait();
+		THUAI3::wait();
 		play();
 	}
 	getchar();
