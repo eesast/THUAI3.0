@@ -69,7 +69,7 @@ public:
 	void OnReceive(shared_ptr<Message> message);
 	void Quit();
 	void SendChatMessage(string message);
-	void SendCommandMessage(Protobuf::MessageToServer message);
+	bool SendCommandMessage(Protobuf::MessageToServer message);
 	void UpdateInfo(Protobuf::MessageToClient *message);
 	Constant::Player GetInfo();
 };
