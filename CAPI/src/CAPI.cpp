@@ -18,6 +18,7 @@
 #include "structures.h"
 #include "player.h"
 #include "Sema.h"
+#include "Constant.h"
 #pragma comment(lib, "HPSocket.lib")
 
 #include <sys/timeb.h>
@@ -163,7 +164,7 @@ void CAPI::SendChatMessage(string message)
 
 bool CAPI::SendCommandMessage(MessageToServer message)
 {
-	static const int timelimit = 45;
+	static const int timelimit = Constant::SendTimeLimit;
 	static long long deltaSendTime[] = { timelimit + 5,timelimit + 5 };
 	static long long lastSendTime = 0;
 
