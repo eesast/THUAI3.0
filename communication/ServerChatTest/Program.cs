@@ -40,13 +40,8 @@ namespace ServerChatTest
             //comm.EndPoint = new IPEndPoint(IPAddress.Parse(t[0]), ushort.Parse(t[1]));
             //comm.ID = args[1];
             Constants.ServerPort = 20000;
-            comm.IsOffline = false;
             comm.ServerPort = Constants.ServerPort;
-            comm.Token = new JwtEncoder(new HMACSHA256Algorithm(), new JsonNetSerializer(), new JwtBase64UrlEncoder())
-                .Encode(new JObject
-                {
-                    ["roomID"] = "123"
-                }, "key");
+            comm.Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb29tSWQiOjEsInNlcnZlciI6IlRIVUFJIiwiaWF0IjoxNTg4MjQ0MzA4LCJleHAiOjE1ODgyODc1MDh9.QY5y44mU769_jlLboaqppycI1ijgZnpgkS2NkQWP3XI";
             comm.Initialize();
             comm.MsgProcess += new MessageHandler(PrintChatMessage);
             comm.GameStart();
