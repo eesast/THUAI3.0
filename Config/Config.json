@@ -1,13 +1,13 @@
 {
     "Player": {
-        "InitMoveSpeed": 5,
+        "InitMoveSpeed": 4,
         "InitThrowDistance": 10,
-        "InitSightRange": 9
+        "InitSightRange": 6
     },
     "ItemMoveSpeed": 10,
     "TaskRefreshTime": 8000,
     "ToolRefreshTime": 10000,
-    "FoodPointInitRefreshTime": 10000,
+    "FoodPointInitRefreshTime": 15000,
     "Trigger": {
         "WaveGlue": {
             "ExtraMoveSpeed": -3,
@@ -24,12 +24,12 @@
             "StunDuration": 2000
         },
         "Arrow": {
-            "Score": -20,
+            "Score": -30,
             "StunDuration": 500,
             "Speed": 15
         },
         "Hammer": {
-            "StunDuration": 1000,
+            "StunDuration": 3000,
             "Speed": 10
         }
     },
@@ -43,10 +43,10 @@
             "ExtraThrowDistance": 5
         },
         "TigerShoe": {
-            "ExtraMoveSpeed": 2
+            "ExtraMoveSpeed": 3
         },
         "TeleScope": {
-            "ExtraSightRange": 4
+            "ExtraSightRange": 6
         },
         "Condiment": {
             "ScoreParameter": 0.3
@@ -66,7 +66,7 @@
             "RefreshTime": 30000
         },
         "Runner": {
-            "ExtraMoveSpeed": 3
+            "ExtraMoveSpeed": 5
         },
         "StrongMan": {
             "ExtraThrowDistance": 5,
@@ -77,11 +77,11 @@
                 "MaxDistance": 15
             },
             "Arrow": {
-                "Score": -40,
+                "Score": -50,
                 "StunDuration": 1000
             },
             "Hammer": {
-                "StunDuration": 2000
+                "StunDuration": 4000
             }
         },
         "Technician": {
