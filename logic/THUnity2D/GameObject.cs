@@ -359,10 +359,8 @@ namespace THUnity2D
             lock (privateLock)
             {
                 if (!this._movable)
-                {
                     return;
-                }
-                if ((DateTime.Now - lastMoveTime).TotalSeconds < 1 / _frameRate)
+                if ((DateTime.Now - lastMoveTime).TotalSeconds < 0.7 / _frameRate)
                     return;
                 lastMoveTime = DateTime.Now;
                 MoveStart?.Invoke(this);

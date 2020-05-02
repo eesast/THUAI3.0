@@ -15,6 +15,7 @@
 #include "player.h"
 #include "API.h"
 #include "OS_related.h"
+#include "Sema.h"
 
 using namespace std;
 
@@ -51,11 +52,12 @@ int main(int argc, char* argv[])
 
 	while (!GameRunning)
 	{
-		Sleep(1);
+		API.start_game_sema.wait();
 	}
 	THUAI3::initializeGameTime();
 	while (GameRunning)
 	{
+		THUAI3::wait();
 		play();
 	}
 	getchar();

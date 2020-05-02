@@ -18,7 +18,7 @@ else
     token=''
 fi
 
-dotnet app/Communication.Agent.dll --server $1 --port 30000 --debugLevel $3 --playercount $2 --timelimit $4 ${token} >/dev/null &
+dotnet app/Communication.Agent.dll --server $1 --port 30000 --debugLevel $3 --playercount $2 --timelimit $4 ${token} >agent.log &
 for i in `seq 1 $2`
 do
     /usr/local/mnt/AI${i} 127.0.0.1 30000 >/dev/null &

@@ -9,6 +9,7 @@
 #include "Constant.h"
 #include <MessageToServer.pb.h>
 #include <MessageToClient.pb.h>
+#include "Sema.h"
 
 using namespace std;
 
@@ -44,6 +45,8 @@ public:
 	Constant::Player player;
 	bool Closed;
 	bool PauseUpdate;
+	Sema sema;
+	Sema start_game_sema;
 
 private:
 	CListenerImpl listener;
@@ -66,7 +69,7 @@ public:
 	void OnReceive(shared_ptr<Message> message);
 	void Quit();
 	void SendChatMessage(string message);
-	void SendCommandMessage(Protobuf::MessageToServer message);
+	bool SendCommandMessage(Protobuf::MessageToServer message);
 	void UpdateInfo(Protobuf::MessageToClient *message);
 	Constant::Player GetInfo();
 };

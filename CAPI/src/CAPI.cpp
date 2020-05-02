@@ -17,6 +17,8 @@
 #include <thread>
 #include "structures.h"
 #include "player.h"
+#include "Sema.h"
+#include "Constant.h"
 #pragma comment(lib, "HPSocket.lib")
 
 #include <sys/timeb.h>
@@ -156,17 +158,33 @@ void CAPI::SendChatMessage(string message)
 	mes1->set_message(message);
 	Message* mes2 = new Message(PlayerId, mes1);
 	Message* mes3 = new Message(-1, mes2);
-	shared_ptr<Message> mes=make_shared<Message>(-1, mes3);
+	shared_ptr<Message> mes = make_shared<Message>(-1, mes3);
 	Send(mes);
 }
 
-void CAPI::SendCommandMessage(MessageToServer message)
+bool CAPI::SendCommandMessage(MessageToServer message)
 {
+	static const int timelimit = Constant::SendTimeLimit;
+	static long long deltaSendTime[] = { timelimit + 5,timelimit + 5 };
+	static long long lastSendTime = 0;
+
+	long long now = getSystemTime();
+	//std::cout << "now : " << now << "  deltaSend : " << deltaSendTime[0] << "  ,  " << deltaSendTime[1] << std::endl;
+	long long deltaTime = now - lastSendTime;
+	if (((double)deltaTime + (double)deltaSendTime[0] + (double)deltaSendTime[1]) / 3.0 < timelimit)
+	{
+		//std::cout << "skip sending" << std::endl;
+		return false;
+	}
+	lastSendTime = now;
+	deltaSendTime[0] = deltaSendTime[1];
+	deltaSendTime[1] = deltaTime;
 	MessageToServer* mes0 = new MessageToServer(message);
 	Message* mes2 = new Message(PlayerId, mes0);
 	Message* mes3 = new Message(-1, mes2);
 	shared_ptr<Message> mes = make_shared<Message>(-1, mes3);
 	Send(mes);
+	return true;
 }
 
 void CAPI::CreateObj(int64_t id, Protobuf::MessageToClient* message)
@@ -217,8 +235,9 @@ void CAPI::UpdateInfo(Protobuf::MessageToClient* message)
 		mesC2S.set_issettalent(true);
 		mesC2S.set_talent(initTalent);
 		SendCommandMessage(mesC2S);
-		GameRunning = true;
 		std::cout << "Game start" << std::endl;
+		GameRunning = true;
+		start_game_sema.notify();
 	}
 	google::protobuf::Map<int64_t, Protobuf::GameObject>::const_iterator self_iter = message->gameobjectlist().find(PlayerInfo._id);
 	if (self_iter != message->gameobjectlist().end())
@@ -233,15 +252,6 @@ void CAPI::UpdateInfo(Protobuf::MessageToClient* message)
 		PlayerInfo.tool = self_iter->second.tooltype();
 		PlayerInfo.recieveText = self_iter->second.recievetext();
 	}
-	//Protobuf::GameObject self = message->gameobjectlist().at(PlayerInfo._id);
-	//PlayerInfo._position.x = PlayerInfo.position.x = self.positionx();
-	//PlayerInfo._position.y = PlayerInfo.position.y = self.positiony();
-	//PlayerInfo.facingDirection = self.direction();
-	//PlayerInfo.moveSpeed = self.movespeed();
-	//PlayerInfo.sightRange = PlayerInfo._sightRange = self.sightrange();
-	//PlayerInfo.dish = self.dishtype();
-	//PlayerInfo.tool = self.tooltype();
-	//PlayerInfo.recieveText = self.recievetext();
 	if (message->scores().contains(PlayerInfo._team))
 		PlayerInfo.score = message->scores().at(PlayerInfo._team);
 
@@ -262,6 +272,7 @@ void CAPI::UpdateInfo(Protobuf::MessageToClient* message)
 	{
 		task_list.push_back((DishType)(*i));
 	}
+	sema.notify();
 }
 
 
