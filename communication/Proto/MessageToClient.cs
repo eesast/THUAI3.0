@@ -164,166 +164,90 @@ namespace Communication.Proto {
     /// </summary>
     [pbr::OriginalName("Egg")] Egg = 4,
     /// <summary>
-    ///牛奶
-    /// </summary>
-    [pbr::OriginalName("Milk")] Milk = 5,
-    /// <summary>
-    ///苹果
-    /// </summary>
-    [pbr::OriginalName("Apple")] Apple = 6,
-    /// <summary>
-    ///香蕉
-    /// </summary>
-    [pbr::OriginalName("Banana")] Banana = 7,
-    /// <summary>
-    ///乌梅
-    /// </summary>
-    [pbr::OriginalName("DarkPlum")] DarkPlum = 8,
-    /// <summary>
-    ///山楂
-    /// </summary>
-    [pbr::OriginalName("Hawthorn")] Hawthorn = 9,
-    /// <summary>
-    ///草莓
-    /// </summary>
-    [pbr::OriginalName("Strawberry")] Strawberry = 10,
-    /// <summary>
     ///牛肉
     /// </summary>
-    [pbr::OriginalName("Beef")] Beef = 11,
+    [pbr::OriginalName("Beef")] Beef = 5,
     /// <summary>
     ///猪肉
     /// </summary>
-    [pbr::OriginalName("Pork")] Pork = 12,
-    /// <summary>
-    ///鸡肉
-    /// </summary>
-    [pbr::OriginalName("ChickenMeat")] ChickenMeat = 13,
+    [pbr::OriginalName("Pork")] Pork = 6,
     /// <summary>
     ///土豆
     /// </summary>
-    [pbr::OriginalName("Potato")] Potato = 14,
+    [pbr::OriginalName("Potato")] Potato = 7,
     /// <summary>
     ///生菜
     /// </summary>
-    [pbr::OriginalName("Lettuce")] Lettuce = 15,
+    [pbr::OriginalName("Lettuce")] Lettuce = 8,
     /// <summary>
-    ///木耳
-    /// </summary>
-    [pbr::OriginalName("Agaric")] Agaric = 16,
-    /// <summary>
-    ///金针菇
-    /// </summary>
-    [pbr::OriginalName("NeedleMushroom")] NeedleMushroom = 17,
-    /// <summary>
-    ///包菜
-    /// </summary>
-    [pbr::OriginalName("Cabbage")] Cabbage = 18,
-    [pbr::OriginalName("DishSize1")] DishSize1 = 19,
+    [pbr::OriginalName("DishSize1")] DishSize1 = 9,
     /// <summary>
     ///以下为中间产物
     /// </summary>
-    [pbr::OriginalName("Flour")] Flour = 20,
+    [pbr::OriginalName("Flour")] Flour = 10,
     /// <summary>
     ///面条
     /// </summary>
-    [pbr::OriginalName("Noodle")] Noodle = 21,
+    [pbr::OriginalName("Noodle")] Noodle = 11,
     /// <summary>
     ///面包片
     /// </summary>
-    [pbr::OriginalName("Bread")] Bread = 22,
+    [pbr::OriginalName("Bread")] Bread = 12,
     /// <summary>
     ///米饭
     /// </summary>
-    [pbr::OriginalName("CookedRice")] CookedRice = 23,
+    [pbr::OriginalName("CookedRice")] CookedRice = 13,
     /// <summary>
     ///番茄酱
     /// </summary>
-    [pbr::OriginalName("Ketchup")] Ketchup = 24,
-    /// <summary>
-    ///奶油
-    /// </summary>
-    [pbr::OriginalName("Cream")] Cream = 25,
+    [pbr::OriginalName("Ketchup")] Ketchup = 14,
     /// <summary>
     ///以下为菜品
     /// </summary>
-    [pbr::OriginalName("TomatoFriedEgg")] TomatoFriedEgg = 26,
+    [pbr::OriginalName("TomatoFriedEgg")] TomatoFriedEgg = 15,
     /// <summary>
     ///西红柿鸡蛋面
     /// </summary>
-    [pbr::OriginalName("TomatoFriedEggNoodle")] TomatoFriedEggNoodle = 27,
+    [pbr::OriginalName("TomatoFriedEggNoodle")] TomatoFriedEggNoodle = 16,
     /// <summary>
     ///清青牛拉
     /// </summary>
-    [pbr::OriginalName("BeefNoodle")] BeefNoodle = 28,
+    [pbr::OriginalName("BeefNoodle")] BeefNoodle = 17,
     /// <summary>
     ///盖浇饭
     /// </summary>
-    [pbr::OriginalName("OverRice")] OverRice = 29,
-    /// <summary>
-    ///黄焖鸡米饭
-    /// </summary>
-    [pbr::OriginalName("YellowPheasant")] YellowPheasant = 30,
+    [pbr::OriginalName("OverRice")] OverRice = 18,
     /// <summary>
     ///烤肉
     /// </summary>
-    [pbr::OriginalName("Barbecue")] Barbecue = 31,
+    [pbr::OriginalName("Barbecue")] Barbecue = 19,
     /// <summary>
     ///薯条
     /// </summary>
-    [pbr::OriginalName("FrenchFries")] FrenchFries = 32,
-    /// <summary>
-    ///酸梅汤
-    /// </summary>
-    [pbr::OriginalName("PlumJuice")] PlumJuice = 33,
+    [pbr::OriginalName("FrenchFries")] FrenchFries = 20,
     /// <summary>
     ///汉堡
     /// </summary>
-    [pbr::OriginalName("Hamburger")] Hamburger = 34,
-    /// <summary>
-    ///草莓圣代
-    /// </summary>
-    [pbr::OriginalName("StrawberryIcecream")] StrawberryIcecream = 35,
-    /// <summary>
-    ///鸡米花
-    /// </summary>
-    [pbr::OriginalName("PopcornChicken")] PopcornChicken = 36,
-    /// <summary>
-    ///木耳炒蛋
-    /// </summary>
-    [pbr::OriginalName("AgaricFriedEgg")] AgaricFriedEgg = 37,
-    /// <summary>
-    ///蛋糕
-    /// </summary>
-    [pbr::OriginalName("Cake")] Cake = 38,
-    /// <summary>
-    ///冰糖葫芦
-    /// </summary>
-    [pbr::OriginalName("SugarCoatedHaws")] SugarCoatedHaws = 39,
-    /// <summary>
-    ///水果色拉
-    /// </summary>
-    [pbr::OriginalName("FruitSalad")] FruitSalad = 40,
-    [pbr::OriginalName("SpicedPot")] SpicedPot = 41,
-    [pbr::OriginalName("SpicedPot3")] SpicedPot3 = 42,
-    [pbr::OriginalName("SpicedPot4")] SpicedPot4 = 43,
-    [pbr::OriginalName("SpicedPot5")] SpicedPot5 = 44,
-    [pbr::OriginalName("SpicedPot6")] SpicedPot6 = 45,
-    [pbr::OriginalName("SpicedPot7")] SpicedPot7 = 46,
+    [pbr::OriginalName("Hamburger")] Hamburger = 21,
     /// <summary>
     ///香锅
+    [pbr::OriginalName("SpicedPot")] SpicedPot = 22,
+    [pbr::OriginalName("SpicedPot_3")] SpicedPot_3 = 23,
+    [pbr::OriginalName("SpicedPot_4")] SpicedPot_4 = 24,
+    [pbr::OriginalName("SpicedPot_5")] SpicedPot_5 = 25,
+    [pbr::OriginalName("SpicedPot_6")] SpicedPot_6 = 26,
+    /// <summary>
     /// </summary>
-    [pbr::OriginalName("SpicedPot8")] SpicedPot8 = 47,
-    [pbr::OriginalName("DishSize2")] DishSize2 = 48,
+    [pbr::OriginalName("DishSize2")] DishSize2 = 27,
     /// <summary>
     ///以下为垃圾
     /// </summary>
-    [pbr::OriginalName("OverCookedDish")] OverCookedDish = 49,
+    [pbr::OriginalName("OverCookedDish")] OverCookedDish = 28,
     /// <summary>
     ///黑暗料理
     /// </summary>
-    [pbr::OriginalName("DarkDish")] DarkDish = 50,
-    [pbr::OriginalName("DishSize3")] DishSize3 = 51,
+    [pbr::OriginalName("DarkDish")] DarkDish = 29,
+    [pbr::OriginalName("DishSize3")] DishSize3 = 30,
   }
 
   /// <summary>

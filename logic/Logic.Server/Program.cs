@@ -58,6 +58,7 @@ namespace Logic.Server
             THUnity2D.GameObject.DebugWithoutEndline = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
             THUnity2D.GameObject.DebugWithoutID = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
             THUnity2D.GameObject.DebugWithoutIDEndline = new Action<THUnity2D.GameObject, string>((gameObject, str) => { });
+            int i = 1;
             for (uint x = 0; x < WorldMap.Width; x++)
             {
                 for (uint y = 0; y < WorldMap.Height; y++)
@@ -66,7 +67,7 @@ namespace Logic.Server
                     {
                         case 0: break;
                         case 1: new TaskPoint(x + 0.5, y + 0.5).Parent = WorldMap; break;
-                        case 2: new FoodPoint(x + 0.5, y + 0.5).Parent = WorldMap; break;
+                        case 2: { new FoodPoint(x + 0.5, y + 0.5, (DishType)i).Parent = WorldMap; i++; break; }
                         case 3: new Cooker(x + 0.5, y + 0.5).Parent = WorldMap; break;
                         case 4: new RubbishBin(x + 0.5, y + 0.5).Parent = WorldMap; break;
                         case 5: new Wall(x + 0.5, y + 0.5).Parent = WorldMap; break;

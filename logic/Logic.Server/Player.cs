@@ -323,9 +323,9 @@ namespace Logic.Server
         }
         public override void Put(double distance, double angle, bool isThrowDish)
         {
-            if (distance > MaxThrowDistance) distance = MaxThrowDistance;
+            distance = distance < (MaxThrowDistance + StrenthBuffThrowDistance) ? distance : (MaxThrowDistance + StrenthBuffThrowDistance);
             int dueTime = (int)((double)1000 * distance / (double)Configs("ItemMoveSpeed")) - (int)HalfTimeIntervalInMillisecond;//注意到如果直接用 distance / ItemMoveSpeed 会在最后多走一步，所以必须做一些数值处理
-
+        
             Obj ItemToThrow;
             if (Dish != DishType.DishEmpty && isThrowDish)
             {
