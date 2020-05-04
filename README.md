@@ -18,7 +18,7 @@
 
 ## runClientConsole 用法
 
-- Q W E A D Z X C 分别向八个方向的走路（输入一次连续走5格）
+- Q W E A D Z X C 分别向八个方向的走路（输入一次连续走1.6格）
 - F 捡拾物品或抓取食物产生点/灶台的食材
 - R、T 扔东西，然后要再输入一个数字（对应put的distance），按下回车，再输入第二个数字（对应put的angle），按下回车。R丢弃菜肴（Dish） ，T丢弃工具（Tool）
 - U 使用物品，然后要再输入一个数字（对应use的parameter1），按下回车，再输入第二个数字（对应use的parameter2），按下回车。
