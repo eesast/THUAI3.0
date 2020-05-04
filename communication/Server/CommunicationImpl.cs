@@ -81,7 +81,7 @@ namespace Communication.Server
         {
             if (token == null)
             {
-                await HttpAsync($"https://api.eesast.com/v1/rooms/{roomID}", this.token, "PUT", new JObject
+                await HttpAsync($"https://api.eesast.com/v1/rooms/{roomID}/status", this.token, "PUT", new JObject
                 {
                     ["status"] = (int)status
                 });
