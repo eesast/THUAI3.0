@@ -57,7 +57,8 @@ namespace Logic.Server
                 if (Timer.Time.GameTime() > TimeSpan.FromMinutes(5) && SpicedPotNum > 0)
                 { 
                     temp = (DishType)Program.Random.Next((int)DishType.CookedRice, (int)DishType.SpicedPot + 1); 
-                    if(temp== DishType.SpicedPot) SpicedPotNum--; 
+                    if(temp== DishType.SpicedPot) 
+                        SpicedPotNum--; 
                 }
                 else temp = (DishType)Program.Random.Next((int)DishType.CookedRice, (int)DishType.SpicedPot); 
                 if (temp == DishType.DishSize1)
