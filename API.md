@@ -5,7 +5,7 @@
 - bool THUAI3::move(Direction direction_t, int duration)
     
     人物移动，第一个参数为移动方向，一共有8个方向，分别是右，右上，上，左上，左，左下，下，右下。
-    第二个参数为移动的时间（以毫秒计算），本游戏帧率为20，选手初始移动速度为每秒5个单位，如设定移动时间为1000则会在接下来的1秒内每50毫秒移动一次，每次移动距离为0.25。
+    第二个参数为移动的时间（以毫秒计算），本游戏帧率为20，选手初始移动速度为每秒4个单位，如设定移动时间为1000则会在接下来的1秒内每50毫秒移动一次，每次移动距离为0.2。
 
 	返回值表示消息是否发送成功。
 
@@ -53,13 +53,13 @@
 ## 数据结构
 
 	enum ObjType { //可能出现在地图上的各种物品
-      People = 0;  //人
-      Block = 1;   //墙体
-      Dish = 2;    //食材
-      Tool = 3;    //道具
-      Trigger = 4; //触发器
-      ObjTypeSize = 5;
-    }
+	  People = 0;  //人
+	  Block = 1;   //墙体
+	  Dish = 2;    //食材
+	  Tool = 3;    //道具
+	  Trigger = 4; //触发器
+	  ObjTypeSize = 5;
+	}
 	enum BlockType {  //标1的物品扔出碰到会反弹，标0的会穿过去
 	  Wall = 0;       // 1
 	  Table = 1;      // 0
@@ -72,60 +72,39 @@
 	enum DishType {
 	  DishEmpty = 0;
 	  //以下为食材
-	  Wheat = 1;           //麦子
-	  Rice = 2;            //水稻
-	  Tomato = 3;          //番茄
-	  Egg = 4;             //鸡蛋
-	  Milk = 5;            //牛奶
-	  Apple = 6;           //苹果
-	  Banana = 7;          //香蕉
-	  DarkPlum = 8;        //乌梅
-	  Hawthorn = 9;        //山楂
-	  Strawberry = 10;     //草莓
-	  Beef = 11;           //牛肉
-	  Pork = 12;           //猪肉
-	  ChickenMeat = 13;    //鸡肉
-	  Potato = 14;         //土豆
-	  Lettuce = 15;        //生菜
-	  Agaric = 16;         //木耳
-	  NeedleMushroom = 17; //金针菇
-	  Cabbage = 18;        //包菜
-	  DishSize1 = 19;
+	  Wheat = 1;   //麦子
+	  Rice = 2;    //水稻
+	  Tomato = 3;  //番茄
+	  Egg = 4;     //鸡蛋
+	  Beef = 5;    //牛肉
+	  Pork = 6;    //猪肉
+	  Potato = 7;  //土豆
+	  Lettuce = 8; //生菜
+	  DishSize1 = 9;
 	  //以下为中间产物
-	  Flour = 20;      //面粉
-	  Noodle = 21;     //面条
-	  Bread = 22;      //面包片
-	  CookedRice = 23; //米饭
-	  Ketchup = 24;    //番茄酱
-	  Cream = 25;      //奶油
+	  Flour = 10;   //面粉
+	  Noodle = 11;  //面条
+	  Bread = 12;   //面包片
+	  Ketchup = 13; //番茄酱
 	  //以下为菜品
-	  TomatoFriedEgg = 26;       //番茄炒蛋
-	  TomatoFriedEggNoodle = 27; //西红柿鸡蛋面
-	  BeefNoodle = 28;           //清青牛拉
-	  OverRice = 29;             //盖浇饭
-	  YellowPheasant = 30;       //黄焖鸡米饭
-	  Barbecue = 31;             //烤肉
-	  FrenchFries = 32;          //薯条
-	  PlumJuice = 33;            //酸梅汤
-	  Hamburger = 34;            //汉堡
-	  StrawberryIcecream = 35;   //草莓圣代
-	  PopcornChicken = 36;       //鸡米花
-	  AgaricFriedEgg = 37;       //木耳炒蛋
-	  Cake = 38;                 //蛋糕
-	  SugarCoatedHaws = 39;      //冰糖葫芦
-	  FruitSalad = 40;           //水果色拉
-	  SpicedPot = 41;
-	  SpicedPot3 = 42;
-	  SpicedPot4 = 43;
-	  SpicedPot5 = 44;
-	  SpicedPot6 = 45;
-	  SpicedPot7 = 46;
-	  SpicedPot8 = 47; //香锅
-	  DishSize2 = 48;
+	  CookedRice = 14;           //米饭
+	  TomatoFriedEgg = 15;       //番茄炒蛋
+	  TomatoFriedEggNoodle = 16; //西红柿鸡蛋面
+	  BeefNoodle = 17;           //清青牛拉
+	  OverRice = 18;             //盖浇饭
+	  Barbecue = 19;             //烤肉
+	  FrenchFries = 20;          //薯条
+	  Hamburger = 21;            //汉堡
+	  SpicedPot = 22;            //香锅
+	  SpicedPot3 = 23;
+	  SpicedPot4 = 24;
+	  SpicedPot5 = 25;
+	  SpicedPot6 = 26;
+	  DishSize2 = 27;
 	  //以下为垃圾
-	  OverCookedDish = 49;
-	  DarkDish = 50; //黑暗料理
-	  DishSize3 = 51;
+	  OverCookedDish = 28;
+	  DarkDish = 29; //黑暗料理
+	  DishSize3 = 30;
 	}
 	enum ToolType {     //道具
 	  ToolEmpty = 0;    //
@@ -149,9 +128,9 @@
 	}
 	enum TriggerType {
 	  WaveGlue = 0; //滔牌胶水，踩上后会减速，过一段时间自行消失
-	  Trap = 1;     //陷阱，踩上后有一段时间不能动弹
-	  Mine = 2;     //地雷，踩上后减分数并眩晕一段时间
-	  Bomb = 3; //炸弹，踩上后眩晕一段时间，并掉落身上的食材和道具
+	  Trap = 1; //陷阱，踩上后有一段时间不能动弹，地图上不可见
+	  Mine = 2; //地雷，踩上后减分数并眩晕一段时间，地图上不可见
+	  Bomb = 3; //炸弹，踩上后眩晕一段时间，并掉落身上的食材和道具，地图上不可见
 	  Arrow = 4; //箭，被射中后扣一定的分数并眩晕一段时间
 	  Hammer = 5; //锤子，被砸中后眩晕一段时间并掉落身上的食材和道具
 	  TriggerSize = 6;
@@ -169,14 +148,14 @@
 	}
 	enum Talent {
 	  None = 0;
-      Runner = 1;    // 跑步加速
-      StrongMan = 2; //扔东西距离变远，扔锤子和射箭伤害更大
-      Cook = 3;      //制作食材获得分数有一定加成
-      Technician = 4; //防止地雷、陷阱、炸弹、使用传送门有一定加成
-      LuckyBoy = 5; //每隔一段时间在手上生成一个道具，若手上已有道具则在身边的地面生成
+	  Runner = 1;    // 跑步加速
+	  StrongMan = 2; //扔东西距离变远，扔锤子和射箭伤害更大
+	  Cook = 3;      //制作食材获得分数有一定加成
+	  Technician = 4; //防止地雷、陷阱、炸弹、使用传送门有一定加成
+	  LuckyBoy =
+	      5; //每隔一段时间在手上生成一个道具，若手上已有道具则在身边的地面生成
 	  TalentSize = 6;
 	}
-
 
 ## 玩家自身信息
 
