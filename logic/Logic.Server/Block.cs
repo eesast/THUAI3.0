@@ -11,7 +11,7 @@ namespace Logic.Server
     public class Block : Obj
     {
         public BlockType blockType;
-
+        
         public Block(double x_t, double y_t, BlockType type_t) : base(x_t, y_t, ObjType.Block)
         {
             if (type_t == BlockType.Wall || type_t == BlockType.FoodPoint || type_t == BlockType.TaskPoint)
@@ -20,6 +20,7 @@ namespace Logic.Server
                 Layer = BlockLayer;
             Movable = false;
             blockType = type_t;
+            
         }
 
         public override DishType GetDish(DishType t)
@@ -33,12 +34,13 @@ namespace Logic.Server
     public class FoodPoint : Block
     {
         public int RefreshTime = (int)Configs("FoodPointInitRefreshTime");//食物刷新点的食物刷新速率，毫秒
-
-        public FoodPoint(double x_t, double y_t) : base(x_t, y_t, BlockType.FoodPoint)
+        public DishType foodType;
+        public FoodPoint(double x_t, double y_t, DishType foodType_t = DishType.DishEmpty) : base(x_t, y_t, BlockType.FoodPoint)
         {
+            foodType = foodType_t;
             Layer = WallLayer;
             AddToMessage();
-            Dish = (DishType)Program.Random.Next(1, (int)DishType.DishSize1 - 1);
+            Dish = foodType;
             //lock (Program.MessageToClientLock)
             Program.MessageToClient.GameObjectList[ID].BlockType = BlockType.FoodPoint;
             Server.ServerDebug("食品刷新：地点（" + Position.x + "," + Position.y + "）, 种类 : " + Dish);
@@ -62,7 +64,7 @@ namespace Logic.Server
         }
         public void Refresh(object? i)
         {
-            Dish = (DishType)Program.Random.Next(1, (int)DishType.DishSize1 - 1);
+            Dish = foodType;
             Server.ServerDebug("食品刷新：地点（" + Position.x + "," + Position.y + "）, 种类 : " + Dish);
         }
         //Refresh End
@@ -173,12 +175,14 @@ namespace Logic.Server
                 int score = 0;
                 foreach (var dishType in dishTypeSet)
                 {
-                    score += (int)Configs(dishType.ToString(), "Score");
+                    if ((int)dishType <= (int)DishType.CookedRice)
+                        score += (int)Configs(dishType.ToString(), "Score");
                 }
                 if (score < 60) return;
                 isCooking = true;
                 ProtectedTeam = TeamNumber;
                 Dish = DishType.DarkDish;
+                if (t != Talent.Cook && score > 80) score = 80;
                 cookingResult = "SpicedPot_" + (score / 20).ToString();
                 CookingTimer.Change((int)Configs("SpicedPot", "CookTime"), 0);
                 ProtectTimer.Change((int)(1.25 * (double)Configs("SpicedPot", "CookTime")), 0);

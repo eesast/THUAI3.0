@@ -9,6 +9,7 @@ namespace Logic.Server
     public static class TaskSystem
     {
         public static ConcurrentDictionary<DishType, uint> TaskQueue = new ConcurrentDictionary<DishType, uint>();
+        private static int SpicedPotNum = 2;
         private static Timer.MultiTaskTimer? _removeTaskTimer;
         public static Timer.MultiTaskTimer RemoveTaskTimer
         {
@@ -53,8 +54,12 @@ namespace Logic.Server
             DishType temp = DishType.DishEmpty;
             for (; ; )
             {
-                if (Timer.Time.GameTime() < TimeSpan.FromMinutes(10)) temp = (DishType)Program.Random.Next((int)DishType.TomatoFriedEgg, (int)DishType.SpicedPot);
-                else temp = (DishType)Program.Random.Next((int)DishType.TomatoFriedEgg, (int)DishType.SpicedPot + 1);
+                if (Timer.Time.GameTime() > TimeSpan.FromMinutes(5) && SpicedPotNum > 0)
+                { 
+                    temp = (DishType)Program.Random.Next((int)DishType.TomatoFriedEgg, (int)DishType.SpicedPot + 1); 
+                    if(temp== DishType.SpicedPot) SpicedPotNum--; 
+                }
+                else temp = (DishType)Program.Random.Next((int)DishType.TomatoFriedEgg, (int)DishType.SpicedPot); 
                 if (temp == DishType.DishSize1)
                     continue;
                 break;
@@ -72,11 +77,11 @@ namespace Logic.Server
                 score = (int)Configs(dish_t.ToString(), "Score");//菜品名+Score，在App.config里加
                 RemoveTask(dish_t);
             }
-            else if (dish_t >= DishType.SpicedPot && dish_t <= DishType.SpicedPot8 && TaskQueue.ContainsKey(DishType.SpicedPot))
+            else if (dish_t >= DishType.SpicedPot && dish_t <= DishType.SpicedPot_6 && TaskQueue.ContainsKey(DishType.SpicedPot))
             {
                 string[] i = dish_t.ToString().Split('_');
                 double temp = Convert.ToDouble(i[1]);
-                score = (int)((1 + temp / 8) * temp * 20);
+                score = (int)((1 + temp / 10) * temp * 15);
                 RemoveTask(DishType.SpicedPot);
             }
             //PrintAllTask();

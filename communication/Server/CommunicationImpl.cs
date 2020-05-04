@@ -157,6 +157,7 @@ namespace Communication.Server
             full.Reset();
             server.Start();
             Constants.Debug("Waiting for clients");
+            //IsOffline = true;
             full.WaitOne();
             //FIXME: 现在似乎有的时候会先set状态competing再join，不知道会不会有什么影响
             Status = DockerGameStatus.Competing;
