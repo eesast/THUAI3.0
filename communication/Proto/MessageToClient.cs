@@ -221,13 +221,13 @@ namespace Communication.Proto {
     ///汉堡
     /// </summary>
     [pbr::OriginalName("Hamburger")] Hamburger = 21,
+    /// <summary>
+    ///香锅
+    /// </summary>
     [pbr::OriginalName("SpicedPot")] SpicedPot = 22,
     [pbr::OriginalName("SpicedPot_3")] SpicedPot3 = 23,
     [pbr::OriginalName("SpicedPot_4")] SpicedPot4 = 24,
     [pbr::OriginalName("SpicedPot_5")] SpicedPot5 = 25,
-    /// <summary>
-    ///香锅
-    /// </summary>
     [pbr::OriginalName("SpicedPot_6")] SpicedPot6 = 26,
     [pbr::OriginalName("DishSize2")] DishSize2 = 27,
     /// <summary>

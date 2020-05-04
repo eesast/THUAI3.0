@@ -78,9 +78,9 @@ namespace Logic.Server
                 score = (int)Configs(dish_t.ToString(), "Score");//菜品名+Score，在App.config里加
                 RemoveTask(dish_t);
             }
-            else if (dish_t >= DishType.SpicedPot && dish_t <= DishType.SpicedPot_6 && TaskQueue.ContainsKey(DishType.SpicedPot))
+            else if (dish_t >= DishType.SpicedPot && dish_t <= DishType.SpicedPot6 && TaskQueue.ContainsKey(DishType.SpicedPot))
             {
-                string[] i = dish_t.ToString().Split('_');
+                string[] i = dish_t.ToString().Split('t');
                 double temp = Convert.ToDouble(i[1]);
                 score = (int)((1 + temp / 10) * temp * 15);
                 RemoveTask(DishType.SpicedPot);

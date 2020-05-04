@@ -45,11 +45,11 @@ enum DishType {
   Barbecue = 19;             //烤肉
   FrenchFries = 20;          //薯条
   Hamburger = 21;            //汉堡
-  SpicedPot = 22;
+  SpicedPot = 22;            //香锅
   SpicedPot_3 = 23;
   SpicedPot_4 = 24;
   SpicedPot_5 = 25;
-  SpicedPot_6 = 26; //香锅
+  SpicedPot_6 = 26; 
   DishSize2 = 27;
   //以下为垃圾
   OverCookedDish = 28;
