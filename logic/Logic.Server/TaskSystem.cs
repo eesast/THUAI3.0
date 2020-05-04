@@ -56,10 +56,10 @@ namespace Logic.Server
             {
                 if (Timer.Time.GameTime() > TimeSpan.FromMinutes(5) && SpicedPotNum > 0)
                 { 
-                    temp = (DishType)Program.Random.Next((int)DishType.TomatoFriedEgg, (int)DishType.SpicedPot + 1); 
+                    temp = (DishType)Program.Random.Next((int)DishType.CookedRice, (int)DishType.SpicedPot + 1); 
                     if(temp== DishType.SpicedPot) SpicedPotNum--; 
                 }
-                else temp = (DishType)Program.Random.Next((int)DishType.TomatoFriedEgg, (int)DishType.SpicedPot); 
+                else temp = (DishType)Program.Random.Next((int)DishType.CookedRice, (int)DishType.SpicedPot); 
                 if (temp == DishType.DishSize1)
                     continue;
                 break;

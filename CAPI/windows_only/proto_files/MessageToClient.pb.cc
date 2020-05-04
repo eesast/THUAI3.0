@@ -180,43 +180,35 @@ const char descriptor_table_protodef_MessageToClient_2eproto[] =
   "h\020\002\022\010\n\004Tool\020\003\022\013\n\007Trigger\020\004\022\017\n\013ObjTypeSiz"
   "e\020\005*m\n\tBlockType\022\010\n\004Wall\020\000\022\t\n\005Table\020\001\022\r\n"
   "\tFoodPoint\020\002\022\n\n\006Cooker\020\003\022\016\n\nRubbishBin\020\004"
-  "\022\r\n\tTaskPoint\020\005\022\021\n\rBlockTypeSize\020\006*\217\006\n\010D"
+  "\022\r\n\tTaskPoint\020\005\022\021\n\rBlockTypeSize\020\006*\313\003\n\010D"
   "ishType\022\r\n\tDishEmpty\020\000\022\t\n\005Wheat\020\001\022\010\n\004Ric"
-  "e\020\002\022\n\n\006Tomato\020\003\022\007\n\003Egg\020\004\022\010\n\004Milk\020\005\022\t\n\005Ap"
-  "ple\020\006\022\n\n\006Banana\020\007\022\014\n\010DarkPlum\020\010\022\014\n\010Hawth"
-  "orn\020\t\022\016\n\nStrawberry\020\n\022\010\n\004Beef\020\013\022\010\n\004Pork\020"
-  "\014\022\017\n\013ChickenMeat\020\r\022\n\n\006Potato\020\016\022\013\n\007Lettuc"
-  "e\020\017\022\n\n\006Agaric\020\020\022\022\n\016NeedleMushroom\020\021\022\013\n\007C"
-  "abbage\020\022\022\r\n\tDishSize1\020\023\022\t\n\005Flour\020\024\022\n\n\006No"
-  "odle\020\025\022\t\n\005Bread\020\026\022\016\n\nCookedRice\020\027\022\013\n\007Ket"
-  "chup\020\030\022\t\n\005Cream\020\031\022\022\n\016TomatoFriedEgg\020\032\022\030\n"
-  "\024TomatoFriedEggNoodle\020\033\022\016\n\nBeefNoodle\020\034\022"
-  "\014\n\010OverRice\020\035\022\022\n\016YellowPheasant\020\036\022\014\n\010Bar"
-  "becue\020\037\022\017\n\013FrenchFries\020 \022\r\n\tPlumJuice\020!\022"
-  "\r\n\tHamburger\020\"\022\026\n\022StrawberryIcecream\020#\022\022"
-  "\n\016PopcornChicken\020$\022\022\n\016AgaricFriedEgg\020%\022\010"
-  "\n\004Cake\020&\022\023\n\017SugarCoatedHaws\020\'\022\016\n\nFruitSa"
-  "lad\020(\022\r\n\tSpicedPot\020)\022\016\n\nSpicedPot3\020*\022\016\n\n"
-  "SpicedPot4\020+\022\016\n\nSpicedPot5\020,\022\016\n\nSpicedPo"
-  "t6\020-\022\016\n\nSpicedPot7\020.\022\016\n\nSpicedPot8\020/\022\r\n\t"
-  "DishSize2\0200\022\022\n\016OverCookedDish\0201\022\014\n\010DarkD"
-  "ish\0202\022\r\n\tDishSize3\0203*\214\002\n\010ToolType\022\r\n\tToo"
-  "lEmpty\020\000\022\016\n\nTigerShoes\020\001\022\r\n\tSpeedBuff\020\002\022"
-  "\020\n\014StrengthBuff\020\003\022\r\n\tTeleScope\020\004\022\r\n\tCond"
-  "iment\020\005\022\016\n\nFertilizer\020\006\022\017\n\013BreastPlate\020\007"
-  "\022\r\n\tSpaceGate\020\010\022\022\n\016WaveGlueBottle\020\t\022\014\n\010L"
-  "andMine\020\n\022\014\n\010TrapTool\020\013\022\r\n\tFlashBomb\020\014\022\017"
-  "\n\013ThrowHammer\020\r\022\007\n\003Bow\020\016\022\013\n\007Stealer\020\017\022\014\n"
-  "\010ToolSize\020\020*a\n\013TriggerType\022\014\n\010WaveGlue\020\000"
-  "\022\010\n\004Trap\020\001\022\010\n\004Mine\020\002\022\010\n\004Bomb\020\003\022\t\n\005Arrow\020"
-  "\004\022\n\n\006Hammer\020\005\022\017\n\013TriggerSize\020\006*{\n\tDirect"
-  "ion\022\t\n\005Right\020\000\022\013\n\007RightUp\020\001\022\006\n\002Up\020\002\022\n\n\006L"
-  "eftUp\020\003\022\010\n\004Left\020\004\022\014\n\010LeftDown\020\005\022\010\n\004Down\020"
-  "\006\022\r\n\tRightDown\020\007\022\021\n\rDirectionSize\020\010*e\n\006T"
-  "alent\022\010\n\004None\020\000\022\n\n\006Runner\020\001\022\r\n\tStrongMan"
-  "\020\002\022\010\n\004Cook\020\003\022\016\n\nTechnician\020\004\022\014\n\010LuckyBoy"
-  "\020\005\022\016\n\nTalentSize\020\006B\026\252\002\023Communication.Pro"
-  "tob\006proto3"
+  "e\020\002\022\n\n\006Tomato\020\003\022\007\n\003Egg\020\004\022\010\n\004Beef\020\005\022\010\n\004Po"
+  "rk\020\006\022\n\n\006Potato\020\007\022\013\n\007Lettuce\020\010\022\r\n\tDishSiz"
+  "e1\020\t\022\t\n\005Flour\020\n\022\n\n\006Noodle\020\013\022\t\n\005Bread\020\014\022\013"
+  "\n\007Ketchup\020\r\022\016\n\nCookedRice\020\016\022\022\n\016TomatoFri"
+  "edEgg\020\017\022\030\n\024TomatoFriedEggNoodle\020\020\022\016\n\nBee"
+  "fNoodle\020\021\022\014\n\010OverRice\020\022\022\014\n\010Barbecue\020\023\022\017\n"
+  "\013FrenchFries\020\024\022\r\n\tHamburger\020\025\022\r\n\tSpicedP"
+  "ot\020\026\022\017\n\013SpicedPot_3\020\027\022\017\n\013SpicedPot_4\020\030\022\017"
+  "\n\013SpicedPot_5\020\031\022\017\n\013SpicedPot_6\020\032\022\r\n\tDish"
+  "Size2\020\033\022\022\n\016OverCookedDish\020\034\022\014\n\010DarkDish\020"
+  "\035\022\r\n\tDishSize3\020\036*\214\002\n\010ToolType\022\r\n\tToolEmp"
+  "ty\020\000\022\016\n\nTigerShoes\020\001\022\r\n\tSpeedBuff\020\002\022\020\n\014S"
+  "trengthBuff\020\003\022\r\n\tTeleScope\020\004\022\r\n\tCondimen"
+  "t\020\005\022\016\n\nFertilizer\020\006\022\017\n\013BreastPlate\020\007\022\r\n\t"
+  "SpaceGate\020\010\022\022\n\016WaveGlueBottle\020\t\022\014\n\010LandM"
+  "ine\020\n\022\014\n\010TrapTool\020\013\022\r\n\tFlashBomb\020\014\022\017\n\013Th"
+  "rowHammer\020\r\022\007\n\003Bow\020\016\022\013\n\007Stealer\020\017\022\014\n\010Too"
+  "lSize\020\020*a\n\013TriggerType\022\014\n\010WaveGlue\020\000\022\010\n\004"
+  "Trap\020\001\022\010\n\004Mine\020\002\022\010\n\004Bomb\020\003\022\t\n\005Arrow\020\004\022\n\n"
+  "\006Hammer\020\005\022\017\n\013TriggerSize\020\006*{\n\tDirection\022"
+  "\t\n\005Right\020\000\022\013\n\007RightUp\020\001\022\006\n\002Up\020\002\022\n\n\006LeftU"
+  "p\020\003\022\010\n\004Left\020\004\022\014\n\010LeftDown\020\005\022\010\n\004Down\020\006\022\r\n"
+  "\tRightDown\020\007\022\021\n\rDirectionSize\020\010*e\n\006Talen"
+  "t\022\010\n\004None\020\000\022\n\n\006Runner\020\001\022\r\n\tStrongMan\020\002\022\010"
+  "\n\004Cook\020\003\022\016\n\nTechnician\020\004\022\014\n\010LuckyBoy\020\005\022\016"
+  "\n\nTalentSize\020\006B\026\252\002\023Communication.Protob\006"
+  "proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_MessageToClient_2eproto_deps[1] = {
 };
@@ -229,7 +221,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_Mes
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_MessageToClient_2eproto_once;
 static bool descriptor_table_MessageToClient_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_MessageToClient_2eproto = {
-  &descriptor_table_MessageToClient_2eproto_initialized, descriptor_table_protodef_MessageToClient_2eproto, "MessageToClient.proto", 2330,
+  &descriptor_table_MessageToClient_2eproto_initialized, descriptor_table_protodef_MessageToClient_2eproto, "MessageToClient.proto", 2006,
   &descriptor_table_MessageToClient_2eproto_once, descriptor_table_MessageToClient_2eproto_sccs, descriptor_table_MessageToClient_2eproto_deps, 4, 0,
   schemas, file_default_instances, TableStruct_MessageToClient_2eproto::offsets,
   file_level_metadata_MessageToClient_2eproto, 4, file_level_enum_descriptors_MessageToClient_2eproto, file_level_service_descriptors_MessageToClient_2eproto,
@@ -312,27 +304,6 @@ bool DishType_IsValid(int value) {
     case 28:
     case 29:
     case 30:
-    case 31:
-    case 32:
-    case 33:
-    case 34:
-    case 35:
-    case 36:
-    case 37:
-    case 38:
-    case 39:
-    case 40:
-    case 41:
-    case 42:
-    case 43:
-    case 44:
-    case 45:
-    case 46:
-    case 47:
-    case 48:
-    case 49:
-    case 50:
-    case 51:
       return true;
     default:
       return false;

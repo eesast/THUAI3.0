@@ -44,38 +44,31 @@ namespace Communication.Proto {
             "CgRUb29sEAMSCwoHVHJpZ2dlchAEEg8KC09ialR5cGVTaXplEAUqbQoJQmxv",
             "Y2tUeXBlEggKBFdhbGwQABIJCgVUYWJsZRABEg0KCUZvb2RQb2ludBACEgoK",
             "BkNvb2tlchADEg4KClJ1YmJpc2hCaW4QBBINCglUYXNrUG9pbnQQBRIRCg1C",
-            "bG9ja1R5cGVTaXplEAYqjwYKCERpc2hUeXBlEg0KCURpc2hFbXB0eRAAEgkK",
-            "BVdoZWF0EAESCAoEUmljZRACEgoKBlRvbWF0bxADEgcKA0VnZxAEEggKBE1p",
-            "bGsQBRIJCgVBcHBsZRAGEgoKBkJhbmFuYRAHEgwKCERhcmtQbHVtEAgSDAoI",
-            "SGF3dGhvcm4QCRIOCgpTdHJhd2JlcnJ5EAoSCAoEQmVlZhALEggKBFBvcmsQ",
-            "DBIPCgtDaGlja2VuTWVhdBANEgoKBlBvdGF0bxAOEgsKB0xldHR1Y2UQDxIK",
-            "CgZBZ2FyaWMQEBISCg5OZWVkbGVNdXNocm9vbRAREgsKB0NhYmJhZ2UQEhIN",
-            "CglEaXNoU2l6ZTEQExIJCgVGbG91chAUEgoKBk5vb2RsZRAVEgkKBUJyZWFk",
-            "EBYSDgoKQ29va2VkUmljZRAXEgsKB0tldGNodXAQGBIJCgVDcmVhbRAZEhIK",
-            "DlRvbWF0b0ZyaWVkRWdnEBoSGAoUVG9tYXRvRnJpZWRFZ2dOb29kbGUQGxIO",
-            "CgpCZWVmTm9vZGxlEBwSDAoIT3ZlclJpY2UQHRISCg5ZZWxsb3dQaGVhc2Fu",
-            "dBAeEgwKCEJhcmJlY3VlEB8SDwoLRnJlbmNoRnJpZXMQIBINCglQbHVtSnVp",
-            "Y2UQIRINCglIYW1idXJnZXIQIhIWChJTdHJhd2JlcnJ5SWNlY3JlYW0QIxIS",
-            "Cg5Qb3Bjb3JuQ2hpY2tlbhAkEhIKDkFnYXJpY0ZyaWVkRWdnECUSCAoEQ2Fr",
-            "ZRAmEhMKD1N1Z2FyQ29hdGVkSGF3cxAnEg4KCkZydWl0U2FsYWQQKBINCglT",
-            "cGljZWRQb3QQKRIOCgpTcGljZWRQb3QzECoSDgoKU3BpY2VkUG90NBArEg4K",
-            "ClNwaWNlZFBvdDUQLBIOCgpTcGljZWRQb3Q2EC0SDgoKU3BpY2VkUG90NxAu",
-            "Eg4KClNwaWNlZFBvdDgQLxINCglEaXNoU2l6ZTIQMBISCg5PdmVyQ29va2Vk",
-            "RGlzaBAxEgwKCERhcmtEaXNoEDISDQoJRGlzaFNpemUzEDMqjAIKCFRvb2xU",
-            "eXBlEg0KCVRvb2xFbXB0eRAAEg4KClRpZ2VyU2hvZXMQARINCglTcGVlZEJ1",
-            "ZmYQAhIQCgxTdHJlbmd0aEJ1ZmYQAxINCglUZWxlU2NvcGUQBBINCglDb25k",
-            "aW1lbnQQBRIOCgpGZXJ0aWxpemVyEAYSDwoLQnJlYXN0UGxhdGUQBxINCglT",
-            "cGFjZUdhdGUQCBISCg5XYXZlR2x1ZUJvdHRsZRAJEgwKCExhbmRNaW5lEAoS",
-            "DAoIVHJhcFRvb2wQCxINCglGbGFzaEJvbWIQDBIPCgtUaHJvd0hhbW1lchAN",
-            "EgcKA0JvdxAOEgsKB1N0ZWFsZXIQDxIMCghUb29sU2l6ZRAQKmEKC1RyaWdn",
-            "ZXJUeXBlEgwKCFdhdmVHbHVlEAASCAoEVHJhcBABEggKBE1pbmUQAhIICgRC",
-            "b21iEAMSCQoFQXJyb3cQBBIKCgZIYW1tZXIQBRIPCgtUcmlnZ2VyU2l6ZRAG",
-            "KnsKCURpcmVjdGlvbhIJCgVSaWdodBAAEgsKB1JpZ2h0VXAQARIGCgJVcBAC",
-            "EgoKBkxlZnRVcBADEggKBExlZnQQBBIMCghMZWZ0RG93bhAFEggKBERvd24Q",
-            "BhINCglSaWdodERvd24QBxIRCg1EaXJlY3Rpb25TaXplEAgqZQoGVGFsZW50",
-            "EggKBE5vbmUQABIKCgZSdW5uZXIQARINCglTdHJvbmdNYW4QAhIICgRDb29r",
-            "EAMSDgoKVGVjaG5pY2lhbhAEEgwKCEx1Y2t5Qm95EAUSDgoKVGFsZW50U2l6",
-            "ZRAGQhaqAhNDb21tdW5pY2F0aW9uLlByb3RvYgZwcm90bzM="));
+            "bG9ja1R5cGVTaXplEAYqywMKCERpc2hUeXBlEg0KCURpc2hFbXB0eRAAEgkK",
+            "BVdoZWF0EAESCAoEUmljZRACEgoKBlRvbWF0bxADEgcKA0VnZxAEEggKBEJl",
+            "ZWYQBRIICgRQb3JrEAYSCgoGUG90YXRvEAcSCwoHTGV0dHVjZRAIEg0KCURp",
+            "c2hTaXplMRAJEgkKBUZsb3VyEAoSCgoGTm9vZGxlEAsSCQoFQnJlYWQQDBIL",
+            "CgdLZXRjaHVwEA0SDgoKQ29va2VkUmljZRAOEhIKDlRvbWF0b0ZyaWVkRWdn",
+            "EA8SGAoUVG9tYXRvRnJpZWRFZ2dOb29kbGUQEBIOCgpCZWVmTm9vZGxlEBES",
+            "DAoIT3ZlclJpY2UQEhIMCghCYXJiZWN1ZRATEg8KC0ZyZW5jaEZyaWVzEBQS",
+            "DQoJSGFtYnVyZ2VyEBUSDQoJU3BpY2VkUG90EBYSDwoLU3BpY2VkUG90XzMQ",
+            "FxIPCgtTcGljZWRQb3RfNBAYEg8KC1NwaWNlZFBvdF81EBkSDwoLU3BpY2Vk",
+            "UG90XzYQGhINCglEaXNoU2l6ZTIQGxISCg5PdmVyQ29va2VkRGlzaBAcEgwK",
+            "CERhcmtEaXNoEB0SDQoJRGlzaFNpemUzEB4qjAIKCFRvb2xUeXBlEg0KCVRv",
+            "b2xFbXB0eRAAEg4KClRpZ2VyU2hvZXMQARINCglTcGVlZEJ1ZmYQAhIQCgxT",
+            "dHJlbmd0aEJ1ZmYQAxINCglUZWxlU2NvcGUQBBINCglDb25kaW1lbnQQBRIO",
+            "CgpGZXJ0aWxpemVyEAYSDwoLQnJlYXN0UGxhdGUQBxINCglTcGFjZUdhdGUQ",
+            "CBISCg5XYXZlR2x1ZUJvdHRsZRAJEgwKCExhbmRNaW5lEAoSDAoIVHJhcFRv",
+            "b2wQCxINCglGbGFzaEJvbWIQDBIPCgtUaHJvd0hhbW1lchANEgcKA0JvdxAO",
+            "EgsKB1N0ZWFsZXIQDxIMCghUb29sU2l6ZRAQKmEKC1RyaWdnZXJUeXBlEgwK",
+            "CFdhdmVHbHVlEAASCAoEVHJhcBABEggKBE1pbmUQAhIICgRCb21iEAMSCQoF",
+            "QXJyb3cQBBIKCgZIYW1tZXIQBRIPCgtUcmlnZ2VyU2l6ZRAGKnsKCURpcmVj",
+            "dGlvbhIJCgVSaWdodBAAEgsKB1JpZ2h0VXAQARIGCgJVcBACEgoKBkxlZnRV",
+            "cBADEggKBExlZnQQBBIMCghMZWZ0RG93bhAFEggKBERvd24QBhINCglSaWdo",
+            "dERvd24QBxIRCg1EaXJlY3Rpb25TaXplEAgqZQoGVGFsZW50EggKBE5vbmUQ",
+            "ABIKCgZSdW5uZXIQARINCglTdHJvbmdNYW4QAhIICgRDb29rEAMSDgoKVGVj",
+            "aG5pY2lhbhAEEgwKCEx1Y2t5Qm95EAUSDgoKVGFsZW50U2l6ZRAGQhaqAhND",
+            "b21tdW5pY2F0aW9uLlByb3RvYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Communication.Proto.ObjType), typeof(global::Communication.Proto.BlockType), typeof(global::Communication.Proto.DishType), typeof(global::Communication.Proto.ToolType), typeof(global::Communication.Proto.TriggerType), typeof(global::Communication.Proto.Direction), typeof(global::Communication.Proto.Talent), }, new pbr::GeneratedClrTypeInfo[] {
@@ -179,7 +172,6 @@ namespace Communication.Proto {
     ///生菜
     /// </summary>
     [pbr::OriginalName("Lettuce")] Lettuce = 8,
-    /// <summary>
     [pbr::OriginalName("DishSize1")] DishSize1 = 9,
     /// <summary>
     ///以下为中间产物
@@ -194,15 +186,15 @@ namespace Communication.Proto {
     /// </summary>
     [pbr::OriginalName("Bread")] Bread = 12,
     /// <summary>
-    ///米饭
-    /// </summary>
-    [pbr::OriginalName("CookedRice")] CookedRice = 13,
-    /// <summary>
     ///番茄酱
     /// </summary>
-    [pbr::OriginalName("Ketchup")] Ketchup = 14,
+    [pbr::OriginalName("Ketchup")] Ketchup = 13,
     /// <summary>
     ///以下为菜品
+    /// </summary>
+    [pbr::OriginalName("CookedRice")] CookedRice = 14,
+    /// <summary>
+    ///番茄炒蛋
     /// </summary>
     [pbr::OriginalName("TomatoFriedEgg")] TomatoFriedEgg = 15,
     /// <summary>
@@ -229,15 +221,14 @@ namespace Communication.Proto {
     ///汉堡
     /// </summary>
     [pbr::OriginalName("Hamburger")] Hamburger = 21,
+    [pbr::OriginalName("SpicedPot")] SpicedPot = 22,
+    [pbr::OriginalName("SpicedPot_3")] SpicedPot3 = 23,
+    [pbr::OriginalName("SpicedPot_4")] SpicedPot4 = 24,
+    [pbr::OriginalName("SpicedPot_5")] SpicedPot5 = 25,
     /// <summary>
     ///香锅
-    [pbr::OriginalName("SpicedPot")] SpicedPot = 22,
-    [pbr::OriginalName("SpicedPot_3")] SpicedPot_3 = 23,
-    [pbr::OriginalName("SpicedPot_4")] SpicedPot_4 = 24,
-    [pbr::OriginalName("SpicedPot_5")] SpicedPot_5 = 25,
-    [pbr::OriginalName("SpicedPot_6")] SpicedPot_6 = 26,
-    /// <summary>
     /// </summary>
+    [pbr::OriginalName("SpicedPot_6")] SpicedPot6 = 26,
     [pbr::OriginalName("DishSize2")] DishSize2 = 27,
     /// <summary>
     ///以下为垃圾
