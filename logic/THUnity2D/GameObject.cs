@@ -364,8 +364,8 @@ namespace THUnity2D
                     return;
                 lastMoveTime = DateTime.Now;
                 MoveStart?.Invoke(this);
-                XYPosition previousPosition = _position;
-                _position = _position + new XYPosition(distance * Math.Cos(angle), distance * Math.Sin(angle));
+                XYPosition previousPosition = new XYPosition(Math.Round(_position.x, 6), Math.Round(_position.y, 6));
+                _position = previousPosition + new XYPosition(distance * Math.Cos(angle), distance * Math.Sin(angle));
                 Debug(this, "Move from " + previousPosition.ToString() + " angle : " + angle + " distance : " + distance + " aim : " + _position.ToString());
                 OnMove?.Invoke(this, angle, distance, previousPosition);
                 Debug(this, "Move result poition : " + this._position.ToString());
