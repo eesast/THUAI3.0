@@ -160,7 +160,7 @@ namespace Logic.Server
             {
                 isCooking = true;
                 ProtectedTeam = TeamNumber;
-                Dish = DishType.DarkDish;//未煮熟之前都是黑暗料理
+                Dish = DishType.CookingDish;//未煮熟
                 foreach (var dishType in dishTypeSet)
                 {
                     Material += dishType.ToString();
@@ -181,9 +181,9 @@ namespace Logic.Server
                 if (score < 60) return;
                 isCooking = true;
                 ProtectedTeam = TeamNumber;
-                Dish = DishType.DarkDish;
+                Dish = DishType.CookingDish;
                 if (t != Talent.Cook && score > 80) score = 80;
-                cookingResult = "SpicedPot_" + (score / 20).ToString();
+                cookingResult = "SpicedPot" + (score / 20).ToString();
                 CookingTimer.Change((int)Configs("SpicedPot", "CookTime"), 0);
                 ProtectTimer.Change((int)(1.25 * (double)Configs("SpicedPot", "CookTime")), 0);
             }

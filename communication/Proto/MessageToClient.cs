@@ -44,7 +44,7 @@ namespace Communication.Proto {
             "CgRUb29sEAMSCwoHVHJpZ2dlchAEEg8KC09ialR5cGVTaXplEAUqbQoJQmxv",
             "Y2tUeXBlEggKBFdhbGwQABIJCgVUYWJsZRABEg0KCUZvb2RQb2ludBACEgoK",
             "BkNvb2tlchADEg4KClJ1YmJpc2hCaW4QBBINCglUYXNrUG9pbnQQBRIRCg1C",
-            "bG9ja1R5cGVTaXplEAYqywMKCERpc2hUeXBlEg0KCURpc2hFbXB0eRAAEgkK",
+            "bG9ja1R5cGVTaXplEAYq3AMKCERpc2hUeXBlEg0KCURpc2hFbXB0eRAAEgkK",
             "BVdoZWF0EAESCAoEUmljZRACEgoKBlRvbWF0bxADEgcKA0VnZxAEEggKBEJl",
             "ZWYQBRIICgRQb3JrEAYSCgoGUG90YXRvEAcSCwoHTGV0dHVjZRAIEg0KCURp",
             "c2hTaXplMRAJEgkKBUZsb3VyEAoSCgoGTm9vZGxlEAsSCQoFQnJlYWQQDBIL",
@@ -54,21 +54,21 @@ namespace Communication.Proto {
             "DQoJSGFtYnVyZ2VyEBUSDQoJU3BpY2VkUG90EBYSDwoLU3BpY2VkUG90XzMQ",
             "FxIPCgtTcGljZWRQb3RfNBAYEg8KC1NwaWNlZFBvdF81EBkSDwoLU3BpY2Vk",
             "UG90XzYQGhINCglEaXNoU2l6ZTIQGxISCg5PdmVyQ29va2VkRGlzaBAcEgwK",
-            "CERhcmtEaXNoEB0SDQoJRGlzaFNpemUzEB4qjAIKCFRvb2xUeXBlEg0KCVRv",
-            "b2xFbXB0eRAAEg4KClRpZ2VyU2hvZXMQARINCglTcGVlZEJ1ZmYQAhIQCgxT",
-            "dHJlbmd0aEJ1ZmYQAxINCglUZWxlU2NvcGUQBBINCglDb25kaW1lbnQQBRIO",
-            "CgpGZXJ0aWxpemVyEAYSDwoLQnJlYXN0UGxhdGUQBxINCglTcGFjZUdhdGUQ",
-            "CBISCg5XYXZlR2x1ZUJvdHRsZRAJEgwKCExhbmRNaW5lEAoSDAoIVHJhcFRv",
-            "b2wQCxINCglGbGFzaEJvbWIQDBIPCgtUaHJvd0hhbW1lchANEgcKA0JvdxAO",
-            "EgsKB1N0ZWFsZXIQDxIMCghUb29sU2l6ZRAQKmEKC1RyaWdnZXJUeXBlEgwK",
-            "CFdhdmVHbHVlEAASCAoEVHJhcBABEggKBE1pbmUQAhIICgRCb21iEAMSCQoF",
-            "QXJyb3cQBBIKCgZIYW1tZXIQBRIPCgtUcmlnZ2VyU2l6ZRAGKnsKCURpcmVj",
-            "dGlvbhIJCgVSaWdodBAAEgsKB1JpZ2h0VXAQARIGCgJVcBACEgoKBkxlZnRV",
-            "cBADEggKBExlZnQQBBIMCghMZWZ0RG93bhAFEggKBERvd24QBhINCglSaWdo",
-            "dERvd24QBxIRCg1EaXJlY3Rpb25TaXplEAgqZQoGVGFsZW50EggKBE5vbmUQ",
-            "ABIKCgZSdW5uZXIQARINCglTdHJvbmdNYW4QAhIICgRDb29rEAMSDgoKVGVj",
-            "aG5pY2lhbhAEEgwKCEx1Y2t5Qm95EAUSDgoKVGFsZW50U2l6ZRAGQhaqAhND",
-            "b21tdW5pY2F0aW9uLlByb3RvYgZwcm90bzM="));
+            "CERhcmtEaXNoEB0SDwoLQ29va2luZ0Rpc2gQHhINCglEaXNoU2l6ZTMQHyqM",
+            "AgoIVG9vbFR5cGUSDQoJVG9vbEVtcHR5EAASDgoKVGlnZXJTaG9lcxABEg0K",
+            "CVNwZWVkQnVmZhACEhAKDFN0cmVuZ3RoQnVmZhADEg0KCVRlbGVTY29wZRAE",
+            "Eg0KCUNvbmRpbWVudBAFEg4KCkZlcnRpbGl6ZXIQBhIPCgtCcmVhc3RQbGF0",
+            "ZRAHEg0KCVNwYWNlR2F0ZRAIEhIKDldhdmVHbHVlQm90dGxlEAkSDAoITGFu",
+            "ZE1pbmUQChIMCghUcmFwVG9vbBALEg0KCUZsYXNoQm9tYhAMEg8KC1Rocm93",
+            "SGFtbWVyEA0SBwoDQm93EA4SCwoHU3RlYWxlchAPEgwKCFRvb2xTaXplEBAq",
+            "YQoLVHJpZ2dlclR5cGUSDAoIV2F2ZUdsdWUQABIICgRUcmFwEAESCAoETWlu",
+            "ZRACEggKBEJvbWIQAxIJCgVBcnJvdxAEEgoKBkhhbW1lchAFEg8KC1RyaWdn",
+            "ZXJTaXplEAYqewoJRGlyZWN0aW9uEgkKBVJpZ2h0EAASCwoHUmlnaHRVcBAB",
+            "EgYKAlVwEAISCgoGTGVmdFVwEAMSCAoETGVmdBAEEgwKCExlZnREb3duEAUS",
+            "CAoERG93bhAGEg0KCVJpZ2h0RG93bhAHEhEKDURpcmVjdGlvblNpemUQCCpl",
+            "CgZUYWxlbnQSCAoETm9uZRAAEgoKBlJ1bm5lchABEg0KCVN0cm9uZ01hbhAC",
+            "EggKBENvb2sQAxIOCgpUZWNobmljaWFuEAQSDAoITHVja3lCb3kQBRIOCgpU",
+            "YWxlbnRTaXplEAZCFqoCE0NvbW11bmljYXRpb24uUHJvdG9iBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Communication.Proto.ObjType), typeof(global::Communication.Proto.BlockType), typeof(global::Communication.Proto.DishType), typeof(global::Communication.Proto.ToolType), typeof(global::Communication.Proto.TriggerType), typeof(global::Communication.Proto.Direction), typeof(global::Communication.Proto.Talent), }, new pbr::GeneratedClrTypeInfo[] {
@@ -238,7 +238,8 @@ namespace Communication.Proto {
     ///黑暗料理
     /// </summary>
     [pbr::OriginalName("DarkDish")] DarkDish = 29,
-    [pbr::OriginalName("DishSize3")] DishSize3 = 30,
+    [pbr::OriginalName("CookingDish")] CookingDish = 30,
+    [pbr::OriginalName("DishSize3")] DishSize3 = 30
   }
 
   /// <summary>
