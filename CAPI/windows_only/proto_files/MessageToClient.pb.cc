@@ -180,7 +180,7 @@ const char descriptor_table_protodef_MessageToClient_2eproto[] =
   "h\020\002\022\010\n\004Tool\020\003\022\013\n\007Trigger\020\004\022\017\n\013ObjTypeSiz"
   "e\020\005*m\n\tBlockType\022\010\n\004Wall\020\000\022\t\n\005Table\020\001\022\r\n"
   "\tFoodPoint\020\002\022\n\n\006Cooker\020\003\022\016\n\nRubbishBin\020\004"
-  "\022\r\n\tTaskPoint\020\005\022\021\n\rBlockTypeSize\020\006*\334\003\n\010D"
+  "\022\r\n\tTaskPoint\020\005\022\021\n\rBlockTypeSize\020\006*\307\003\n\010D"
   "ishType\022\r\n\tDishEmpty\020\000\022\t\n\005Wheat\020\001\022\010\n\004Ric"
   "e\020\002\022\n\n\006Tomato\020\003\022\007\n\003Egg\020\004\022\010\n\004Beef\020\005\022\010\n\004Po"
   "rk\020\006\022\n\n\006Potato\020\007\022\013\n\007Lettuce\020\010\022\r\n\tDishSiz"

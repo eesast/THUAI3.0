@@ -473,7 +473,7 @@ namespace THUnity2D
 
             //调整位置
             Debug(this, "Moving " + childrenGameObject.ID + " resultDistance : " + resultDistance);
-            childrenGameObject._position = previousPosition + new XYPosition(resultDistance * Math.Cos(angle), resultDistance * Math.Sin(angle));
+            childrenGameObject._position = previousPosition + new XYPosition(Math.Round(resultDistance * Math.Cos(angle), 6), Math.Round(resultDistance * Math.Sin(angle), 6));
             this._grid[(int)previousPosition.x, (int)previousPosition.y].DeleteGameObject(childrenGameObject);
             this._grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].AddGameObject(childrenGameObject);
             //调整位置 End

@@ -159,7 +159,7 @@
     },
     "CookedRice": {
         "Score": 20,
-        "TaskTime": 30000,
+        "TaskTime": 40000,
         "CookTime": 10000
     },
     "TomatoFriedEgg": {
@@ -221,7 +221,7 @@
         "TomatoEgg": "TomatoFriedEgg",
         "NoodleTomatoFriedEgg": "TomatoFriedEggNoodle",
         "BeefNoodle": "BeefNoodle",
-        "RicePorkCabbage": "OverRice",
+        "RicePorkPotato": "OverRice",
         "PorkLettuce": "Barbecue",
         "PotatoKetchup": "FrenchFries",
         "BeefLettuceBread": "Hamburger"
