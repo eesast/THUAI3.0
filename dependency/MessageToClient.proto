@@ -54,7 +54,8 @@ enum DishType {
   //以下为垃圾
   OverCookedDish = 28;
   DarkDish = 29; //黑暗料理
-  DishSize3 = 30;
+  CookingDish = 30;
+  DishSize3 = 31;
 }
 enum ToolType {     //道具
   ToolEmpty = 0;    //

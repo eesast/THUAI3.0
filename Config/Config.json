@@ -204,13 +204,18 @@
     },
     "DarkDish": {
         "Score": -10,
-        "TaskTime": 30000,
-        "CookTime": 60000
+        "TaskTime": 300000,
+        "CookTime": 5000
     },
     "OverCookedDish": {
         "Score": -10,
         "TaskTime": 300000,
-        "CookTime": 60000
+        "CookTime": 5000
+    },
+    "CookingDish": {
+        "Score": -10,
+        "TaskTime": 300000,
+        "CookTime": 5000
     },
     "CookingTable": {
         "Wheat": "Flour",

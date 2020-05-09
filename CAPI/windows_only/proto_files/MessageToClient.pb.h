@@ -173,7 +173,8 @@ enum DishType : int {
   DishSize2 = 27,
   OverCookedDish = 28,
   DarkDish = 29,
-  DishSize3 = 30,
+  CookingDish = 30,
+  DishSize3 = 31,
   DishType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
   DishType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
