@@ -191,8 +191,9 @@ namespace Constant
 	{int(Protobuf::FrenchFries), {45,15000,75000} },
 	{int(Protobuf::Hamburger), {80,20000,120000} },
 	{int(Protobuf::SpicedPot), {0,60000,300000} },
-	{int(Protobuf::DarkDish), {-10,60000,30000} },
-	{int(Protobuf::OverCookedDish), {-10,60000,300000} },
+	{int(Protobuf::DarkDish), {-10,5000,300000} },
+	{int(Protobuf::OverCookedDish), {-10,5000,300000} },
+	{int(Protobuf::CookingDish), {-10,5000,300000} },
 	};
 	const static std::unordered_map<int, std::list<Protobuf::DishType>> CookingTable =
 	{
