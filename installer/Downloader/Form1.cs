@@ -88,7 +88,7 @@ namespace Downloader
                     string localFileName = System.IO.Path.GetFileName(download_dir); //指定本地保存的文件名      <--------------
                     GetObjectRequest request = new GetObjectRequest(bucket, key, localDir, localFileName);
                     //设置签名有效时长
-                    request.SetSign(DateTimeOffset.UtcNow.ToUnixTimeSeconds(), 1000);
+                    //request.SetSign(DateTimeOffset.UtcNow.ToString(), 1000);
                     //设置进度回调
                     Dictionary<string, string> test = request.GetRequestHeaders();
                     request.SetCosProgressCallback(delegate (long completed, long total)
@@ -100,9 +100,13 @@ namespace Downloader
                     //请求成功
                     Console.WriteLine(result.GetResultInfo());
                 }
-                catch (System.Exception)
+                catch (COSXML.CosException.CosClientException clientEx)
                 {
-                    throw;
+                    throw clientEx;
+                }
+                catch (COSXML.CosException.CosServerException serverEx)
+                {
+                    throw serverEx;
                 }
             }
         }
@@ -141,9 +145,7 @@ namespace Downloader
                     fst.Close();
                 return "";
             }
-            finally
-            {
-            }
+            finally { }
         }
 
         private async void btn_Click(object sender, EventArgs e)
@@ -184,7 +186,7 @@ namespace Downloader
                                         if (token.IsCancellationRequested)
                                         { cancelled = true; tokenSource = new CancellationTokenSource(); token = tokenSource.Token; return; }
                                         this.textBox2.AppendText(newFile + 1 + "/" + totalnew + ": 开始下载" + Filename + Environment.NewLine);
-                                        await Task.Run(() => { Downloader.download(System.IO.Path.Combine(this.textBox1.Text, "THUAI3.0", Filename), Filename); });
+                                        await Task.Run(() => { Downloader.download(System.IO.Path.Combine(this.textBox1.Text, Filename), Filename); });
                                         this.textBox2.AppendText(Filename + "下载完毕!" + Environment.NewLine); newFile++;
                                     }
                                     foreach (string Filename in SelectedUpdateFile)
@@ -192,8 +194,8 @@ namespace Downloader
                                         if (token.IsCancellationRequested)
                                         { cancelled = true; tokenSource = new CancellationTokenSource(); token = tokenSource.Token; return; }
                                         this.textBox2.AppendText(updateFile + 1 + "/" + totalupdate + ": 开始更新" + Filename + Environment.NewLine);
-                                        File.Delete(System.IO.Path.Combine(this.textBox1.Text, "THUAI3.0", Filename));
-                                        await Task.Run(() => { Downloader.download(System.IO.Path.Combine(this.textBox1.Text, "THUAI3.0", Filename), Filename); });
+                                        File.Delete(System.IO.Path.Combine(this.textBox1.Text, Filename));
+                                        await Task.Run(() => { Downloader.download(System.IO.Path.Combine(this.textBox1.Text, Filename), Filename); });
                                         this.textBox2.AppendText(Filename + "更新完毕!" + Environment.NewLine); updateFile++;
                                     }
                                 }, token);
@@ -275,20 +277,43 @@ namespace Downloader
             newFileName.Clear();
             updateFileName.Clear();
             Tencent_cos_download Downloader = new Tencent_cos_download();
-            await Task.Run(() => { Downloader.download(System.IO.Path.Combine(this.textBox1.Text, "THUAI3.0", "md5list.json")); });
-            using (StreamReader r = new StreamReader(System.IO.Path.Combine(this.textBox1.Text, "THUAI3.0", "md5list.json")))
+            try
+            {
+                if (File.Exists(System.IO.Path.Combine(this.textBox1.Text, "md5list.json")))
+                {
+                    File.Delete(System.IO.Path.Combine(this.textBox1.Text, "md5list.json"));
+                    await Task.Run(() => { Downloader.download(System.IO.Path.Combine(this.textBox1.Text, "md5list.json")); });
+                }
+                else await Task.Run(() => { Downloader.download(System.IO.Path.Combine(this.textBox1.Text, "md5list.json")); });
+
+            }
+            catch (COSXML.CosException.CosClientException clientEx)
+            {
+                //请求失败
+                this.textBox2.AppendText("CosClientException: " + clientEx.ToString() + Environment.NewLine);
+                return;
+            }
+            catch (COSXML.CosException.CosServerException serverEx)
+            {
+                //请求失败
+                this.textBox2.AppendText("CosClientException: " + serverEx.ToString() + Environment.NewLine);
+                return;
+            }
+            using (StreamReader r = new StreamReader(System.IO.Path.Combine(this.textBox1.Text, "md5list.json")))
                 json = r.ReadToEnd();
             json = json.Replace("\r", string.Empty).Replace("\n", string.Empty);
             Dictionary<string, string> jsonDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-
-            foreach (KeyValuePair<string, string> pair in jsonDict)
+            await Task.Run(() =>
             {
-                MD5 = GetFileMd5Hash(System.IO.Path.Combine(this.textBox1.Text, "THUAI3.0", pair.Key));
-                if (MD5.Length == 0)
-                    newFileName.Add(pair.Key);
-                else if (MD5 != pair.Value)
-                    updateFileName.Add(pair.Key);
-            }
+                foreach (KeyValuePair<string, string> pair in jsonDict)
+                {
+                    MD5 = GetFileMd5Hash(System.IO.Path.Combine(this.textBox1.Text, pair.Key));
+                    if (MD5.Length == 0)
+                        newFileName.Add(pair.Key);
+                    else if (MD5 != pair.Value)
+                        updateFileName.Add(pair.Key);
+                }
+            });
             newFile = newFileName.Count();
             updateFile = updateFileName.Count();
             if(this.textBox2.Text.Length!=0)
@@ -301,10 +326,76 @@ namespace Downloader
             }
             else
             {
-                this.textBox2.AppendText($"发现{newFile}个新文件：" + Environment.NewLine);
+                this.textBox2.AppendText($"发现{newFile}个新核心文件：" + Environment.NewLine);
                 foreach (string filename in newFileName)
                     this.textBox2.AppendText(filename + Environment.NewLine);
-                this.textBox2.AppendText(Environment.NewLine + $"发现{updateFile}个文件更新：" + Environment.NewLine);
+                this.textBox2.AppendText(Environment.NewLine + $"发现{updateFile}个核心文件更新：" + Environment.NewLine);
+                foreach (string filename in updateFileName)
+                    this.textBox2.AppendText(filename + Environment.NewLine);
+                this.textBox2.AppendText(Environment.NewLine + "请点击下载按钮选择文件" + Environment.NewLine + Environment.NewLine);
+            }
+            Checked = true;
+        }
+
+        private async void button4_Click(object sender, EventArgs e)
+        {
+            string json, MD5;
+            int newFile = 0, updateFile = 0;
+            newFileName.Clear();
+            updateFileName.Clear();
+            Tencent_cos_download Downloader = new Tencent_cos_download();
+            try
+            {
+                if (File.Exists(System.IO.Path.Combine(this.textBox1.Text, "clientForWinmd5list.json")))
+                {
+                    File.Delete(System.IO.Path.Combine(this.textBox1.Text, "clientForWinmd5list.json"));
+                    await Task.Run(() => { Downloader.download(System.IO.Path.Combine(this.textBox1.Text, "clientForWinmd5list.json"), "clientForWinmd5list.json"); });
+                }
+                else await Task.Run(() => { Downloader.download(System.IO.Path.Combine(this.textBox1.Text, "clientForWinmd5list.json"), "clientForWinmd5list.json"); });
+            }
+            catch (COSXML.CosException.CosClientException clientEx)
+            {
+                //请求失败
+                this.textBox2.AppendText("CosClientException: " + clientEx.ToString() + Environment.NewLine);
+                return;
+            }
+            catch (COSXML.CosException.CosServerException serverEx)
+            {
+                //请求失败
+                this.textBox2.AppendText("CosClientException: " + serverEx.ToString() + Environment.NewLine);
+                return;
+            }
+            using(StreamReader r = new StreamReader(System.IO.Path.Combine(this.textBox1.Text, "clientForWinmd5list.json")))
+                json = r.ReadToEnd();
+            json = json.Replace("\r", string.Empty).Replace("\n", string.Empty);
+            Dictionary<string, string> jsonDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+            await Task.Run(() =>
+            {
+                foreach (KeyValuePair<string, string> pair in jsonDict)
+                {
+                    MD5 = GetFileMd5Hash(System.IO.Path.Combine(this.textBox1.Text, pair.Key));
+                    if (MD5.Length == 0)
+                        newFileName.Add(pair.Key);
+                    else if (MD5 != pair.Value)
+                        updateFileName.Add(pair.Key);
+                }
+            });
+            newFile = newFileName.Count();
+            updateFile = updateFileName.Count();
+            if (this.textBox2.Text.Length != 0)
+                this.textBox2.AppendText("----------------------" + Environment.NewLine);
+
+            if (newFile + updateFile == 0)
+            {
+                this.textBox2.AppendText("暂无新unity文件！" + Environment.NewLine);
+                newFileName.Clear(); updateFileName.Clear();
+            }
+            else
+            {
+                this.textBox2.AppendText($"发现{newFile}个新unity文件：" + Environment.NewLine);
+                foreach (string filename in newFileName)
+                    this.textBox2.AppendText(filename + Environment.NewLine);
+                this.textBox2.AppendText(Environment.NewLine + $"发现{updateFile}个unity文件更新：" + Environment.NewLine);
                 foreach (string filename in updateFileName)
                     this.textBox2.AppendText(filename + Environment.NewLine);
                 this.textBox2.AppendText(Environment.NewLine + "请点击下载按钮选择文件" + Environment.NewLine + Environment.NewLine);
