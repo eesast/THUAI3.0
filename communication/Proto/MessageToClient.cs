@@ -44,31 +44,31 @@ namespace Communication.Proto {
             "CgRUb29sEAMSCwoHVHJpZ2dlchAEEg8KC09ialR5cGVTaXplEAUqbQoJQmxv",
             "Y2tUeXBlEggKBFdhbGwQABIJCgVUYWJsZRABEg0KCUZvb2RQb2ludBACEgoK",
             "BkNvb2tlchADEg4KClJ1YmJpc2hCaW4QBBINCglUYXNrUG9pbnQQBRIRCg1C",
-            "bG9ja1R5cGVTaXplEAYq3AMKCERpc2hUeXBlEg0KCURpc2hFbXB0eRAAEgkK",
+            "bG9ja1R5cGVTaXplEAYq2AMKCERpc2hUeXBlEg0KCURpc2hFbXB0eRAAEgkK",
             "BVdoZWF0EAESCAoEUmljZRACEgoKBlRvbWF0bxADEgcKA0VnZxAEEggKBEJl",
             "ZWYQBRIICgRQb3JrEAYSCgoGUG90YXRvEAcSCwoHTGV0dHVjZRAIEg0KCURp",
             "c2hTaXplMRAJEgkKBUZsb3VyEAoSCgoGTm9vZGxlEAsSCQoFQnJlYWQQDBIL",
             "CgdLZXRjaHVwEA0SDgoKQ29va2VkUmljZRAOEhIKDlRvbWF0b0ZyaWVkRWdn",
             "EA8SGAoUVG9tYXRvRnJpZWRFZ2dOb29kbGUQEBIOCgpCZWVmTm9vZGxlEBES",
             "DAoIT3ZlclJpY2UQEhIMCghCYXJiZWN1ZRATEg8KC0ZyZW5jaEZyaWVzEBQS",
-            "DQoJSGFtYnVyZ2VyEBUSDQoJU3BpY2VkUG90EBYSDwoLU3BpY2VkUG90XzMQ",
-            "FxIPCgtTcGljZWRQb3RfNBAYEg8KC1NwaWNlZFBvdF81EBkSDwoLU3BpY2Vk",
-            "UG90XzYQGhINCglEaXNoU2l6ZTIQGxISCg5PdmVyQ29va2VkRGlzaBAcEgwK",
-            "CERhcmtEaXNoEB0SDwoLQ29va2luZ0Rpc2gQHhINCglEaXNoU2l6ZTMQHyqM",
-            "AgoIVG9vbFR5cGUSDQoJVG9vbEVtcHR5EAASDgoKVGlnZXJTaG9lcxABEg0K",
-            "CVNwZWVkQnVmZhACEhAKDFN0cmVuZ3RoQnVmZhADEg0KCVRlbGVTY29wZRAE",
-            "Eg0KCUNvbmRpbWVudBAFEg4KCkZlcnRpbGl6ZXIQBhIPCgtCcmVhc3RQbGF0",
-            "ZRAHEg0KCVNwYWNlR2F0ZRAIEhIKDldhdmVHbHVlQm90dGxlEAkSDAoITGFu",
-            "ZE1pbmUQChIMCghUcmFwVG9vbBALEg0KCUZsYXNoQm9tYhAMEg8KC1Rocm93",
-            "SGFtbWVyEA0SBwoDQm93EA4SCwoHU3RlYWxlchAPEgwKCFRvb2xTaXplEBAq",
-            "YQoLVHJpZ2dlclR5cGUSDAoIV2F2ZUdsdWUQABIICgRUcmFwEAESCAoETWlu",
-            "ZRACEggKBEJvbWIQAxIJCgVBcnJvdxAEEgoKBkhhbW1lchAFEg8KC1RyaWdn",
-            "ZXJTaXplEAYqewoJRGlyZWN0aW9uEgkKBVJpZ2h0EAASCwoHUmlnaHRVcBAB",
-            "EgYKAlVwEAISCgoGTGVmdFVwEAMSCAoETGVmdBAEEgwKCExlZnREb3duEAUS",
-            "CAoERG93bhAGEg0KCVJpZ2h0RG93bhAHEhEKDURpcmVjdGlvblNpemUQCCpl",
-            "CgZUYWxlbnQSCAoETm9uZRAAEgoKBlJ1bm5lchABEg0KCVN0cm9uZ01hbhAC",
-            "EggKBENvb2sQAxIOCgpUZWNobmljaWFuEAQSDAoITHVja3lCb3kQBRIOCgpU",
-            "YWxlbnRTaXplEAZCFqoCE0NvbW11bmljYXRpb24uUHJvdG9iBnByb3RvMw=="));
+            "DQoJSGFtYnVyZ2VyEBUSDQoJU3BpY2VkUG90EBYSDgoKU3BpY2VkUG90MxAX",
+            "Eg4KClNwaWNlZFBvdDQQGBIOCgpTcGljZWRQb3Q1EBkSDgoKU3BpY2VkUG90",
+            "NhAaEg0KCURpc2hTaXplMhAbEhIKDk92ZXJDb29rZWREaXNoEBwSDAoIRGFy",
+            "a0Rpc2gQHRIPCgtDb29raW5nRGlzaBAeEg0KCURpc2hTaXplMxAfKowCCghU",
+            "b29sVHlwZRINCglUb29sRW1wdHkQABIOCgpUaWdlclNob2VzEAESDQoJU3Bl",
+            "ZWRCdWZmEAISEAoMU3RyZW5ndGhCdWZmEAMSDQoJVGVsZVNjb3BlEAQSDQoJ",
+            "Q29uZGltZW50EAUSDgoKRmVydGlsaXplchAGEg8KC0JyZWFzdFBsYXRlEAcS",
+            "DQoJU3BhY2VHYXRlEAgSEgoOV2F2ZUdsdWVCb3R0bGUQCRIMCghMYW5kTWlu",
+            "ZRAKEgwKCFRyYXBUb29sEAsSDQoJRmxhc2hCb21iEAwSDwoLVGhyb3dIYW1t",
+            "ZXIQDRIHCgNCb3cQDhILCgdTdGVhbGVyEA8SDAoIVG9vbFNpemUQECphCgtU",
+            "cmlnZ2VyVHlwZRIMCghXYXZlR2x1ZRAAEggKBFRyYXAQARIICgRNaW5lEAIS",
+            "CAoEQm9tYhADEgkKBUFycm93EAQSCgoGSGFtbWVyEAUSDwoLVHJpZ2dlclNp",
+            "emUQBip7CglEaXJlY3Rpb24SCQoFUmlnaHQQABILCgdSaWdodFVwEAESBgoC",
+            "VXAQAhIKCgZMZWZ0VXAQAxIICgRMZWZ0EAQSDAoITGVmdERvd24QBRIICgRE",
+            "b3duEAYSDQoJUmlnaHREb3duEAcSEQoNRGlyZWN0aW9uU2l6ZRAIKmUKBlRh",
+            "bGVudBIICgROb25lEAASCgoGUnVubmVyEAESDQoJU3Ryb25nTWFuEAISCAoE",
+            "Q29vaxADEg4KClRlY2huaWNpYW4QBBIMCghMdWNreUJveRAFEg4KClRhbGVu",
+            "dFNpemUQBkIWqgITQ29tbXVuaWNhdGlvbi5Qcm90b2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Communication.Proto.ObjType), typeof(global::Communication.Proto.BlockType), typeof(global::Communication.Proto.DishType), typeof(global::Communication.Proto.ToolType), typeof(global::Communication.Proto.TriggerType), typeof(global::Communication.Proto.Direction), typeof(global::Communication.Proto.Talent), }, new pbr::GeneratedClrTypeInfo[] {
@@ -239,7 +239,7 @@ namespace Communication.Proto {
     /// </summary>
     [pbr::OriginalName("DarkDish")] DarkDish = 29,
     [pbr::OriginalName("CookingDish")] CookingDish = 30,
-    [pbr::OriginalName("DishSize3")] DishSize3 = 30
+    [pbr::OriginalName("DishSize3")] DishSize3 = 31,
   }
 
   /// <summary>
@@ -374,9 +374,6 @@ namespace Communication.Proto {
     ///每隔一段时间在手上生成一个道具，若手上已有道具则在身边的地面生成
     /// </summary>
     [pbr::OriginalName("LuckyBoy")] LuckyBoy = 5,
-    /// <summary>
-    /// DrunkMan
-    /// </summary>
     [pbr::OriginalName("TalentSize")] Size = 6,
   }
 
