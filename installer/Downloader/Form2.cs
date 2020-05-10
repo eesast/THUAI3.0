@@ -11,7 +11,9 @@ namespace Downloader
     {
         static List<string> SelectedNewFile = new List<string>();
         static List<string> SelectedUpdateFile = new List<string>();
-        static bool warning = false;
+        static bool warning0 = false;
+        static bool warning1 = false;
+        static bool warning2 = false;
         public 文件列表()
         {
             InitializeComponent();
@@ -57,9 +59,9 @@ namespace Downloader
         {
             foreach (TreeNode n in Nodes)
             {
-                if (n.Text != "player.cpp")
+                if (n.Text != "player.cpp" && n.Text != "server.playback" && n.Text != "ClientConfig.json")
                     n.Checked = true;
-                if (n.Text == "player.cpp")
+                if (n.Text == "player.cpp" || n.Text == "server.playback" || n.Text == "ClientConfig.json")
                     if (!flag)
                     {
                         TreeNode node = n;
@@ -199,14 +201,22 @@ namespace Downloader
         {
             if (e.Node.Text == "player.cpp" && e.Node.Checked && this.treeView2.Nodes.Find("player.cpp", true).Length != 0)
             {
-                this.label3.Text = "警告：player.cpp将被更新";
-                warning = true;
+                this.label3.Text = "警告：player.cpp将被更新"; warning0 = true;
             }
             else if (e.Node.Text == "player.cpp" && !e.Node.Checked)
             {
-                this.label3.Text = "";
-                warning = false;
+                this.label3.Text = ""; warning0 = false;
             }
+            if (e.Node.Text == "server.playback" && e.Node.Checked && this.treeView2.Nodes.Find("server.playback", true).Length != 0)
+            {
+                this.label3.Text = "警告：回放文件server.playback等将被更新"; warning1 = true;
+            }
+            else if (e.Node.Text == "server.playback" && !e.Node.Checked)
+            {
+                this.label3.Text = ""; warning1 = false;
+            }
+            if (e.Node.Text == "ClientConfig.json" && e.Node.Checked && this.treeView2.Nodes.Find("ClientConfig.json", true).Length != 0) warning2 = true;
+            else if (e.Node.Text == "ClientConfig.json" && !e.Node.Checked) warning2 = false;
             if (e.Action != TreeViewAction.Unknown)
             {
                 e.Node.ForeColor = Color.Black;
@@ -241,11 +251,25 @@ namespace Downloader
         private void button1_Click(object sender, EventArgs e)
         {
             string current = "";
-            if (warning)
+            if (warning0)
             {
                 MessageBoxButtons mes = MessageBoxButtons.OKCancel;
                 DialogResult dialogResult = MessageBox.Show("确认更新player.cpp?", "警告", mes);
                 if (dialogResult != DialogResult.OK) return;
+                else warning0 = false;
+            }
+            if (warning1)
+            {
+                MessageBoxButtons mes = MessageBoxButtons.OKCancel;
+                DialogResult dialogResult = MessageBox.Show("确认更新server.playback?", "警告", mes);
+                if (dialogResult != DialogResult.OK) return;
+            }
+            if (warning2)
+            {
+                MessageBoxButtons mes = MessageBoxButtons.OKCancel;
+                DialogResult dialogResult = MessageBox.Show("确认更新ClientConfig.json?", "警告", mes);
+                if (dialogResult != DialogResult.OK) return;
+                else warning2 = warning1 = false;
             }
             foreach (TreeNode node in this.treeView1.Nodes)
                 getFileName(node, current, true);
@@ -259,7 +283,7 @@ namespace Downloader
 
         private void button2_Click(object sender, EventArgs e)
         {
-            warning = false;
+            warning0 = false;warning1 = false;
             this.DialogResult = DialogResult.No;
             this.Close();
         }
