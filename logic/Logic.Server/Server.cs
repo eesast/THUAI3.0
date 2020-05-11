@@ -186,6 +186,31 @@ namespace Logic.Server
                                 break;
                         }
                         break;
+                    case "Move":
+                        switch (words[1])
+                        {
+                            case "Dish":
+                                var dish = WorldMap.Grid[int.Parse(words[2]), int.Parse(words[3])].GetFirstObject(typeof(Dish));
+                                if (dish != null)
+                                    dish.Position = new XYPosition(double.Parse(words[4]), double.Parse(words[5]));
+                                break;
+                            case "Tool":
+                                var tool = WorldMap.Grid[int.Parse(words[2]), int.Parse(words[3])].GetFirstObject(typeof(Tool));
+                                if (tool != null)
+                                    tool.Position = new XYPosition(double.Parse(words[4]), double.Parse(words[5]));
+                                break;
+                            case "Trigger":
+                                var trigger = WorldMap.Grid[int.Parse(words[2]), int.Parse(words[3])].GetFirstObject(typeof(Trigger));
+                                if (trigger != null)
+                                    trigger.Position = new XYPosition(double.Parse(words[4]), double.Parse(words[5]));
+                                break;
+                            case "Player":
+                                var player = WorldMap.Grid[int.Parse(words[2]), int.Parse(words[3])].GetFirstObject(typeof(Player));
+                                if (player != null)
+                                    player.Position = new XYPosition(double.Parse(words[4]), double.Parse(words[5]));
+                                break;
+                        }
+                        break;
                     case "Remove":
                         break;
                 }
