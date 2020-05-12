@@ -56,8 +56,8 @@ namespace Communication.Agent
             string[] t = ep.Split(':');
             Constants.Debug("Server endpoint: " + t);
             Server = new IPEndPoint(IPAddress.Parse(t[0]), int.Parse(t[1]));
-            server.Port = port;
-            Constants.Debug("Agent Listen Port: " + server.Port.ToString());
+                server.Port = port;
+                Constants.Debug("Agent Listen Port: " + server.Port.ToString());
             Constants.Debug("Client Token: " + (token ?? "<offline>"));
             //for (int i = 0; i < LastSpam.Length; i++)
             //    LastSpam[i] = Environment.TickCount;
@@ -68,6 +68,7 @@ namespace Communication.Agent
             myTimer.Enabled = true;
             client.OnReceive += delegate (Message message)
             {
+                Console.Write(Environment.TickCount % 10000 + ",");
                 server.Send(message.Content as Message); //向客户端转发Content
             };
             server.InternalQuit += delegate ()

@@ -187,25 +187,41 @@ namespace THUnity2D
                 }
             }
         }
+        bool canMove = false;
+        System.Threading.Semaphore canMoveSema = new System.Threading.Semaphore(0, 1);
         private System.Threading.Timer? _movingTimer;
-        protected System.Threading.Timer MovingTimer
-        {
-            get
-            {
-                if (_movingTimer == null)
-                {
-                    _movingTimer = new System.Threading.Timer(
-                        (o) =>
-                        {
-                            lock (privateLock)
-                            {
-                                Move(_velocity.angle, _velocity.length / _frameRate);
-                            }
-                        });
-                }
-                return _movingTimer;
-            }
-        }
+        //protected System.Threading.Timer MovingTimer
+        //{
+        //    get
+        //    {
+        //        if (_movingTimer == null)
+        //        {
+        //            _movingTimer = new System.Threading.Timer(
+        //                (o) =>
+        //                {
+        //                    while (true)
+        //                    {
+        //                        Console.WriteLine(this);
+        //                        canMoveSema.WaitOne();
+        //                        //System.Threading.Thread.Sleep(500);
+        //                        while (canMove)
+        //                        {
+        //                            lock (privateLock)
+        //                            {
+        //                                int begin = Environment.TickCount;
+        //                                Move(_velocity.angle, _velocity.length / _frameRate);
+        //                                int end = Environment.TickCount;
+        //                                int delta = end - begin;
+        //                                if (1 / _frameRate > delta)
+        //                                    System.Threading.Thread.Sleep((int)(1 / _frameRate - delta));
+        //                            }
+        //                        }
+        //                    }
+        //                });
+        //        }
+        //        return _movingTimer;
+        //    }
+        //}
         protected Vector _velocity = new Vector();
         protected object _velocityLock = new object();
         public Vector Velocity
@@ -213,18 +229,57 @@ namespace THUnity2D
             get => _velocity;
             set
             {
+                if (_movingTimer == null)
+                {
+                    _movingTimer = new System.Threading.Timer(
+                        (o) =>
+                        {
+                            while (true)
+                            {
+                                while (!canMove)
+                                {
+                                    //Console.WriteLine(this);
+                                    canMoveSema.WaitOne();
+                                    //System.Threading.Thread.Sleep(500);
+                                }
+                                while (canMove)
+                                {
+                                    lock (privateLock)
+                                    {
+                                        int begin = Environment.TickCount;
+                                        Move(_velocity.angle, _velocity.length / _frameRate);
+                                        int end = Environment.TickCount;
+                                        int delta = end - begin;
+                                        if (1 / _frameRate > delta)
+                                            System.Threading.Thread.Sleep((int)(1 / _frameRate - delta));
+                                    }
+                                }
+                            }
+                        }, null, 0, 0);
+                }
+
                 lock (_velocityLock)
                 {
                     if (value.length < MinSpeed)
                     {
                         _velocity = new Vector(value.angle, 0);
-                        MovingTimer.Change(-1, -1);
+                        //MovingTimer.Change(-1, -1);
+                        canMove = false;
                         return;
                     }
-                    bool isStartMovingTimer = (_velocity.length < MinSpeed) ? true : false;
+                    //bool isStartMovingTimer = (_velocity.length < MinSpeed) ? true : false;
                     this._velocity = value;
-                    if (isStartMovingTimer)
-                        MovingTimer.Change(0, (int)(1000.0 / this.FrameRate));
+                    //if (isStartMovingTimer)
+                    //{
+                        //MovingTimer.Change(0, (int)(1000.0 / this.FrameRate));
+                        canMove = true;
+                        try
+                        {
+                            canMoveSema.Release();
+                        }
+                        catch (System.Threading.SemaphoreFullException)
+                        { }
+                    //}
                 }
             }
         }
@@ -334,6 +389,7 @@ namespace THUnity2D
             ID = currentMaxID;
             currentMaxID++;
             this.Parent = parent;
+            //MovingTimer.Change(0, 0);
             Debug(this, "has been newed . ");
         }
         public GameObject(XYPosition position, GameObject? parent = null) : this(parent)
