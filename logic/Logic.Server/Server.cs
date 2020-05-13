@@ -95,7 +95,7 @@ namespace Logic.Server
                         int begin = Environment.TickCount;
                         SendMessageToAllClient();
                         int end = Environment.TickCount;
-                        Thread.Sleep(50 - (end - begin));
+                        Thread.Sleep((int)TimeIntervalInMillisecond - (end - begin));
                     }
                 });//发送消息
 

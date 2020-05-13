@@ -113,5 +113,7 @@ namespace THUnity2D
             }
             return false;
         }
+
+        public static Random Random = new Random(DateTime.Now.Millisecond);
     }
 }

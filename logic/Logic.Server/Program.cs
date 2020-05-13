@@ -86,6 +86,8 @@ namespace Logic.Server
         private static Server server;
         public static void Main(string[] args)
         {
+            System.Threading.ThreadPool.SetMinThreads(32, 32);
+
             Parser.Default.ParseArguments<AugmentOptions>(args)
                   .WithParsed<AugmentOptions>(o =>
                   {
