@@ -68,6 +68,7 @@ namespace Communication.Agent
             myTimer.Enabled = true;
             client.OnReceive += delegate (Message message)
             {
+                Console.Write(Environment.TickCount % 10000 + ",");
                 server.Send(message.Content as Message); //向客户端转发Content
             };
             server.InternalQuit += delegate ()

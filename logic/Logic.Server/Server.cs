@@ -88,8 +88,8 @@ namespace Logic.Server
             ToolRefreshTimer = new System.Threading.Timer(ToolRefresh, null,
                 0, (int)Configs("ToolRefreshTime"));
 
-            SendMessageTimer = new System.Threading.Timer(
-                (o) =>
+            System.Threading.Tasks.Task.Run(
+                () =>
                 {
                     while (true)
                     {

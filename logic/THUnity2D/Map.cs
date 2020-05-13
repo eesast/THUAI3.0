@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Text;
@@ -662,6 +663,7 @@ namespace THUnity2D
             {
                 gameObject.Trigger(new HashSet<GameObject> { childrenGameObject });
             }
+
         }
 
         public void PrintGrid()

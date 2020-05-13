@@ -141,28 +141,25 @@ namespace THUnity2D
         public double FacingDirection
         {
             get => this._facingDirection;
-            set
+            set { lock (privateLock) { this._facingDirection = value; OnDirectionChanged(new DirectionChangedEventArgs(this._facingDirection)); } }
+        }
+        public class DirectionChangedEventArgs : EventArgs
+        {
+            public readonly double facingDirection;
+            public DirectionChangedEventArgs(double facingDirection)
             {
-                int tmp = Tools.Random.Next();
-                //Debug(this, "function FacingDirection : Attempt to lock " + tmp);
-                lock (privateLock)
-                {
-                    //Debug(this, "function FacingDirection : Enter lock " + tmp);
-                    this._facingDirection = value; OnDirectionChanged(_facingDirection);
-                    //Debug(this, "function FacingDirection : Attempt to release " + tmp);
-                }
-                //Debug(this, "function FacingDirection : Release lock " + tmp);
+                this.facingDirection = facingDirection;
             }
         }
-        public delegate void DirectionChangedHandler(GameObject sender, double direction);
+        public delegate void DirectionChangedHandler(GameObject sender, DirectionChangedEventArgs e);
         public event DirectionChangedHandler? DirectionChanged; // 声明事件
-        protected virtual void OnDirectionChanged(double direction)
+        protected virtual void OnDirectionChanged(DirectionChangedEventArgs e)
         {
             lock (privateLock)
             {
                 if (DirectionChanged != null)
                 {
-                    DirectionChanged(this, direction); // 调用所有注册对象的方法
+                    DirectionChanged(this, e); // 调用所有注册对象的方法
                 }
             }
         }
@@ -197,14 +194,15 @@ namespace THUnity2D
         protected object _velocityLock = new object();
         public Vector Velocity
         {
-            get
+            get => _velocity;
+            set
             {
                 if (_movingThread == null)
                 {
                     _movingThread = new System.Threading.Thread(
                         () =>
                         {
-                            lock (privateLock)
+                            while (true)
                             {
                                 while (!canMove)
                                 {
@@ -214,11 +212,8 @@ namespace THUnity2D
                                 }
                                 while (canMove)
                                 {
-                                    int tmp = Tools.Random.Next();
-                                    //Debug(this, "function velocity : Attempt to lock " + tmp);
                                     lock (privateLock)
                                     {
-                                        //Debug(this, "function velocity : Enter lock " + tmp);
                                         //Console.Write(Environment.TickCount + ",");
                                         int begin = Environment.TickCount;
                                         Move(_velocity.angle, _velocity.length / _frameRate);
@@ -228,33 +223,26 @@ namespace THUnity2D
                                         //Console.Write(1.0 / _frameRate + ",");
                                         if (1000.0 / _frameRate > delta)
                                             System.Threading.Thread.Sleep((int)(1000.0 / _frameRate - delta));
-                                        //Debug(this, "function velocity : Attempt to release " + tmp);
                                     }
-                                    //Debug(this, "function velocity : Release lock " + tmp);
                                 }
                             }
                         });
                     _movingThread.Start();
                 }
-                return _movingTimer;
-            }
-        }
-        protected Vector _velocity = new Vector();
-        protected object _velocityLock = new object();
-        public Vector Velocity
-        {
-            get => _velocity;
-            set
-            {
                 lock (_velocityLock)
                 {
                     if (value.length < MinSpeed)
                     {
                         _velocity = new Vector(value.angle, 0);
+                        //MovingTimer.Change(-1, -1);
                         canMove = false;
                         return;
                     }
+                    //bool isStartMovingTimer = (_velocity.length < MinSpeed) ? true : false;
                     this._velocity = value;
+                    //if (isStartMovingTimer)
+                    //{
+                    //MovingTimer.Change(0, (int)(1000.0 / this.FrameRate));
                     canMove = true;
                     try
                     {
@@ -262,6 +250,7 @@ namespace THUnity2D
                     }
                     catch (System.Threading.SemaphoreFullException)
                     { }
+                    //}
                 }
             }
         }
@@ -371,6 +360,7 @@ namespace THUnity2D
             ID = currentMaxID;
             currentMaxID++;
             this.Parent = parent;
+            //MovingTimer.Change(0, 0);
             Debug(this, "has been newed . ");
         }
         public GameObject(XYPosition position, GameObject? parent = null) : this(parent)
@@ -393,11 +383,8 @@ namespace THUnity2D
                 distance = 0;
             if (distance == 0)
                 return;
-            int tmp = Tools.Random.Next();
-            //Debug(this, "function Move : Attempt to lock " + tmp);
             lock (privateLock)
             {
-                //Debug(this, "function Move : Enter lock " + tmp);
                 if (!this._movable)
                     return;
                 if ((DateTime.Now - lastMoveTime).TotalSeconds < 0.7 / _frameRate)
@@ -410,9 +397,7 @@ namespace THUnity2D
                 OnMove?.Invoke(this, angle, distance, previousPosition);
                 Debug(this, "Move result poition : " + this._position.ToString());
                 MoveComplete?.Invoke(this);
-                //Debug(this, "function Move : Attempt to release " + tmp);
             }
-            //Debug(this, "function Move : Release lock " + tmp);
         }
         //Move end
 
@@ -430,16 +415,13 @@ namespace THUnity2D
         //Bouncable
 
         //Collision
-        private object collisionLock = new object();
         public delegate void CollisionHandler(Direction collisionDirection, HashSet<GameObject>? collisionGameObjects);
         public event CollisionHandler? OnCollision;
+        private object collisionLock = new object();
         protected internal void Collide(Direction collisionDirection, HashSet<GameObject>? collisionGameObjects)
         {
-            int tmp = Tools.Random.Next();
-            //Debug(this, "function Collide : Attempt to lock " + tmp);
             lock (collisionLock)
             {
-                //Debug(this, "function Collide : Enter lock " + tmp);
                 DebugWithoutEndline(this, "Collide with : ");
                 if (collisionGameObjects != null)
                     foreach (var gameObject in collisionGameObjects)
@@ -448,25 +430,20 @@ namespace THUnity2D
                     }
                 DebugWithoutID(this, " Direction : " + collisionDirection);
                 OnCollision?.Invoke(collisionDirection, collisionGameObjects);
-                //Debug(this, "function Collide : Attempt to release " + tmp);
             }
-            //Debug(this, "function Collide : Release lock " + tmp);
         }
         //Collision
 
         //Trigger
-        private object triggerLock = new object();
         public delegate void TriggerHandler(HashSet<GameObject> triggerGameObjects);
         public event TriggerHandler? OnTrigger;
+        private object triggerLock = new object();
         protected internal void Trigger(HashSet<GameObject> triggerGameObjects)
         {
             if (triggerGameObjects == null || triggerGameObjects.Count == 0)
                 return;
-            int tmp = Tools.Random.Next();
-            //Debug(this, "function Trigger : Attempt to lock " + tmp);
             lock (triggerLock)
             {
-                //Debug(this, "function Trigger : Enter lock " + tmp);
                 DebugWithoutEndline(this, "Trigger with : ");
                 foreach (var gameObject in triggerGameObjects)
                 {
@@ -474,9 +451,7 @@ namespace THUnity2D
                 }
                 DebugWithoutID(this, "");
                 OnTrigger?.Invoke(triggerGameObjects);
-                //Debug(this, "function Trigger : Attempt to release " + tmp);
             }
-            //Debug(this, "function Trigger : Release lock " + tmp);
         }
         //Trigger
 
