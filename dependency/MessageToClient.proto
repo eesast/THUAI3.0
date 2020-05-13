@@ -121,6 +121,7 @@ message GameObject {
   int32 team = 11;
   int32 SightRange = 12;
   double MoveSpeed = 13;
+  int32 MaxThrowDistance = 14;
 }
 message MessageToClient {
   map<int64, GameObject> GameObjectList = 1;

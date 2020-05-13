@@ -524,6 +524,12 @@ class GameObject :
   ::PROTOBUF_NAMESPACE_ID::int32 sightrange() const;
   void set_sightrange(::PROTOBUF_NAMESPACE_ID::int32 value);
 
+  // int32 MaxThrowDistance = 14;
+  void clear_maxthrowdistance();
+  static const int kMaxThrowDistanceFieldNumber = 14;
+  ::PROTOBUF_NAMESPACE_ID::int32 maxthrowdistance() const;
+  void set_maxthrowdistance(::PROTOBUF_NAMESPACE_ID::int32 value);
+
   // @@protoc_insertion_point(class_scope:Protobuf.GameObject)
  private:
   class HasBitSetters;
@@ -542,6 +548,7 @@ class GameObject :
   ::PROTOBUF_NAMESPACE_ID::int32 team_;
   double movespeed_;
   ::PROTOBUF_NAMESPACE_ID::int32 sightrange_;
+  ::PROTOBUF_NAMESPACE_ID::int32 maxthrowdistance_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_MessageToClient_2eproto;
 };
@@ -995,6 +1002,20 @@ inline void GameObject::set_movespeed(double value) {
   
   movespeed_ = value;
   // @@protoc_insertion_point(field_set:Protobuf.GameObject.MoveSpeed)
+}
+
+// int32 MaxThrowDistance = 14;
+inline void GameObject::clear_maxthrowdistance() {
+  maxthrowdistance_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 GameObject::maxthrowdistance() const {
+  // @@protoc_insertion_point(field_get:Protobuf.GameObject.MaxThrowDistance)
+  return maxthrowdistance_;
+}
+inline void GameObject::set_maxthrowdistance(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  maxthrowdistance_ = value;
+  // @@protoc_insertion_point(field_set:Protobuf.GameObject.MaxThrowDistance)
 }
 
 // -------------------------------------------------------------------

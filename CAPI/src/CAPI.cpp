@@ -247,6 +247,7 @@ void CAPI::UpdateInfo(Protobuf::MessageToClient* message)
 		PlayerInfo._position.y = PlayerInfo.position.y = self_iter->second.positiony();
 		PlayerInfo.facingDirection = self_iter->second.direction();
 		PlayerInfo.moveSpeed = self_iter->second.movespeed();
+		PlayerInfo.maxThrowDistance = self_iter->second.maxthrowdistance();
 		PlayerInfo.sightRange = PlayerInfo._sightRange = self_iter->second.sightrange();
 		PlayerInfo.dish = self_iter->second.dishtype();
 		PlayerInfo.tool = self_iter->second.tooltype();
