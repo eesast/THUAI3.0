@@ -255,6 +255,7 @@ namespace THUnity2D
                         return;
                     }
                     this._velocity = value;
+<<<<<<< HEAD
                     canMove = true;
                     try
                     {
@@ -262,6 +263,19 @@ namespace THUnity2D
                     }
                     catch (System.Threading.SemaphoreFullException)
                     { }
+=======
+                    //if (isStartMovingTimer)
+                    //{
+                        //MovingTimer.Change(0, (int)(1000.0 / this.FrameRate));
+                        canMove = true;
+                        try
+                        {
+                            canMoveSema.Release();
+                        }
+                        catch (System.Threading.SemaphoreFullException)
+                        { }
+                    //}
+>>>>>>> parent of 0dc5cd5... 修复移动速度过快的bug
                 }
             }
         }
@@ -385,7 +399,7 @@ namespace THUnity2D
         public event MoveCompleteHandler? MoveComplete;
         public delegate void MoveStartHandler(GameObject sender);
         public event MoveStartHandler? MoveStart;
-        protected int lastMoveTime = 0;
+        protected DateTime lastMoveTime = DateTime.MinValue;
         public virtual void Move(double angle, double distance)
         {
             angle = CorrectAngle(angle);
@@ -400,9 +414,9 @@ namespace THUnity2D
                 //Debug(this, "function Move : Enter lock " + tmp);
                 if (!this._movable)
                     return;
-                if ((Environment.TickCount - lastMoveTime) < 800 / _frameRate)
+                if ((DateTime.Now - lastMoveTime).TotalSeconds < 0.7 / _frameRate)
                     return;
-                lastMoveTime = Environment.TickCount;
+                lastMoveTime = DateTime.Now;
                 MoveStart?.Invoke(this);
                 XYPosition previousPosition = new XYPosition(Math.Round(_position.x, 6), Math.Round(_position.y, 6));
                 _position = previousPosition + new XYPosition(distance * Math.Cos(angle), distance * Math.Sin(angle));
