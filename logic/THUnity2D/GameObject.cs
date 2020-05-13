@@ -246,12 +246,15 @@ namespace THUnity2D
                                 {
                                     lock (privateLock)
                                     {
+                                        //Console.Write(Environment.TickCount + ",");
                                         int begin = Environment.TickCount;
                                         Move(_velocity.angle, _velocity.length / _frameRate);
                                         int end = Environment.TickCount;
                                         int delta = end - begin;
-                                        if (1 / _frameRate > delta)
-                                            System.Threading.Thread.Sleep((int)(1 / _frameRate - delta));
+                                        //Console.Write(delta + ",");
+                                        //Console.Write(1.0 / _frameRate + ",");
+                                        if (1000.0 / _frameRate > delta)
+                                            System.Threading.Thread.Sleep((int)(1000.0 / _frameRate - delta));
                                     }
                                 }
                             }
@@ -271,14 +274,14 @@ namespace THUnity2D
                     this._velocity = value;
                     //if (isStartMovingTimer)
                     //{
-                        //MovingTimer.Change(0, (int)(1000.0 / this.FrameRate));
-                        canMove = true;
-                        try
-                        {
-                            canMoveSema.Release();
-                        }
-                        catch (System.Threading.SemaphoreFullException)
-                        { }
+                    //MovingTimer.Change(0, (int)(1000.0 / this.FrameRate));
+                    canMove = true;
+                    try
+                    {
+                        canMoveSema.Release();
+                    }
+                    catch (System.Threading.SemaphoreFullException)
+                    { }
                     //}
                 }
             }
@@ -404,7 +407,7 @@ namespace THUnity2D
         public event MoveCompleteHandler? MoveComplete;
         public delegate void MoveStartHandler(GameObject sender);
         public event MoveStartHandler? MoveStart;
-        protected DateTime lastMoveTime = DateTime.MinValue;
+        protected int lastMoveTime = 0;
         public virtual void Move(double angle, double distance)
         {
             angle = CorrectAngle(angle);
@@ -416,9 +419,9 @@ namespace THUnity2D
             {
                 if (!this._movable)
                     return;
-                if ((DateTime.Now - lastMoveTime).TotalSeconds < 0.7 / _frameRate)
+                if ((Environment.TickCount - lastMoveTime) < 800 / _frameRate)
                     return;
-                lastMoveTime = DateTime.Now;
+                lastMoveTime = Environment.TickCount;
                 MoveStart?.Invoke(this);
                 XYPosition previousPosition = new XYPosition(Math.Round(_position.x, 6), Math.Round(_position.y, 6));
                 _position = previousPosition + new XYPosition(distance * Math.Cos(angle), distance * Math.Sin(angle));

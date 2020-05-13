@@ -1,1 +1,1 @@
-logic\Logic.Client\bin\Release\netcoreapp3.0\Logic.Client.exe --port 30000 --debugLevel 1 --talent 1 --isPlayBack 0
+logic\Logic.Client\bin\Release\netcoreapp3.0\Logic.Client.exe --port 30000 --debugLevel 1 --talent 0 --isPlayBack 0
