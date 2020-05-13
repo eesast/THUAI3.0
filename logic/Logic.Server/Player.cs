@@ -129,6 +129,7 @@ namespace Logic.Server
                         SightRange = this.SightRange,
                         Direction = (Direction)this.FacingDirection,
                         MoveSpeed = this.MoveSpeed,
+                        MaxThrowDistance = this.MaxThrowDistance,
                         DishType = Dish,
                         ToolType = Tool,
                     });
