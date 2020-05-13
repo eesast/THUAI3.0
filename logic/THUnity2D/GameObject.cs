@@ -255,7 +255,6 @@ namespace THUnity2D
                         return;
                     }
                     this._velocity = value;
-<<<<<<< HEAD
                     canMove = true;
                     try
                     {
@@ -263,19 +262,6 @@ namespace THUnity2D
                     }
                     catch (System.Threading.SemaphoreFullException)
                     { }
-=======
-                    //if (isStartMovingTimer)
-                    //{
-                        //MovingTimer.Change(0, (int)(1000.0 / this.FrameRate));
-                        canMove = true;
-                        try
-                        {
-                            canMoveSema.Release();
-                        }
-                        catch (System.Threading.SemaphoreFullException)
-                        { }
-                    //}
->>>>>>> parent of 0dc5cd5... 修复移动速度过快的bug
                 }
             }
         }
