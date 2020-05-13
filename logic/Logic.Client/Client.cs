@@ -309,7 +309,6 @@ namespace Client
         }
 
         private object PlayBackLock = new object();
-        int i = 0;
         public void PlayBack()
         {
             Console.WriteLine("Press any key to start playback");
@@ -322,10 +321,7 @@ namespace Client
                     {
                         message = new MessageToClient();
                         if (Reader.Read(ref message))
-                        {
                             OnReceive(message);
-                            //Console.Write((++i) + ",");
-                        }
                         else
                         {
                             Console.WriteLine("PlayBack End !");
@@ -386,7 +382,12 @@ namespace Client
                 throw new Exception("Recieve Error !");
             MessageToClient msg = message as MessageToClient;
 
-            //Console.Write(Environment.TickCount % 10000 + ",");
+            //Console.WriteLine("\nRecieve :");
+            //foreach (var item in msg.GameObjectList)
+            //{
+            //    Console.Write("\t" + item.Key);
+            //}
+            //Console.WriteLine("");
 
             //自己的id小于0时为未初始化状态，此时初始化自己的id，然后发送message选择天赋
             if (this.id < 0)

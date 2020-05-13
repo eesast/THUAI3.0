@@ -87,8 +87,9 @@ namespace Logic.Server
             TaskSystem.RefreshTimer.Change(1000, (int)Configs("TaskRefreshTime"));
             ToolRefreshTimer = new System.Threading.Timer(ToolRefresh, null,
                 0, (int)Configs("ToolRefreshTime"));
-            System.Threading.Tasks.Task.Run(
-                () =>
+
+            SendMessageTimer = new System.Threading.Timer(
+                (o) =>
                 {
                     while (true)
                     {
@@ -99,7 +100,7 @@ namespace Logic.Server
                     }
                 });//发送消息
 
-            WatchInputTimer = new System.Threading.Timer(WatchInput, null, 0, 0);//此定时器只运行一次，有空再改成Task
+            WatchInputTimer = new System.Threading.Timer(WatchInput, null, 0, 0);
 
             Thread.Sleep((int)MaxRunTimeInSecond * 1000);
             PrintScore();
@@ -110,7 +111,6 @@ namespace Logic.Server
             });
             ServerCommunication.GameOver();
             Server.ServerDebug("Server stop running");
-            Console.ReadKey();
         }
 
         void ToolRefresh(object? o)
@@ -256,16 +256,10 @@ namespace Logic.Server
         }
 
         //向所有Client发送消息，按照帧率定时发送，严禁在其他地方调用此函数
-        //int lastSendTime = 0;
         protected void SendMessageToAllClient()
         {
             lock (Program.MessageToClientLock)
             {
-                //int delta = Environment.TickCount - lastSendTime;
-                //if (delta > 200)
-                //    Console.WriteLine("Stuck on send message for " + delta + " ms");
-                //lastSendTime = Environment.TickCount;
-
                 Program.ServerMessage.Message = Program.MessageToClient;
                 ServerCommunication.SendMessage(Program.ServerMessage);
                 writer.Write(Program.MessageToClient);

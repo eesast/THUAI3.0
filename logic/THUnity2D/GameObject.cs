@@ -197,15 +197,14 @@ namespace THUnity2D
         protected object _velocityLock = new object();
         public Vector Velocity
         {
-            get => _velocity;
-            set
+            get
             {
                 if (_movingThread == null)
                 {
                     _movingThread = new System.Threading.Thread(
                         () =>
                         {
-                            while (true)
+                            lock (privateLock)
                             {
                                 while (!canMove)
                                 {
@@ -237,7 +236,16 @@ namespace THUnity2D
                         });
                     _movingThread.Start();
                 }
-
+                return _movingTimer;
+            }
+        }
+        protected Vector _velocity = new Vector();
+        protected object _velocityLock = new object();
+        public Vector Velocity
+        {
+            get => _velocity;
+            set
+            {
                 lock (_velocityLock)
                 {
                     if (value.length < MinSpeed)
