@@ -24,7 +24,7 @@ namespace Communication.Proto {
     static MessageToClientReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChVNZXNzYWdlVG9DbGllbnQucHJvdG8SCFByb3RvYnVmIvoCCgpHYW1lT2Jq",
+            "ChVNZXNzYWdlVG9DbGllbnQucHJvdG8SCFByb3RvYnVmIpQDCgpHYW1lT2Jq",
             "ZWN0EhEKCVBvc2l0aW9uWBgBIAEoARIRCglQb3NpdGlvblkYAiABKAESJgoJ",
             "RGlyZWN0aW9uGAMgASgOMhMuUHJvdG9idWYuRGlyZWN0aW9uEiIKB09ialR5",
             "cGUYBCABKA4yES5Qcm90b2J1Zi5PYmpUeXBlEiYKCUJsb2NrVHlwZRgFIAEo",
@@ -33,46 +33,47 @@ namespace Communication.Proto {
             "VG9vbFR5cGUSKgoLVHJpZ2dlclR5cGUYCCABKA4yFS5Qcm90b2J1Zi5Ucmln",
             "Z2VyVHlwZRIQCghpc01vdmluZxgJIAEoCBITCgtSZWNpZXZlVGV4dBgKIAEo",
             "CRIMCgR0ZWFtGAsgASgFEhIKClNpZ2h0UmFuZ2UYDCABKAUSEQoJTW92ZVNw",
-            "ZWVkGA0gASgBIq4CCg9NZXNzYWdlVG9DbGllbnQSRQoOR2FtZU9iamVjdExp",
-            "c3QYASADKAsyLS5Qcm90b2J1Zi5NZXNzYWdlVG9DbGllbnQuR2FtZU9iamVj",
-            "dExpc3RFbnRyeRIhCgVUYXNrcxgCIAMoDjISLlByb3RvYnVmLkRpc2hUeXBl",
-            "EjUKBlNjb3JlcxgDIAMoCzIlLlByb3RvYnVmLk1lc3NhZ2VUb0NsaWVudC5T",
-            "Y29yZXNFbnRyeRpLChNHYW1lT2JqZWN0TGlzdEVudHJ5EgsKA2tleRgBIAEo",
-            "AxIjCgV2YWx1ZRgCIAEoCzIULlByb3RvYnVmLkdhbWVPYmplY3Q6AjgBGi0K",
-            "C1Njb3Jlc0VudHJ5EgsKA2tleRgBIAEoBRINCgV2YWx1ZRgCIAEoBToCOAEq",
-            "UgoHT2JqVHlwZRIKCgZQZW9wbGUQABIJCgVCbG9jaxABEggKBERpc2gQAhII",
-            "CgRUb29sEAMSCwoHVHJpZ2dlchAEEg8KC09ialR5cGVTaXplEAUqbQoJQmxv",
-            "Y2tUeXBlEggKBFdhbGwQABIJCgVUYWJsZRABEg0KCUZvb2RQb2ludBACEgoK",
-            "BkNvb2tlchADEg4KClJ1YmJpc2hCaW4QBBINCglUYXNrUG9pbnQQBRIRCg1C",
-            "bG9ja1R5cGVTaXplEAYq2AMKCERpc2hUeXBlEg0KCURpc2hFbXB0eRAAEgkK",
-            "BVdoZWF0EAESCAoEUmljZRACEgoKBlRvbWF0bxADEgcKA0VnZxAEEggKBEJl",
-            "ZWYQBRIICgRQb3JrEAYSCgoGUG90YXRvEAcSCwoHTGV0dHVjZRAIEg0KCURp",
-            "c2hTaXplMRAJEgkKBUZsb3VyEAoSCgoGTm9vZGxlEAsSCQoFQnJlYWQQDBIL",
-            "CgdLZXRjaHVwEA0SDgoKQ29va2VkUmljZRAOEhIKDlRvbWF0b0ZyaWVkRWdn",
-            "EA8SGAoUVG9tYXRvRnJpZWRFZ2dOb29kbGUQEBIOCgpCZWVmTm9vZGxlEBES",
-            "DAoIT3ZlclJpY2UQEhIMCghCYXJiZWN1ZRATEg8KC0ZyZW5jaEZyaWVzEBQS",
-            "DQoJSGFtYnVyZ2VyEBUSDQoJU3BpY2VkUG90EBYSDgoKU3BpY2VkUG90MxAX",
-            "Eg4KClNwaWNlZFBvdDQQGBIOCgpTcGljZWRQb3Q1EBkSDgoKU3BpY2VkUG90",
-            "NhAaEg0KCURpc2hTaXplMhAbEhIKDk92ZXJDb29rZWREaXNoEBwSDAoIRGFy",
-            "a0Rpc2gQHRIPCgtDb29raW5nRGlzaBAeEg0KCURpc2hTaXplMxAfKowCCghU",
-            "b29sVHlwZRINCglUb29sRW1wdHkQABIOCgpUaWdlclNob2VzEAESDQoJU3Bl",
-            "ZWRCdWZmEAISEAoMU3RyZW5ndGhCdWZmEAMSDQoJVGVsZVNjb3BlEAQSDQoJ",
-            "Q29uZGltZW50EAUSDgoKRmVydGlsaXplchAGEg8KC0JyZWFzdFBsYXRlEAcS",
-            "DQoJU3BhY2VHYXRlEAgSEgoOV2F2ZUdsdWVCb3R0bGUQCRIMCghMYW5kTWlu",
-            "ZRAKEgwKCFRyYXBUb29sEAsSDQoJRmxhc2hCb21iEAwSDwoLVGhyb3dIYW1t",
-            "ZXIQDRIHCgNCb3cQDhILCgdTdGVhbGVyEA8SDAoIVG9vbFNpemUQECphCgtU",
-            "cmlnZ2VyVHlwZRIMCghXYXZlR2x1ZRAAEggKBFRyYXAQARIICgRNaW5lEAIS",
-            "CAoEQm9tYhADEgkKBUFycm93EAQSCgoGSGFtbWVyEAUSDwoLVHJpZ2dlclNp",
-            "emUQBip7CglEaXJlY3Rpb24SCQoFUmlnaHQQABILCgdSaWdodFVwEAESBgoC",
-            "VXAQAhIKCgZMZWZ0VXAQAxIICgRMZWZ0EAQSDAoITGVmdERvd24QBRIICgRE",
-            "b3duEAYSDQoJUmlnaHREb3duEAcSEQoNRGlyZWN0aW9uU2l6ZRAIKmUKBlRh",
-            "bGVudBIICgROb25lEAASCgoGUnVubmVyEAESDQoJU3Ryb25nTWFuEAISCAoE",
-            "Q29vaxADEg4KClRlY2huaWNpYW4QBBIMCghMdWNreUJveRAFEg4KClRhbGVu",
-            "dFNpemUQBkIWqgITQ29tbXVuaWNhdGlvbi5Qcm90b2IGcHJvdG8z"));
+            "ZWVkGA0gASgBEhgKEE1heFRocm93RGlzdGFuY2UYDiABKAUirgIKD01lc3Nh",
+            "Z2VUb0NsaWVudBJFCg5HYW1lT2JqZWN0TGlzdBgBIAMoCzItLlByb3RvYnVm",
+            "Lk1lc3NhZ2VUb0NsaWVudC5HYW1lT2JqZWN0TGlzdEVudHJ5EiEKBVRhc2tz",
+            "GAIgAygOMhIuUHJvdG9idWYuRGlzaFR5cGUSNQoGU2NvcmVzGAMgAygLMiUu",
+            "UHJvdG9idWYuTWVzc2FnZVRvQ2xpZW50LlNjb3Jlc0VudHJ5GksKE0dhbWVP",
+            "YmplY3RMaXN0RW50cnkSCwoDa2V5GAEgASgDEiMKBXZhbHVlGAIgASgLMhQu",
+            "UHJvdG9idWYuR2FtZU9iamVjdDoCOAEaLQoLU2NvcmVzRW50cnkSCwoDa2V5",
+            "GAEgASgFEg0KBXZhbHVlGAIgASgFOgI4ASpSCgdPYmpUeXBlEgoKBlBlb3Bs",
+            "ZRAAEgkKBUJsb2NrEAESCAoERGlzaBACEggKBFRvb2wQAxILCgdUcmlnZ2Vy",
+            "EAQSDwoLT2JqVHlwZVNpemUQBSptCglCbG9ja1R5cGUSCAoEV2FsbBAAEgkK",
+            "BVRhYmxlEAESDQoJRm9vZFBvaW50EAISCgoGQ29va2VyEAMSDgoKUnViYmlz",
+            "aEJpbhAEEg0KCVRhc2tQb2ludBAFEhEKDUJsb2NrVHlwZVNpemUQBirYAwoI",
+            "RGlzaFR5cGUSDQoJRGlzaEVtcHR5EAASCQoFV2hlYXQQARIICgRSaWNlEAIS",
+            "CgoGVG9tYXRvEAMSBwoDRWdnEAQSCAoEQmVlZhAFEggKBFBvcmsQBhIKCgZQ",
+            "b3RhdG8QBxILCgdMZXR0dWNlEAgSDQoJRGlzaFNpemUxEAkSCQoFRmxvdXIQ",
+            "ChIKCgZOb29kbGUQCxIJCgVCcmVhZBAMEgsKB0tldGNodXAQDRIOCgpDb29r",
+            "ZWRSaWNlEA4SEgoOVG9tYXRvRnJpZWRFZ2cQDxIYChRUb21hdG9GcmllZEVn",
+            "Z05vb2RsZRAQEg4KCkJlZWZOb29kbGUQERIMCghPdmVyUmljZRASEgwKCEJh",
+            "cmJlY3VlEBMSDwoLRnJlbmNoRnJpZXMQFBINCglIYW1idXJnZXIQFRINCglT",
+            "cGljZWRQb3QQFhIOCgpTcGljZWRQb3QzEBcSDgoKU3BpY2VkUG90NBAYEg4K",
+            "ClNwaWNlZFBvdDUQGRIOCgpTcGljZWRQb3Q2EBoSDQoJRGlzaFNpemUyEBsS",
+            "EgoOT3ZlckNvb2tlZERpc2gQHBIMCghEYXJrRGlzaBAdEg8KC0Nvb2tpbmdE",
+            "aXNoEB4SDQoJRGlzaFNpemUzEB8qjAIKCFRvb2xUeXBlEg0KCVRvb2xFbXB0",
+            "eRAAEg4KClRpZ2VyU2hvZXMQARINCglTcGVlZEJ1ZmYQAhIQCgxTdHJlbmd0",
+            "aEJ1ZmYQAxINCglUZWxlU2NvcGUQBBINCglDb25kaW1lbnQQBRIOCgpGZXJ0",
+            "aWxpemVyEAYSDwoLQnJlYXN0UGxhdGUQBxINCglTcGFjZUdhdGUQCBISCg5X",
+            "YXZlR2x1ZUJvdHRsZRAJEgwKCExhbmRNaW5lEAoSDAoIVHJhcFRvb2wQCxIN",
+            "CglGbGFzaEJvbWIQDBIPCgtUaHJvd0hhbW1lchANEgcKA0JvdxAOEgsKB1N0",
+            "ZWFsZXIQDxIMCghUb29sU2l6ZRAQKmEKC1RyaWdnZXJUeXBlEgwKCFdhdmVH",
+            "bHVlEAASCAoEVHJhcBABEggKBE1pbmUQAhIICgRCb21iEAMSCQoFQXJyb3cQ",
+            "BBIKCgZIYW1tZXIQBRIPCgtUcmlnZ2VyU2l6ZRAGKnsKCURpcmVjdGlvbhIJ",
+            "CgVSaWdodBAAEgsKB1JpZ2h0VXAQARIGCgJVcBACEgoKBkxlZnRVcBADEggK",
+            "BExlZnQQBBIMCghMZWZ0RG93bhAFEggKBERvd24QBhINCglSaWdodERvd24Q",
+            "BxIRCg1EaXJlY3Rpb25TaXplEAgqZQoGVGFsZW50EggKBE5vbmUQABIKCgZS",
+            "dW5uZXIQARINCglTdHJvbmdNYW4QAhIICgRDb29rEAMSDgoKVGVjaG5pY2lh",
+            "bhAEEgwKCEx1Y2t5Qm95EAUSDgoKVGFsZW50U2l6ZRAGQhaqAhNDb21tdW5p",
+            "Y2F0aW9uLlByb3RvYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Communication.Proto.ObjType), typeof(global::Communication.Proto.BlockType), typeof(global::Communication.Proto.DishType), typeof(global::Communication.Proto.ToolType), typeof(global::Communication.Proto.TriggerType), typeof(global::Communication.Proto.Direction), typeof(global::Communication.Proto.Talent), }, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.GameObject), global::Communication.Proto.GameObject.Parser, new[]{ "PositionX", "PositionY", "Direction", "ObjType", "BlockType", "DishType", "ToolType", "TriggerType", "IsMoving", "RecieveText", "Team", "SightRange", "MoveSpeed" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.GameObject), global::Communication.Proto.GameObject.Parser, new[]{ "PositionX", "PositionY", "Direction", "ObjType", "BlockType", "DishType", "ToolType", "TriggerType", "IsMoving", "RecieveText", "Team", "SightRange", "MoveSpeed", "MaxThrowDistance" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.MessageToClient), global::Communication.Proto.MessageToClient.Parser, new[]{ "GameObjectList", "Tasks", "Scores" }, null, null, new pbr::GeneratedClrTypeInfo[] { null, null, })
           }));
     }
@@ -418,6 +419,7 @@ namespace Communication.Proto {
       team_ = other.team_;
       sightRange_ = other.sightRange_;
       moveSpeed_ = other.moveSpeed_;
+      maxThrowDistance_ = other.maxThrowDistance_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -569,6 +571,17 @@ namespace Communication.Proto {
       }
     }
 
+    /// <summary>Field number for the "MaxThrowDistance" field.</summary>
+    public const int MaxThrowDistanceFieldNumber = 14;
+    private int maxThrowDistance_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int MaxThrowDistance {
+      get { return maxThrowDistance_; }
+      set {
+        maxThrowDistance_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as GameObject);
@@ -595,6 +608,7 @@ namespace Communication.Proto {
       if (Team != other.Team) return false;
       if (SightRange != other.SightRange) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(MoveSpeed, other.MoveSpeed)) return false;
+      if (MaxThrowDistance != other.MaxThrowDistance) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -614,6 +628,7 @@ namespace Communication.Proto {
       if (Team != 0) hash ^= Team.GetHashCode();
       if (SightRange != 0) hash ^= SightRange.GetHashCode();
       if (MoveSpeed != 0D) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(MoveSpeed);
+      if (MaxThrowDistance != 0) hash ^= MaxThrowDistance.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -679,6 +694,10 @@ namespace Communication.Proto {
         output.WriteRawTag(105);
         output.WriteDouble(MoveSpeed);
       }
+      if (MaxThrowDistance != 0) {
+        output.WriteRawTag(112);
+        output.WriteInt32(MaxThrowDistance);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -725,6 +744,9 @@ namespace Communication.Proto {
       }
       if (MoveSpeed != 0D) {
         size += 1 + 8;
+      }
+      if (MaxThrowDistance != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(MaxThrowDistance);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -775,6 +797,9 @@ namespace Communication.Proto {
       }
       if (other.MoveSpeed != 0D) {
         MoveSpeed = other.MoveSpeed;
+      }
+      if (other.MaxThrowDistance != 0) {
+        MaxThrowDistance = other.MaxThrowDistance;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -837,6 +862,10 @@ namespace Communication.Proto {
           }
           case 105: {
             MoveSpeed = input.ReadDouble();
+            break;
+          }
+          case 112: {
+            MaxThrowDistance = input.ReadInt32();
             break;
           }
         }

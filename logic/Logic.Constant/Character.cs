@@ -11,15 +11,12 @@ namespace Logic.Constant
     public class Character : THUnity2D.GameObject
     {
         protected Tuple<int, int> _communicationID = new Tuple<int, int>(0, 0);//第一个数表示Agent，第二个数表示Client
-        //public int team = 0;
-        //protected double GlueExtraMoveSpeed = 0;
-        //protected double SpeedBuffExtraMoveSpeed = 0;
         protected double _moveSpeed = (double)Configs("Player", "InitMoveSpeed");
         protected double MoveSpeed { get => _moveSpeed; }
         protected new THUnity2D.Direction _facingDirection;
         public new THUnity2D.Direction FacingDirection { get => _facingDirection; }
-        protected int StrenthBuffThrowDistance = 0;
-        protected int MaxThrowDistance = (int)Configs("Player", "InitThrowDistance");
+        //protected int StrenthBuffThrowDistance = 0;
+        protected int _maxThrowDistance = (int)Configs("Player", "InitThrowDistance");
         protected int _sightRange = (int)Configs("Player", "InitSightRange");
         public int SightRange { get => _sightRange; }
         protected Talent _talent = Talent.None;

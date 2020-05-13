@@ -94,6 +94,12 @@ namespace Logic.Server
             private set => Program.MessageToClient.GameObjectList[this.ID].MoveSpeed = _moveSpeed = value;
 
         }
+        protected int MaxThrowDistance
+        {
+            get => _maxThrowDistance;
+            private set => Program.MessageToClient.GameObjectList[this.ID].MaxThrowDistance = _maxThrowDistance = value;
+
+        }
         protected new THUnity2D.Direction FacingDirection
         {
             get => _facingDirection;
@@ -107,7 +113,7 @@ namespace Logic.Server
             MoveStopTimer = new System.Threading.Timer((i) => { Velocity = new Vector(Velocity.angle, 0); status = CommandType.Stop; Program.MessageToClient.GameObjectList[this.ID].IsMoving = false; });
             StunTimer = new System.Threading.Timer((i) => { _isStun = 0; });
             SpeedBuffTimer = new System.Threading.Timer((i) => { MoveSpeed -= (double)Configs("Tool", "SpeedBuff", "ExtraMoveSpeed"); });
-            StrengthBuffTimer = new System.Threading.Timer((i) => { StrenthBuffThrowDistance = 0; });
+            StrengthBuffTimer = new System.Threading.Timer((i) => { MaxThrowDistance -= (int)Configs("Tool", "StrengthBuff", "ExtraThrowDistance"); });
             PositionChangeComplete += new PositionChangeCompleteHandler(ChangePositionInMessage);
 
             lock (Program.MessageToClientLock)
@@ -323,9 +329,9 @@ namespace Logic.Server
         }
         public override void Put(double distance, double angle, bool isThrowDish)
         {
-            distance = distance < (MaxThrowDistance + StrenthBuffThrowDistance) ? distance : (MaxThrowDistance + StrenthBuffThrowDistance);
+            distance = distance < MaxThrowDistance ? distance : MaxThrowDistance;
             int dueTime = (int)((double)1000 * distance / (double)Configs("ItemMoveSpeed")) - (int)HalfTimeIntervalInMillisecond;//注意到如果直接用 distance / ItemMoveSpeed 会在最后多走一步，所以必须做一些数值处理
-        
+
             Obj ItemToThrow;
             if (Dish != DishType.DishEmpty && isThrowDish)
             {
@@ -452,7 +458,7 @@ namespace Logic.Server
                 case ToolType.StrengthBuff:
                     {
                         Server.ServerDebug(this + " use Tool " + Tool);
-                        StrenthBuffThrowDistance = (int)Configs("Tool", "StrengthBuff", "ExtraThrowDistance");
+                        MaxThrowDistance += (int)Configs("Tool", "StrengthBuff", "ExtraThrowDistance");
                         if (Talent != Talent.Technician) StrengthBuffTimer.Change((int)Configs("Tool", "StrengthBuff", "Duration"), 0);
                         else StrengthBuffTimer.Change((int)Configs("Talent", "Technician", "StrengthBuff", "Duration"), 0);
                         Tool = ToolType.ToolEmpty;

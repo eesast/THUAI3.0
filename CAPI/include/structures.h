@@ -136,6 +136,7 @@ public:
 	int team = 0;											//玩家所属队伍
 	Direction facingDirection;								//玩家当前面朝的方向
 	double moveSpeed;										//玩家当前移动速度
+	int maxThrowDistance;									//玩家最远扔东西距离
 	int sightRange = Constant::Player::InitSightRange;		//玩家的视野半径
 	Talent talent = initTalent;								//玩家的天赋
 	int score = 0;											//玩家所在队伍当前的分数

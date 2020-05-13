@@ -116,6 +116,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_MessageToClient_2eproto::offse
   PROTOBUF_FIELD_OFFSET(::Protobuf::GameObject, team_),
   PROTOBUF_FIELD_OFFSET(::Protobuf::GameObject, sightrange_),
   PROTOBUF_FIELD_OFFSET(::Protobuf::GameObject, movespeed_),
+  PROTOBUF_FIELD_OFFSET(::Protobuf::GameObject, maxthrowdistance_),
   PROTOBUF_FIELD_OFFSET(::Protobuf::MessageToClient_GameObjectListEntry_DoNotUse, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::Protobuf::MessageToClient_GameObjectListEntry_DoNotUse, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -145,9 +146,9 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_MessageToClient_2eproto::offse
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::Protobuf::GameObject)},
-  { 18, 25, sizeof(::Protobuf::MessageToClient_GameObjectListEntry_DoNotUse)},
-  { 27, 34, sizeof(::Protobuf::MessageToClient_ScoresEntry_DoNotUse)},
-  { 36, -1, sizeof(::Protobuf::MessageToClient)},
+  { 19, 26, sizeof(::Protobuf::MessageToClient_GameObjectListEntry_DoNotUse)},
+  { 28, 35, sizeof(::Protobuf::MessageToClient_ScoresEntry_DoNotUse)},
+  { 37, -1, sizeof(::Protobuf::MessageToClient)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -158,7 +159,7 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 };
 
 const char descriptor_table_protodef_MessageToClient_2eproto[] =
-  "\n\025MessageToClient.proto\022\010Protobuf\"\372\002\n\nGa"
+  "\n\025MessageToClient.proto\022\010Protobuf\"\224\003\n\nGa"
   "meObject\022\021\n\tPositionX\030\001 \001(\001\022\021\n\tPositionY"
   "\030\002 \001(\001\022&\n\tDirection\030\003 \001(\0162\023.Protobuf.Dir"
   "ection\022\"\n\007ObjType\030\004 \001(\0162\021.Protobuf.ObjTy"
@@ -168,47 +169,48 @@ const char descriptor_table_protodef_MessageToClient_2eproto[] =
   "\n\013TriggerType\030\010 \001(\0162\025.Protobuf.TriggerTy"
   "pe\022\020\n\010isMoving\030\t \001(\010\022\023\n\013RecieveText\030\n \001("
   "\t\022\014\n\004team\030\013 \001(\005\022\022\n\nSightRange\030\014 \001(\005\022\021\n\tM"
-  "oveSpeed\030\r \001(\001\"\256\002\n\017MessageToClient\022E\n\016Ga"
-  "meObjectList\030\001 \003(\0132-.Protobuf.MessageToC"
-  "lient.GameObjectListEntry\022!\n\005Tasks\030\002 \003(\016"
-  "2\022.Protobuf.DishType\0225\n\006Scores\030\003 \003(\0132%.P"
-  "rotobuf.MessageToClient.ScoresEntry\032K\n\023G"
-  "ameObjectListEntry\022\013\n\003key\030\001 \001(\003\022#\n\005value"
-  "\030\002 \001(\0132\024.Protobuf.GameObject:\0028\001\032-\n\013Scor"
-  "esEntry\022\013\n\003key\030\001 \001(\005\022\r\n\005value\030\002 \001(\005:\0028\001*"
-  "R\n\007ObjType\022\n\n\006People\020\000\022\t\n\005Block\020\001\022\010\n\004Dis"
-  "h\020\002\022\010\n\004Tool\020\003\022\013\n\007Trigger\020\004\022\017\n\013ObjTypeSiz"
-  "e\020\005*m\n\tBlockType\022\010\n\004Wall\020\000\022\t\n\005Table\020\001\022\r\n"
-  "\tFoodPoint\020\002\022\n\n\006Cooker\020\003\022\016\n\nRubbishBin\020\004"
-  "\022\r\n\tTaskPoint\020\005\022\021\n\rBlockTypeSize\020\006*\330\003\n\010D"
-  "ishType\022\r\n\tDishEmpty\020\000\022\t\n\005Wheat\020\001\022\010\n\004Ric"
-  "e\020\002\022\n\n\006Tomato\020\003\022\007\n\003Egg\020\004\022\010\n\004Beef\020\005\022\010\n\004Po"
-  "rk\020\006\022\n\n\006Potato\020\007\022\013\n\007Lettuce\020\010\022\r\n\tDishSiz"
-  "e1\020\t\022\t\n\005Flour\020\n\022\n\n\006Noodle\020\013\022\t\n\005Bread\020\014\022\013"
-  "\n\007Ketchup\020\r\022\016\n\nCookedRice\020\016\022\022\n\016TomatoFri"
-  "edEgg\020\017\022\030\n\024TomatoFriedEggNoodle\020\020\022\016\n\nBee"
-  "fNoodle\020\021\022\014\n\010OverRice\020\022\022\014\n\010Barbecue\020\023\022\017\n"
-  "\013FrenchFries\020\024\022\r\n\tHamburger\020\025\022\r\n\tSpicedP"
-  "ot\020\026\022\016\n\nSpicedPot3\020\027\022\016\n\nSpicedPot4\020\030\022\016\n\n"
-  "SpicedPot5\020\031\022\016\n\nSpicedPot6\020\032\022\r\n\tDishSize"
-  "2\020\033\022\022\n\016OverCookedDish\020\034\022\014\n\010DarkDish\020\035\022\017\n"
-  "\013CookingDish\020\036\022\r\n\tDishSize3\020\037*\214\002\n\010ToolTy"
-  "pe\022\r\n\tToolEmpty\020\000\022\016\n\nTigerShoes\020\001\022\r\n\tSpe"
-  "edBuff\020\002\022\020\n\014StrengthBuff\020\003\022\r\n\tTeleScope\020"
-  "\004\022\r\n\tCondiment\020\005\022\016\n\nFertilizer\020\006\022\017\n\013Brea"
-  "stPlate\020\007\022\r\n\tSpaceGate\020\010\022\022\n\016WaveGlueBott"
-  "le\020\t\022\014\n\010LandMine\020\n\022\014\n\010TrapTool\020\013\022\r\n\tFlas"
-  "hBomb\020\014\022\017\n\013ThrowHammer\020\r\022\007\n\003Bow\020\016\022\013\n\007Ste"
-  "aler\020\017\022\014\n\010ToolSize\020\020*a\n\013TriggerType\022\014\n\010W"
-  "aveGlue\020\000\022\010\n\004Trap\020\001\022\010\n\004Mine\020\002\022\010\n\004Bomb\020\003\022"
-  "\t\n\005Arrow\020\004\022\n\n\006Hammer\020\005\022\017\n\013TriggerSize\020\006*"
-  "{\n\tDirection\022\t\n\005Right\020\000\022\013\n\007RightUp\020\001\022\006\n\002"
-  "Up\020\002\022\n\n\006LeftUp\020\003\022\010\n\004Left\020\004\022\014\n\010LeftDown\020\005"
-  "\022\010\n\004Down\020\006\022\r\n\tRightDown\020\007\022\021\n\rDirectionSi"
-  "ze\020\010*e\n\006Talent\022\010\n\004None\020\000\022\n\n\006Runner\020\001\022\r\n\t"
-  "StrongMan\020\002\022\010\n\004Cook\020\003\022\016\n\nTechnician\020\004\022\014\n"
-  "\010LuckyBoy\020\005\022\016\n\nTalentSize\020\006B\026\252\002\023Communic"
-  "ation.Protob\006proto3"
+  "oveSpeed\030\r \001(\001\022\030\n\020MaxThrowDistance\030\016 \001(\005"
+  "\"\256\002\n\017MessageToClient\022E\n\016GameObjectList\030\001"
+  " \003(\0132-.Protobuf.MessageToClient.GameObje"
+  "ctListEntry\022!\n\005Tasks\030\002 \003(\0162\022.Protobuf.Di"
+  "shType\0225\n\006Scores\030\003 \003(\0132%.Protobuf.Messag"
+  "eToClient.ScoresEntry\032K\n\023GameObjectListE"
+  "ntry\022\013\n\003key\030\001 \001(\003\022#\n\005value\030\002 \001(\0132\024.Proto"
+  "buf.GameObject:\0028\001\032-\n\013ScoresEntry\022\013\n\003key"
+  "\030\001 \001(\005\022\r\n\005value\030\002 \001(\005:\0028\001*R\n\007ObjType\022\n\n\006"
+  "People\020\000\022\t\n\005Block\020\001\022\010\n\004Dish\020\002\022\010\n\004Tool\020\003\022"
+  "\013\n\007Trigger\020\004\022\017\n\013ObjTypeSize\020\005*m\n\tBlockTy"
+  "pe\022\010\n\004Wall\020\000\022\t\n\005Table\020\001\022\r\n\tFoodPoint\020\002\022\n"
+  "\n\006Cooker\020\003\022\016\n\nRubbishBin\020\004\022\r\n\tTaskPoint\020"
+  "\005\022\021\n\rBlockTypeSize\020\006*\330\003\n\010DishType\022\r\n\tDis"
+  "hEmpty\020\000\022\t\n\005Wheat\020\001\022\010\n\004Rice\020\002\022\n\n\006Tomato\020"
+  "\003\022\007\n\003Egg\020\004\022\010\n\004Beef\020\005\022\010\n\004Pork\020\006\022\n\n\006Potato"
+  "\020\007\022\013\n\007Lettuce\020\010\022\r\n\tDishSize1\020\t\022\t\n\005Flour\020"
+  "\n\022\n\n\006Noodle\020\013\022\t\n\005Bread\020\014\022\013\n\007Ketchup\020\r\022\016\n"
+  "\nCookedRice\020\016\022\022\n\016TomatoFriedEgg\020\017\022\030\n\024Tom"
+  "atoFriedEggNoodle\020\020\022\016\n\nBeefNoodle\020\021\022\014\n\010O"
+  "verRice\020\022\022\014\n\010Barbecue\020\023\022\017\n\013FrenchFries\020\024"
+  "\022\r\n\tHamburger\020\025\022\r\n\tSpicedPot\020\026\022\016\n\nSpiced"
+  "Pot3\020\027\022\016\n\nSpicedPot4\020\030\022\016\n\nSpicedPot5\020\031\022\016"
+  "\n\nSpicedPot6\020\032\022\r\n\tDishSize2\020\033\022\022\n\016OverCoo"
+  "kedDish\020\034\022\014\n\010DarkDish\020\035\022\017\n\013CookingDish\020\036"
+  "\022\r\n\tDishSize3\020\037*\214\002\n\010ToolType\022\r\n\tToolEmpt"
+  "y\020\000\022\016\n\nTigerShoes\020\001\022\r\n\tSpeedBuff\020\002\022\020\n\014St"
+  "rengthBuff\020\003\022\r\n\tTeleScope\020\004\022\r\n\tCondiment"
+  "\020\005\022\016\n\nFertilizer\020\006\022\017\n\013BreastPlate\020\007\022\r\n\tS"
+  "paceGate\020\010\022\022\n\016WaveGlueBottle\020\t\022\014\n\010LandMi"
+  "ne\020\n\022\014\n\010TrapTool\020\013\022\r\n\tFlashBomb\020\014\022\017\n\013Thr"
+  "owHammer\020\r\022\007\n\003Bow\020\016\022\013\n\007Stealer\020\017\022\014\n\010Tool"
+  "Size\020\020*a\n\013TriggerType\022\014\n\010WaveGlue\020\000\022\010\n\004T"
+  "rap\020\001\022\010\n\004Mine\020\002\022\010\n\004Bomb\020\003\022\t\n\005Arrow\020\004\022\n\n\006"
+  "Hammer\020\005\022\017\n\013TriggerSize\020\006*{\n\tDirection\022\t"
+  "\n\005Right\020\000\022\013\n\007RightUp\020\001\022\006\n\002Up\020\002\022\n\n\006LeftUp"
+  "\020\003\022\010\n\004Left\020\004\022\014\n\010LeftDown\020\005\022\010\n\004Down\020\006\022\r\n\t"
+  "RightDown\020\007\022\021\n\rDirectionSize\020\010*e\n\006Talent"
+  "\022\010\n\004None\020\000\022\n\n\006Runner\020\001\022\r\n\tStrongMan\020\002\022\010\n"
+  "\004Cook\020\003\022\016\n\nTechnician\020\004\022\014\n\010LuckyBoy\020\005\022\016\n"
+  "\nTalentSize\020\006B\026\252\002\023Communication.Protob\006p"
+  "roto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_MessageToClient_2eproto_deps[1] = {
 };
@@ -221,7 +223,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_Mes
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_MessageToClient_2eproto_once;
 static bool descriptor_table_MessageToClient_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_MessageToClient_2eproto = {
-  &descriptor_table_MessageToClient_2eproto_initialized, descriptor_table_protodef_MessageToClient_2eproto, "MessageToClient.proto", 2019,
+  &descriptor_table_MessageToClient_2eproto_initialized, descriptor_table_protodef_MessageToClient_2eproto, "MessageToClient.proto", 2045,
   &descriptor_table_MessageToClient_2eproto_once, descriptor_table_MessageToClient_2eproto_sccs, descriptor_table_MessageToClient_2eproto_deps, 4, 0,
   schemas, file_default_instances, TableStruct_MessageToClient_2eproto::offsets,
   file_level_metadata_MessageToClient_2eproto, 4, file_level_enum_descriptors_MessageToClient_2eproto, file_level_service_descriptors_MessageToClient_2eproto,
@@ -422,6 +424,7 @@ const int GameObject::kRecieveTextFieldNumber;
 const int GameObject::kTeamFieldNumber;
 const int GameObject::kSightRangeFieldNumber;
 const int GameObject::kMoveSpeedFieldNumber;
+const int GameObject::kMaxThrowDistanceFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 GameObject::GameObject()
@@ -438,8 +441,8 @@ GameObject::GameObject(const GameObject& from)
     recievetext_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.recievetext_);
   }
   ::memcpy(&positionx_, &from.positionx_,
-    static_cast<size_t>(reinterpret_cast<char*>(&sightrange_) -
-    reinterpret_cast<char*>(&positionx_)) + sizeof(sightrange_));
+    static_cast<size_t>(reinterpret_cast<char*>(&maxthrowdistance_) -
+    reinterpret_cast<char*>(&positionx_)) + sizeof(maxthrowdistance_));
   // @@protoc_insertion_point(copy_constructor:Protobuf.GameObject)
 }
 
@@ -447,8 +450,8 @@ void GameObject::SharedCtor() {
   ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_GameObject_MessageToClient_2eproto.base);
   recievetext_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   ::memset(&positionx_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&sightrange_) -
-      reinterpret_cast<char*>(&positionx_)) + sizeof(sightrange_));
+      reinterpret_cast<char*>(&maxthrowdistance_) -
+      reinterpret_cast<char*>(&positionx_)) + sizeof(maxthrowdistance_));
 }
 
 GameObject::~GameObject() {
@@ -477,8 +480,8 @@ void GameObject::Clear() {
 
   recievetext_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   ::memset(&positionx_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&sightrange_) -
-      reinterpret_cast<char*>(&positionx_)) + sizeof(sightrange_));
+      reinterpret_cast<char*>(&maxthrowdistance_) -
+      reinterpret_cast<char*>(&positionx_)) + sizeof(maxthrowdistance_));
   _internal_metadata_.Clear();
 }
 
@@ -585,6 +588,13 @@ const char* GameObject::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 105)) {
           movespeed_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
           ptr += sizeof(double);
+        } else goto handle_unusual;
+        continue;
+      // int32 MaxThrowDistance = 14;
+      case 14:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 112)) {
+          maxthrowdistance_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
         } else goto handle_unusual;
         continue;
       default: {
@@ -794,6 +804,19 @@ bool GameObject::MergePartialFromCodedStream(
         break;
       }
 
+      // int32 MaxThrowDistance = 14;
+      case 14: {
+        if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (112 & 0xFF)) {
+
+          DO_((::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadPrimitive<
+                   ::PROTOBUF_NAMESPACE_ID::int32, ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_INT32>(
+                 input, &maxthrowdistance_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -897,6 +920,11 @@ void GameObject::SerializeWithCachedSizes(
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDouble(13, this->movespeed(), output);
   }
 
+  // int32 MaxThrowDistance = 14;
+  if (this->maxthrowdistance() != 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32(14, this->maxthrowdistance(), output);
+  }
+
   if (_internal_metadata_.have_unknown_fields()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SerializeUnknownFields(
         _internal_metadata_.unknown_fields(), output);
@@ -985,6 +1013,11 @@ void GameObject::SerializeWithCachedSizes(
   // double MoveSpeed = 13;
   if (!(this->movespeed() <= 0 && this->movespeed() >= 0)) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(13, this->movespeed(), target);
+  }
+
+  // int32 MaxThrowDistance = 14;
+  if (this->maxthrowdistance() != 0) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(14, this->maxthrowdistance(), target);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -1085,6 +1118,13 @@ size_t GameObject::ByteSizeLong() const {
         this->sightrange());
   }
 
+  // int32 MaxThrowDistance = 14;
+  if (this->maxthrowdistance() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->maxthrowdistance());
+  }
+
   int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
   SetCachedSize(cached_size);
   return total_size;
@@ -1152,6 +1192,9 @@ void GameObject::MergeFrom(const GameObject& from) {
   if (from.sightrange() != 0) {
     set_sightrange(from.sightrange());
   }
+  if (from.maxthrowdistance() != 0) {
+    set_maxthrowdistance(from.maxthrowdistance());
+  }
 }
 
 void GameObject::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
@@ -1193,6 +1236,7 @@ void GameObject::InternalSwap(GameObject* other) {
   swap(team_, other->team_);
   swap(movespeed_, other->movespeed_);
   swap(sightrange_, other->sightrange_);
+  swap(maxthrowdistance_, other->maxthrowdistance_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata GameObject::GetMetadata() const {
