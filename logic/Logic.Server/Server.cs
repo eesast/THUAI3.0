@@ -88,11 +88,17 @@ namespace Logic.Server
             ToolRefreshTimer = new System.Threading.Timer(ToolRefresh, null,
                 0, (int)Configs("ToolRefreshTime"));
 
-            SendMessageTimer = new System.Threading.Timer(
-                (o) =>
+            System.Threading.Tasks.Task.Run(
+                () =>
                 {
-                    SendMessageToAllClient();
-                }, null, TimeSpan.FromSeconds(TimeInterval), TimeSpan.FromSeconds(TimeInterval));
+                    while (true)
+                    {
+                        int begin = Environment.TickCount;
+                        SendMessageToAllClient();
+                        int end = Environment.TickCount;
+                        Thread.Sleep((int)TimeIntervalInMillisecond - (end - begin));
+                    }
+                });//发送消息
 
             WatchInputTimer = new System.Threading.Timer(WatchInput, null, 0, 0);
 
@@ -183,6 +189,31 @@ namespace Logic.Server
                                 if (triggertype >= TriggerType.TriggerSize)
                                     return;
                                 new Trigger(double.Parse(words[3]), double.Parse(words[4]), triggertype, -1, Talent.None).Parent = MapInfo.WorldMap;
+                                break;
+                        }
+                        break;
+                    case "Move":
+                        switch (words[1])
+                        {
+                            case "Dish":
+                                var dish = WorldMap.Grid[int.Parse(words[2]), int.Parse(words[3])].GetFirstObject(typeof(Dish));
+                                if (dish != null)
+                                    dish.Position = new XYPosition(double.Parse(words[4]), double.Parse(words[5]));
+                                break;
+                            case "Tool":
+                                var tool = WorldMap.Grid[int.Parse(words[2]), int.Parse(words[3])].GetFirstObject(typeof(Tool));
+                                if (tool != null)
+                                    tool.Position = new XYPosition(double.Parse(words[4]), double.Parse(words[5]));
+                                break;
+                            case "Trigger":
+                                var trigger = WorldMap.Grid[int.Parse(words[2]), int.Parse(words[3])].GetFirstObject(typeof(Trigger));
+                                if (trigger != null)
+                                    trigger.Position = new XYPosition(double.Parse(words[4]), double.Parse(words[5]));
+                                break;
+                            case "Player":
+                                var player = WorldMap.Grid[int.Parse(words[2]), int.Parse(words[3])].GetFirstObject(typeof(Player));
+                                if (player != null)
+                                    player.Position = new XYPosition(double.Parse(words[4]), double.Parse(words[5]));
                                 break;
                         }
                         break;

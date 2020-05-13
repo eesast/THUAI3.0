@@ -4,7 +4,7 @@
 #include <iostream>
 #include "OS_related.h"
 using namespace THUAI3;
-Protobuf::Talent initTalent = Protobuf::Talent::None;//指定人物天赋。选手代码必须定义此变量，否则报错
+Protobuf::Talent initTalent = Protobuf::Talent::Runner;//指定人物天赋。选手代码必须定义此变量，否则报错
 void play()
 {
 	char c;
@@ -18,7 +18,6 @@ void play()
 		int moveDistance = 0;
 		std::cout << endl << "Please Input your move distance" << endl;
 		cin >> moveDistance;
-		cout << moveDistance / PlayerInfo.moveSpeed * 1000 << endl;
 		move(Protobuf::Direction::Right, moveDistance / PlayerInfo.moveSpeed * 1000);
 	}break;
 	case 'e':
@@ -131,9 +130,8 @@ void play()
 		cin.clear();
 		cin.ignore();
 		cin >> x >> y;
-		list<Obj> l = MapInfo::get_mapcell(PlayerInfo.position.x, PlayerInfo.position.y);
-		if (l.empty()) cout << "empty" << endl;
-		std::cout << "objs in map[" << PlayerInfo.position.x << "][" << PlayerInfo.position.y << "] :" << endl;
+		list<Obj> l = MapInfo::get_mapcell(x, y);
+		std::cout << "objs in map[" << x << "][" << y << "] :" << endl;
 		for (list<Obj>::iterator i = l.begin(); i != l.end(); i++)
 		{
 			std::cout << "\tblocktype : " << i->objType << endl;
@@ -152,6 +150,7 @@ void play()
 	default:
 		break;
 	}
+
 
 	std::cout << "Game Time : " << THUAI3::getGameTime() << endl;
 	/*  玩家在这里写代码  */
