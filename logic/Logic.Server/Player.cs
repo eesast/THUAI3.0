@@ -521,6 +521,7 @@ namespace Logic.Server
                         if (!WorldMap.XYPositionIsLegal(aim, 1, 1, Layer))
                         { Server.ServerDebug("物品使用失败（无效的传送门地点）！"); break; }
                         Server.ServerDebug(this + " use Tool " + Tool);
+                        this.Position = aim;
                         Tool = ToolType.ToolEmpty;
                     }
                     break;
