@@ -242,7 +242,6 @@ void CAPI::UpdateInfo(Protobuf::MessageToClient* message)
 	google::protobuf::Map<int64_t, Protobuf::GameObject>::const_iterator self_iter = message->gameobjectlist().find(PlayerInfo._id);
 	if (self_iter != message->gameobjectlist().end())
 	{
-
 		PlayerInfo._position.x = PlayerInfo.position.x = self_iter->second.positionx();
 		PlayerInfo._position.y = PlayerInfo.position.y = self_iter->second.positiony();
 		PlayerInfo.facingDirection = self_iter->second.direction();
