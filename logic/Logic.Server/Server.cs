@@ -100,7 +100,8 @@ namespace Logic.Server
                         if (delta > 0)
                             Thread.Sleep(delta);
                     }
-                }).Start();//发送消息
+                })
+            { IsBackground = true }.Start();//发送消息
 
             WatchInputTimer = new System.Threading.Timer(WatchInput, null, 0, 0);
 
@@ -262,7 +263,7 @@ namespace Logic.Server
         {
             lock (Program.MessageToClientLock)
             {
-                //Console.Write("S;");
+                //Console.Write("Sent;");
                 Program.ServerMessage.Message = Program.MessageToClient;
                 ServerCommunication.SendMessage(Program.ServerMessage);
                 writer.Write(Program.MessageToClient);

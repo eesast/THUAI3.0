@@ -104,7 +104,7 @@ std::list<Obj> MapInfo::get_mapcell(const int x, const int y)
 	{
 		return list<Obj>();
 	}
-	if (abs(x - PlayerInfo._position.x) > PlayerInfo._sightRange || abs(y - PlayerInfo._position.y) > PlayerInfo._sightRange)
+	if (abs(x - (int)PlayerInfo._position.x) > PlayerInfo._sightRange || abs(y - (int)PlayerInfo._position.y) > PlayerInfo._sightRange)
 	{
 		return list<Obj>();
 	}
