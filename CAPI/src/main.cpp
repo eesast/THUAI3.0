@@ -43,9 +43,9 @@ int main(int argc, char* argv[])
 	int agent_port = atoi(argv[2]);
 	API.Initialize();
 	API.ConnectServer(agent_ip, agent_port);
-	pthread_t pt;
-	pthread_create(&pt, NULL, Ping, NULL);
-	pthread_detach(pt);
+	// pthread_t pt;
+	// pthread_create(&pt, NULL, Ping, NULL);
+	// pthread_detach(pt);
 	string message = "Connected!";
 
 	DebugFunc = DebugSilently;

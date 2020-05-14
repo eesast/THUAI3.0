@@ -68,7 +68,7 @@ namespace Communication.Agent
             myTimer.Enabled = true;
             client.OnReceive += delegate (Message message)
             {
-                Console.Write(Environment.TickCount % 10000 + ",");
+                Console.Write("S:" + Environment.TickCount % 10000 + ",");
                 server.Send(message.Content as Message); //向客户端转发Content
             };
             server.InternalQuit += delegate ()
@@ -97,7 +97,7 @@ namespace Communication.Agent
                 //}
                 //else
                 //    Constants.Debug("Ignoring PingPacket");
-
+                Console.Write("C:" + Environment.TickCount % 10000 + ",");
                 client.Send(message.Content as Message);
             };
 

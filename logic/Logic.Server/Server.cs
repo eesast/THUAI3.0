@@ -88,7 +88,7 @@ namespace Logic.Server
             ToolRefreshTimer = new System.Threading.Timer(ToolRefresh, null,
                 0, (int)Configs("ToolRefreshTime"));
 
-            System.Threading.Tasks.Task.Run(
+            new System.Threading.Thread(
                 () =>
                 {
                     while (true)
@@ -96,9 +96,11 @@ namespace Logic.Server
                         int begin = Environment.TickCount;
                         SendMessageToAllClient();
                         int end = Environment.TickCount;
-                        Thread.Sleep((int)TimeIntervalInMillisecond - (end - begin));
+                        int delta = (int)TimeIntervalInMillisecond - (end - begin);
+                        if (delta > 0)
+                            Thread.Sleep(delta);
                     }
-                });//发送消息
+                }).Start();//发送消息
 
             WatchInputTimer = new System.Threading.Timer(WatchInput, null, 0, 0);
 
@@ -260,6 +262,7 @@ namespace Logic.Server
         {
             lock (Program.MessageToClientLock)
             {
+                //Console.Write("S;");
                 Program.ServerMessage.Message = Program.MessageToClient;
                 ServerCommunication.SendMessage(Program.ServerMessage);
                 writer.Write(Program.MessageToClient);
