@@ -97,7 +97,7 @@ namespace Communication.Agent
                 //}
                 //else
                 //    Constants.Debug("Ignoring PingPacket");
-                Console.Write("C:" + Environment.TickCount % 10000 + ",");
+                Console.Write("C" + message.Address + ":" + Environment.TickCount % 10000 + ",");
                 client.Send(message.Content as Message);
             };
 
