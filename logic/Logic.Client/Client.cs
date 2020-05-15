@@ -448,19 +448,16 @@ namespace Client
                 Program.form.playerLabels.Remove(number);
             }
 
-            if (lastRecieveMessage.Tasks.GetHashCode() == msg.Tasks.GetHashCode())
+            if (lastRecieveMessage.Tasks.GetHashCode() != msg.Tasks.GetHashCode())
             {
-                //Console.WriteLine("Same Tasks");
-                return;
-            }
-
-            if (Program.form.ControlLabels["Task"].InvokeRequired)
-            {
-                Program.form.ControlLabels["Task"].Invoke(new Action<MessageToClient>(ChangeTaskLabel), msg);
-            }
-            else
-            {
-                ChangeTaskLabel(msg);
+                if (Program.form.ControlLabels["Task"].InvokeRequired)
+                {
+                    Program.form.ControlLabels["Task"].Invoke(new Action<MessageToClient>(ChangeTaskLabel), msg);
+                }
+                else
+                {
+                    ChangeTaskLabel(msg);
+                }
             }
             if (msg.Scores.ContainsKey(team))
                 ChangeControlLabelText("Score", msg.Scores[team].ToString());

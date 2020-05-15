@@ -26,11 +26,9 @@ namespace THUnity2D
             }
         }
 
-        public Map(int width, int height) : base(null)
+        public Map(int width, int height) : base(width, height, null)
         {
             Debug(this, "new Map : " + width.ToString() + " , " + height.ToString());
-            this.Width = width;
-            this.Height = height;
             this.Grid = new MapCell[Width, Height];
         }
 
@@ -73,25 +71,25 @@ namespace THUnity2D
 
         protected bool XIsLegal(double x, int objectWidth = 0)
         {
-            if (x - (double)objectWidth / 2 < 0 || x + (double)objectWidth / 2 > (double)this._width)
+            if (x - (double)objectWidth / 2 < 0 || x + (double)objectWidth / 2 > (double)this.Width)
                 return false;
             return true;
         }
         protected bool YIsLegal(double y, int objectHeight = 0)
         {
-            if (y - (double)objectHeight / 2 < 0 || y + (double)objectHeight / 2 > (double)this._height)
+            if (y - (double)objectHeight / 2 < 0 || y + (double)objectHeight / 2 > (double)this.Height)
                 return false;
             return true;
         }
         protected bool XIsLegal(int x)
         {
-            if (x < 0 || x >= this._width)
+            if (x < 0 || x >= this.Width)
                 return false;
             return true;
         }
         protected bool YIsLegal(int y)
         {
-            if (y < 0 || y >= this._height)
+            if (y < 0 || y >= this.Height)
                 return false;
             return true;
         }
@@ -153,18 +151,18 @@ namespace THUnity2D
             XYPosition newCenterPosition = position.GetMid();
             if (newCenterPosition.x < 0.5)
                 newCenterPosition = new XYPosition(0.5, newCenterPosition.y);
-            else if (newCenterPosition.x > (double)this._width - 0.5)
-                newCenterPosition = new XYPosition((double)this._width - 0.5, newCenterPosition.y);
+            else if (newCenterPosition.x > (double)this.Width - 0.5)
+                newCenterPosition = new XYPosition((double)this.Width - 0.5, newCenterPosition.y);
             if (newCenterPosition.y < 0.5)
                 newCenterPosition = new XYPosition(newCenterPosition.x, 0.5);
-            else if (newCenterPosition.y > (double)this._height - 0.5)
-                newCenterPosition = new XYPosition(newCenterPosition.x, (double)this._height - 0.5);
+            else if (newCenterPosition.y > (double)this.Height - 0.5)
+                newCenterPosition = new XYPosition(newCenterPosition.x, (double)this.Height - 0.5);
 
             if (XYPositionIsLegal(newCenterPosition, objectWidth, objectHeight, objectLayer))
                 return newCenterPosition;
 
             XYPosition testPosition = newCenterPosition;
-            for (int round = 1; round < Math.Max(this._width, this._height); round++)
+            for (int round = 1; round < Math.Max(this.Width, this.Height); round++)
             {
                 //Debug(this,"round : " + round);
                 for (double ySearch = newCenterPosition.y - (double)round; ySearch <= newCenterPosition.y + (double)round + 0.1; ySearch += 2 * (double)round)
@@ -315,21 +313,21 @@ namespace THUnity2D
                 for (int i = 0; i < 2; i++)//分别检查X和Y
                 {
                     int j = Convert.ToInt32(!Convert.ToBoolean(i));
-                    toCheck[i] = gameObject.Position.GetProperty(i) + toCheckAdd[i];
+                    toCheck[i] = Math.Round(gameObject.Position.GetProperty(i), 6) + toCheckAdd[i];
                     startPoint[i] = previousPosition.GetProperty(i) + startPointAdd[i];
                     if (IsInCloseOpenInterval(toCheck[i], startPoint[i], infinityBound[i])
                         && delta[i] != 0)//如果平行四边形是一条线，就跳过
                     {
-                        //Debug(this,"delta[" + i + "] : " + delta[i]);
+                        Debug(this, "delta[" + i + "] : " + delta[i]);
                         double temp = previousPosition.GetProperty(j) - 0.5 + (toCheck[i] - startPoint[i]) * delta[j] / delta[i];
-                        //Debug(this, "temp : " + temp);
-                        if (IsInOpenInterval(temp, gameObject.Position.GetProperty(j) - 0.5 - 1, gameObject.Position.GetProperty(j) + 0.5))
+                        Debug(this, "temp : " + temp);
+                        if (IsInOpenInterval(temp, Math.Round(gameObject.Position.GetProperty(j), 6) - 0.5 - 1, Math.Round(gameObject.Position.GetProperty(j), 6) + 0.5))
                         {
-                            //Debug(this, "!");
+                            Debug(this, "!");
                             Distance[i] = (toCheck[i] - startPoint[i]) * resultDistance / delta[i];
                         }
                     }
-                    //Debug(this, "Distance[" + i + "] : " + Distance[i]);
+                    Debug(this, "Distance[" + i + "] : " + Distance[i]);
                 }
                 double maxReachDistance = Math.Min(Distance[0], Distance[1]);
                 {
@@ -355,15 +353,15 @@ namespace THUnity2D
 
 
             //核心代码，检查(x,y)位置的方块与childrenGameObject的关系，并检查碰撞
-            //LinkedList<object> lockList = new LinkedList<object>();
+            LinkedList<object> lockList = new LinkedList<object>();
             //LinkedList<Tuple<int, int>> positionlist = new LinkedList<Tuple<int, int>>();
             void CheckBlockAndAdjustPosition(int x, int y)
             {
                 if (!(XIsLegal(x) && YIsLegal(y)))
                     return;
-                //Monitor.Enter(_grid[x, y].publicLock);
+                Monitor.Enter(_grid[x, y].publicLock);
                 //Debug(this, "Moving " + childrenGameObject.ID + "  Enter lock " + x + "," + y);
-                //lockList.AddLast(_grid[x, y].publicLock);
+                lockList.AddLast(_grid[x, y].publicLock);
                 //positionlist.AddLast(new Tuple<int, int>(x, y));
                 if (x != (int)previousPosition.x || y != (int)previousPosition.y)
                     foreach (var layer in childrenGameObject.Layer.CollisionLayers.Keys)
@@ -417,6 +415,8 @@ namespace THUnity2D
                 }
             }
 
+
+            SortedSet<Tuple<int, int>> set = new SortedSet<Tuple<int, int>>();
             //搜索可能碰撞的GameObject
             //建议不要尝试读懂这段代码
             bool[] SearchCompleted = { false, false };
@@ -457,8 +457,7 @@ namespace THUnity2D
                                         end[j]));
                              z = z + Step[j])
                         {
-                            Debug(this, "Moving " + childrenGameObject.ID + " Checking : (" + (i == 0 ? Search[i] : z) + "," + (i == 0 ? z : Search[i]) + ")");
-                            CheckBlockAndAdjustPosition(i == 0 ? (int)Search[i] : (int)z, i == 0 ? (int)z : (int)Search[i]);
+                            set.Add(new Tuple<int, int>(i == 0 ? (int)Search[i] : (int)z, i == 0 ? (int)z : (int)Search[i]));
                         }
                         Search[i] = Search[i] + Step[i];
                     }
@@ -471,6 +470,13 @@ namespace THUnity2D
             //搜索可能碰撞的GameObject
             //建议不要尝试读懂这段代码
 
+
+            foreach (var item in set)
+            {
+                Debug(this, "Moving " + childrenGameObject.ID + " Checking : (" + item.Item1 + "," + item.Item2 + ")");
+                CheckBlockAndAdjustPosition(item.Item1, item.Item2);
+            }
+
             //调整位置
             Debug(this, "Moving " + childrenGameObject.ID + " resultDistance : " + resultDistance);
             childrenGameObject._position = previousPosition + new XYPosition(Math.Round(resultDistance * Math.Cos(angle), 6), Math.Round(resultDistance * Math.Sin(angle), 6));
@@ -479,14 +485,14 @@ namespace THUnity2D
             //调整位置 End
 
             //解除锁的占用
-            //while (lockList.First != null)
-            //{
-            //    object o = lockList.First.Value;
-            //    lockList.RemoveFirst();
-            //    Monitor.Exit(o);
-            //    Debug(this, "Moving " + childrenGameObject.ID + "  Release lock " + positionlist.First.Value);
-            //    positionlist.RemoveFirst();
-            //}
+            while (lockList.First != null)
+            {
+                object o = lockList.First.Value;
+                lockList.RemoveFirst();
+                Monitor.Exit(o);
+                //Debug(this, "Moving " + childrenGameObject.ID + "  Release lock ");
+                //positionlist.RemoveFirst();
+            }
             //解除锁的占用 End
 
             //Trigger

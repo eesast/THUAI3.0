@@ -11,16 +11,12 @@ namespace Logic.Server
     public class Block : Obj
     {
         public BlockType blockType;
-        
+
         public Block(double x_t, double y_t, BlockType type_t) : base(x_t, y_t, ObjType.Block)
         {
-            if (type_t == BlockType.Wall || type_t == BlockType.FoodPoint || type_t == BlockType.TaskPoint)
-                Layer = WallLayer;
-            else
-                Layer = BlockLayer;
             Movable = false;
             blockType = type_t;
-            
+
         }
 
         public override DishType GetDish(DishType t)
@@ -41,9 +37,12 @@ namespace Logic.Server
             Layer = WallLayer;
             AddToMessage();
             Dish = foodType;
+            PositionChangeComplete += ChangePositionInMessage;
+            PositionChangeComplete += (o) => { Server.ServerDebug("食品刷新：地点（" + Position.x + "," + Position.y + "）, 种类 : " + Dish); };
+            Program.MessageToClient.GameObjectList[ID].PositionX = Position.x; Program.MessageToClient.GameObjectList[ID].PositionY = Position.y;
             //lock (Program.MessageToClientLock)
             Program.MessageToClient.GameObjectList[ID].BlockType = BlockType.FoodPoint;
-            Server.ServerDebug("食品刷新：地点（" + Position.x + "," + Position.y + "）, 种类 : " + Dish);
+            ;
         }
 
         public override DishType GetDish(DishType t)
@@ -77,6 +76,8 @@ namespace Logic.Server
             Layer = BlockLayer;
             AddToMessage();
             Dish = DishType.DishEmpty;
+            PositionChangeComplete += ChangePositionInMessage;
+            PositionChangeComplete += (o) => { Server.ServerDebug("工作台（" + Position.x + "," + Position.y + "）"); };
             //lock (Program.MessageToClientLock)
             Program.MessageToClient.GameObjectList[ID].BlockType = BlockType.Cooker;
 

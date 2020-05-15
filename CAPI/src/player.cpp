@@ -7,7 +7,7 @@ using namespace THUAI3;
 Protobuf::Talent initTalent = Protobuf::Talent::Runner;//指定人物天赋。选手代码必须定义此变量，否则报错
 void play()
 {
-	char c;
+	/*char c;
 	cin.clear();
 	cin.ignore();
 	cin >> c;
@@ -152,6 +152,21 @@ void play()
 	}
 
 
-	std::cout << "Game Time : " << THUAI3::getGameTime() << endl;
+	std::cout << "Game Time : " << THUAI3::getGameTime() << endl;*/
+
+
+	while (true)
+	{
+		for (int i = 0; i < 7; i++)
+		{
+			move(Protobuf::Direction::Right, 1000);
+			Sleep(1000);
+		}
+		for (int i = 0; i < 7; i++)
+		{
+			move(Protobuf::Direction::Left, 1000);
+			Sleep(1000);
+		}
+	}
 	/*  玩家在这里写代码  */
 }
