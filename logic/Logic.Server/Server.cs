@@ -80,6 +80,7 @@ namespace Logic.Server
             Server.ServerDebug("Server constructed");
         }
 
+        System.Threading.Timer timer;
         public void Run()
         {
             Time.InitializeTime();
@@ -104,7 +105,14 @@ namespace Logic.Server
             { IsBackground = true }.Start();//发送消息
 
             WatchInputTimer = new System.Threading.Timer(WatchInput, null, 0, 0);
-
+            //timer = new System.Threading.Timer(
+            //    (o) =>
+            //    {
+            //        Trigger triggerToThrow = new Trigger(48.5, 1.5, TriggerType.Arrow, -1, Talent.None);
+            //        triggerToThrow.Parent = WorldMap;
+            //        triggerToThrow.Velocity = new Vector(3.14, 10);
+            //        triggerToThrow.StopMovingTimer.Change(4000, 0);
+            //    }, null, 0, 3000);
             Thread.Sleep((int)MaxRunTimeInSecond * 1000);
             PrintScore();
             SaveScore();
@@ -236,6 +244,7 @@ namespace Logic.Server
 
         protected void OnRecieve(Object communication, EventArgs e)
         {
+            Console.Write("Recieved;");
             //CommunicationImpl communicationImpl = communication as CommunicationImpl;
             MessageToServer msg2svr = (MessageToServer)((MessageEventArgs)e).message.Message;
             Tuple<int, int> playerCommunitionID = new Tuple<int, int>(((MessageEventArgs)e).message.Agent, ((MessageEventArgs)e).message.Client);
@@ -263,7 +272,7 @@ namespace Logic.Server
         {
             lock (Program.MessageToClientLock)
             {
-                //Console.Write("Sent;");
+                Console.Write("Sent;");
                 Program.ServerMessage.Message = Program.MessageToClient;
                 ServerCommunication.SendMessage(Program.ServerMessage);
                 writer.Write(Program.MessageToClient);

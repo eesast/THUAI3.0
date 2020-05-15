@@ -114,7 +114,6 @@ namespace Logic.Server
             StunTimer = new System.Threading.Timer((i) => { _isStun = 0; });
             SpeedBuffTimer = new System.Threading.Timer((i) => { MoveSpeed -= (double)Configs("Tool", "SpeedBuff", "ExtraMoveSpeed"); });
             StrengthBuffTimer = new System.Threading.Timer((i) => { MaxThrowDistance -= (int)Configs("Tool", "StrengthBuff", "ExtraThrowDistance"); });
-            PositionChangeComplete += new PositionChangeCompleteHandler(ChangePositionInMessage);
 
             lock (Program.MessageToClientLock)
             {
@@ -134,35 +133,32 @@ namespace Logic.Server
                         ToolType = Tool,
                     });
             }
-            MoveStart += new MoveStartHandler(
-                (thisGameObject) =>
+            PositionChangeComplete += ChangePositionInMessage;
+            MoveStart += (thisGameObject) =>
+            {
+                tempIsStepOnGlue = false;
+            };
+            MoveComplete += ChangePositionInMessage;
+            MoveComplete += (thisGameObject) =>
+            {
+                if (!isStepOnGlue && tempIsStepOnGlue)
                 {
-                    tempIsStepOnGlue = false;
-                });
-            MoveComplete += new MoveCompleteHandler(ChangePositionInMessage);
-            MoveComplete += new MoveCompleteHandler(
-                (thisGameObject) =>
-                {
-                    if (!isStepOnGlue && tempIsStepOnGlue)
-                    {
-                        MoveSpeed += (double)Configs("Trigger", "WaveGlue", "ExtraMoveSpeed");
-                        Velocity = new Vector(Velocity.angle, MoveSpeed);
-                        isStepOnGlue = true;
-                    }
-                    else if (isStepOnGlue && !tempIsStepOnGlue)
-                    {
-                        MoveSpeed -= (double)Configs("Trigger", "WaveGlue", "ExtraMoveSpeed");
-                        Velocity = new Vector(Velocity.angle, MoveSpeed);
-                        isStepOnGlue = false;
-                    }
+                    MoveSpeed += (double)Configs("Trigger", "WaveGlue", "ExtraMoveSpeed");
+                    Velocity = new Vector(Velocity.angle, MoveSpeed);
+                    isStepOnGlue = true;
                 }
-                );
-            OnTrigger += new TriggerHandler(
-                (triggerGameObjects) =>
+                else if (isStepOnGlue && !tempIsStepOnGlue)
                 {
-                    foreach (Trigger trigger in triggerGameObjects)
-                        this.TouchTrigger(trigger);
-                });
+                    MoveSpeed -= (double)Configs("Trigger", "WaveGlue", "ExtraMoveSpeed");
+                    Velocity = new Vector(Velocity.angle, MoveSpeed);
+                    isStepOnGlue = false;
+                }
+            };
+            OnTrigger += (triggerGameObjects) =>
+            {
+                foreach (Trigger trigger in triggerGameObjects)
+                    this.TouchTrigger(trigger);
+            };
         }
         public void ExecuteMessage(MessageToServer msg)
         {
