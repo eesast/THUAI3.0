@@ -272,7 +272,7 @@ namespace Logic.Server
         {
             lock (Program.MessageToClientLock)
             {
-                Console.Write("Sent;");
+                Console.Write("S;");
                 Program.ServerMessage.Message = Program.MessageToClient;
                 ServerCommunication.SendMessage(Program.ServerMessage);
                 writer.Write(Program.MessageToClient);
