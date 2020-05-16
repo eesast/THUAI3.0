@@ -197,6 +197,7 @@ namespace THUnity2D
                                 }
                             }
                         });
+                    _movingThread.IsBackground = true;
                     _movingThread.Start();
                 }
                 lock (_velocityLock)
