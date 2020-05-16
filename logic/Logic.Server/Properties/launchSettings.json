@@ -2,7 +2,7 @@
   "profiles": {
     "Logic.Server": {
       "commandName": "Project",
-      "commandLineArgs": " --port 20000 --debugLevel 1 --playerCount 2 --agentCount 1 --gameTime 600"
+      "commandLineArgs": " --port 20000 --debugLevel 1 --playerCount 1 --agentCount 1 --gameTime 600"
     },
     "Docker": {
       "commandName": "Docker"
