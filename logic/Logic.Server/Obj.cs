@@ -15,10 +15,8 @@ namespace Logic.Server
             set
             {
                 _dish = value;
-                lock (Program.MessageToClientLock)
-                {
-                    Program.MessageToClient.GameObjectList[ID].DishType = _dish;
-                }
+                //lock (Program.MessageToClientLock)
+                Program.MessageToClient.GameObjectList[ID].DishType = _dish;
             }
         }
         protected ToolType _tool;
@@ -28,21 +26,19 @@ namespace Logic.Server
             set
             {
                 _tool = value;
-                lock (Program.MessageToClientLock)
-                {
-                    Program.MessageToClient.GameObjectList[ID].ToolType = _tool;
-                }
+                //lock (Program.MessageToClientLock)
+                Program.MessageToClient.GameObjectList[ID].ToolType = _tool;
             }
         }
 
-        public delegate void StopMovingHandler(object o);
+        public delegate void StopMovingHandler(object? o);
         public event StopMovingHandler? StopMoving = null;
-        protected void StopMovingMethod(object o)
+        protected void StopMovingMethod(object? o)
         {
             Velocity = new THUnity2D.Vector(Velocity.angle, 0);
             StopMoving?.Invoke(o);
         }
-        protected System.Threading.Timer _stopMovingTimer = null;
+        protected System.Threading.Timer? _stopMovingTimer = null;
         public System.Threading.Timer StopMovingTimer
         {
             get
@@ -80,16 +76,20 @@ namespace Logic.Server
             lock (Program.MessageToClientLock)
             {
                 Program.MessageToClient.GameObjectList.Remove(ID);
-                //Server.ServerDebug("Delete " + objType + " From Message List");
+                Server.ServerDebug("Delete " + this.ToString() + " From Message List");
             }
         }
         protected void ChangePositionInMessage(THUnity2D.GameObject thisGameObject)
         {
-            lock (Program.MessageToClientLock)
-            {
-                Program.MessageToClient.GameObjectList[thisGameObject.ID].PositionX = thisGameObject.Position.x;
-                Program.MessageToClient.GameObjectList[thisGameObject.ID].PositionY = thisGameObject.Position.y;
-            }
+            //lock (Program.MessageToClientLock)
+            //{
+            Program.MessageToClient.GameObjectList[thisGameObject.ID].PositionX = thisGameObject.Position.x;
+            Program.MessageToClient.GameObjectList[thisGameObject.ID].PositionY = thisGameObject.Position.y;
+            //}
+        }
+        public override string ToString()
+        {
+            return objType + ":" + ID + ", " + Position.ToString() + " ";
         }
     }
 }

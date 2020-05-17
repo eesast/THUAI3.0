@@ -27,7 +27,8 @@ namespace Communication.Server
         private static readonly IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
         private static readonly IDateTimeProvider provider = new UtcDateTimeProvider();
         private readonly JwtDecoder decoder = new JwtDecoder(serializer, new JwtValidator(serializer, provider), urlEncoder, algorithm);
-        
+        private object joinLock = new object();
+
         public string Token
         {
             get
@@ -36,13 +37,24 @@ namespace Communication.Server
             }
             set
             {
-                roomID = (string) JObject.Parse(decoder.Decode(value))["roomID"];
+                if (string.IsNullOrEmpty(value))
+                {
+                    Constants.Debug("Enable offline mode.");
+                }
+                else
+                {
+                    var json = JObject.Parse(decoder.Decode(value));
+                    Constants.Debug($"Parsing roomID from {json}");
+                    roomID = (string)json["roomId"];
+                    Constants.Debug($"roomID = {roomID}");
+                }
                 token = value;
             }
         }
 
         private async Task HttpAsync(string uri, string token, string method, JObject data)
         {
+            if (string.IsNullOrEmpty(token)) return;
             try
             {
                 var request = WebRequest.CreateHttp(uri);
@@ -54,7 +66,7 @@ namespace Communication.Server
                     var raw = Encoding.UTF8.GetBytes(data.ToString());
                     request.GetRequestStream().Write(raw, 0, raw.Length);
                 }
-                
+
                 var response = await request.GetResponseAsync() as HttpWebResponse;
                 if ((int)response.StatusCode / 100 != 2)
                     Constants.Debug(response.StatusDescription);
@@ -67,17 +79,19 @@ namespace Communication.Server
 
         private async Task NoticeServer(string token, DockerGameStatus status)
         {
-            if (IsOffline) return;
             if (token == null)
             {
-                await HttpAsync($"http://localhost:28888/v1/rooms/{roomID}", this.token, "PUT", new JObject
+                await HttpAsync($"https://api.eesast.com/v1/rooms/{roomID}/status", this.token, "PUT", new JObject
                 {
                     ["status"] = (int)status
                 });
             }
             else
             {
-                await HttpAsync($"http://localhost:28888/v1/rooms/{roomID}/join", token, "GET", null);
+                await HttpAsync($"https://api.eesast.com/v1/rooms/{roomID}/join", this.token, "POST", new JObject
+                {
+                    ["token"] = token
+                });
             }
         }
 
@@ -96,7 +110,6 @@ namespace Communication.Server
             get => server.Port;
             set => server.Port = value;
         }
-        public bool IsOffline { get; set; }
 
         public event MessageHandler MsgProcess;
 
@@ -116,7 +129,10 @@ namespace Communication.Server
             {
                 if (message.Content is PlayerToken token)
                 {
-                    NoticeServer(token.Token, default).Wait();
+                    lock (joinLock)
+                    {
+                        NoticeServer(token.Token, default).Wait();
+                    }
                     Constants.Debug($"Agent Connected: {server.Count}/{Constants.AgentCount}");
                     if (server.Count == Constants.AgentCount)
                     {
@@ -141,6 +157,7 @@ namespace Communication.Server
             full.Reset();
             server.Start();
             Constants.Debug("Waiting for clients");
+            //IsOffline = true;
             full.WaitOne();
             //FIXME: 现在似乎有的时候会先set状态competing再join，不知道会不会有什么影响
             Status = DockerGameStatus.Competing;

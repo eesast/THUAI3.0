@@ -1,11 +1,8 @@
 ## Yours
-windows_only/
+
 proto/*.proto
 !.gitkeep
 # Cmake Generate
-*.sln
-*.vcxproj
-*.vcxproj.filters
 *.cmake
 CMakeCache.txt
 CmakeFiles/
@@ -23,7 +20,7 @@ build/
 # User-specific files
 *.rsuser
 *.suo
-*.user
+
 *.userosscache
 *.sln.docstates
 

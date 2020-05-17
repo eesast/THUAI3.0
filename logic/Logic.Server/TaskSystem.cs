@@ -9,7 +9,8 @@ namespace Logic.Server
     public static class TaskSystem
     {
         public static ConcurrentDictionary<DishType, uint> TaskQueue = new ConcurrentDictionary<DishType, uint>();
-        private static Timer.MultiTaskTimer _removeTaskTimer;
+        private static int SpicedPotNum = 2;
+        private static Timer.MultiTaskTimer? _removeTaskTimer;
         public static Timer.MultiTaskTimer RemoveTaskTimer
         {
             get
@@ -39,7 +40,7 @@ namespace Logic.Server
             Server.ServerDebug("Remove task : " + task);
             //PrintAllTask();
         }
-        public static System.Threading.Timer _refreshTimer;
+        public static System.Threading.Timer? _refreshTimer;
         public static System.Threading.Timer RefreshTimer
         {
             get
@@ -48,19 +49,24 @@ namespace Logic.Server
                 return _refreshTimer;
             }
         }
-        public static void TaskProduce(object i)
+        public static void TaskProduce(object? i)
         {
             DishType temp = DishType.DishEmpty;
             for (; ; )
             {
-                if (Timer.Time.GameTime() < TimeSpan.FromMinutes(10)) temp = (DishType)Program.Random.Next((int)DishType.TomatoFriedEgg, (int)DishType.SpicedPot);
-                else temp = (DishType)Program.Random.Next((int)DishType.TomatoFriedEgg, (int)DishType.SpicedPot + 1);
+                if (Timer.Time.GameTime() > TimeSpan.FromMinutes(5) && SpicedPotNum > 0)
+                { 
+                    temp = (DishType)Program.Random.Next((int)DishType.CookedRice, (int)DishType.SpicedPot + 1); 
+                    if(temp== DishType.SpicedPot) 
+                        SpicedPotNum--; 
+                }
+                else temp = (DishType)Program.Random.Next((int)DishType.CookedRice, (int)DishType.SpicedPot); 
                 if (temp == DishType.DishSize1)
                     continue;
                 break;
             }
             AddTask(temp);
-            RemoveTaskTimer.Add((o, e) => { RemoveTask(temp); }, (uint)Configs[temp.ToString()]["TaskTime"]);
+            RemoveTaskTimer.Add((o, e) => { RemoveTask(temp); }, (uint)Configs(temp.ToString(), "TaskTime"));
             //需要广播产生的任务
             //感觉只需要广播任务的产生，而任务被完成以及任务因过时而gg都不用广播，需要玩家自己把握？
         }
@@ -69,14 +75,14 @@ namespace Logic.Server
             int score = 0;
             if (dish_t < DishType.SpicedPot && TaskQueue.ContainsKey(dish_t))
             {
-                score = (int)Configs[dish_t.ToString()]["Score"];//菜品名+Score，在App.config里加
+                score = (int)Configs(dish_t.ToString(), "Score");//菜品名+Score，在App.config里加
                 RemoveTask(dish_t);
             }
-            else if (dish_t >= DishType.SpicedPot && dish_t <= DishType.SpicedPot8 && TaskQueue.ContainsKey(DishType.SpicedPot))
+            else if (dish_t >= DishType.SpicedPot && dish_t <= DishType.SpicedPot6 && TaskQueue.ContainsKey(DishType.SpicedPot))
             {
-                string[] i = Convert.ToString(dish_t).Split('_');
+                string[] i = dish_t.ToString().Split('t');
                 double temp = Convert.ToDouble(i[1]);
-                score = (int)((1 + temp / 8) * temp * 20);
+                score = (int)((1 + temp / 10) * temp * 15);
                 RemoveTask(DishType.SpicedPot);
             }
             //PrintAllTask();

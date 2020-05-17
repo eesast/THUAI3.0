@@ -26,17 +26,17 @@ namespace THUnity2D
             }
         }
 
-        public Map(int width, int height) : base(null)
+        public Map(int width, int height) : base(width, height, null)
         {
             Debug(this, "new Map : " + width.ToString() + " , " + height.ToString());
-            this.Width = width;
-            this.Height = height;
             this.Grid = new MapCell[Width, Height];
         }
 
         protected override void OnChildrenAdded(GameObject childrenGameObject)
         {
-            childrenGameObject._position = CorrectPosition(childrenGameObject.Position, childrenGameObject.Width, childrenGameObject.Height, childrenGameObject.Layer);
+            if (!this._layerSet.ContainsKey(childrenGameObject.Layer))
+                throw new Exception("Map does not contains layer !");
+            childrenGameObject.Position = CorrectPosition(childrenGameObject.Position, childrenGameObject.Width, childrenGameObject.Height, childrenGameObject.Layer);
             base.OnChildrenAdded(childrenGameObject);
             childrenGameObject.OnLayerChange += this.OnChildrenLayerChange;
             //AddToGameObjectListByLayer(childrenObject);
@@ -56,14 +56,14 @@ namespace THUnity2D
             lock (_grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].publicLock)
                 _grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].DeleteGameObject(childrenGameObject);
         }
-        protected override void OnChildrenPositionChanged(GameObject childrenGameObject, PositionChangedEventArgs e)
+        protected override void OnChildrenPositionChanged(GameObject childrenGameObject, XYPosition previousPosition, XYPosition targetPosition)
         {
-            Debug(this, "Children object " + childrenGameObject.ID + " position change. from : " + e.previousPosition.ToString() + " aim : " + e.position.ToString());
+            Debug(this, "Children object " + childrenGameObject.ID + " position change. from : " + previousPosition.ToString() + " aim : " + targetPosition.ToString());
             //base.OnChildrenPositionChanged(childrenGameObject, e, out eOut);
 
-            if (XIsLegal((int)e.previousPosition.x) && YIsLegal((int)e.previousPosition.y))
-                this._grid[(int)e.previousPosition.x, (int)e.previousPosition.y].DeleteGameObject(childrenGameObject);//如果需要把childrenGameObject从Grid上拿掉且可以拿掉
-            childrenGameObject._position = CorrectPosition(e.position, childrenGameObject.Width, childrenGameObject.Height, childrenGameObject.Layer);
+            if (XIsLegal((int)previousPosition.x) && YIsLegal((int)previousPosition.y))
+                this._grid[(int)previousPosition.x, (int)previousPosition.y].DeleteGameObject(childrenGameObject);//如果需要把childrenGameObject从Grid上拿掉且可以拿掉
+            childrenGameObject._position = CorrectPosition(targetPosition, childrenGameObject.Width, childrenGameObject.Height, childrenGameObject.Layer);
             _grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].AddGameObject(childrenGameObject);
             TryToTrigger(childrenGameObject);
         }
@@ -71,25 +71,25 @@ namespace THUnity2D
 
         protected bool XIsLegal(double x, int objectWidth = 0)
         {
-            if (x - (double)objectWidth / 2 < 0 || x + (double)objectWidth / 2 > (double)this._width)
+            if (x - (double)objectWidth / 2 < 0 || x + (double)objectWidth / 2 > (double)this.Width)
                 return false;
             return true;
         }
         protected bool YIsLegal(double y, int objectHeight = 0)
         {
-            if (y - (double)objectHeight / 2 < 0 || y + (double)objectHeight / 2 > (double)this._height)
+            if (y - (double)objectHeight / 2 < 0 || y + (double)objectHeight / 2 > (double)this.Height)
                 return false;
             return true;
         }
         protected bool XIsLegal(int x)
         {
-            if (x < 0 || x >= this._width)
+            if (x < 0 || x >= this.Width)
                 return false;
             return true;
         }
         protected bool YIsLegal(int y)
         {
-            if (y < 0 || y >= this._height)
+            if (y < 0 || y >= this.Height)
                 return false;
             return true;
         }
@@ -151,18 +151,18 @@ namespace THUnity2D
             XYPosition newCenterPosition = position.GetMid();
             if (newCenterPosition.x < 0.5)
                 newCenterPosition = new XYPosition(0.5, newCenterPosition.y);
-            else if (newCenterPosition.x > (double)this._width - 0.5)
-                newCenterPosition = new XYPosition((double)this._width - 0.5, newCenterPosition.y);
+            else if (newCenterPosition.x > (double)this.Width - 0.5)
+                newCenterPosition = new XYPosition((double)this.Width - 0.5, newCenterPosition.y);
             if (newCenterPosition.y < 0.5)
                 newCenterPosition = new XYPosition(newCenterPosition.x, 0.5);
-            else if (newCenterPosition.y > (double)this._height - 0.5)
-                newCenterPosition = new XYPosition(newCenterPosition.x, (double)this._height - 0.5);
+            else if (newCenterPosition.y > (double)this.Height - 0.5)
+                newCenterPosition = new XYPosition(newCenterPosition.x, (double)this.Height - 0.5);
 
             if (XYPositionIsLegal(newCenterPosition, objectWidth, objectHeight, objectLayer))
                 return newCenterPosition;
 
             XYPosition testPosition = newCenterPosition;
-            for (int round = 1; round < Math.Max(this._width, this._height); round++)
+            for (int round = 1; round < Math.Max(this.Width, this.Height); round++)
             {
                 //Debug(this,"round : " + round);
                 for (double ySearch = newCenterPosition.y - (double)round; ySearch <= newCenterPosition.y + (double)round + 0.1; ySearch += 2 * (double)round)
@@ -196,17 +196,17 @@ namespace THUnity2D
         }
 
         //为提高代码复用性，此函数内大量采用长度为2的数组表示X和Y，0表示X，1表示Y
-        protected override void OnChildrenMove(GameObject childrenGameObject, MoveEventArgs e, XYPosition previousPosition)
+        protected override void OnChildrenMove(GameObject childrenGameObject, double angle, double distance, XYPosition previousPosition)
         {
             Debug(this, "Attempting to move Children : " + childrenGameObject.ID);
             //base.OnChildrenMove(childrenGameObject, e, out eOut);
             //XYPosition aim;
-            double resultDistance = e.distance;
+            double resultDistance = distance;
             double[] delta = new double[2];
-            delta[0] = e.distance * Math.Cos(e.angle);
+            delta[0] = distance * Math.Cos(angle);
             if (Math.Abs(delta[0]) < 1E-8)
                 delta[0] = 0;
-            delta[1] = e.distance * Math.Sin(e.angle);
+            delta[1] = distance * Math.Sin(angle);
             if (Math.Abs(delta[1]) < 1E-8)
                 delta[1] = 0;
             bool[] IsDirectionPositive = { (delta[0] < 0) ? false : true, (delta[1] < 0) ? false : true };
@@ -232,7 +232,7 @@ namespace THUnity2D
                 }
             }
 
-            Debug(this, "initialize resultDistance : " + resultDistance);
+            Debug(this, "Moving " + childrenGameObject.ID + " initialize resultDistance : " + resultDistance);
 
             double ClosestGreater0_5(double d)
             {
@@ -275,7 +275,7 @@ namespace THUnity2D
                 {
                     return;
                 }
-                Debug(this, "Refresh resultDistance : " + newResultDistance);
+                Debug(this, "Moving " + childrenGameObject.ID + " Refresh resultDistance : " + newResultDistance);
                 for (int i = 0; i < 2; i++)
                 {
                     delta[i] = DivisionWithoutNaN(delta[i] * newResultDistance, resultDistance);
@@ -305,6 +305,7 @@ namespace THUnity2D
             double[] infinityBound = { IsDirectionPositive[0] ? 1.0 / 0.0 : -1.0 / 0.0, IsDirectionPositive[1] ? 1.0 / 0.0 : -1.0 / 0.0 };
             double GameObjectMaxReachDistance(GameObject gameObject, ref double[] Distance)
             {
+                //Debug(this, "Moving " + childrenGameObject.ID + " Begin to calculate maxReach");
                 Distance[0] = 1.0 / 0.0; Distance[1] = 1.0 / 0.0;
                 double[] toCheck = new double[2];
                 double[] startPoint = new double[2];
@@ -312,21 +313,21 @@ namespace THUnity2D
                 for (int i = 0; i < 2; i++)//分别检查X和Y
                 {
                     int j = Convert.ToInt32(!Convert.ToBoolean(i));
-                    toCheck[i] = gameObject.Position.GetProperty(i) + toCheckAdd[i];
+                    toCheck[i] = Math.Round(gameObject.Position.GetProperty(i), 6) + toCheckAdd[i];
                     startPoint[i] = previousPosition.GetProperty(i) + startPointAdd[i];
                     if (IsInCloseOpenInterval(toCheck[i], startPoint[i], infinityBound[i])
                         && delta[i] != 0)//如果平行四边形是一条线，就跳过
                     {
-                        //Debug(this,"delta[" + i + "] : " + delta[i]);
+                        Debug(this, "delta[" + i + "] : " + delta[i]);
                         double temp = previousPosition.GetProperty(j) - 0.5 + (toCheck[i] - startPoint[i]) * delta[j] / delta[i];
-                        //Debug(this, "temp : " + temp);
-                        if (IsInOpenInterval(temp, gameObject.Position.GetProperty(j) - 0.5 - 1, gameObject.Position.GetProperty(j) + 0.5))
+                        Debug(this, "temp : " + temp);
+                        if (IsInOpenInterval(temp, Math.Round(gameObject.Position.GetProperty(j), 6) - 0.5 - 1, Math.Round(gameObject.Position.GetProperty(j), 6) + 0.5))
                         {
-                            //Debug(this, "!");
+                            Debug(this, "!");
                             Distance[i] = (toCheck[i] - startPoint[i]) * resultDistance / delta[i];
                         }
                     }
-                    //Debug(this, "Distance[" + i + "] : " + Distance[i]);
+                    Debug(this, "Distance[" + i + "] : " + Distance[i]);
                 }
                 double maxReachDistance = Math.Min(Distance[0], Distance[1]);
                 {
@@ -345,7 +346,7 @@ namespace THUnity2D
                             maxReachDistance = resultDistance * (toCheck[0] - startPoint[0]) / delta[0];
                     }
                 }
-                Debug(this, "maxReachDistance : " + maxReachDistance);
+                Debug(this, "Moving " + childrenGameObject.ID + " maxReachDistance : " + maxReachDistance);
                 return maxReachDistance;
             }
             //=================
@@ -353,12 +354,15 @@ namespace THUnity2D
 
             //核心代码，检查(x,y)位置的方块与childrenGameObject的关系，并检查碰撞
             LinkedList<object> lockList = new LinkedList<object>();
+            //LinkedList<Tuple<int, int>> positionlist = new LinkedList<Tuple<int, int>>();
             void CheckBlockAndAdjustPosition(int x, int y)
             {
                 if (!(XIsLegal(x) && YIsLegal(y)))
                     return;
                 Monitor.Enter(_grid[x, y].publicLock);
+                //Debug(this, "Moving " + childrenGameObject.ID + "  Enter lock " + x + "," + y);
                 lockList.AddLast(_grid[x, y].publicLock);
+                //positionlist.AddLast(new Tuple<int, int>(x, y));
                 if (x != (int)previousPosition.x || y != (int)previousPosition.y)
                     foreach (var layer in childrenGameObject.Layer.CollisionLayers.Keys)
                     {
@@ -368,7 +372,6 @@ namespace THUnity2D
                         {
                             double[] Distance = new double[2];
                             double maxReachDistance = GameObjectMaxReachDistance(toCheckGameObject, ref Distance);
-
                             //检查是否与toCheckGameObject碰撞，若是，更新resultDistance并获取碰撞方向
                             //当与多个GameObject碰撞时会出现不合逻辑的地方，暂时无法解决
                             if (maxReachDistance < resultDistance)
@@ -412,19 +415,8 @@ namespace THUnity2D
                 }
             }
 
-            {//这段代码检查是否准备移动到地图外，若是，把它移回地图内
-                double[] aim = { previousPosition.x + delta[0], previousPosition.y + delta[1] };
-                double[] Distance = { resultDistance, resultDistance };
-                double[] HalfLength = { (double)childrenGameObject.Width / 2.0, (double)childrenGameObject.Height / 2.0 };
-                for (int i = 0; i < 2; i++)
-                    if (aim[i] < HalfLength[i])
-                        Distance[i] = (HalfLength[i] - previousPosition.GetProperty(i)) / delta[i] * resultDistance;
-                    else if (aim[i] > this.GetLength(i) - HalfLength[i])
-                        Distance[i] = (this.GetLength(i) - HalfLength[i] - previousPosition.GetProperty(i)) / delta[i] * resultDistance;
-                RefreshResultDistance(Math.Min(Distance[0], Distance[1]));
-                RefreshCollisionDirection(Distance);
-            }
 
+            SortedSet<Tuple<int, int>> set = new SortedSet<Tuple<int, int>>();
             //搜索可能碰撞的GameObject
             //建议不要尝试读懂这段代码
             bool[] SearchCompleted = { false, false };
@@ -465,8 +457,7 @@ namespace THUnity2D
                                         end[j]));
                              z = z + Step[j])
                         {
-                            Debug(this, "Checking : (" + (i == 0 ? Search[i] : z) + "," + (i == 0 ? z : Search[i]) + ")");
-                            CheckBlockAndAdjustPosition(i == 0 ? (int)Search[i] : (int)z, i == 0 ? (int)z : (int)Search[i]);
+                            set.Add(new Tuple<int, int>(i == 0 ? (int)Search[i] : (int)z, i == 0 ? (int)z : (int)Search[i]));
                         }
                         Search[i] = Search[i] + Step[i];
                     }
@@ -479,19 +470,28 @@ namespace THUnity2D
             //搜索可能碰撞的GameObject
             //建议不要尝试读懂这段代码
 
+
+            foreach (var item in set)
+            {
+                Debug(this, "Moving " + childrenGameObject.ID + " Checking : (" + item.Item1 + "," + item.Item2 + ")");
+                CheckBlockAndAdjustPosition(item.Item1, item.Item2);
+            }
+
             //调整位置
-            Debug(this, "resultDistance : " + resultDistance);
-            childrenGameObject._position = previousPosition + new XYPosition(resultDistance * Math.Cos(e.angle), resultDistance * Math.Sin(e.angle));
+            Debug(this, "Moving " + childrenGameObject.ID + " resultDistance : " + resultDistance);
+            childrenGameObject._position = previousPosition + new XYPosition(Math.Round(resultDistance * Math.Cos(angle), 6), Math.Round(resultDistance * Math.Sin(angle), 6));
             this._grid[(int)previousPosition.x, (int)previousPosition.y].DeleteGameObject(childrenGameObject);
             this._grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].AddGameObject(childrenGameObject);
             //调整位置 End
 
             //解除锁的占用
-            for (; lockList.Count != 0;)
+            while (lockList.First != null)
             {
                 object o = lockList.First.Value;
                 lockList.RemoveFirst();
                 Monitor.Exit(o);
+                //Debug(this, "Moving " + childrenGameObject.ID + "  Release lock ");
+                //positionlist.RemoveFirst();
             }
             //解除锁的占用 End
 
@@ -511,13 +511,13 @@ namespace THUnity2D
             //Trigger End
 
             //Collide
-            if (resultDistance < e.distance)
+            if (resultDistance < distance)
             {
-                childrenGameObject.Collide(new CollisionEventArgs(collisionDirection, CollisionGameObjects));
+                childrenGameObject.Collide(collisionDirection, CollisionGameObjects);
                 if (CollisionGameObjects != null)
                     foreach (var gameObject in CollisionGameObjects)
                     {
-                        gameObject.Collide(new CollisionEventArgs((Direction)(((int)collisionDirection + 4) % 8), new HashSet<GameObject> { childrenGameObject }));
+                        gameObject.Collide((Direction)(((int)collisionDirection + 4) % 8), new HashSet<GameObject> { childrenGameObject });
                     }
 
                 //Check Bouncable
@@ -528,18 +528,18 @@ namespace THUnity2D
                     switch (collisionDirection)
                     {
                         case Direction.Left:
-                        case Direction.Right: bounceAngle = Math.PI - e.angle; break;
+                        case Direction.Right: bounceAngle = Math.PI - angle; break;
                         case Direction.Up:
-                        case Direction.Down: bounceAngle = -e.angle; break;
-                        default: bounceAngle = Math.PI + e.angle; break;
+                        case Direction.Down: bounceAngle = -angle; break;
+                        default: bounceAngle = Math.PI + angle; break;
                     }
-                    childrenGameObject.Move(new MoveEventArgs(bounceAngle, e.distance - resultDistance));
+                    childrenGameObject.Move(bounceAngle, distance - resultDistance);
                     childrenGameObject.Velocity = new Vector(bounceAngle, childrenGameObject.Velocity.length);
                 }
                 else
                 {
                     if (childrenGameObject.Velocity.length > 0)
-                        childrenGameObject.Velocity = new Vector(e.angle, 0);
+                        childrenGameObject.Velocity = new Vector(angle, 0);
                 }
                 //Check Bouncable End
 
@@ -622,34 +622,17 @@ namespace THUnity2D
             layer2.TriggerLayers.TryRemove(layer1, out temp);
         }
 
-        //protected ConcurrentDictionary<Layer, ConcurrentDictionary<GameObject, byte>> _gameObjectListByLayer = new ConcurrentDictionary<Layer, ConcurrentDictionary<GameObject, byte>>();
-        //protected void AddToGameObjectListByLayer(GameObject gameObject)
-        //{
-        //    if (!_gameObjectListByLayer.ContainsKey(gameObject.Layer))
-        //        _gameObjectListByLayer.TryAdd(gameObject.Layer, new ConcurrentDictionary<GameObject, byte>());
-        //    _gameObjectListByLayer[gameObject.Layer].TryAdd(gameObject, 0);
-        //}
-        //protected void DeleteFromGameObjectListByLayer(GameObject gameObject)
-        //{
-        //    byte temp = 0;
-        //    _gameObjectListByLayer[gameObject.Layer].TryRemove(gameObject, out temp);
-        //    if (_gameObjectListByLayer[gameObject.Layer].Count <= 0)
-        //    {
-        //        ConcurrentDictionary<GameObject, byte>? tmp;
-        //        _gameObjectListByLayer.TryRemove(gameObject.Layer, out tmp);
-        //    }
-        //}
-        protected void OnChildrenLayerChange(GameObject childrenGameObject, LayerChangeEventArgs e)
+        protected void OnChildrenLayerChange(GameObject childrenGameObject, Layer previousLayer, Layer targetLayer)
         {
-            childrenGameObject._layer = e.previousLayer;
+            childrenGameObject._layer = previousLayer;
             byte temp = 0;
             childrenGameObject.Layer.GameObjectList.TryRemove(childrenGameObject, out temp);
             //DeleteFromGameObjectListByLayer(childrenGameObject);
             Monitor.Enter(_grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].publicLock);
             _grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].DeleteGameObject(childrenGameObject);
             Monitor.Exit(_grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].publicLock);
-            childrenGameObject._layer = e.targetLayer;
-            childrenGameObject._position = CorrectPosition(childrenGameObject.Position, childrenGameObject.Width, childrenGameObject.Height, e.targetLayer);
+            childrenGameObject._layer = targetLayer;
+            childrenGameObject._position = CorrectPosition(childrenGameObject.Position, childrenGameObject.Width, childrenGameObject.Height, targetLayer);
             childrenGameObject.Layer.GameObjectList.TryAdd(childrenGameObject, 0);
             //AddToGameObjectListByLayer(childrenGameObject);
             Monitor.Enter(_grid[(int)childrenGameObject.Position.x, (int)childrenGameObject.Position.y].publicLock);

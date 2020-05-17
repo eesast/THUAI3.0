@@ -24,64 +24,56 @@ namespace Communication.Proto {
     static MessageToClientReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChVNZXNzYWdlVG9DbGllbnQucHJvdG8SCFByb3RvYnVmIqIDCgpHYW1lT2Jq",
-            "ZWN0EhEKCVBvc2l0aW9uWBgBIAEoARIRCglQb3NpdGlvblkYAiABKAESDQoF",
-            "V2lkdGgYAyABKAUSDgoGSGVpZ2h0GAQgASgFEiYKCURpcmVjdGlvbhgFIAEo",
-            "DjITLlByb3RvYnVmLkRpcmVjdGlvbhIiCgdPYmpUeXBlGAYgASgOMhEuUHJv",
-            "dG9idWYuT2JqVHlwZRImCglCbG9ja1R5cGUYByABKA4yEy5Qcm90b2J1Zi5C",
-            "bG9ja1R5cGUSJAoIRGlzaFR5cGUYCCABKA4yEi5Qcm90b2J1Zi5EaXNoVHlw",
-            "ZRIkCghUb29sVHlwZRgJIAEoDjISLlByb3RvYnVmLlRvb2xUeXBlEioKC1Ry",
-            "aWdnZXJUeXBlGAogASgOMhUuUHJvdG9idWYuVHJpZ2dlclR5cGUSEAoIaXNN",
-            "b3ZpbmcYCyABKAgSHAoEQnVmZhgMIAMoDjIOLlByb3RvYnVmLkJ1ZmYSEQoJ",
-            "U3BlYWtUZXh0GA0gASgJEgwKBHRlYW0YDiABKAUSEgoKU2lnaHRSYW5nZRgP",
-            "IAEoBSKuAgoPTWVzc2FnZVRvQ2xpZW50EkUKDkdhbWVPYmplY3RMaXN0GAEg",
-            "AygLMi0uUHJvdG9idWYuTWVzc2FnZVRvQ2xpZW50LkdhbWVPYmplY3RMaXN0",
-            "RW50cnkSIQoFVGFza3MYAiADKA4yEi5Qcm90b2J1Zi5EaXNoVHlwZRI1CgZT",
-            "Y29yZXMYAyADKAsyJS5Qcm90b2J1Zi5NZXNzYWdlVG9DbGllbnQuU2NvcmVz",
-            "RW50cnkaSwoTR2FtZU9iamVjdExpc3RFbnRyeRILCgNrZXkYASABKAMSIwoF",
-            "dmFsdWUYAiABKAsyFC5Qcm90b2J1Zi5HYW1lT2JqZWN0OgI4ARotCgtTY29y",
-            "ZXNFbnRyeRILCgNrZXkYASABKAUSDQoFdmFsdWUYAiABKAU6AjgBKlIKB09i",
-            "alR5cGUSCgoGUGVvcGxlEAASCQoFQmxvY2sQARIICgREaXNoEAISCAoEVG9v",
-            "bBADEgsKB1RyaWdnZXIQBBIPCgtPYmpUeXBlU2l6ZRAFKm0KCUJsb2NrVHlw",
-            "ZRIICgRXYWxsEAASCQoFVGFibGUQARINCglGb29kUG9pbnQQAhIKCgZDb29r",
-            "ZXIQAxIOCgpSdWJiaXNoQmluEAQSDQoJVGFza1BvaW50EAUSEQoNQmxvY2tU",
-            "eXBlU2l6ZRAGKo8GCghEaXNoVHlwZRINCglEaXNoRW1wdHkQABIJCgVXaGVh",
-            "dBABEggKBFJpY2UQAhIKCgZUb21hdG8QAxIHCgNFZ2cQBBIICgRNaWxrEAUS",
-            "CQoFQXBwbGUQBhIKCgZCYW5hbmEQBxIMCghEYXJrUGx1bRAIEgwKCEhhd3Ro",
-            "b3JuEAkSDgoKU3RyYXdiZXJyeRAKEggKBEJlZWYQCxIICgRQb3JrEAwSDwoL",
-            "Q2hpY2tlbk1lYXQQDRIKCgZQb3RhdG8QDhILCgdMZXR0dWNlEA8SCgoGQWdh",
-            "cmljEBASEgoOTmVlZGxlTXVzaHJvb20QERILCgdDYWJiYWdlEBISDQoJRGlz",
-            "aFNpemUxEBMSCQoFRmxvdXIQFBIKCgZOb29kbGUQFRIJCgVCcmVhZBAWEg4K",
-            "CkNvb2tlZFJpY2UQFxILCgdLZXRjaHVwEBgSCQoFQ3JlYW0QGRISCg5Ub21h",
-            "dG9GcmllZEVnZxAaEhgKFFRvbWF0b0ZyaWVkRWdnTm9vZGxlEBsSDgoKQmVl",
-            "Zk5vb2RsZRAcEgwKCE92ZXJSaWNlEB0SEgoOWWVsbG93UGhlYXNhbnQQHhIM",
-            "CghCYXJiZWN1ZRAfEg8KC0ZyZW5jaEZyaWVzECASDQoJUGx1bUp1aWNlECES",
-            "DQoJSGFtYnVyZ2VyECISFgoSU3RyYXdiZXJyeUljZWNyZWFtECMSEgoOUG9w",
-            "Y29ybkNoaWNrZW4QJBISCg5BZ2FyaWNGcmllZEVnZxAlEggKBENha2UQJhIT",
-            "Cg9TdWdhckNvYXRlZEhhd3MQJxIOCgpGcnVpdFNhbGFkECgSDQoJU3BpY2Vk",
-            "UG90ECkSDgoKU3BpY2VkUG90MxAqEg4KClNwaWNlZFBvdDQQKxIOCgpTcGlj",
-            "ZWRQb3Q1ECwSDgoKU3BpY2VkUG90NhAtEg4KClNwaWNlZFBvdDcQLhIOCgpT",
-            "cGljZWRQb3Q4EC8SDQoJRGlzaFNpemUyEDASEgoOT3ZlckNvb2tlZERpc2gQ",
-            "MRIMCghEYXJrRGlzaBAyEg0KCURpc2hTaXplMxAzKowCCghUb29sVHlwZRIN",
-            "CglUb29sRW1wdHkQABIOCgpUaWdlclNob2VzEAESDQoJU3BlZWRCdWZmEAIS",
-            "EAoMU3RyZW5ndGhCdWZmEAMSDQoJVGVsZVNjb3BlEAQSDQoJQ29uZGltZW50",
-            "EAUSDgoKRmVydGlsaXplchAGEg8KC0JyZWFzdFBsYXRlEAcSDQoJU3BhY2VH",
-            "YXRlEAgSEgoOV2F2ZUdsdWVCb3R0bGUQCRIMCghMYW5kTWluZRAKEgwKCFRy",
-            "YXBUb29sEAsSDQoJRmxhc2hCb21iEAwSDwoLVGhyb3dIYW1tZXIQDRIHCgNC",
-            "b3cQDhILCgdTdGVhbGVyEA8SDAoIVG9vbFNpemUQECphCgtUcmlnZ2VyVHlw",
-            "ZRIMCghXYXZlR2x1ZRAAEggKBFRyYXAQARIICgRNaW5lEAISCAoEQm9tYhAD",
-            "EgkKBUFycm93EAQSCgoGSGFtbWVyEAUSDwoLVHJpZ2dlclNpemUQBio6CgRC",
-            "dWZmEgoKBkZyb3plbhAAEgsKB1N0dW5uZWQQARILCgdTcGVlZFVwEAISDAoI",
-            "U2xvd0Rvd24QAyp7CglEaXJlY3Rpb24SCQoFUmlnaHQQABILCgdSaWdodFVw",
-            "EAESBgoCVXAQAhIKCgZMZWZ0VXAQAxIICgRMZWZ0EAQSDAoITGVmdERvd24Q",
-            "BRIICgREb3duEAYSDQoJUmlnaHREb3duEAcSEQoNRGlyZWN0aW9uU2l6ZRAI",
-            "KmUKBlRhbGVudBIICgROb25lEAASCgoGUnVubmVyEAESDQoJU3Ryb25nTWFu",
-            "EAISCAoEQ29vaxADEg4KClRlY2huaWNpYW4QBBIMCghMdWNreUJveRAFEg4K",
-            "ClRhbGVudFNpemUQBkIWqgITQ29tbXVuaWNhdGlvbi5Qcm90b2IGcHJvdG8z"));
+            "ChVNZXNzYWdlVG9DbGllbnQucHJvdG8SCFByb3RvYnVmIpQDCgpHYW1lT2Jq",
+            "ZWN0EhEKCVBvc2l0aW9uWBgBIAEoARIRCglQb3NpdGlvblkYAiABKAESJgoJ",
+            "RGlyZWN0aW9uGAMgASgOMhMuUHJvdG9idWYuRGlyZWN0aW9uEiIKB09ialR5",
+            "cGUYBCABKA4yES5Qcm90b2J1Zi5PYmpUeXBlEiYKCUJsb2NrVHlwZRgFIAEo",
+            "DjITLlByb3RvYnVmLkJsb2NrVHlwZRIkCghEaXNoVHlwZRgGIAEoDjISLlBy",
+            "b3RvYnVmLkRpc2hUeXBlEiQKCFRvb2xUeXBlGAcgASgOMhIuUHJvdG9idWYu",
+            "VG9vbFR5cGUSKgoLVHJpZ2dlclR5cGUYCCABKA4yFS5Qcm90b2J1Zi5Ucmln",
+            "Z2VyVHlwZRIQCghpc01vdmluZxgJIAEoCBITCgtSZWNpZXZlVGV4dBgKIAEo",
+            "CRIMCgR0ZWFtGAsgASgFEhIKClNpZ2h0UmFuZ2UYDCABKAUSEQoJTW92ZVNw",
+            "ZWVkGA0gASgBEhgKEE1heFRocm93RGlzdGFuY2UYDiABKAUirgIKD01lc3Nh",
+            "Z2VUb0NsaWVudBJFCg5HYW1lT2JqZWN0TGlzdBgBIAMoCzItLlByb3RvYnVm",
+            "Lk1lc3NhZ2VUb0NsaWVudC5HYW1lT2JqZWN0TGlzdEVudHJ5EiEKBVRhc2tz",
+            "GAIgAygOMhIuUHJvdG9idWYuRGlzaFR5cGUSNQoGU2NvcmVzGAMgAygLMiUu",
+            "UHJvdG9idWYuTWVzc2FnZVRvQ2xpZW50LlNjb3Jlc0VudHJ5GksKE0dhbWVP",
+            "YmplY3RMaXN0RW50cnkSCwoDa2V5GAEgASgDEiMKBXZhbHVlGAIgASgLMhQu",
+            "UHJvdG9idWYuR2FtZU9iamVjdDoCOAEaLQoLU2NvcmVzRW50cnkSCwoDa2V5",
+            "GAEgASgFEg0KBXZhbHVlGAIgASgFOgI4ASpSCgdPYmpUeXBlEgoKBlBlb3Bs",
+            "ZRAAEgkKBUJsb2NrEAESCAoERGlzaBACEggKBFRvb2wQAxILCgdUcmlnZ2Vy",
+            "EAQSDwoLT2JqVHlwZVNpemUQBSptCglCbG9ja1R5cGUSCAoEV2FsbBAAEgkK",
+            "BVRhYmxlEAESDQoJRm9vZFBvaW50EAISCgoGQ29va2VyEAMSDgoKUnViYmlz",
+            "aEJpbhAEEg0KCVRhc2tQb2ludBAFEhEKDUJsb2NrVHlwZVNpemUQBirYAwoI",
+            "RGlzaFR5cGUSDQoJRGlzaEVtcHR5EAASCQoFV2hlYXQQARIICgRSaWNlEAIS",
+            "CgoGVG9tYXRvEAMSBwoDRWdnEAQSCAoEQmVlZhAFEggKBFBvcmsQBhIKCgZQ",
+            "b3RhdG8QBxILCgdMZXR0dWNlEAgSDQoJRGlzaFNpemUxEAkSCQoFRmxvdXIQ",
+            "ChIKCgZOb29kbGUQCxIJCgVCcmVhZBAMEgsKB0tldGNodXAQDRIOCgpDb29r",
+            "ZWRSaWNlEA4SEgoOVG9tYXRvRnJpZWRFZ2cQDxIYChRUb21hdG9GcmllZEVn",
+            "Z05vb2RsZRAQEg4KCkJlZWZOb29kbGUQERIMCghPdmVyUmljZRASEgwKCEJh",
+            "cmJlY3VlEBMSDwoLRnJlbmNoRnJpZXMQFBINCglIYW1idXJnZXIQFRINCglT",
+            "cGljZWRQb3QQFhIOCgpTcGljZWRQb3QzEBcSDgoKU3BpY2VkUG90NBAYEg4K",
+            "ClNwaWNlZFBvdDUQGRIOCgpTcGljZWRQb3Q2EBoSDQoJRGlzaFNpemUyEBsS",
+            "EgoOT3ZlckNvb2tlZERpc2gQHBIMCghEYXJrRGlzaBAdEg8KC0Nvb2tpbmdE",
+            "aXNoEB4SDQoJRGlzaFNpemUzEB8qjAIKCFRvb2xUeXBlEg0KCVRvb2xFbXB0",
+            "eRAAEg4KClRpZ2VyU2hvZXMQARINCglTcGVlZEJ1ZmYQAhIQCgxTdHJlbmd0",
+            "aEJ1ZmYQAxINCglUZWxlU2NvcGUQBBINCglDb25kaW1lbnQQBRIOCgpGZXJ0",
+            "aWxpemVyEAYSDwoLQnJlYXN0UGxhdGUQBxINCglTcGFjZUdhdGUQCBISCg5X",
+            "YXZlR2x1ZUJvdHRsZRAJEgwKCExhbmRNaW5lEAoSDAoIVHJhcFRvb2wQCxIN",
+            "CglGbGFzaEJvbWIQDBIPCgtUaHJvd0hhbW1lchANEgcKA0JvdxAOEgsKB1N0",
+            "ZWFsZXIQDxIMCghUb29sU2l6ZRAQKmEKC1RyaWdnZXJUeXBlEgwKCFdhdmVH",
+            "bHVlEAASCAoEVHJhcBABEggKBE1pbmUQAhIICgRCb21iEAMSCQoFQXJyb3cQ",
+            "BBIKCgZIYW1tZXIQBRIPCgtUcmlnZ2VyU2l6ZRAGKnsKCURpcmVjdGlvbhIJ",
+            "CgVSaWdodBAAEgsKB1JpZ2h0VXAQARIGCgJVcBACEgoKBkxlZnRVcBADEggK",
+            "BExlZnQQBBIMCghMZWZ0RG93bhAFEggKBERvd24QBhINCglSaWdodERvd24Q",
+            "BxIRCg1EaXJlY3Rpb25TaXplEAgqZQoGVGFsZW50EggKBE5vbmUQABIKCgZS",
+            "dW5uZXIQARINCglTdHJvbmdNYW4QAhIICgRDb29rEAMSDgoKVGVjaG5pY2lh",
+            "bhAEEgwKCEx1Y2t5Qm95EAUSDgoKVGFsZW50U2l6ZRAGQhaqAhNDb21tdW5p",
+            "Y2F0aW9uLlByb3RvYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
-          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Communication.Proto.ObjType), typeof(global::Communication.Proto.BlockType), typeof(global::Communication.Proto.DishType), typeof(global::Communication.Proto.ToolType), typeof(global::Communication.Proto.TriggerType), typeof(global::Communication.Proto.Buff), typeof(global::Communication.Proto.Direction), typeof(global::Communication.Proto.Talent), }, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.GameObject), global::Communication.Proto.GameObject.Parser, new[]{ "PositionX", "PositionY", "Width", "Height", "Direction", "ObjType", "BlockType", "DishType", "ToolType", "TriggerType", "IsMoving", "Buff", "SpeakText", "Team", "SightRange" }, null, null, null),
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Communication.Proto.ObjType), typeof(global::Communication.Proto.BlockType), typeof(global::Communication.Proto.DishType), typeof(global::Communication.Proto.ToolType), typeof(global::Communication.Proto.TriggerType), typeof(global::Communication.Proto.Direction), typeof(global::Communication.Proto.Talent), }, new pbr::GeneratedClrTypeInfo[] {
+            new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.GameObject), global::Communication.Proto.GameObject.Parser, new[]{ "PositionX", "PositionY", "Direction", "ObjType", "BlockType", "DishType", "ToolType", "TriggerType", "IsMoving", "RecieveText", "Team", "SightRange", "MoveSpeed", "MaxThrowDistance" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Communication.Proto.MessageToClient), global::Communication.Proto.MessageToClient.Parser, new[]{ "GameObjectList", "Tasks", "Scores" }, null, null, new pbr::GeneratedClrTypeInfo[] { null, null, })
           }));
     }
@@ -89,11 +81,29 @@ namespace Communication.Proto {
 
   }
   #region Enums
+  /// <summary>
+  ///可能出现在地图上的各种物品
+  /// </summary>
   public enum ObjType {
+    /// <summary>
+    ///人
+    /// </summary>
     [pbr::OriginalName("People")] People = 0,
+    /// <summary>
+    ///墙体
+    /// </summary>
     [pbr::OriginalName("Block")] Block = 1,
+    /// <summary>
+    ///食材
+    /// </summary>
     [pbr::OriginalName("Dish")] Dish = 2,
+    /// <summary>
+    ///道具
+    /// </summary>
     [pbr::OriginalName("Tool")] Tool = 3,
+    /// <summary>
+    ///触发器
+    /// </summary>
     [pbr::OriginalName("Trigger")] Trigger = 4,
     [pbr::OriginalName("ObjTypeSize")] Size = 5,
   }
@@ -148,206 +158,187 @@ namespace Communication.Proto {
     /// </summary>
     [pbr::OriginalName("Egg")] Egg = 4,
     /// <summary>
-    ///牛奶
-    /// </summary>
-    [pbr::OriginalName("Milk")] Milk = 5,
-    /// <summary>
-    ///苹果
-    /// </summary>
-    [pbr::OriginalName("Apple")] Apple = 6,
-    /// <summary>
-    ///香蕉
-    /// </summary>
-    [pbr::OriginalName("Banana")] Banana = 7,
-    /// <summary>
-    ///乌梅
-    /// </summary>
-    [pbr::OriginalName("DarkPlum")] DarkPlum = 8,
-    /// <summary>
-    ///山楂
-    /// </summary>
-    [pbr::OriginalName("Hawthorn")] Hawthorn = 9,
-    /// <summary>
-    ///草莓
-    /// </summary>
-    [pbr::OriginalName("Strawberry")] Strawberry = 10,
-    /// <summary>
     ///牛肉
     /// </summary>
-    [pbr::OriginalName("Beef")] Beef = 11,
+    [pbr::OriginalName("Beef")] Beef = 5,
     /// <summary>
     ///猪肉
     /// </summary>
-    [pbr::OriginalName("Pork")] Pork = 12,
-    /// <summary>
-    ///鸡肉
-    /// </summary>
-    [pbr::OriginalName("ChickenMeat")] ChickenMeat = 13,
+    [pbr::OriginalName("Pork")] Pork = 6,
     /// <summary>
     ///土豆
     /// </summary>
-    [pbr::OriginalName("Potato")] Potato = 14,
+    [pbr::OriginalName("Potato")] Potato = 7,
     /// <summary>
     ///生菜
     /// </summary>
-    [pbr::OriginalName("Lettuce")] Lettuce = 15,
-    /// <summary>
-    ///木耳
-    /// </summary>
-    [pbr::OriginalName("Agaric")] Agaric = 16,
-    /// <summary>
-    ///金针菇
-    /// </summary>
-    [pbr::OriginalName("NeedleMushroom")] NeedleMushroom = 17,
-    /// <summary>
-    ///包菜
-    /// </summary>
-    [pbr::OriginalName("Cabbage")] Cabbage = 18,
-    [pbr::OriginalName("DishSize1")] DishSize1 = 19,
+    [pbr::OriginalName("Lettuce")] Lettuce = 8,
+    [pbr::OriginalName("DishSize1")] DishSize1 = 9,
     /// <summary>
     ///以下为中间产物
     /// </summary>
-    [pbr::OriginalName("Flour")] Flour = 20,
+    [pbr::OriginalName("Flour")] Flour = 10,
     /// <summary>
     ///面条
     /// </summary>
-    [pbr::OriginalName("Noodle")] Noodle = 21,
+    [pbr::OriginalName("Noodle")] Noodle = 11,
     /// <summary>
     ///面包片
     /// </summary>
-    [pbr::OriginalName("Bread")] Bread = 22,
-    /// <summary>
-    ///米饭
-    /// </summary>
-    [pbr::OriginalName("CookedRice")] CookedRice = 23,
+    [pbr::OriginalName("Bread")] Bread = 12,
     /// <summary>
     ///番茄酱
     /// </summary>
-    [pbr::OriginalName("Ketchup")] Ketchup = 24,
-    /// <summary>
-    ///奶油
-    /// </summary>
-    [pbr::OriginalName("Cream")] Cream = 25,
+    [pbr::OriginalName("Ketchup")] Ketchup = 13,
     /// <summary>
     ///以下为菜品
     /// </summary>
-    [pbr::OriginalName("TomatoFriedEgg")] TomatoFriedEgg = 26,
+    [pbr::OriginalName("CookedRice")] CookedRice = 14,
+    /// <summary>
+    ///番茄炒蛋
+    /// </summary>
+    [pbr::OriginalName("TomatoFriedEgg")] TomatoFriedEgg = 15,
     /// <summary>
     ///西红柿鸡蛋面
     /// </summary>
-    [pbr::OriginalName("TomatoFriedEggNoodle")] TomatoFriedEggNoodle = 27,
+    [pbr::OriginalName("TomatoFriedEggNoodle")] TomatoFriedEggNoodle = 16,
     /// <summary>
     ///清青牛拉
     /// </summary>
-    [pbr::OriginalName("BeefNoodle")] BeefNoodle = 28,
+    [pbr::OriginalName("BeefNoodle")] BeefNoodle = 17,
     /// <summary>
     ///盖浇饭
     /// </summary>
-    [pbr::OriginalName("OverRice")] OverRice = 29,
-    /// <summary>
-    ///黄焖鸡米饭
-    /// </summary>
-    [pbr::OriginalName("YellowPheasant")] YellowPheasant = 30,
+    [pbr::OriginalName("OverRice")] OverRice = 18,
     /// <summary>
     ///烤肉
     /// </summary>
-    [pbr::OriginalName("Barbecue")] Barbecue = 31,
+    [pbr::OriginalName("Barbecue")] Barbecue = 19,
     /// <summary>
     ///薯条
     /// </summary>
-    [pbr::OriginalName("FrenchFries")] FrenchFries = 32,
-    /// <summary>
-    ///酸梅汤
-    /// </summary>
-    [pbr::OriginalName("PlumJuice")] PlumJuice = 33,
+    [pbr::OriginalName("FrenchFries")] FrenchFries = 20,
     /// <summary>
     ///汉堡
     /// </summary>
-    [pbr::OriginalName("Hamburger")] Hamburger = 34,
-    /// <summary>
-    ///草莓圣代
-    /// </summary>
-    [pbr::OriginalName("StrawberryIcecream")] StrawberryIcecream = 35,
-    /// <summary>
-    ///鸡米花
-    /// </summary>
-    [pbr::OriginalName("PopcornChicken")] PopcornChicken = 36,
-    /// <summary>
-    ///木耳炒蛋
-    /// </summary>
-    [pbr::OriginalName("AgaricFriedEgg")] AgaricFriedEgg = 37,
-    /// <summary>
-    ///蛋糕
-    /// </summary>
-    [pbr::OriginalName("Cake")] Cake = 38,
-    /// <summary>
-    ///冰糖葫芦
-    /// </summary>
-    [pbr::OriginalName("SugarCoatedHaws")] SugarCoatedHaws = 39,
-    /// <summary>
-    ///水果色拉
-    /// </summary>
-    [pbr::OriginalName("FruitSalad")] FruitSalad = 40,
-    [pbr::OriginalName("SpicedPot")] SpicedPot = 41,
-    [pbr::OriginalName("SpicedPot3")] SpicedPot3 = 42,
-    [pbr::OriginalName("SpicedPot4")] SpicedPot4 = 43,
-    [pbr::OriginalName("SpicedPot5")] SpicedPot5 = 44,
-    [pbr::OriginalName("SpicedPot6")] SpicedPot6 = 45,
-    [pbr::OriginalName("SpicedPot7")] SpicedPot7 = 46,
+    [pbr::OriginalName("Hamburger")] Hamburger = 21,
     /// <summary>
     ///香锅
     /// </summary>
-    [pbr::OriginalName("SpicedPot8")] SpicedPot8 = 47,
-    [pbr::OriginalName("DishSize2")] DishSize2 = 48,
+    [pbr::OriginalName("SpicedPot")] SpicedPot = 22,
+    [pbr::OriginalName("SpicedPot3")] SpicedPot3 = 23,
+    [pbr::OriginalName("SpicedPot4")] SpicedPot4 = 24,
+    [pbr::OriginalName("SpicedPot5")] SpicedPot5 = 25,
+    [pbr::OriginalName("SpicedPot6")] SpicedPot6 = 26,
+    [pbr::OriginalName("DishSize2")] DishSize2 = 27,
     /// <summary>
     ///以下为垃圾
     /// </summary>
-    [pbr::OriginalName("OverCookedDish")] OverCookedDish = 49,
+    [pbr::OriginalName("OverCookedDish")] OverCookedDish = 28,
     /// <summary>
     ///黑暗料理
     /// </summary>
-    [pbr::OriginalName("DarkDish")] DarkDish = 50,
-    [pbr::OriginalName("DishSize3")] DishSize3 = 51,
+    [pbr::OriginalName("DarkDish")] DarkDish = 29,
+    [pbr::OriginalName("CookingDish")] CookingDish = 30,
+    [pbr::OriginalName("DishSize3")] DishSize3 = 31,
   }
 
+  /// <summary>
+  ///道具
+  /// </summary>
   public enum ToolType {
+    /// <summary>
+    /// </summary>
     [pbr::OriginalName("ToolEmpty")] ToolEmpty = 0,
+    /// <summary>
+    ///虎头鞋，穿上加速，扔掉恢复原速
+    /// </summary>
     [pbr::OriginalName("TigerShoes")] TigerShoes = 1,
+    /// <summary>
+    ///加速，一定时间内加速
+    /// </summary>
     [pbr::OriginalName("SpeedBuff")] SpeedBuff = 2,
+    /// <summary>
+    ///加力量，一定时间内增加扔物品的距离
+    /// </summary>
     [pbr::OriginalName("StrengthBuff")] StrengthBuff = 3,
+    /// <summary>
+    ///望远镜，增加视野范围
+    /// </summary>
     [pbr::OriginalName("TeleScope")] TeleScope = 4,
+    /// <summary>
+    ///调料，提交香锅时专用
+    /// </summary>
     [pbr::OriginalName("Condiment")] Condiment = 5,
+    /// <summary>
+    ///肥料，加速做菜
+    /// </summary>
     [pbr::OriginalName("Fertilizer")] Fertilizer = 6,
+    /// <summary>
+    ///护心镜，防止各种攻击性道具
+    /// </summary>
     [pbr::OriginalName("BreastPlate")] BreastPlate = 7,
+    /// <summary>
+    ///传送门，瞬间传送到指定地点
+    /// </summary>
     [pbr::OriginalName("SpaceGate")] SpaceGate = 8,
     /// <summary>
     /// Eye = 9;
     /// </summary>
     [pbr::OriginalName("WaveGlueBottle")] WaveGlueBottle = 9,
+    /// <summary>
+    ///放置地雷
+    /// </summary>
     [pbr::OriginalName("LandMine")] LandMine = 10,
+    /// <summary>
+    ///放置陷阱
+    /// </summary>
     [pbr::OriginalName("TrapTool")] TrapTool = 11,
+    /// <summary>
+    ///防止闪光炸弹
+    /// </summary>
     [pbr::OriginalName("FlashBomb")] FlashBomb = 12,
+    /// <summary>
+    ///扔锤子
+    /// </summary>
     [pbr::OriginalName("ThrowHammer")] ThrowHammer = 13,
+    /// <summary>
+    ///弓箭
+    /// </summary>
     [pbr::OriginalName("Bow")] Bow = 14,
+    /// <summary>
+    ///偷东西，可以偷食材
+    /// </summary>
     [pbr::OriginalName("Stealer")] Stealer = 15,
     [pbr::OriginalName("ToolSize")] ToolSize = 16,
   }
 
   public enum TriggerType {
+    /// <summary>
+    ///滔牌胶水，踩上后会减速，过一段时间自行消失
+    /// </summary>
     [pbr::OriginalName("WaveGlue")] WaveGlue = 0,
+    /// <summary>
+    ///陷阱，踩上后有一段时间不能动弹，地图上不可见
+    /// </summary>
     [pbr::OriginalName("Trap")] Trap = 1,
+    /// <summary>
+    ///地雷，踩上后减分数并眩晕一段时间，地图上不可见
+    /// </summary>
     [pbr::OriginalName("Mine")] Mine = 2,
+    /// <summary>
+    ///炸弹，踩上后眩晕一段时间，并掉落身上的食材和道具，地图上不可见
+    /// </summary>
     [pbr::OriginalName("Bomb")] Bomb = 3,
+    /// <summary>
+    ///箭，被射中后扣一定的分数并眩晕一段时间
+    /// </summary>
     [pbr::OriginalName("Arrow")] Arrow = 4,
+    /// <summary>
+    ///锤子，被砸中后眩晕一段时间并掉落身上的食材和道具
+    /// </summary>
     [pbr::OriginalName("Hammer")] Hammer = 5,
     [pbr::OriginalName("TriggerSize")] TriggerSize = 6,
-  }
-
-  public enum Buff {
-    [pbr::OriginalName("Frozen")] Frozen = 0,
-    [pbr::OriginalName("Stunned")] Stunned = 1,
-    [pbr::OriginalName("SpeedUp")] SpeedUp = 2,
-    [pbr::OriginalName("SlowDown")] SlowDown = 3,
   }
 
   public enum Direction {
@@ -364,14 +355,26 @@ namespace Communication.Proto {
 
   public enum Talent {
     [pbr::OriginalName("None")] None = 0,
-    [pbr::OriginalName("Runner")] Runner = 1,
-    [pbr::OriginalName("StrongMan")] StrongMan = 2,
-    [pbr::OriginalName("Cook")] Cook = 3,
-    [pbr::OriginalName("Technician")] Technician = 4,
-    [pbr::OriginalName("LuckyBoy")] LuckyBoy = 5,
     /// <summary>
-    /// DrunkMan
+    /// 跑步加速
     /// </summary>
+    [pbr::OriginalName("Runner")] Runner = 1,
+    /// <summary>
+    ///扔东西距离变远，扔锤子和射箭伤害更大
+    /// </summary>
+    [pbr::OriginalName("StrongMan")] StrongMan = 2,
+    /// <summary>
+    ///制作食材获得分数有一定加成
+    /// </summary>
+    [pbr::OriginalName("Cook")] Cook = 3,
+    /// <summary>
+    ///防止地雷、陷阱、炸弹、使用传送门有一定加成
+    /// </summary>
+    [pbr::OriginalName("Technician")] Technician = 4,
+    /// <summary>
+    ///每隔一段时间在手上生成一个道具，若手上已有道具则在身边的地面生成
+    /// </summary>
+    [pbr::OriginalName("LuckyBoy")] LuckyBoy = 5,
     [pbr::OriginalName("TalentSize")] Size = 6,
   }
 
@@ -405,8 +408,6 @@ namespace Communication.Proto {
     public GameObject(GameObject other) : this() {
       positionX_ = other.positionX_;
       positionY_ = other.positionY_;
-      width_ = other.width_;
-      height_ = other.height_;
       direction_ = other.direction_;
       objType_ = other.objType_;
       blockType_ = other.blockType_;
@@ -414,10 +415,11 @@ namespace Communication.Proto {
       toolType_ = other.toolType_;
       triggerType_ = other.triggerType_;
       isMoving_ = other.isMoving_;
-      buff_ = other.buff_.Clone();
-      speakText_ = other.speakText_;
+      recieveText_ = other.recieveText_;
       team_ = other.team_;
       sightRange_ = other.sightRange_;
+      moveSpeed_ = other.moveSpeed_;
+      maxThrowDistance_ = other.maxThrowDistance_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -448,30 +450,8 @@ namespace Communication.Proto {
       }
     }
 
-    /// <summary>Field number for the "Width" field.</summary>
-    public const int WidthFieldNumber = 3;
-    private int width_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int Width {
-      get { return width_; }
-      set {
-        width_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "Height" field.</summary>
-    public const int HeightFieldNumber = 4;
-    private int height_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int Height {
-      get { return height_; }
-      set {
-        height_ = value;
-      }
-    }
-
     /// <summary>Field number for the "Direction" field.</summary>
-    public const int DirectionFieldNumber = 5;
+    public const int DirectionFieldNumber = 3;
     private global::Communication.Proto.Direction direction_ = 0;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Communication.Proto.Direction Direction {
@@ -482,7 +462,7 @@ namespace Communication.Proto {
     }
 
     /// <summary>Field number for the "ObjType" field.</summary>
-    public const int ObjTypeFieldNumber = 6;
+    public const int ObjTypeFieldNumber = 4;
     private global::Communication.Proto.ObjType objType_ = 0;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Communication.Proto.ObjType ObjType {
@@ -493,7 +473,7 @@ namespace Communication.Proto {
     }
 
     /// <summary>Field number for the "BlockType" field.</summary>
-    public const int BlockTypeFieldNumber = 7;
+    public const int BlockTypeFieldNumber = 5;
     private global::Communication.Proto.BlockType blockType_ = 0;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Communication.Proto.BlockType BlockType {
@@ -504,7 +484,7 @@ namespace Communication.Proto {
     }
 
     /// <summary>Field number for the "DishType" field.</summary>
-    public const int DishTypeFieldNumber = 8;
+    public const int DishTypeFieldNumber = 6;
     private global::Communication.Proto.DishType dishType_ = 0;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Communication.Proto.DishType DishType {
@@ -515,7 +495,7 @@ namespace Communication.Proto {
     }
 
     /// <summary>Field number for the "ToolType" field.</summary>
-    public const int ToolTypeFieldNumber = 9;
+    public const int ToolTypeFieldNumber = 7;
     private global::Communication.Proto.ToolType toolType_ = 0;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Communication.Proto.ToolType ToolType {
@@ -526,7 +506,7 @@ namespace Communication.Proto {
     }
 
     /// <summary>Field number for the "TriggerType" field.</summary>
-    public const int TriggerTypeFieldNumber = 10;
+    public const int TriggerTypeFieldNumber = 8;
     private global::Communication.Proto.TriggerType triggerType_ = 0;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Communication.Proto.TriggerType TriggerType {
@@ -537,7 +517,7 @@ namespace Communication.Proto {
     }
 
     /// <summary>Field number for the "isMoving" field.</summary>
-    public const int IsMovingFieldNumber = 11;
+    public const int IsMovingFieldNumber = 9;
     private bool isMoving_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool IsMoving {
@@ -547,32 +527,19 @@ namespace Communication.Proto {
       }
     }
 
-    /// <summary>Field number for the "Buff" field.</summary>
-    public const int BuffFieldNumber = 12;
-    private static readonly pb::FieldCodec<global::Communication.Proto.Buff> _repeated_buff_codec
-        = pb::FieldCodec.ForEnum(98, x => (int) x, x => (global::Communication.Proto.Buff) x);
-    private readonly pbc::RepeatedField<global::Communication.Proto.Buff> buff_ = new pbc::RepeatedField<global::Communication.Proto.Buff>();
+    /// <summary>Field number for the "RecieveText" field.</summary>
+    public const int RecieveTextFieldNumber = 10;
+    private string recieveText_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public pbc::RepeatedField<global::Communication.Proto.Buff> Buff {
-      get { return buff_; }
-    }
-
-    /// <summary>Field number for the "SpeakText" field.</summary>
-    public const int SpeakTextFieldNumber = 13;
-    private string speakText_ = "";
-    /// <summary>
-    /// int32 Score = 13;
-    /// </summary>
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public string SpeakText {
-      get { return speakText_; }
+    public string RecieveText {
+      get { return recieveText_; }
       set {
-        speakText_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+        recieveText_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
     /// <summary>Field number for the "team" field.</summary>
-    public const int TeamFieldNumber = 14;
+    public const int TeamFieldNumber = 11;
     private int team_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int Team {
@@ -583,13 +550,35 @@ namespace Communication.Proto {
     }
 
     /// <summary>Field number for the "SightRange" field.</summary>
-    public const int SightRangeFieldNumber = 15;
+    public const int SightRangeFieldNumber = 12;
     private int sightRange_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int SightRange {
       get { return sightRange_; }
       set {
         sightRange_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "MoveSpeed" field.</summary>
+    public const int MoveSpeedFieldNumber = 13;
+    private double moveSpeed_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public double MoveSpeed {
+      get { return moveSpeed_; }
+      set {
+        moveSpeed_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "MaxThrowDistance" field.</summary>
+    public const int MaxThrowDistanceFieldNumber = 14;
+    private int maxThrowDistance_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int MaxThrowDistance {
+      get { return maxThrowDistance_; }
+      set {
+        maxThrowDistance_ = value;
       }
     }
 
@@ -608,8 +597,6 @@ namespace Communication.Proto {
       }
       if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(PositionX, other.PositionX)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(PositionY, other.PositionY)) return false;
-      if (Width != other.Width) return false;
-      if (Height != other.Height) return false;
       if (Direction != other.Direction) return false;
       if (ObjType != other.ObjType) return false;
       if (BlockType != other.BlockType) return false;
@@ -617,10 +604,11 @@ namespace Communication.Proto {
       if (ToolType != other.ToolType) return false;
       if (TriggerType != other.TriggerType) return false;
       if (IsMoving != other.IsMoving) return false;
-      if(!buff_.Equals(other.buff_)) return false;
-      if (SpeakText != other.SpeakText) return false;
+      if (RecieveText != other.RecieveText) return false;
       if (Team != other.Team) return false;
       if (SightRange != other.SightRange) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(MoveSpeed, other.MoveSpeed)) return false;
+      if (MaxThrowDistance != other.MaxThrowDistance) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -629,8 +617,6 @@ namespace Communication.Proto {
       int hash = 1;
       if (PositionX != 0D) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(PositionX);
       if (PositionY != 0D) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(PositionY);
-      if (Width != 0) hash ^= Width.GetHashCode();
-      if (Height != 0) hash ^= Height.GetHashCode();
       if (Direction != 0) hash ^= Direction.GetHashCode();
       if (ObjType != 0) hash ^= ObjType.GetHashCode();
       if (BlockType != 0) hash ^= BlockType.GetHashCode();
@@ -638,10 +624,11 @@ namespace Communication.Proto {
       if (ToolType != 0) hash ^= ToolType.GetHashCode();
       if (TriggerType != 0) hash ^= TriggerType.GetHashCode();
       if (IsMoving != false) hash ^= IsMoving.GetHashCode();
-      hash ^= buff_.GetHashCode();
-      if (SpeakText.Length != 0) hash ^= SpeakText.GetHashCode();
+      if (RecieveText.Length != 0) hash ^= RecieveText.GetHashCode();
       if (Team != 0) hash ^= Team.GetHashCode();
       if (SightRange != 0) hash ^= SightRange.GetHashCode();
+      if (MoveSpeed != 0D) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(MoveSpeed);
+      if (MaxThrowDistance != 0) hash ^= MaxThrowDistance.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -663,54 +650,53 @@ namespace Communication.Proto {
         output.WriteRawTag(17);
         output.WriteDouble(PositionY);
       }
-      if (Width != 0) {
-        output.WriteRawTag(24);
-        output.WriteInt32(Width);
-      }
-      if (Height != 0) {
-        output.WriteRawTag(32);
-        output.WriteInt32(Height);
-      }
       if (Direction != 0) {
-        output.WriteRawTag(40);
+        output.WriteRawTag(24);
         output.WriteEnum((int) Direction);
       }
       if (ObjType != 0) {
-        output.WriteRawTag(48);
+        output.WriteRawTag(32);
         output.WriteEnum((int) ObjType);
       }
       if (BlockType != 0) {
-        output.WriteRawTag(56);
+        output.WriteRawTag(40);
         output.WriteEnum((int) BlockType);
       }
       if (DishType != 0) {
-        output.WriteRawTag(64);
+        output.WriteRawTag(48);
         output.WriteEnum((int) DishType);
       }
       if (ToolType != 0) {
-        output.WriteRawTag(72);
+        output.WriteRawTag(56);
         output.WriteEnum((int) ToolType);
       }
       if (TriggerType != 0) {
-        output.WriteRawTag(80);
+        output.WriteRawTag(64);
         output.WriteEnum((int) TriggerType);
       }
       if (IsMoving != false) {
-        output.WriteRawTag(88);
+        output.WriteRawTag(72);
         output.WriteBool(IsMoving);
       }
-      buff_.WriteTo(output, _repeated_buff_codec);
-      if (SpeakText.Length != 0) {
-        output.WriteRawTag(106);
-        output.WriteString(SpeakText);
+      if (RecieveText.Length != 0) {
+        output.WriteRawTag(82);
+        output.WriteString(RecieveText);
       }
       if (Team != 0) {
-        output.WriteRawTag(112);
+        output.WriteRawTag(88);
         output.WriteInt32(Team);
       }
       if (SightRange != 0) {
-        output.WriteRawTag(120);
+        output.WriteRawTag(96);
         output.WriteInt32(SightRange);
+      }
+      if (MoveSpeed != 0D) {
+        output.WriteRawTag(105);
+        output.WriteDouble(MoveSpeed);
+      }
+      if (MaxThrowDistance != 0) {
+        output.WriteRawTag(112);
+        output.WriteInt32(MaxThrowDistance);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -725,12 +711,6 @@ namespace Communication.Proto {
       }
       if (PositionY != 0D) {
         size += 1 + 8;
-      }
-      if (Width != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Width);
-      }
-      if (Height != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Height);
       }
       if (Direction != 0) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Direction);
@@ -753,15 +733,20 @@ namespace Communication.Proto {
       if (IsMoving != false) {
         size += 1 + 1;
       }
-      size += buff_.CalculateSize(_repeated_buff_codec);
-      if (SpeakText.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(SpeakText);
+      if (RecieveText.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(RecieveText);
       }
       if (Team != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Team);
       }
       if (SightRange != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(SightRange);
+      }
+      if (MoveSpeed != 0D) {
+        size += 1 + 8;
+      }
+      if (MaxThrowDistance != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(MaxThrowDistance);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -779,12 +764,6 @@ namespace Communication.Proto {
       }
       if (other.PositionY != 0D) {
         PositionY = other.PositionY;
-      }
-      if (other.Width != 0) {
-        Width = other.Width;
-      }
-      if (other.Height != 0) {
-        Height = other.Height;
       }
       if (other.Direction != 0) {
         Direction = other.Direction;
@@ -807,15 +786,20 @@ namespace Communication.Proto {
       if (other.IsMoving != false) {
         IsMoving = other.IsMoving;
       }
-      buff_.Add(other.buff_);
-      if (other.SpeakText.Length != 0) {
-        SpeakText = other.SpeakText;
+      if (other.RecieveText.Length != 0) {
+        RecieveText = other.RecieveText;
       }
       if (other.Team != 0) {
         Team = other.Team;
       }
       if (other.SightRange != 0) {
         SightRange = other.SightRange;
+      }
+      if (other.MoveSpeed != 0D) {
+        MoveSpeed = other.MoveSpeed;
+      }
+      if (other.MaxThrowDistance != 0) {
+        MaxThrowDistance = other.MaxThrowDistance;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -837,56 +821,51 @@ namespace Communication.Proto {
             break;
           }
           case 24: {
-            Width = input.ReadInt32();
-            break;
-          }
-          case 32: {
-            Height = input.ReadInt32();
-            break;
-          }
-          case 40: {
             Direction = (global::Communication.Proto.Direction) input.ReadEnum();
             break;
           }
-          case 48: {
+          case 32: {
             ObjType = (global::Communication.Proto.ObjType) input.ReadEnum();
             break;
           }
-          case 56: {
+          case 40: {
             BlockType = (global::Communication.Proto.BlockType) input.ReadEnum();
             break;
           }
-          case 64: {
+          case 48: {
             DishType = (global::Communication.Proto.DishType) input.ReadEnum();
             break;
           }
-          case 72: {
+          case 56: {
             ToolType = (global::Communication.Proto.ToolType) input.ReadEnum();
             break;
           }
-          case 80: {
+          case 64: {
             TriggerType = (global::Communication.Proto.TriggerType) input.ReadEnum();
             break;
           }
-          case 88: {
+          case 72: {
             IsMoving = input.ReadBool();
             break;
           }
-          case 98:
-          case 96: {
-            buff_.AddEntriesFrom(input, _repeated_buff_codec);
+          case 82: {
+            RecieveText = input.ReadString();
             break;
           }
-          case 106: {
-            SpeakText = input.ReadString();
-            break;
-          }
-          case 112: {
+          case 88: {
             Team = input.ReadInt32();
             break;
           }
-          case 120: {
+          case 96: {
             SightRange = input.ReadInt32();
+            break;
+          }
+          case 105: {
+            MoveSpeed = input.ReadDouble();
+            break;
+          }
+          case 112: {
+            MaxThrowDistance = input.ReadInt32();
             break;
           }
         }

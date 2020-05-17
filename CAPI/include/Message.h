@@ -1,8 +1,6 @@
 #ifndef MESSAGE_H
 #define MESSAGE_H
-#ifndef DEVELOPER_ONLY
-#error This file is only included for developers
-#endif
+
 #include "OS_related.h"
 #include <string>
 #include <sys/timeb.h>
@@ -67,9 +65,9 @@ public:
 	int GetCachedSize() const;
 	const byte *ParseFromArray(const byte *bytes, int size);
 	byte *SerializeToArray(byte *bytes, int size);
+	~Message();
 
 protected:
-	// 未实现
 	virtual google::protobuf::Metadata GetMetadata() const;
 };
 

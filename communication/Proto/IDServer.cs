@@ -14,6 +14,7 @@ namespace Communication.Proto
         private ConcurrentDictionary<int, IntPtr> clientList;
         private readonly TcpServer server;
         private bool isListening;
+        private object idLock = new object();
 
         public ushort Port
         {
@@ -31,7 +32,7 @@ namespace Communication.Proto
             {
                 MemoryStream istream = new MemoryStream(bytes);
                 BinaryReader br = new BinaryReader(istream);
-                PacketType type = (PacketType) br.ReadInt32();
+                PacketType type = (PacketType)br.ReadInt32();
 
                 switch (type)
                 {
@@ -43,10 +44,10 @@ namespace Communication.Proto
                         }
                         clientList[br.ReadInt32()] = connId;
                         OnAccept?.Invoke();
-                        int id=-1;
+                        int id = -1;
                         foreach (int key in clientList.Keys)
                         {
-                            if(clientList[key]==connId)
+                            if (clientList[key] == connId)
                             {
                                 id = key;
                                 break;
@@ -55,29 +56,32 @@ namespace Communication.Proto
                         Constants.Debug($"ServerSide: Using Pre-Allocated ID #{id}");
                         break;
                     case PacketType.IdRequest: //客户端请求ID
-                        if (!isListening)
+                        lock (idLock)
                         {
-                            server.Disconnect(connId);
-                            break;
-                        }
-                        id = -1;
-                        for(int i=0; ;i++)
-                        {
-                            if(!clientList.ContainsKey(i))
+                            if (!isListening)
                             {
-                                id = i;
+                                server.Disconnect(connId);
                                 break;
                             }
+                            id = -1;
+                            for (int i = 0; ; i++)
+                            {
+                                if (!clientList.ContainsKey(i))
+                                {
+                                    id = i;
+                                    break;
+                                }
+                            }
+                            clientList.TryAdd(id, connId);
+                            MemoryStream ostream = new MemoryStream();
+                            BinaryWriter bw = new BinaryWriter(ostream);
+                            bw.Write((int)PacketType.IdAllocate);
+                            bw.Write(id);
+                            byte[] raw = ostream.ToArray();
+                            server.Send(connId, raw, raw.Length);
+                            OnAccept?.Invoke();
+                            Constants.Debug($"ServerSide: Allocate ID #{id}");
                         }
-                        clientList.TryAdd(id,connId);
-                        MemoryStream ostream = new MemoryStream();
-                        BinaryWriter bw = new BinaryWriter(ostream);
-                        bw.Write((int)PacketType.IdAllocate);
-                        bw.Write(id);
-                        byte[] raw = ostream.ToArray();
-                        server.Send(connId, raw, raw.Length);
-                        OnAccept?.Invoke();
-                        Constants.Debug($"ServerSide: Allocate ID #{id}");
                         break;
                     case PacketType.ProtoPacket: //接收到包
                         Message message = new Message();
@@ -105,7 +109,7 @@ namespace Communication.Proto
                             }
                         }
                         IntPtr tmp;
-                        clientList.TryRemove(id,out tmp);
+                        clientList.TryRemove(id, out tmp);
                         Constants.Debug($"ServerSide: ID #{id } has quited");
                         server.Disconnect(tmp);
                         InternalQuit?.Invoke();
@@ -163,19 +167,19 @@ namespace Communication.Proto
                 message.WriteTo(ostream);
                 byte[] raw = ostream.ToArray();
                 if (message.Address == -2) //广播包
-                    foreach(IntPtr client in clientList.Values)
+                    foreach (IntPtr client in clientList.Values)
                         server.Send(client, raw, raw.Length);
                 else
                 {
-                    if(clientList.ContainsKey(message.Address))server.Send(clientList[message.Address], raw, raw.Length);
+                    if (clientList.ContainsKey(message.Address)) server.Send(clientList[message.Address], raw, raw.Length);
                 }
-                    
+
             }
         }
 
         public void Send(Message message) //发包
         {
-            if(clientList.Count>0)
+            if (clientList.Count > 0)
             {
                 InternalSend(message, -1);
                 //Constants.Debug($"ServerSide: Data sent {message.Content.GetType().FullName}");

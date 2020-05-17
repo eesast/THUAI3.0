@@ -25,5 +25,8 @@ message MessageToServer {
   double Parameter1 = 10;
   double Parameter2 = 11;
   bool IsSetTalent = 12;
-  Talent Talent = 13;
+  bool IsPickSelfPosition = 13;
+  ObjType PickType = 14;
+  int32 PickDishOrToolType = 15;
+  Talent Talent = 16;
 }

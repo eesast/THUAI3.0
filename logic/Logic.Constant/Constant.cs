@@ -16,15 +16,20 @@ namespace Logic.Constant
         public const double FrameRate = 20;
         public const double TimeInterval = 1 / FrameRate;
         public const double TimeIntervalInMillisecond = 1000 * 1 / FrameRate;
+        public const double HalfTimeIntervalInMillisecond = TimeIntervalInMillisecond / 2;
 
-        private static JObject _configs;
-        public static JObject Configs
+        private static JToken? _configs;
+
+        public static JToken Configs(params string[] strlist)
         {
-            get
+            if(_configs == null)
+                _configs = JToken.ReadFrom(new JsonTextReader(File.OpenText(@"Config/Config.json")));
+            JToken returnValue = _configs;
+            foreach (string str in strlist)
             {
-                _configs = _configs ?? (JObject)JToken.ReadFrom(new JsonTextReader(File.OpenText(@"Config/Config.json")));
-                return _configs;
+                returnValue = returnValue[str];
             }
+            return returnValue;
         }
     }
 

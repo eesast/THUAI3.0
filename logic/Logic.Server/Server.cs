@@ -7,37 +7,49 @@ using Timer;
 using THUnity2D;
 using static Logic.Constant.Constant;
 using static Logic.Constant.MapInfo;
+using Newtonsoft.Json.Linq;
+using System.Net.Http;
+using System.Net;
+using System.Text;
+
 namespace Logic.Server
 {
     class Server
     {
         protected ICommunication ServerCommunication;
         protected uint MaxRunTimeInSecond;
-        System.Threading.Timer SendMessageTimer = null;
-        System.Threading.Timer ToolRefreshTimer = null;
-        System.Threading.Timer ServerStopTimer = null;
-        System.Threading.Timer WatchInputTimer = null;
-        Thread ServerRunThread = null;
+        System.Threading.Timer? SendMessageTimer;
+        System.Threading.Timer? ToolRefreshTimer;
+        //System.Threading.Timer? ServerStopTimer;
+        System.Threading.Timer? WatchInputTimer;
+        Thread ServerRunThread;
+        PlayBack.Writer writer = new PlayBack.Writer("server.playback");
 
-        public Server(ushort serverPort, ushort playerCount, ushort agentCount, uint MaxGameTimeSeconds)
+        public Server(ushort serverPort, ushort playerCount, ushort agentCount, uint MaxGameTimeSeconds, string token)
         {
             Communication.Proto.Constants.PlayerCount = playerCount;
             Communication.Proto.Constants.AgentCount = agentCount;
             MaxRunTimeInSecond = MaxGameTimeSeconds;
-            ServerCommunication = new CommunicationImpl { ServerPort = serverPort };
+            ServerCommunication = new CommunicationImpl
+            {
+                ServerPort = serverPort,
+                Token = token
+            };
             ServerCommunication.Initialize();
             ServerCommunication.MsgProcess += OnRecieve;
             ServerCommunication.GameStart();
 
             //初始化playerList
             //向所有Client发送他们自己的ID
+            XYPosition[] bornPoints = { new XYPosition(2.5, 1.5), new XYPosition(48.5, 2.5), new XYPosition(48.5, 48.5), new XYPosition(2.5, 48.5) };
             for (int a = 0; a < Constants.AgentCount; a++)
             {
                 Program.MessageToClient.Scores.Add(a, 0);
+                Program.ScoreLocks.TryAdd(a, new object());
                 for (int c = 0; c < Constants.PlayerCount; c++)
                 {
                     Tuple<int, int> playerIDTuple = new Tuple<int, int>(a, c);
-                    Program.PlayerList.TryAdd(playerIDTuple, new Player(2.5, 1.5));//new Random().Next(2, WORLD_MAP_WIDTH - 2), new Random().Next(2, WORLD_MAP_HEIGHT - 2)));
+                    Program.PlayerList.TryAdd(playerIDTuple, new Player(bornPoints[a].x, bornPoints[a].y));//new Random().Next(2, WORLD_MAP_WIDTH - 2), new Random().Next(2, WORLD_MAP_HEIGHT - 2)));
                     Program.PlayerList[playerIDTuple].CommunicationID = playerIDTuple;
                     MessageToClient msg = new MessageToClient();
                     msg.GameObjectList.Add(
@@ -68,35 +80,56 @@ namespace Logic.Server
             Server.ServerDebug("Server constructed");
         }
 
+        System.Threading.Timer timer;
         public void Run()
         {
             Time.InitializeTime();
             Server.ServerDebug("Server begin to run");
-            TaskSystem.RefreshTimer.Change(1000, (int)Configs["TaskRefreshTime"]);
+            TaskSystem.RefreshTimer.Change(1000, (int)Configs("TaskRefreshTime"));
             ToolRefreshTimer = new System.Threading.Timer(ToolRefresh, null,
-                0, (int)Configs["ToolRefreshTime"]);
+                0, (int)Configs("ToolRefreshTime"));
 
-            SendMessageTimer = new System.Threading.Timer(
-                (o) =>
+            new System.Threading.Thread(
+                () =>
                 {
-                    SendMessageToAllClient();
-                }, null, TimeSpan.FromSeconds(TimeInterval), TimeSpan.FromSeconds(TimeInterval));
+                    while (true)
+                    {
+                        int begin = Environment.TickCount;
+                        SendMessageToAllClient();
+                        int end = Environment.TickCount;
+                        int delta = (int)TimeIntervalInMillisecond - (end - begin);
+                        if (delta > 0)
+                            Thread.Sleep(delta);
+                    }
+                })
+            { IsBackground = true }.Start();//发送消息
 
             WatchInputTimer = new System.Threading.Timer(WatchInput, null, 0, 0);
-
+            //timer = new System.Threading.Timer(
+            //    (o) =>
+            //    {
+            //        Trigger triggerToThrow = new Trigger(48.5, 1.5, TriggerType.Arrow, -1, Talent.None);
+            //        triggerToThrow.Parent = WorldMap;
+            //        triggerToThrow.Velocity = new Vector(3.14, 10);
+            //        triggerToThrow.StopMovingTimer.Change(4000, 0);
+            //    }, null, 0, 3000);
             Thread.Sleep((int)MaxRunTimeInSecond * 1000);
             PrintScore();
+            SaveScore();
+            SendHttpRequest($"https://api.eesast.com/v1/teams/scores", ServerCommunication.Token, "PUT", new JObject
+            {
+                ["scores"] = new JArray(Program.MessageToClient.Scores.Values)
+            });
+            ServerCommunication.GameOver();
             Server.ServerDebug("Server stop running");
         }
 
-        void ToolRefresh(object o)
+        void ToolRefresh(object? o)
         {
-            THUnity2D.XYPosition tempPosition = null;
-            for (int i = 0; i < 10; i++)//加入次数限制，防止后期地图过满疯狂Random
+            THUnity2D.XYPosition tempPosition = new THUnity2D.XYPosition(Program.Random.Next(1, map.GetLength(0) - 1), Program.Random.Next(1, map.GetLength(1) - 1)); ;
+            for (int i = 0; i < 10 && !WorldMap.Grid[(int)tempPosition.x, (int)tempPosition.y].IsEmpty(); i++)//加入次数限制，防止后期地图过满疯狂Random
             {
                 tempPosition = new THUnity2D.XYPosition(Program.Random.Next(1, map.GetLength(0) - 1), Program.Random.Next(1, map.GetLength(1) - 1));
-                if (WorldMap.Grid[(int)tempPosition.x, (int)tempPosition.y].IsEmpty())
-                    break;
             }
             new Tool(tempPosition.x + 0.5, tempPosition.y + 0.5, (ToolType)Program.Random.Next(1, (int)ToolType.ToolSize - 1)).Parent = WorldMap;
         }
@@ -111,20 +144,32 @@ namespace Logic.Server
             Console.WriteLine("===============================");
         }
 
-        protected void WatchInput(object o)
+        protected void SaveScore()
         {
-            while (true)
+            JToken scores = new JObject();
+            foreach (var item in Program.MessageToClient.Scores)
             {
-                /*
-                这里应该放定时、刷新物品等代码。
-                */
-                char key = Console.ReadKey().KeyChar;
-                switch (key)
-                {
-                    case '`': GodMode(); break;
-                }
-
+                scores[item.Key.ToString()] = item.Value;
             }
+            System.IO.File.WriteAllText("scores.json", Newtonsoft.Json.JsonConvert.SerializeObject(scores));
+        }
+
+        protected void WatchInput(object? o)
+        {
+            try
+            {
+                while (true)
+                {
+                    char key = Console.ReadKey().KeyChar;
+                    switch (key)
+                    {
+                        case '`': GodMode(); break;
+                    }
+
+                }
+            }
+            catch (InvalidOperationException)
+            { }
         }
 
         protected void GodMode()
@@ -158,6 +203,31 @@ namespace Logic.Server
                                 break;
                         }
                         break;
+                    case "Move":
+                        switch (words[1])
+                        {
+                            case "Dish":
+                                var dish = WorldMap.Grid[int.Parse(words[2]), int.Parse(words[3])].GetFirstObject(typeof(Dish));
+                                if (dish != null)
+                                    dish.Position = new XYPosition(double.Parse(words[4]), double.Parse(words[5]));
+                                break;
+                            case "Tool":
+                                var tool = WorldMap.Grid[int.Parse(words[2]), int.Parse(words[3])].GetFirstObject(typeof(Tool));
+                                if (tool != null)
+                                    tool.Position = new XYPosition(double.Parse(words[4]), double.Parse(words[5]));
+                                break;
+                            case "Trigger":
+                                var trigger = WorldMap.Grid[int.Parse(words[2]), int.Parse(words[3])].GetFirstObject(typeof(Trigger));
+                                if (trigger != null)
+                                    trigger.Position = new XYPosition(double.Parse(words[4]), double.Parse(words[5]));
+                                break;
+                            case "Player":
+                                var player = WorldMap.Grid[int.Parse(words[2]), int.Parse(words[3])].GetFirstObject(typeof(Player));
+                                if (player != null)
+                                    player.Position = new XYPosition(double.Parse(words[4]), double.Parse(words[5]));
+                                break;
+                        }
+                        break;
                     case "Remove":
                         break;
                 }
@@ -174,49 +244,62 @@ namespace Logic.Server
 
         protected void OnRecieve(Object communication, EventArgs e)
         {
-            CommunicationImpl communicationImpl = communication as CommunicationImpl;
-            MessageEventArgs messageEventArgs = e as MessageEventArgs;
-            Tuple<int, int> playerCommunitionID = new Tuple<int, int>(messageEventArgs.message.Agent, messageEventArgs.message.Client);
-            if (((MessageToServer)messageEventArgs.message.Message).IsSetTalent)
+            Console.Write("Recieved;");
+            //CommunicationImpl communicationImpl = communication as CommunicationImpl;
+            MessageToServer msg2svr = (MessageToServer)((MessageEventArgs)e).message.Message;
+            Tuple<int, int> playerCommunitionID = new Tuple<int, int>(((MessageEventArgs)e).message.Agent, ((MessageEventArgs)e).message.Client);
+            if (msg2svr.IsSetTalent)
             {
                 while (!Program.PlayerList.ContainsKey(playerCommunitionID))
                 {
-                    Thread.Sleep(100);
+                    Thread.Sleep(20);
                 }
-                if (((MessageToServer)messageEventArgs.message.Message).Talent < Talent.None || ((MessageToServer)messageEventArgs.message.Message).Talent >= Talent.Size)
+                if (msg2svr.Talent < Talent.None || msg2svr.Talent >= Talent.Size)
                 {
-                    ((MessageToServer)messageEventArgs.message.Message).Talent = Talent.None;
+                    msg2svr.Talent = Talent.None;
                 }
-                Program.PlayerList[playerCommunitionID].Talent = ((MessageToServer)messageEventArgs.message.Message).Talent;
+                Program.PlayerList[playerCommunitionID].Talent = msg2svr.Talent;
                 Server.ServerDebug("Player " + playerCommunitionID.Item1 + "." + playerCommunitionID.Item2 + " has chose talent " + Program.PlayerList[playerCommunitionID].Talent);
                 return;
             }
 
             //Server.ServerDebug("GameTime : " + Time.GameTime().TotalSeconds.ToString("F3") + "s");
-            Program.PlayerList[playerCommunitionID].ExecuteMessage(communicationImpl, (MessageToServer)messageEventArgs.message.Message);
+            Program.PlayerList[playerCommunitionID].ExecuteMessage(msg2svr);
         }
 
         //向所有Client发送消息，按照帧率定时发送，严禁在其他地方调用此函数
         protected void SendMessageToAllClient()
         {
-            //for (int i = 0; i < 20; i++)
-            //{
-            //    Console.Write("Send");
-            //    for (int k = 0; k < i; k++)
-            //        Console.Write(" ");
-            //    Console.WriteLine(i);
-            //}
             lock (Program.MessageToClientLock)
             {
-                ServerCommunication.SendMessage(new ServerMessage
-                {
-                    Agent = -2,
-                    Client = -2,
-                    Message = Program.MessageToClient
-                });
+                Console.Write("S;");
+                Program.ServerMessage.Message = Program.MessageToClient;
+                ServerCommunication.SendMessage(Program.ServerMessage);
+                writer.Write(Program.MessageToClient);
             }
         }
-
         public static Action<string> ServerDebug = (str) => { Console.WriteLine(str); };
+
+        protected void SendHttpRequest(string url, string token, string method, JObject data)
+        {
+            if (string.IsNullOrEmpty(token)) return;
+            try
+            {
+                var request = WebRequest.CreateHttp(url);
+                request.Method = method;
+                request.Headers.Add("Authorization", $"bearer {token}");
+                if (data != null)
+                {
+                    request.ContentType = "application/json";
+                    var raw = Encoding.UTF8.GetBytes(data.ToString());
+                    request.GetRequestStream().Write(raw, 0, raw.Length);
+                    request.GetResponse();
+                }
+            }
+            catch (Exception e)
+            {
+                Server.ServerDebug(e.ToString());
+            }
+        }
     }
 }

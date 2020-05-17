@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Text;
 using static THUnity2D.Tools;
 
@@ -12,8 +13,10 @@ namespace THUnity2D
         //public double GlueExtraMoveSpeed = 0;
         //public bool IsTrigger = false;
 
-        private readonly Object privateLock = new Object();
-        public readonly Object publicLock = new Object();
+        //private readonly Object privateLock = new Object();
+        //public readonly Object publicLock = new Object();
+
+        private readonly BlockingCollection<Action> Operations = new BlockingCollection<Action>();
 
         private static Int64 currentMaxID = 0;
         public readonly Int64 ID;
@@ -22,12 +25,6 @@ namespace THUnity2D
         //Parent
         protected delegate void ParentDeleteHandler();
         protected event ParentDeleteHandler? OnParentDelete;
-        private void DeleteParent()
-        {
-            this._parent.OnChildrenDelete(this);
-            this._parent = null;
-            OnParentDelete?.Invoke();
-        }
         protected delegate void ParentAddHandler();
         protected event ParentAddHandler? OnParentAdd;
         private void AddParent(GameObject parent)
@@ -39,57 +36,63 @@ namespace THUnity2D
         private GameObject? _parent;
         public GameObject? Parent
         {
-            get { lock (privateLock) { return _parent; } }
+            get => _parent;
             set
             {
-                lock (privateLock)
-                {
-                    if (value != null && this._parent != null)
+                Operations.Add(
+                    () =>
+                    //lock (privateLock)
                     {
-                        Debug(this, "Reset Parent to : " + value.ID);
-                        DeleteParent();
-                        AddParent(value);
-                    }
-                    else if (value != null && this._parent == null)
-                    {
-                        Debug(this, "Set new Parent : " + value.ID);
-                        AddParent(value);
-                    }
-                    else if (value == null && this._parent != null)
-                    {
-                        Debug(this, "Delete Parent : " + this._parent.ID);
-                        DeleteParent();
-                    }
-                }
+                        if (value != null && this._parent != null)
+                        {
+                            Debug(this, "Reset Parent to : " + value.ID);
+
+                            this._parent.OnChildrenDelete(this);
+                            this._parent = null;
+                            if (Velocity.length > 0)
+                                Velocity = new Vector(Velocity.angle, 0);
+                            OnParentDelete?.Invoke();
+
+                            AddParent(value);
+                        }
+                        else if (value != null && this._parent == null)
+                        {
+                            Debug(this, "Set new Parent : " + value.ID);
+                            AddParent(value);
+                        }
+                        else if (value == null && this._parent != null)
+                        {
+                            Debug(this, "Delete Parent : " + this._parent.ID);
+
+
+                            this._parent.OnChildrenDelete(this);
+                            this._parent = null;
+                            if (Velocity.length > 0)
+                                Velocity = new Vector(Velocity.angle, 0);
+                            OnParentDelete?.Invoke();
+                        }
+                    });
             }
         }
-        //Parent End
 
         //Children
-        protected HashSet<GameObject> _childrenGameObjectList = new HashSet<GameObject>();
-        public HashSet<GameObject> ChildrenGameObjectList { get { lock (privateLock) { return this._childrenGameObjectList; } } }
+        public ConcurrentDictionary<GameObject, byte> ChildrenGameObjectList { get; } = new ConcurrentDictionary<GameObject, byte>();
         protected virtual void OnChildrenAdded(GameObject childrenObject)
         {
-            lock (privateLock)
-            {
-                this.ChildrenGameObjectList.Add(childrenObject);
-                childrenObject.OnPositionChanged += this.OnChildrenPositionChanged;
-                childrenObject.OnMove += this.OnChildrenMove;
-                childrenObject.FrameRate = this.FrameRate;
-            }
+            this.ChildrenGameObjectList.TryAdd(childrenObject, 0);
+            childrenObject.OnPositionChanged += this.OnChildrenPositionChanged;
+            childrenObject.OnMove += this.OnChildrenMove;
+            childrenObject.FrameRate = this.FrameRate;
         }
         protected virtual void OnChildrenDelete(GameObject childrenObject)
         {
-            lock (privateLock)
-            {
-                this.ChildrenGameObjectList.Remove(childrenObject);
-                childrenObject.OnPositionChanged -= this.OnChildrenPositionChanged;
-                childrenObject.OnMove -= this.OnChildrenMove;
-            }
+            byte tmp = 0; this.ChildrenGameObjectList.TryRemove(childrenObject, out tmp);
+            childrenObject.OnPositionChanged -= this.OnChildrenPositionChanged;
+            childrenObject.OnMove -= this.OnChildrenMove;
         }
-        protected virtual void OnChildrenPositionChanged(GameObject gameObject, PositionChangedEventArgs e)
+        protected virtual void OnChildrenPositionChanged(GameObject gameObject, XYPosition previousPosition, XYPosition targetPosition)
         { }
-        protected virtual void OnChildrenMove(GameObject gameObject, MoveEventArgs e, XYPosition previousPosition)
+        protected virtual void OnChildrenMove(GameObject gameObject, double angle, double distance, XYPosition previousPosition)
         { }
         //Children end
 
@@ -97,70 +100,37 @@ namespace THUnity2D
         protected internal XYPosition _position = new XYPosition();
         public XYPosition Position
         {
-            get { lock (privateLock) { return this._position; } }
+            get => _position;
             set
             {
-                lock (privateLock)
-                {
-                    Debug(this, "Prompt to change position to : " + value.ToString());
-                    PositionChanged(new PositionChangedEventArgs(this._position, value));
-                    Debug(this, "change position to : " + this._position.ToString());
-                }
+                Operations.Add(
+                    () =>
+                    //lock (privateLock)
+                    {
+                        Debug(this, "Prompt to change position to : " + value.ToString());
+                        XYPosition previousPosition = _position;
+                        _position = value;
+                        OnPositionChanged?.Invoke(this, previousPosition, value);
+                        Debug(this, "change position to : " + this._position.ToString());
+                        PositionChangeComplete?.Invoke(this);
+                    });
             }
         }
-        public class PositionChangedEventArgs : EventArgs
-        {
-            public readonly XYPosition previousPosition;
-            public readonly XYPosition position;
-            public PositionChangedEventArgs(XYPosition previousPosition, XYPosition position)
-            {
-                this.previousPosition = previousPosition;
-                this.position = position;
-            }
-        }
-
-        public delegate void PositionChangedHandler(GameObject sender, PositionChangedEventArgs e);
-        public event PositionChangedHandler? OnPositionChanged; // 声明事件
+        internal delegate void PositionChangedHandler(GameObject sender, XYPosition previousPosition, XYPosition targetPosition);
+        internal event PositionChangedHandler? OnPositionChanged; // 声明事件
         public delegate void PositionChangeCompleteHandler(GameObject sender);
         public event PositionChangeCompleteHandler? PositionChangeComplete;
-        protected virtual void PositionChanged(PositionChangedEventArgs e)
-        {
-            lock (privateLock)
-            {
-                _position = e.position;
-                OnPositionChanged?.Invoke(this, e);
-            }
-            PositionChangeComplete?.Invoke(this);
-        }
         //Position end
 
         //Direction
         protected double _facingDirection = 0;
         public double FacingDirection
         {
-            get { lock (privateLock) { return this._facingDirection; } }
-            set { lock (privateLock) { this._facingDirection = value; OnDirectionChanged(new DirectionChangedEventArgs(this._facingDirection)); } }
+            get => this._facingDirection;
+            set { Operations.Add(() => { this._facingDirection = value; DirectionChanged?.Invoke(this, _facingDirection); }); }
         }
-        public class DirectionChangedEventArgs : EventArgs
-        {
-            public readonly double facingDirection;
-            public DirectionChangedEventArgs(double facingDirection)
-            {
-                this.facingDirection = facingDirection;
-            }
-        }
-        public delegate void DirectionChangedHandler(GameObject sender, DirectionChangedEventArgs e);
+        public delegate void DirectionChangedHandler(GameObject sender, double direction);
         public event DirectionChangedHandler? DirectionChanged; // 声明事件
-        protected virtual void OnDirectionChanged(DirectionChangedEventArgs e)
-        {
-            lock (privateLock)
-            {
-                if (DirectionChanged != null)
-                {
-                    DirectionChanged(this, e); // 调用所有注册对象的方法
-                }
-            }
-        }
         //direction end
 
 
@@ -168,61 +138,90 @@ namespace THUnity2D
         protected double _frameRate = 30;
         public double FrameRate
         {
-            get { lock (privateLock) { return this._frameRate; } }
+            get => _frameRate;
             set
             {
-                lock (privateLock)
-                {
-                    if (value < 1)//限制帧率最小为每秒一帧
-                        this._frameRate = 1;
-                    else if (value > 100)//限制帧率最大为每秒100帧
-                        this._frameRate = 100;
-                    else
-                        this._frameRate = value;
-                    foreach (var item in ChildrenGameObjectList)
-                        item.FrameRate = this._frameRate;
-                    return;
-                }
+                Operations.Add(
+                    () =>
+                    //lock (privateLock)
+                    {
+                        if (value < 1)//限制帧率最小为每秒一帧
+                            this._frameRate = 1;
+                        else if (value > 100)//限制帧率最大为每秒100帧
+                            this._frameRate = 100;
+                        else
+                            this._frameRate = value;
+                        foreach (var item in ChildrenGameObjectList.Keys)
+                            item.FrameRate = this._frameRate;
+                        return;
+                    });
             }
         }
-        private System.Threading.Timer? _movingTimer;
-        protected System.Threading.Timer MovingTimer
-        {
-            get
-            {
-                if (_movingTimer == null)
-                {
-                    _movingTimer = new System.Threading.Timer(
-                        (o) =>
-                        {
-                            lock (privateLock)
-                            {
-                                Move(new MoveEventArgs(_velocity.angle, _velocity.length / _frameRate));
-                            }
-                        });
-                }
-                return _movingTimer;
-            }
-        }
+        bool canMove = false;
+        System.Threading.Semaphore canMoveSema = new System.Threading.Semaphore(0, 1);
+        private System.Threading.Thread? _movingThread;
         protected Vector _velocity = new Vector();
         protected object _velocityLock = new object();
         public Vector Velocity
         {
-            get { lock (_velocityLock) { return this._velocity; } }
+            get => _velocity;
             set
             {
+                if (_movingThread == null)
+                {
+                    _movingThread = new System.Threading.Thread(
+                        () =>
+                        {
+                            while (true)
+                            {
+                                while (!canMove)
+                                {
+                                    //Console.WriteLine(this);
+                                    canMoveSema.WaitOne();
+                                    //System.Threading.Thread.Sleep(500);
+                                }
+                                while (canMove)
+                                {
+                                    //lock (privateLock)
+                                    //{
+                                    //Console.Write(Environment.TickCount + ",");
+                                    //int begin = Environment.TickCount;
+                                    Move(_velocity.angle, _velocity.length / _frameRate);
+                                    //int end = Environment.TickCount;
+                                    //int delta = end - begin;
+                                    //Console.Write(delta + ",");
+                                    //Console.Write(1.0 / _frameRate + ",");
+                                    //if (1000.0 / _frameRate > delta)
+                                    System.Threading.Thread.Sleep((int)(1000.0 / _frameRate));
+                                    //}
+                                }
+                            }
+                        });
+                    _movingThread.IsBackground = true;
+                    _movingThread.Start();
+                }
                 lock (_velocityLock)
                 {
                     if (value.length < MinSpeed)
                     {
-                        this._velocity = new Vector(value.angle, 0);
-                        MovingTimer.Change(-1, -1);
+                        _velocity = new Vector(value.angle, 0);
+                        //MovingTimer.Change(-1, -1);
+                        canMove = false;
                         return;
                     }
-                    if (value == this._velocity)
-                        return;
+                    //bool isStartMovingTimer = (_velocity.length < MinSpeed) ? true : false;
                     this._velocity = value;
-                    MovingTimer.Change(TimeSpan.FromSeconds(0), TimeSpan.FromSeconds(1 / this.FrameRate));
+                    //if (isStartMovingTimer)
+                    //{
+                    //MovingTimer.Change(0, (int)(1000.0 / this.FrameRate));
+                    canMove = true;
+                    try
+                    {
+                        canMoveSema.Release();
+                    }
+                    catch (System.Threading.SemaphoreFullException)
+                    { }
+                    //}
                 }
             }
         }
@@ -239,55 +238,18 @@ namespace THUnity2D
         }
 
         //Width
-        protected int _width = 1;
+        private int _width = 1;
         public int Width
         {
-            get { lock (privateLock) { return this._width; } }
-            set
-            {
-                lock (privateLock)
-                {
-                    if (value < 1)
-                        this._width = 1;
-                    else
-                        this._width = value;
-                }
-            }
-        }
-        public class WidthChangedEventArgs : EventArgs
-        {
-            public readonly int width;
-            public WidthChangedEventArgs(int width_t)
-            {
-                this.width = width_t;
-            }
-        }
-        public delegate void WidthChangedHandler(GameObject sender, WidthChangedEventArgs e);
-        public event WidthChangedHandler? WidthChanged; // 声明事件
-        protected virtual void OnWidthChanged(WidthChangedEventArgs e)
-        {
-            if (WidthChanged != null)
-            {
-                WidthChanged(this, e); // 调用所有注册对象的方法
-            }
+            get => _width;
         }
         //Width end
 
         //Height
-        protected int _height = 1;
+        private int _height = 1;
         public int Height
         {
-            get { lock (privateLock) { return this._height; } }
-            set
-            {
-                lock (privateLock)
-                {
-                    if (value < 1)
-                        this._height = 1;
-                    else
-                        this._height = value;
-                }
-            }
+            get => _height;
         }
         //Height end
 
@@ -295,36 +257,26 @@ namespace THUnity2D
         protected internal Layer _layer;
         public Layer Layer
         {
-            get { lock (privateLock) { return _layer; } }
+            get => _layer;
             set
             {
-                lock (privateLock)
+                LayerChange(_layer, value);
+            }
+        }
+        protected internal delegate void LayerChangeHandler(GameObject sender, Layer previousLayer, Layer targetLayer);
+        protected internal event LayerChangeHandler? OnLayerChange;
+        protected internal virtual void LayerChange(Layer previousLayer, Layer targetLayer)
+        {
+            Operations.Add(
+                () =>
+                //lock (privateLock)
                 {
-                    Debug(this, "Prompt to change layer from " + this._layer + " to " + value);
-                    LayerChange(new LayerChangeEventArgs(this._layer, value));
-                    Debug(this, "Change layer to " + this._layer);
-                }
-            }
-        }
-        public class LayerChangeEventArgs : EventArgs
-        {
-            public readonly Layer previousLayer;
-            public readonly Layer targetLayer;
-            public LayerChangeEventArgs(Layer previousLayer, Layer targetLayer)
-            {
-                this.previousLayer = previousLayer;
-                this.targetLayer = targetLayer;
-            }
-        }
-        public delegate void LayerChangeHandler(GameObject sender, LayerChangeEventArgs e);
-        public event LayerChangeHandler? OnLayerChange;
-        protected virtual void LayerChange(LayerChangeEventArgs e)
-        {
-            lock (privateLock)
-            {
-                _layer = e.targetLayer;
-                OnLayerChange?.Invoke(this, e);
-            }
+                    Debug(this, "Prompt to change layer from " + _layer + " to " + targetLayer);
+                    _layer = targetLayer;
+                    OnLayerChange?.Invoke(this, previousLayer, targetLayer);
+                    Debug(this, "Change layer to " + _layer);
+
+                });
         }
         //Layer
 
@@ -332,8 +284,8 @@ namespace THUnity2D
         private bool _movable;
         public bool Movable
         {
-            get { lock (privateLock) { return this._movable; } }
-            set { lock (privateLock) { this._movable = value; } }
+            get => this._movable;
+            set { Operations.Add(() => { this._movable = value; }); }
         }
         //Movable end
 
@@ -342,53 +294,62 @@ namespace THUnity2D
             ID = currentMaxID;
             currentMaxID++;
             this.Parent = parent;
+            //MovingTimer.Change(0, 0);
+            new System.Threading.Thread(
+                () =>
+                {
+                    while (true)
+                    {
+                        Operations.Take()();
+                    }
+                }
+            )
+            { IsBackground = true }.Start();
             Debug(this, "has been newed . ");
         }
         public GameObject(XYPosition position, GameObject? parent = null) : this(parent)
         {
             this.Position = position;
         }
+        public GameObject(int width, int height, GameObject? parent = null) : this(parent)
+        {
+            this._width = width;
+            this._height = height;
+        }
 
         //Move
-        public class MoveEventArgs
-        {
-            public readonly double angle;
-            public readonly double distance;
-            public MoveEventArgs(double angle_t, double distance_t) // angle is radian
-            {
-                this.angle = CorrectAngle(angle_t);
-                if (double.IsNaN(distance_t))
-                    distance_t = 0;
-                this.distance = distance_t;
-            }
-        }
-        public delegate void MoveHandler(GameObject sender, MoveEventArgs e, XYPosition previousPosition);
-        public event MoveHandler? OnMove;
+        public delegate void MoveHandler(GameObject sender, double angle, double distance, XYPosition previousPosition);
+        internal event MoveHandler? OnMove;
         public delegate void MoveCompleteHandler(GameObject sender);
         public event MoveCompleteHandler? MoveComplete;
         public delegate void MoveStartHandler(GameObject sender);
         public event MoveStartHandler? MoveStart;
-        protected DateTime lastMoveTime = DateTime.MinValue;
-        public virtual void Move(MoveEventArgs e)
+        protected int lastMoveTime = 0;
+        public virtual void Move(double angle, double distance)
         {
-            if (e.distance == 0)
+            if (double.IsNaN(angle))
+                angle = 0;
+            if (double.IsNaN(distance))
+                distance = 0;
+            if (distance == 0)
                 return;
-            lock (privateLock)
-            {
-                if (!this._movable)
+            if ((Environment.TickCount - lastMoveTime) < 800.0 / _frameRate)
+                return;
+            lastMoveTime = Environment.TickCount;
+            Operations.Add(
+                () =>
+                //lock (privateLock)
                 {
-                    return;
-                }
-                if ((DateTime.Now - lastMoveTime).TotalSeconds < 1 / _frameRate)
-                    return;
-                MoveStart?.Invoke(this);
-                XYPosition previousPosition = _position;
-                _position = _position + new XYPosition(e.distance * Math.Cos(e.angle), e.distance * Math.Sin(e.angle));
-                Debug(this, "Move from " + previousPosition.ToString() + " angle : " + e.angle + " distance : " + e.distance + " aim : " + _position.ToString());
-                OnMove?.Invoke(this, e, previousPosition);
-                Debug(this, "Move result poition : " + this._position.ToString());
-                MoveComplete?.Invoke(this);
-            }
+                    if (!this._movable)
+                        return;
+                    MoveStart?.Invoke(this);
+                    XYPosition previousPosition = new XYPosition(Math.Round(_position.x, 6), Math.Round(_position.y, 6));
+                    _position = previousPosition + new XYPosition(distance * Math.Cos(angle), distance * Math.Sin(angle));
+                    Debug(this, "Move from " + previousPosition.ToString() + " angle : " + angle + " distance : " + distance + " aim : " + _position.ToString());
+                    OnMove?.Invoke(this, angle, distance, previousPosition);
+                    Debug(this, "Move result poition : " + this._position.ToString());
+                    MoveComplete?.Invoke(this);
+                });
         }
         //Move end
 
@@ -396,7 +357,7 @@ namespace THUnity2D
         protected bool _bouncable = false;
         public bool Bouncable
         {
-            get { return _bouncable; }
+            get => _bouncable;
             set
             {
                 _bouncable = value;
@@ -406,52 +367,49 @@ namespace THUnity2D
         //Bouncable
 
         //Collision
-        public class CollisionEventArgs : EventArgs
-        {
-            public readonly Direction collisionDirection;
-            public readonly HashSet<GameObject>? collisionGameObjects;
-            public CollisionEventArgs(Direction collisionDirection, HashSet<GameObject>? collisionGameObjects)
-            {
-                this.collisionDirection = collisionDirection;
-                this.collisionGameObjects = collisionGameObjects;
-            }
-        }
-        public delegate void CollisionHandler(CollisionEventArgs e);
+        public delegate void CollisionHandler(Direction collisionDirection, HashSet<GameObject>? collisionGameObjects);
         public event CollisionHandler? OnCollision;
-        protected internal void Collide(CollisionEventArgs e)
+        //private object collisionLock = new object();
+        protected internal void Collide(Direction collisionDirection, HashSet<GameObject>? collisionGameObjects)
         {
-            lock (privateLock)
+            //lock (collisionLock)
+            Operations.Add(
+                () =>
             {
                 DebugWithoutEndline(this, "Collide with : ");
-                if (e.collisionGameObjects != null)
-                    foreach (var gameObject in e.collisionGameObjects)
+                if (collisionGameObjects != null)
+                    foreach (var gameObject in collisionGameObjects)
                     {
                         DebugWithoutIDEndline(this, gameObject.ID + "  ");
                     }
-                DebugWithoutID(this, " Direction : " + e.collisionDirection);
-                OnCollision?.Invoke(e);
-            }
+                DebugWithoutID(this, " Direction : " + collisionDirection);
+                OnCollision?.Invoke(collisionDirection, collisionGameObjects);
+            });
         }
         //Collision
 
         //Trigger
-        public delegate void TriggerHandler(HashSet<GameObject>? triggerGameObjects);
+        public delegate void TriggerHandler(HashSet<GameObject> triggerGameObjects);
         public event TriggerHandler? OnTrigger;
-        protected internal void Trigger(HashSet<GameObject>? triggerGameObjects)
+        //private object triggerLock = new object();
+        protected internal void Trigger(HashSet<GameObject> triggerGameObjects)
         {
             if (triggerGameObjects == null || triggerGameObjects.Count == 0)
                 return;
-            lock (privateLock)
-            {
-                DebugWithoutEndline(this, "Trigger with : ");
-                if (triggerGameObjects != null)
+            //Debug(this, "function Trigger : Attempt to enter lock");
+            Operations.Add(
+                () =>
+                //lock (triggerLock)
+                {
+                    DebugWithoutEndline(this, "Trigger with : ");
                     foreach (var gameObject in triggerGameObjects)
                     {
                         DebugWithoutIDEndline(this, gameObject.ID + "  ");
                     }
-                DebugWithoutID(this, "");
-                OnTrigger?.Invoke(triggerGameObjects);
-            }
+                    DebugWithoutID(this, "");
+                    OnTrigger?.Invoke(triggerGameObjects);
+                });
+            //Debug(this, "function Trigger : Release lock");
         }
         //Trigger
 
@@ -480,7 +438,7 @@ namespace THUnity2D
         public void PrintChildrenList()
         {
             Console.WriteLine("========= " + this.GetType() + " : " + this.ID + " children GameObject list =========");
-            foreach (var child in ChildrenGameObjectList)
+            foreach (var child in ChildrenGameObjectList.Keys)
             {
                 Console.WriteLine(child.GetType() + " : " + child.ID + " (" + child.Position.x + "," + child.Position.y + ")");
             }

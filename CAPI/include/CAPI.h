@@ -3,11 +3,13 @@
 #ifndef DEVELOPER_ONLY
 #error This file is only included for developers
 #endif
+
 #define _CRT_SECURE_NO_WARNINGS
 #include "Message.h"
 #include "Constant.h"
 #include <MessageToServer.pb.h>
 #include <MessageToClient.pb.h>
+#include "Sema.h"
 
 using namespace std;
 
@@ -40,9 +42,11 @@ public:
 	int AgentId;
 	int AgentCount;
 	string buffer;
-	Player player;
+	Constant::Player player;
 	bool Closed;
 	bool PauseUpdate;
+	Sema sema;
+	Sema start_game_sema;
 
 private:
 	CListenerImpl listener;
@@ -60,12 +64,14 @@ public:
 	void Disconnect();
 	bool PrintBuffer();
 	void Send(Message *mes);
+	void Send(shared_ptr<Message> mes);
 	void OnReceive(IMessage *message);
+	void OnReceive(shared_ptr<Message> message);
 	void Quit();
 	void SendChatMessage(string message);
-	void SendCommandMessage(Protobuf::MessageToServer *message);
+	bool SendCommandMessage(Protobuf::MessageToServer message);
 	void UpdateInfo(Protobuf::MessageToClient *message);
-	Player GetInfo();
+	Constant::Player GetInfo();
 };
 
 #endif //CAPI_H

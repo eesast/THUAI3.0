@@ -9,7 +9,6 @@ namespace Logic.Server
 
         public Tool(double x_t, double y_t, ToolType type_t) : base(x_t, y_t, ObjType.Tool)
         {
-            Server.ServerDebug("Create Tool : " + type_t);
             Layer = ItemLayer;
             Movable = true;
             Bouncable = true;
@@ -18,15 +17,22 @@ namespace Logic.Server
             Tool = type_t;
             this.StopMoving += new StopMovingHandler((o) =>
             {
+                Server.ServerDebug(this + "has stopped moving");
                 Layer = ItemLayer;
                 if (WorldMap.Grid[(int)Position.x, (int)Position.y].ContainsType(typeof(RubbishBin)))
                 {
                     Parent = null;
                 }
             });
-            this.MoveComplete += new MoveCompleteHandler(ChangePositionInMessage);
-            this.OnParentDelete += new ParentDeleteHandler(DeleteFromMessage);
-
+            MoveComplete += ChangePositionInMessage;
+            PositionChangeComplete += ChangePositionInMessage;
+            OnParentDelete += DeleteFromMessage;
+            OnParentDelete += () =>
+            {
+                MoveComplete -= ChangePositionInMessage;
+                PositionChangeComplete -= ChangePositionInMessage;
+            };
+            Server.ServerDebug("Create " + this);
         }
         public override ToolType GetTool(ToolType t)
         {
@@ -37,6 +43,11 @@ namespace Logic.Server
                 Tool = t;
             }
             return temp;
+        }
+
+        public override string ToString()
+        {
+            return objType + ":" + Tool + ", " + ID + ", " + Position.ToString() + " ";
         }
 
     }

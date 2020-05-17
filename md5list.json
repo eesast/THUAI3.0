@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<Error>
+	<Code>SignatureDoesNotMatch</Code>
+	<Message>The Signature you specified is invalid.</Message>
+	<StringToSign>sha1
+1587199470;1587200470
+26ba080fe9e2658e25f64797a1154ca00ffb5f21
+</StringToSign>
+	<FormatString>get
+/md5list.json
+
+
+</FormatString>
+	<Resource>thuai-1255334966.cos.ap-beijing.myqcloud.com/md5list.json</Resource>
+	<RequestId>NWU5YWJkZWZfNzliNDBiMDlfMTM0ZWFfOTgwY2I2</RequestId>
+	<TraceId>OGVmYzZiMmQzYjA2OWNhODk0NTRkMTBiOWVmMDAxODc0OWRkZjk0ZDM1NmI1M2E2MTRlY2MzZDhmNmI5MWI1OTQyYWVlY2QwZTk2MDVmZDQ3MmI2Y2I4ZmI5ZmM4ODFjYjdkMDE0YzdiNDU3MThiMzQ3NzBkMmQwZjE1ZWVlZmU=</TraceId>
+</Error>
+

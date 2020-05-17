@@ -1,4 +1,3 @@
-#define DEVELOPER_ONLY
 #include "Message.h"
 #include "Constant.h"
 #include <string>
@@ -80,7 +79,10 @@ Message *Message::New() const
 	Message *mes = new Message();
 	return mes;
 }
-
+Message::~Message()
+{
+	if (this->content != NULL)delete this->content;
+}
 int Message::GetCachedSize() const
 {
 	// 尚未加入类型名字符串长.暂时用不到该函数
@@ -234,5 +236,5 @@ byte *WriteString(string str, byte *bytes)
 	return &p[len];
 }
 
-const double Player::InitMoveSpeed = 5.0;
-const int Player::InitSightRange = 9;
+//const double Player::InitMoveSpeed = 5.0;
+//const int Player::InitSightRange = 9;

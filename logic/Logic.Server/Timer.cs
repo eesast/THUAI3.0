@@ -22,7 +22,7 @@ namespace Timer
         private readonly object privateLock = new object();
         private readonly SortedDictionary<DateTime, System.Timers.ElapsedEventHandler> dict = new SortedDictionary<DateTime, System.Timers.ElapsedEventHandler>();
         private readonly System.Timers.Timer timer = new System.Timers.Timer();
-        private System.Timers.ElapsedEventHandler _control;
+        private System.Timers.ElapsedEventHandler? _control;
         private System.Timers.ElapsedEventHandler Control
         {
             get
@@ -159,15 +159,15 @@ namespace Timer
         }
         public void threadFunctionType2()//上一个计时器的回调函数执行完之后再开始下一个计时器的计时
         {
-            void func(object k)
+            void func(object? k)
             {
                 int i = Convert.ToInt32(k);
                 callback[i](state[i]);
                 if (i != count - 1)
                 {
-                    endTime = Time.GameTime() + TimeSpan.FromSeconds(dueTime[(int)k + 1]); flag++;
+                    endTime = Time.GameTime() + TimeSpan.FromSeconds(dueTime[i + 1]); flag++;
 
-                    timer[i + 1] = new System.Threading.Timer(new TimerCallback(func), (int)k + 1, TimeSpan.FromSeconds(dueTime[i + 1]), TimeSpan.FromSeconds(0));
+                    timer[i + 1] = new System.Threading.Timer(new TimerCallback(func), i + 1, TimeSpan.FromSeconds(dueTime[i + 1]), TimeSpan.FromSeconds(0));
 
                 }
             }
